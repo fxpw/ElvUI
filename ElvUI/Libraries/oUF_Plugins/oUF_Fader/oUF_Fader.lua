@@ -85,7 +85,7 @@ local function Update(self, _, unit)
 		(element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
 		(element.Combat and UnitAffectingCombat(unit)) or
 		(element.PlayerTarget and UnitExists('target')) or
-		(element.UnitTarget and UnitExists(unit..'target')) or
+		(element.UnitTarget and UnitExists('target')) or
 		(element.Focus and UnitExists('focus')) or
 		(element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
 		(element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or

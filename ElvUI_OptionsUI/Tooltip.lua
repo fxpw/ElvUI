@@ -273,7 +273,25 @@ E.Options.args.tooltip = {
 						["ALT"] = L["ALT_KEY_TEXT"],
 						["CTRL"] = L["CTRL_KEY"]
 					}
-				}
+				},
+				spacer = {
+					order = 7,
+					type = "description",
+					name = ""
+				},
+				modifierToShow = {
+                    order = 8,
+                    type = "select",
+                    name = "Когда показывать подсказку", -- TODO translate
+                    desc = "Выбрать показывать ли подсказку, либо показывать при нажатии какой то клавиши",
+                    values = {
+                        ["NONE"] = L["Never Hide"],
+                        ["ALL"] = L["Always Hide"],
+                        ["SHIFT"] = L["SHIFT_KEY"],
+                        ["ALT"] = L["ALT_KEY_TEXT"],
+                        ["CTRL"] = L["CTRL_KEY"]
+                    }
+                }
 			}
 		},
 		healthBar = {

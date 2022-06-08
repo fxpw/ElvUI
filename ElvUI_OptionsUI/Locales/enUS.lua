@@ -1246,6 +1246,14 @@ Name Formats:
 "name:short:translit" - Name restricted to 10 characters with transliteration
 
 To disable leave the field blank, if you need more information visit https://www.tukui.org/forum/viewtopic.php?t=6]=]
+L["NP_TEXT_FORMAT_DESC"] = [=[Provide a string to change the text format.
+
+Name Formats:
+"namenp:veryshort" - Name restricted to 5 characters
+"namenp:short" - Name restricted to 10 characters
+"namenp:medium" - Name restricted to 15 characters
+"namenp:long" - Name restricted to 20 characters
+]=]
 L["NAMEPLATE_FRAMELEVEL_DESC"] = [=[If you set this to 1 then all plates triggered by this style filter will be above any of the non-triggered plates.
 
 If you set this to 2 in another style filter then all plates triggered by that filter will be above plates with frame level set to 1 and all non-triggered plates, and so on.

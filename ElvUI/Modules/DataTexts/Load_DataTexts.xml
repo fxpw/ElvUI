@@ -1,5 +1,7 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="DataTexts.lua"/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">	
+	<Script file="DataTexts.lua"/>	
+	<Script file="DataTexts_Sirus.lua"/>
+	<Script file="ArenaRating_Sirus.lua"/>
 	<Script file="System.lua"/>
 	<Script file="Armor.lua"/>
 	<Script file="Avoidance.lua"/>
@@ -10,7 +12,9 @@
 	<Script file="DPS.lua"/>
 	<Script file="Durability.lua"/>
 	<Script file="Friends.lua"/>
+	<Script file="Friends_Sirus.lua"/>
 	<Script file="Guild.lua"/>
+	<Script file="Guild_Sirus.lua"/>
 	<Script file="Haste.lua"/>
 	<Script file="Hit.lua"/>
 	<Script file="HonorableKills.lua"/>
@@ -18,10 +22,16 @@
 	<Script file="Regen.lua"/>
 	<Script file="Time.lua"/>
 	<Script file="Gold.lua"/>
+	<Script file="BlockChance.lua"/>
+	<Script file="BlockAmount.lua"/>
 	<Script file="AttackPower.lua"/>
 	<Script file="SpellPower.lua"/>
 	<Script file="Battleground.lua"/>
 	<Script file="Resilience.lua"/>
 	<Script file="Achievement.lua"/>
+	<Script file="Onslaught.lua"/>
+	<Script file="BattlePass.lua"/>
+	<Script file="SpecSwitch.lua"/>
+	<Script file="Sound.lua"/>
 	<Script file="ConfigElvUI.lua"/>
 </Ui>

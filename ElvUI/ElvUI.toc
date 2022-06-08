@@ -1,9 +1,9 @@
 ## Interface: 30300
-## Author: Elv, Bunny
-## Version: 6.08
-## Title: |cff1784d1E|r|cffe5e3e3lvUI|r
+## Author: Elv, Bunny, fxpw
+## Version: 7.001
+## Title: |cff1784d1E|r|cffe5e3e3lvUI|r for sirus
 ## Notes: User Interface replacement AddOn for World of Warcraft.
-## SavedVariables: ElvDB, ElvPrivateDB
+## SavedVariables: ElvDB, ElvPrivateDB, ElvSirusDB
 ## SavedVariablesPerCharacter: ElvCharacterDB
 ## OptionalDeps: Blizzard_DebugTools, SharedMedia, Tukui, ButtonFacade
 ## X-oUF: ElvUF
@@ -11,9 +11,21 @@
 Developer\Load_Developer.xml
 Libraries\Load_Libraries.xml
 Init.lua
+
 Locales\Load_Locales.xml
 Media\Load_Media.xml
 Settings\Load_Config.xml
 Core\Load_Core.xml
 Layout\Load_Layout.xml
 Modules\Load_Modules.xml
+
+
+
+
+# Fonts_Sirus.lua
+Tags_Sirus.lua
+Case_Sirus.lua
+# OptionsUI_Sirus.lua
+# Settings_Sirus\Load_Config.xml
+# Modules_Sirus\Load_Modules.xml
+# Plugins_Sirus\Load_Plugins.xml

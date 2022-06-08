@@ -37,13 +37,13 @@ function UF:UpdateOverridePvP(event, unit)
 	if element.PreUpdate then
 		element:PreUpdate()
 	end
-
+	local FACTION_ICON_RENEGATE = [[Interface\AddOns\ElvUI\Media\Textures\Renegade_icon]]
 	local status
 	local factionGroup = UnitFactionGroup(unit)
 
 	if UnitIsPVPFreeForAll(unit) then
 		element:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA")
-		element:SetTexCoord(0, 0.65625, 0, 0.65625)
+		-- element:SetTexCoord(0, 0.65625, 0, 0.65625)
 
 		status = "ffa"
 	elseif factionGroup and UnitIsPVP(unit) then
@@ -51,6 +51,9 @@ function UF:UpdateOverridePvP(event, unit)
 
 		if factionGroup == "Alliance" then
 			element:SetTexCoord(0.545, 0.935, 0.070, 0.940)
+		elseif factionGroup == "Renegade" then
+			element:SetTexCoord(0, 1, 0, 1)
+			element:SetTexture(FACTION_ICON_RENEGATE)
 		else
 			element:SetTexCoord(0.100, 0.475, 0.070, 0.940)
 		end

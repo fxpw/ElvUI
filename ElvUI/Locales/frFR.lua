@@ -226,6 +226,7 @@ L["Reset Position"] = "Réinitialiser la position"
 L["Rested:"] = "Reposé :"
 L["Right Chat"] = "Chat de droite"
 L["Right Click:"] = "Clic droit:"
+L["Middle Click:"] = true
 L["SP"] = "PdS"
 L["Save"] = "Sauvegarder"
 L["Saved Dungeon(s)"] = "Donjon(s) sauvegardé(s)"

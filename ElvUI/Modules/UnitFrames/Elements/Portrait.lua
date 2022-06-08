@@ -30,6 +30,7 @@ function UF:Configure_Portrait(frame, dontHide)
 	if not frame.VARIABLES_SET then return end
 	local db = frame.db
 
+
 	if frame.Portrait and not dontHide then
 		frame.Portrait:Hide()
 		frame.Portrait:ClearAllPoints()
@@ -38,6 +39,7 @@ function UF:Configure_Portrait(frame, dontHide)
 	frame.Portrait = db.portrait.style == "2D" and frame.Portrait2D or frame.Portrait3D
 
 	local portrait = frame.Portrait
+	-- print(41)
 	if frame.USE_PORTRAIT then
 		if not frame:IsElementEnabled("Portrait") then
 			frame:EnableElement("Portrait")
@@ -48,6 +50,7 @@ function UF:Configure_Portrait(frame, dontHide)
 
 		portrait:ClearAllPoints()
 		portrait.backdrop:ClearAllPoints()
+		-- print(52)
 		if frame.USE_PORTRAIT_OVERLAY then
 			if db.portrait.style == "3D" then
 				portrait:SetFrameLevel(frame.Health:GetFrameLevel() + 1)
@@ -61,9 +64,21 @@ function UF:Configure_Portrait(frame, dontHide)
 			end
 			portrait.backdrop:Hide()
 
-			portrait:ClearAllPoints()
+			-- portrait:ClearAllPoints()
 			if db.portrait.fullOverlay then
+				-- if true then return end
+				-- portrait:SetAllPoints()
+				-- portrait:Point("BOTTOMRIGHT", 120, -100)
+				-- portrait:Size(800)
+				
+				-- portrait:SetUnit("player")
 				portrait:SetAllPoints(frame.Health)
+				-- portrait:SetFacing(12)
+				-- portrait:SetPosition(0, 0, 0)
+				-- portrait:ClearAllPoints()
+				-- portrait:SetPoint("CENTER",frame,"CENTER")
+				-- portrait:SetFacing(12)
+				-- print("69")
 			else
 				local statusBarTex = frame.Health:GetStatusBarTexture()
 				if frame.Health:GetOrientation() == "VERTICAL" then
@@ -81,14 +96,14 @@ function UF:Configure_Portrait(frame, dontHide)
 			if not dontHide then
 				portrait:Show()
 			end
+
 			portrait.backdrop:Show()
 			if db.portrait.style == "3D" then
 				portrait:SetFrameLevel(frame.Health:GetFrameLevel() -4) --Make sure portrait is behind Health and Power
 			else
 				portrait:SetParent(frame)
 			end
-
-			if frame.ORIENTATION == "LEFT" then
+			if db.orientation == "LEFT" then
 				portrait.backdrop:Point("TOPLEFT", frame, "TOPLEFT", frame.SPACING, frame.USE_MINI_CLASSBAR and -(frame.CLASSBAR_YOFFSET+frame.SPACING) or -frame.SPACING)
 
 				if frame.USE_MINI_POWERBAR or frame.USE_POWERBAR_OFFSET or not frame.USE_POWERBAR or frame.USE_INSET_POWERBAR or frame.POWERBAR_DETACHED then
@@ -96,7 +111,7 @@ function UF:Configure_Portrait(frame, dontHide)
 				else
 					portrait.backdrop:Point("BOTTOMRIGHT", frame.Power.backdrop, "BOTTOMLEFT", frame.BORDER - frame.SPACING*3, 0)
 				end
-			elseif frame.ORIENTATION == "RIGHT" then
+			elseif db.orientation == "RIGHT" then
 				portrait.backdrop:Point("TOPRIGHT", frame, "TOPRIGHT", -frame.SPACING, frame.USE_MINI_CLASSBAR and -(frame.CLASSBAR_YOFFSET+frame.SPACING) or -frame.SPACING)
 
 				if frame.USE_MINI_POWERBAR or frame.USE_POWERBAR_OFFSET or not frame.USE_POWERBAR or frame.USE_INSET_POWERBAR or frame.POWERBAR_DETACHED then
@@ -115,6 +130,7 @@ function UF:Configure_Portrait(frame, dontHide)
 			portrait.backdrop:Hide()
 		end
 	end
+
 end
 
 function UF:PortraitUpdate()
@@ -128,4 +144,5 @@ function UF:PortraitUpdate()
 	else
 		self:SetAlpha(1)
 	end
+
 end

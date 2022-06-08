@@ -154,7 +154,33 @@ do --this can save some main file locals
 	specialChatIcons = {
 		["Крольчонак-x100"] = ElvPink,
 	}
+
 end
+
+local ElvBlue = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
+	local Vakh = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":16:16")
+	local Dodzo = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
+	local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
+	local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
+	local NightlyBlooD = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\NightlyBlooD]], ":24:24")
+
+	local specialChatIconsSirus = {
+	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
+	["Vakh-Scourge x2 - 3.3.5a+"] = Vakh,
+	["Язло-Scourge x2 - 3.3.5a+"] = Vakh,
+	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
+	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
+	["Шутка-Scourge x2 - 3.3.5a+"] = Fxpw,
+	["Пьяная-Scourge x2 - 3.3.5a+"] = Fxpw,
+	["Лужица-Scourge x2 - 3.3.5a+"] = Fxpw,
+	["Мимирон-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Фьярнскаггл-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Амбасодор-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Кологарн-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Сталелом-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Морхок-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+
+}
 
 local function ChatFrame_OnMouseScroll(frame, delta)
 	if delta < 0 then
@@ -405,14 +431,16 @@ function CH:StyleChat(frame)
 	copyTexture:SetInside()
 	copyTexture:SetTexture(E.Media.Textures.Copy)
 	copyButton.texture = copyTexture
+	-- for i=1,NUM_CHAT_WINDOWS do
+		copyButton:SetScript("OnMouseUp", function(_, btn)
+			if btn == "RightButton" then
+				ToggleFrame(ChatMenu)
+			else
+				CH:CopyChat(frame)
+			end
+		end)
+	-- end
 
-	copyButton:SetScript("OnMouseUp", function(_, btn)
-		if btn == "RightButton" and id == 1 then
-			ToggleFrame(ChatMenu)
-		else
-			CH:CopyChat(frame)
-		end
-	end)
 
 	copyButton:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
 	copyButton:SetScript("OnLeave", function(button)
@@ -424,6 +452,9 @@ function CH:StyleChat(frame)
 	end)
 
 	frame.styled = true
+	frame.buttonFrame:Kill()
+	frame.buttonFrame2:Hide()
+	frame.buttonFrame2.Show = E.noop
 end
 
 function CH:AddMessage(msg, infoR, infoG, infoB, infoID, accessID, typeID, extraData, isHistory, historyTime)
@@ -617,7 +648,7 @@ function CH:UpdateChatTabs()
 		local chat = _G[frameName]
 		local tab = _G[format("%sTab", frameName)]
 
-		if chat:IsShown() and (id <= NUM_CHAT_WINDOWS) and (id == self.RightChatWindowID) then
+		if chat:IsShown() and not (id > NUM_CHAT_WINDOWS) and (id == self.RightChatWindowID) then
 			if self.db.panelBackdrop == "HIDEBOTH" or self.db.panelBackdrop == "LEFT" then
 				CH:SetupChatTabs(tab, fadeTabsNoBackdrop and true or false)
 			else
@@ -666,7 +697,7 @@ function CH:PositionChat(override)
 		tab.isDocked = chat.isDocked
 		tab.owner = chat
 
-		if chat:IsShown() and (id <= NUM_CHAT_WINDOWS) and id == self.RightChatWindowID then
+		if chat:IsShown() and not (id > NUM_CHAT_WINDOWS) and id == self.RightChatWindowID then
 			chat:ClearAllPoints()
 
 			if E.db.datatexts.rightChatPanel then
@@ -702,7 +733,7 @@ function CH:PositionChat(override)
 			chat:SetParent(UIParent)
 			CH:SetupChatTabs(tab, fadeUndockedTabs and true or false)
 		else
-			if id ~= 2 and (id <= NUM_CHAT_WINDOWS) then
+			if id ~= 2 and not (id > NUM_CHAT_WINDOWS) then
 				chat:ClearAllPoints()
 				if E.db.datatexts.leftChatPanel then
 					chat:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 4)
@@ -2027,6 +2058,46 @@ function CH:Initialize()
 	CombatLogQuickButtonFrame_CustomAdditionalFilterButton:Point("TOPRIGHT", 3, -1)
 	CombatLogQuickButtonFrame_CustomAdditionalFilterButton:SetHitRectInsets(0, 0, 0, 0)
 end
+
+
+
+
+local function GetChatIcon(_, name, realm)
+	if not name then return end
+
+	realm = realm ~= "" and realm or E.myrealm
+	name = name.."-"..realm
+
+	if specialChatIconsSirus[name] then
+		return specialChatIconsSirus[name]
+	end
+end
+
+
+function ChatUrlHyperlink_OnClick(link, text)
+	if IsModifiedClick() then
+		HandleModifiedItemClick(text)
+		return
+	end
+
+	local linkData = C_Split(link, ":")
+	if linkData then
+		local id, arg1, arg2, arg3 = unpack(linkData, 2)
+
+		if linkData then
+			if id and arg1 and arg2 and arg3 then
+				C_SendOpcode(CMSG_SIRUS_OPEN_URL, tonumber(id), arg1, arg2, arg3)
+			else
+				local currentLink = strsub(link, 5)
+				if currentLink and currentLink ~= "" then
+					CH:SetChatEditBoxMessage(currentLink)
+				end
+			end
+		end
+	end
+end
+
+CH:AddPluginIcons(GetChatIcon)
 
 local function InitializeCallback()
 	CH:Initialize()

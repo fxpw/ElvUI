@@ -13,8 +13,10 @@ P.general = {
 	interruptAnnounce = "NONE",
 	autoRepair = "NONE",
 	autoRoll = false,
+	showWhenInCombat = false,
 	autoAcceptInvite = false,
 	bottomPanel = true,
+	hideLootAlerts = false,
 	hideErrorFrame = true,
 	enhancedPvpMessages = true,
 	watchFrameHeight = 480,
@@ -459,7 +461,9 @@ P.nameplates = {
 				yOffset = -2,
 				font = "PT Sans Narrow",
 				fontSize = 11,
-				fontOutline = "OUTLINE"
+				fontOutline = "OUTLINE",
+				showWhenHPHidden = false
+
 			},
 			buffs = {
 				enable = true,
@@ -808,7 +812,10 @@ P.nameplates = {
 				size = 15,
 				position = "RIGHT",
 				xOffset = 10,
-				yOffset = 0
+				yOffset = 0,
+				positionh = "RIGHT",
+				xOffseth = 10,
+				yOffseth = 0,
 			},
 			raidTargetIndicator = {
 				size = 24,
@@ -962,7 +969,10 @@ P.nameplates = {
 				size = 15,
 				position = "RIGHT",
 				xOffset = 10,
-				yOffset = 0
+				yOffset = 0,
+				positionh = "RIGHT",
+				xOffseth = 10,
+				yOffseth = 0,
 			},
 			raidTargetIndicator = {
 				size = 24,
@@ -1208,6 +1218,7 @@ P.tooltip = {
 		actionbars = "NONE",
 		combat = false,
 		combatOverride = "ALL",
+		modifierToShow = "NONE",
 	},
 	healthBar = {
 		text = true,
@@ -4359,4 +4370,37 @@ P.actionbar = {
 		alpha = 1,
 		visibility = "[vehicleui] hide;show"
 	}
+}
+
+P.auras.buffs.filter = ""
+P.auras.debuffs.filter = ""
+
+P.actionbar.microbar.buttonsPerRow = 12
+
+P.chat.maxLines = 999
+
+P.databars.honor = {
+	enable = true,
+	width = 10,
+	height = 180,
+	textFormat = "NONE",
+	textSize = 11,
+	font = "PT Sans Narrow",
+	fontOutline = "NONE",
+	mouseover = false,
+	orientation = "VERTICAL",
+	hideInVehicle = false,
+	hideInCombat = false
+}
+
+-- Sirus
+P.sirus = {
+	case = true
+}
+
+P.datatexts.ArenaRating = {
+	[1] = false,
+	[2] = true,
+	[3] = false,
+	[4] = false,
 }

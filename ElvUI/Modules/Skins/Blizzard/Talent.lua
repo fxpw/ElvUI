@@ -116,4 +116,6 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 	PlayerSpecTab1.SetPoint = E.noop
 
 	PlayerTalentFrameTab1:Point("BOTTOMLEFT", 11, 46)
+
+	
 end)

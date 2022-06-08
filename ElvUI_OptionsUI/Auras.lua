@@ -5,7 +5,7 @@ local RB = E:GetModule("ReminderBuffs")
 local M = E:GetModule("Minimap")
 
 local format = string.format
-
+--
 local function GetAuraOptions(headerName)
 	local auraOptions = {
 		header = {
@@ -394,6 +394,57 @@ E.Options.args.auras = {
 							desc = L["Set the font outline."],
 							values = C.Values.FontFlags
 						}
+					}
+				},
+				checkgroup ={
+					order = 5,
+					type = "group",
+					guiInline = true,
+					name = "Бафы для отображения",
+					disabled = function() return not E.db.general.reminder.enable end,
+					args = {
+						pot = {
+							order = 1,
+							type = "toggle",
+							name = "Настои", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
+						food = {
+							order = 2,
+							type = "toggle",
+							name = "Еда", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
+						drubuff = {
+							order = 3,
+							type = "toggle",
+							name = "Дар дикой природы", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
+						palcask = {
+							order = 4,
+							type = "toggle",
+							name = "Благославление королей", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
+						inta = {
+							order = 5,
+							type = "toggle",
+							name = "Интеллект/кулак", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
+						palmp5 = {
+							order = 6,
+							type = "toggle",
+							name = "Благославление мудрости", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
+						oil = {
+							order = 7,
+							type = "toggle",
+							name = "Масло", -----------------------TODO loc
+							set = function(info, value) E.db.general.reminder[info[#info]] = value RB:UpdateButtonStatus() end,
+						},
 					}
 				}
 			}

@@ -185,6 +185,7 @@ E.Media = {
 		HelloKittyChat = M..[[Textures\HelloKittyChat.tga]],
 		Highlight = M..[[Textures\Highlight.tga]],
 		HordeLogo = M..[[Textures\Horde-Logo.blp]],
+		RenegadeLogo = M..[[Textures\Renegade-Logo.blp]],
 		Leader = M..[[Textures\Leader.tga]],
 		LevelUpTex = M..[[Textures\LevelUpTex.blp]],
 		Logo = M..[[Textures\Logo.tga]],

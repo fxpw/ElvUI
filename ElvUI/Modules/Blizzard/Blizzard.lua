@@ -60,6 +60,11 @@ function B:Initialize()
 		end
 	end)
 
+	local items = {
+		["QuestInfoItem"] = MAX_NUM_ITEMS,
+		["QuestProgressItem"] = MAX_REQUIRED_ITEMS
+	}
+
 	QuestLogFrame:HookScript("OnShow", function()
 		local questFrame = QuestLogFrame:GetFrameLevel()
 		local controlPanel = QuestLogControlPanel:GetFrameLevel()
@@ -70,6 +75,15 @@ function B:Initialize()
 		end
 		if questFrame >= scrollFrame then
 			QuestLogDetailScrollFrame:SetFrameLevel(questFrame + 1)
+		end
+		local frameLevel = QuestLogFrame:GetFrameLevel()
+
+		if QuestInfoItem1:GetFrameLevel() <= frameLevel or QuestProgressItem1:GetFrameLevel() <= frameLevel then
+			for frame, numItems in pairs(items) do
+				for i = 1, numItems do
+					_G[frame..i]:SetFrameLevel(frameLevel + 5)
+				end
+			end
 		end
 	end)
 

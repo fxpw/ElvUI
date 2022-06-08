@@ -72,7 +72,8 @@ local function createConfigEnv()
 		end,
 		ColorGradient = ElvUF.ColorGradient,
 		_COLORS = ElvUF.colors
-	}, {
+	},
+	{
 		__index = _G,
 		__newindex = function(_, key, value) _G[key] = value end,
 	})

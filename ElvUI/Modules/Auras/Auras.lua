@@ -551,15 +551,26 @@ function A:UpdateHeader(header)
 		weaponPosition = 1
 	end
 
-	local i = 1
+	local i, spellID = 1
 	repeat
 		local aura, _ = freshTable()
-		aura.name, _, aura.icon, aura.count, aura.dispelType, aura.duration, aura.expires, aura.caster = UnitAura("player", i, filter)
+		aura.name, _, aura.icon, aura.count, aura.dispelType, aura.duration, aura.expires, aura.caster, _, _, spellID = UnitAura("player", i, filter)
 		if aura.name then
 			aura.filter = filter
 			aura.index = i
 
-			tinsert(sortingTable, aura)
+			if db.filter ~= "" and E.global.unitframe.aurafilters[db.filter] then
+				local aurafilter = E.global.unitframe.aurafilters[db.filter]
+				local filterType = aurafilter.type
+				local spellList = aurafilter.spells
+				local spell = spellList and (spellList[spellID] or spellList[aura.name])
+
+				if not ((filterType == "Blacklist") and (spell and spell.enable)) then
+					tinsert(sortingTable, aura)
+				end
+			else
+				tinsert(sortingTable, aura)
+			end
 		else
 			releaseTable(aura)
 		end
@@ -612,7 +623,7 @@ function A:Initialize()
 
 	self.Initialized = true
 	self.db = E.db.auras
-
+	
 	if LBF then
 		self.LBFGroup = LBF and LBF:Group("ElvUI", "Auras")
 	end

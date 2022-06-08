@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Minimap.lua"/>
+	<!-- <Script file="Minimap_Sirus.lua"/> -->
 	<Script file="Worldmap.lua"/>
+	<Script file="InstanceMap.lua"/>
 </Ui>

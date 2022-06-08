@@ -447,8 +447,10 @@ function LO:CreateMinimapPanels()
 	configtoggle:SetScript("OnClick", function(_, btn)
 		if btn == "LeftButton" then
 			E:ToggleOptionsUI()
-		else
+		elseif btn == "RightButton" then
 			E:BGStats()
+		elseif btn == "MiddleButton" then
+			ReloadUI()
 		end
 	end)
 	configtoggle:SetScript("OnEnter", function(self)
@@ -459,6 +461,7 @@ function LO:CreateMinimapPanels()
 		if E.db.datatexts.battleground then
 			GameTooltip:AddDoubleLine(L["Right Click:"], L["Show BG Texts"], 1, 1, 1)
 		end
+		GameTooltip:AddDoubleLine(L["Middle Click:"], L["ReloadUI"], 1, 1, 1)
 		GameTooltip:Show()
 	end)
 	configtoggle:SetScript("OnLeave", function()

@@ -231,6 +231,14 @@ function DT:AssignPanelToDataText(panel, data)
 	else
 		panel:SetScript("OnLeave", DT.Data_OnLeave)
 	end
+
+	if data.onMouseWheel then            ------------------ why ? need for spec switch
+		panel:EnableMouseWheel(1)
+		panel:SetScript("OnMouseWheel", function(p, delta)
+			if E.db.datatexts.noCombatHover and InCombatLockdown() then return end
+			data.onMouseWheel(p,delta)
+		end)
+	end
 end
 
 function DT:LoadDataTexts()
@@ -302,8 +310,9 @@ end
 	onEnterFunc - function to fire OnEnter
 	onLeaveFunc - function to fire OnLeave, if not provided one will be set for you that hides the tooltip.
 	localizedName - localized name of the datetext
+	onMouseWheel,onMouseWheelFunc      true if need and func for mouse wheel
 ]]
-function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc, localizedName)
+function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc, localizedName,onMouseWheel,onMouseWheelFunc)
 	if name then
 		DT.RegisteredDataTexts[name] = {}
 	else
@@ -337,6 +346,9 @@ function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onE
 
 	if localizedName and type(localizedName) == "string" then
 		DT.RegisteredDataTexts[name].localizedName = localizedName
+	end
+	if onMouseWheel and onMouseWheel == true and type(onMouseWheelFunc) == "function" then ------------------ why ? need for spec switch
+		DT.RegisteredDataTexts[name].onMouseWheel = onMouseWheelFunc
 	end
 end
 

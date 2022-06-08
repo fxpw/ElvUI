@@ -21,6 +21,12 @@ RB.Spell1Buffs = {
 	54212, -- Flask of Pure Mojo
 	53752, -- Lesser Flask of Toughness (50 Resilience)
 	17627, -- Flask of Distilled Wisdom
+	270006, -- Настой сопротивления
+	270007, -- Настой Драконьего разума
+	270008, -- Настой Сила титана
+	270009, -- Настой Текущей воды
+	270010, -- Настой Стальной Кожи
+	270011, -- Настой Крепости
 
 	33721, -- Spellpower Elixir
 	53746, -- Wrath Elixir
@@ -64,6 +70,10 @@ RB.Spell3Buffs = {
 	72588, -- Gift of the Wild
 	48469, -- Mark of the Wild
 }
+-- RB.Spell4Buffs = {
+-- 	72588, -- Gift of the Wild
+-- 	48469, -- Mark of the Wild
+-- }
 
 RB.Spell4Buffs = {
 	25898, -- Greater Blessing of Kings
@@ -94,17 +104,109 @@ RB.MeleeSpell6Buffs = {
 	48932, -- Blessing of Might
 	47436, -- Battle Shout
 }
+RB.CasterSpell7Buffs = {
+	317727, --caster oil
+}
 
-function RB:CheckFilterForActiveBuff(filter)
-	for _, spell in ipairs(filter) do
-		local spellName = GetSpellInfo(spell)
-		local name, _, texture, _, _, duration, expirationTime = UnitAura("player", spellName)
+RB.MeleeSpell7Buffs = {
+	317728, --melee oil
+}
 
-		if name then
-			return texture, duration, expirationTime
+
+
+
+
+function RB.CheckForTimeChest(...)
+	-- print(...)
+    for i = 1, select("#", ...) do
+        local region = select(i, ...)
+        if region and region:GetObjectType() == "FontString" then
+            --print(region)
+            local text = region:GetText()
+            -- print(text)
+            if text and (string.match(text, "(+52 к силе заклинаний)") or string.match(text, "(+90 к силе атаки)")) then
+				local hour,mins,seconds = nil,nil,nil
+				local sh,ch = string.find(text, "%d+ час")
+				local sm,em  = string.find(text, "%d+ мин%.")
+				local sc,ec = string.find(text, "%d+ cек%.")
+
+				if sh then
+					hour = string.sub(text,sh,sh+1)
+				elseif sm then
+					mins = string.sub(text,sm,sm+2)
+				elseif sc then
+					seconds = string.sub(text,sc,sc+2)
+				end
+				if hour then
+					RB.remainingTime = (tonumber(hour) or 1) * 60 * 60
+					-- print( RB.remainingTime)
+                    return
+                elseif mins then
+                    RB.remainingTime = (tonumber(mins) or 1) * 60
+					-- print( RB.remainingTime)
+                    return
+                elseif seconds then
+                    RB.remainingTime = (tonumber(seconds) or 1)
+					-- print( RB.remainingTime)
+                    return
+				else
+					RB.remainingTime = 0
+                end
+
+                return
+            end
+        end
+    end
+    RB.remainingTime = 0
+end
+
+
+
+
+function RB:CheckItemForBuffOil(...)
+
+	if not (RB.chestFrame) then
+		RB.chestFrame = CreateFrame("GameTooltip", "ChestTooltip", nil, "GameTooltipTemplate")
+		RB.chestFrame:SetOwner(WorldFrame, "ANCHOR_NONE")
+	end
+
+    RB.chestFrame:SetInventoryItem("player", 5)
+    -- RB.checkTime = GetTime()
+    -- print(RB.checkTime)
+	do
+    	RB.CheckForTimeChest(RB.chestFrame:GetRegions())
+	end
+end
+
+
+
+
+
+function RB:CheckFilterForActiveBuff(filter,...)
+
+	if filter ~= self["Spell7Buffs"] or filter ~= self["Spell7Buffs"] then
+		for _, spell in ipairs(filter) do
+			local spellName = GetSpellInfo(spell)
+			local name, _, texture, _, _, duration, expirationTime = UnitAura("player", spellName)
+
+			if name then
+				return texture, duration, expirationTime
+			end
+		end
+	else
+		-- print("--------------------------------------------")
+		RB:CheckItemForBuffOil(...)
+		for _, spell in ipairs(filter) do
+			local spellName = GetSpellInfo(spell)
+			local name, _, texture, _, _, duration, expirationTime = UnitAura("player",spellName)
+			if name then
+				return texture, 3600, RB.remainingTime + GetTime()
+			end
 		end
 	end
 end
+
+
 
 function RB:UpdateReminderTime(elapsed)
 	self.expiration = self.expiration - elapsed
@@ -132,13 +234,12 @@ end
 function RB:UpdateReminder(event, unit)
 	if event == "UNIT_AURA" and unit ~= "player" then return end
 
-	for i = 1, 6 do
+	for i = 1, 7 do
 		local texture, duration, expirationTime = self:CheckFilterForActiveBuff(self["Spell"..i.."Buffs"])
 		local button = self.frame[i]
 
 		if texture then
 			button.t:SetTexture(texture)
-
 			if (duration == 0 and expirationTime == 0) or E.db.general.reminder.durations ~= true then
 				button.t:SetAlpha(E.db.general.reminder.reverse and 1 or 0.3)
 				button:SetScript("OnUpdate", nil)
@@ -205,7 +306,7 @@ function RB:UpdateSettings(isCallback)
 
 	self:UpdateDefaultIcons()
 
-	for i = 1, 6 do
+	for i = 1, 7 do
 		local button = frame[i]
 		button:ClearAllPoints()
 		button:SetWidth(E.RBRWidth)
@@ -213,7 +314,7 @@ function RB:UpdateSettings(isCallback)
 
 		if i == 1 then
 			button:SetPoint("TOP", ElvUI_ReminderBuffs, "TOP", 0, 0)
-		elseif i == 6 then
+		elseif i == 7 then
 			button:SetPoint("BOTTOM", ElvUI_ReminderBuffs, "BOTTOM", 0, 0)
 		else
 			button:Point("TOP", frame[i - 1], "BOTTOM", 0, E.Border - E.Spacing*3)
@@ -265,11 +366,66 @@ function RB:UpdateDefaultIcons()
 		[3] = "Interface\\Icons\\Spell_Nature_Regeneration",
 		[4] = "Interface\\Icons\\Spell_Magic_GreaterBlessingofKings",
 		[5] = (E.Role == "Caster" and "Interface\\Icons\\Spell_Holy_MagicalSentry") or "Interface\\Icons\\Spell_Holy_WordFortitude",
-		[6] = (E.Role == "Caster" and "Interface\\Icons\\Spell_Holy_GreaterBlessingofWisdom") or "Interface\\Icons\\Ability_Warrior_BattleShout"
+		[6] = (E.Role == "Caster" and "Interface\\Icons\\Spell_Holy_GreaterBlessingofWisdom") or "Interface\\Icons\\Ability_Warrior_BattleShout",
+		[7] = (E.Role == "Caster" and "Interface\\Icons\\INV_Potion_141") or "Interface\\Icons\\INV_Potion_141", --- for another icons TODO later
 	}
 
 	self.Spell5Buffs = E.Role == "Caster" and self.CasterSpell5Buffs or self.MeleeSpell5Buffs
 	self.Spell6Buffs = E.Role == "Caster" and self.CasterSpell6Buffs or self.MeleeSpell6Buffs
+	self.Spell7Buffs = E.Role == "Caster" and self.CasterSpell7Buffs or self.MeleeSpell7Buffs
+end
+
+
+function RB:UpdateButtonStatus()
+	-- if not E.db.general.reminder.pot then
+	-- 	print("DSA")
+	-- end
+	local lastid = 1
+	local allParametres = {
+		E.db.general.reminder.pot,
+		E.db.general.reminder.food,
+		E.db.general.reminder.drubuff,
+		E.db.general.reminder.palcask,
+		E.db.general.reminder.inta,
+		E.db.general.reminder.palmp5,
+		E.db.general.reminder.oil,
+	}
+
+	for i = 1,#allParametres do
+
+		ElvUI_ReminderBuffs[i]:ClearAllPoints()
+		ElvUI_ReminderBuffs[i]:SetWidth(E.RBRWidth)
+		ElvUI_ReminderBuffs[i]:SetHeight(E.RBRWidth)
+		ElvUI_ReminderBuffs[i]:Hide()
+
+		if allParametres[i] == true then
+			ElvUI_ReminderBuffs[i].currentID = lastid
+			lastid = lastid + 1
+			ElvUI_ReminderBuffs[i]:Show()
+		elseif allParametres[i] == false then
+			ElvUI_ReminderBuffs[i]:Hide()
+		end
+
+		-- if i == 1 then
+		-- 	local id = ElvUI_ReminderBuffs[i].currentID
+		-- 	if id then
+		-- 		ElvUI_ReminderBuffs[i]:SetPoint("TOP", ElvUI_ReminderBuffs, "TOP", 0, E.RBRWidth*-id)
+		-- 	end
+		-- -- elseif i == #allParametres then
+		-- -- 	ElvUI_ReminderBuffs[i]:SetPoint("BOTTOM", ElvUI_ReminderBuffs, "BOTTOM", 0, 0)
+		-- else
+			local id = ElvUI_ReminderBuffs[i].currentID
+			if id then
+				if id == 1 then
+					ElvUI_ReminderBuffs[i]:Point("TOP", ElvUI_ReminderBuffs, "TOP", 0, (E.RBRWidth*-(id-1)))
+				-- print((E.Border))
+				-- print((E.Spacing*3))
+				else
+					ElvUI_ReminderBuffs[i]:Point("TOP", ElvUI_ReminderBuffs, "TOP", 0, (E.RBRWidth*-(id-1))+(E.Border - E.Spacing*3)*4)
+				end
+			end
+		-- end
+	end
 end
 
 function RB:Initialize()
@@ -288,12 +444,27 @@ function RB:Initialize()
 	end
 	self.frame = frame
 
-	for i = 1, 6 do
+	for i = 1, 7 do
 		frame[i] = self:CreateButton()
 		frame[i]:SetID(i)
 	end
-
 	self:UpdateSettings()
+	self:UpdateButtonStatus()
+
+	RB.remainingTime = 0
+	-- RB.checkTime = 0
+	
+	-- local f = CreateFrame("Frame",nil,UIParent)
+	-- f:RegisterEvent("UNIT_INVENTORY_CHANGED")
+	-- f:RegisterEvent("PLAYER_ENTERING_WORLD")
+	-- -- f:RegisterEvent("UNIT_INVENTORY_CHANGED")
+	-- -- f:RegisterEvent("UNIT_INVENTORY_CHANGED")
+	-- -- f:RegisterEvent("UNIT_INVENTORY_CHANGED")
+
+	-- f:SetScript("OnEvent",function()
+	-- 	print("da")
+	-- 	RB:CheckItemForBuffOil()
+	-- end)
 end
 
 local function InitializeCallback()

@@ -1,7 +1,8 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local NP = E:GetModule("NamePlates")
+local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
-
+local ElvUF = E.oUF
 --Lua functions
 local format = string.format
 local gmatch = gmatch
@@ -13,18 +14,12 @@ local utf8sub = string.utf8sub
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UNKNOWN = UNKNOWN
 
-local function abbrev(name)
-	local letters, lastWord = "", match(name, ".+%s(.+)$")
-	if lastWord then
-		for word in gmatch(name, ".-%s") do
-			local firstLetter = utf8sub(gsub(word, "^[%s%p]*", ""), 1, 1)
-			if firstLetter ~= utf8lower(firstLetter) then
-				letters = format("%s%s. ", letters, firstLetter)
-			end
+function NP:UpdateAllNames(unit,tag)
+	for frame in pairs(NP.VisiblePlates) do
+		if frame.UnitType == unit then
+			frame.Name:SetText(NP:SetNPText(frame, tag))
 		end
-		name = format("%s%s", letters, lastWord)
 	end
-	return name
 end
 
 function NP:Update_Name(frame, triggered)
@@ -32,9 +27,13 @@ function NP:Update_Name(frame, triggered)
 		if not self.db.units[frame.UnitType].name.enable then return end
 	end
 
+
 	local name = frame.Name
 	local nameText = frame.UnitName or UNKNOWN
-	name:SetText(self.db.units[frame.UnitType].name.abbrev and abbrev(nameText) or nameText)
+	-- local nametr:SetText(NP.db.units[frame.UnitType].name.textFormat)
+	name:SetText(NP:SetNPText(frame,NP.db.units[frame.UnitType].name.textFormat) or nameText)
+	-- name:SetText("das")
+	-- frame:Tag(name, self.db.units[frame.UnitType].name.textFormat)
 
 	if not triggered then
 		name:ClearAllPoints()

@@ -10,226 +10,94 @@ local CreateFrame = CreateFrame
 local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
-local FAILED = FAILED
-local INTERRUPTED = INTERRUPTED
 
-local function resetAttributes(self)
-	self.casting = nil
-	self.channeling = nil
-	self.notInterruptible = nil
-	self.spellName = nil
-end
 
-function NP:Update_CastBarOnUpdate(elapsed)
-	if self.casting or self.channeling then
-		local isCasting = self.casting
-		if isCasting then
-			self.value = self.value + elapsed
-			if self.value >= self.max then
-				resetAttributes(self)
-				self:Hide()
-				NP:StyleFilterUpdate(self:GetParent(), "FAKE_Casting")
-				return
-			end
-		else
-			self.value = self.value - elapsed
-			if self.value <= 0 then
-				resetAttributes(self)
-				self:Hide()
-				NP:StyleFilterUpdate(self:GetParent(), "FAKE_Casting")
-				return
-			end
-		end
+function NP:UpdateElement_CastBarOnShow()
+	local parent = self:GetParent()
+	local unitFrame = parent.UnitFrame
+	if not unitFrame.UnitType then
+		return
+	end
 
-		if self.delay ~= 0 then
-			if self.channeling then
-				if self.channelTimeFormat == "CURRENT" then
-					self.Time:SetFormattedText("%.1f |cffaf5050%.2f|r", abs(self.value - self.max), self.delay)
-				elseif self.channelTimeFormat == "CURRENTMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f |cffaf5050%.2f|r", abs(self.value - self.max), self.max, self.delay)
-				elseif self.channelTimeFormat == "REMAINING" then
-					self.Time:SetFormattedText("%.1f |cffaf5050%.2f|r", self.value, self.delay)
-				elseif self.channelTimeFormat == "REMAININGMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f |cffaf5050%.2f|r", self.value, self.max, self.max, self.delay)
-				end
-			else
-				if self.castTimeFormat == "CURRENT" then
-					self.Time:SetFormattedText("%.1f |cffaf5050%s %.2f|r", self.value, "+", self.delay)
-				elseif self.castTimeFormat == "CURRENTMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f |cffaf5050%s %.2f|r", self.value, self.max, "+", self.delay)
-				elseif self.castTimeFormat == "REMAINING" then
-					self.Time:SetFormattedText("%.1f |cffaf5050%s %.2f|r", abs(self.value - self.max), "+", self.delay)
-				elseif self.castTimeFormat == "REMAININGMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f |cffaf5050%s %.2f|r", abs(self.value - self.max), self.max, "+", self.delay)
-				end
-			end
-		else
-			if self.channeling then
-				if self.channelTimeFormat == "CURRENT" then
-					self.Time:SetFormattedText("%.1f", abs(self.value - self.max))
-				elseif self.channelTimeFormat == "CURRENTMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f", abs(self.value - self.max), self.max)
-				elseif self.channelTimeFormat == "REMAINING" then
-					self.Time:SetFormattedText("%.1f", self.value)
-				elseif self.channelTimeFormat == "REMAININGMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f", self.value, self.max)
-				end
-			else
-				if self.castTimeFormat == "CURRENT" then
-					self.Time:SetFormattedText("%.1f", self.value)
-				elseif self.castTimeFormat == "CURRENTMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f", self.value, self.max)
-				elseif self.castTimeFormat == "REMAINING" then
-					self.Time:SetFormattedText("%.1f", abs(self.value - self.max))
-				elseif self.castTimeFormat == "REMAININGMAX" then
-					self.Time:SetFormattedText("%.1f / %.2f", abs(self.value - self.max), self.max)
-				end
-			end
-		end
+	if NP.db.units[unitFrame.UnitType].castbar.enable ~= true then return end
+	if not unitFrame.Health:IsShown() and not NP.db.units[unitFrame.UnitType].castbar.showWhenHPHidden  then return end
 
-		self:SetValue(self.value)
-	elseif self.holdTime > 0 then
-		self.holdTime = self.holdTime - elapsed
-	else
-		resetAttributes(self)
-		self:Hide()
-		NP:StyleFilterUpdate(self:GetParent(), "FAKE_Casting")
+	if unitFrame.CastBar then
+		unitFrame.CastBar:Show()
+
+		NP:StyleFilterUpdate(unitFrame, "FAKE_Casting")
 	end
 end
 
-function NP:Update_CastBar(frame, event, unit)
-	local castBar = frame.CastBar
+function NP:UpdateElement_CastBarOnHide()
+	local parent = self:GetParent()
+	if parent.UnitFrame.CastBar then
+		parent.UnitFrame.CastBar:Hide()
+
+		NP:StyleFilterUpdate(parent.UnitFrame, "FAKE_Casting")
+	end
+end
+
+
+function NP:UpdateElement_CastBarOnValueChanged(value)
+	local frame = self:GetParent()
+	local min, max = self:GetMinMaxValues()
+	local unitFrame = frame.UnitFrame
+	local isChannel = value < unitFrame.CastBar:GetValue()
+
+	unitFrame.CastBar.value = value
+	unitFrame.CastBar.max = max
+	unitFrame.CastBar:SetMinMaxValues(min, max)
+	unitFrame.CastBar:SetValue(value)
+
+	if isChannel then
+		if unitFrame.CastBar.channelTimeFormat == "CURRENT" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f", abs(unitFrame.CastBar.value - unitFrame.CastBar.max))
+		elseif unitFrame.CastBar.channelTimeFormat == "CURRENTMAX" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f / %.2f", abs(unitFrame.CastBar.value - unitFrame.CastBar.max), unitFrame.CastBar.max)
+		elseif unitFrame.CastBar.channelTimeFormat == "REMAINING" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f", unitFrame.CastBar.value)
+		elseif unitFrame.CastBar.channelTimeFormat == "REMAININGMAX" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f / %.2f", unitFrame.CastBar.value, unitFrame.CastBar.max)
+		end
+	else
+		if unitFrame.CastBar.castTimeFormat == "CURRENT" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f", unitFrame.CastBar.value)
+		elseif unitFrame.CastBar.castTimeFormat == "CURRENTMAX" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f / %.2f", unitFrame.CastBar.value, unitFrame.CastBar.max)
+		elseif unitFrame.CastBar.castTimeFormat == "REMAINING" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f", abs(unitFrame.CastBar.value - unitFrame.CastBar.max))
+		elseif unitFrame.CastBar.castTimeFormat == "REMAININGMAX" then
+			unitFrame.CastBar.Time:SetFormattedText("%.1f / %.2f", abs(unitFrame.CastBar.value - unitFrame.CastBar.max), unitFrame.CastBar.max)
+		end
+	end
+
+	local unit = unitFrame.unit or unitFrame.UnitName
 	if unit then
-		if not event then
-			if UnitChannelInfo(unit) then
-				event = "UNIT_SPELLCAST_CHANNEL_START"
-			elseif UnitCastingInfo(unit) then
-				event = "UNIT_SPELLCAST_START"
-			end
-		end
-	elseif castBar:IsShown() then
-		resetAttributes(castBar)
-		castBar:Hide()
-	end
-
-	if self.db.units[frame.UnitType].castbar.enable ~= true then return end
-	if not frame.Health:IsShown() then return end
-
-	if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" then
-		local name, _, _, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(unit)
-		event = "UNIT_SPELLCAST_START"
-		if not name then
-			name, _, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(unit)
-			event = "UNIT_SPELLCAST_CHANNEL_START"
+		local spell, _, spellName = UnitCastingInfo(unit)
+		if not spell then
+			_, _, spellName = UnitChannelInfo(unit)
 		end
 
-		if not name then
-			resetAttributes(castBar)
-			castBar:Hide()
-			return
-		end
-
-		endTime = endTime / 1000
-		startTime = startTime / 1000
-
-		castBar.max = endTime - startTime
-		castBar.startTime = startTime
-		castBar.delay = 0
-		castBar.casting = event == "UNIT_SPELLCAST_START"
-		castBar.channeling = event == "UNIT_SPELLCAST_CHANNEL_START"
-		castBar.notInterruptible = notInterruptible
-		castBar.holdTime = 0
-		castBar.interrupted = nil
-		castBar.spellName = name
-
-		if castBar.casting then
-			castBar.value = GetTime() - startTime
-		else
-			castBar.value = endTime - GetTime()
-		end
-
-		castBar:SetMinMaxValues(0, castBar.max)
-		castBar:SetValue(castBar.value)
-
-		castBar.Icon.texture:SetTexture(texture)
-		castBar.Spark:Show()
-		castBar.Name:SetText(name)
-		castBar.Time:SetText()
-
-		castBar:Show()
-	elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-		if castBar:IsShown() then
-			resetAttributes(castBar)
-		end
-	elseif event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" then
-		if castBar:IsShown() then
-			castBar.Spark:Hide()
-			castBar.Name:SetText(event == "UNIT_SPELLCAST_FAILED" and FAILED or INTERRUPTED)
-
-			castBar.holdTime = self.db.units[frame.UnitType].castbar.timeToHold --How long the castbar should stay visible after being interrupted, in seconds
-			castBar.interrupted = true
-
-			resetAttributes(castBar)
-			castBar:SetValue(castBar.max)
-		end
-	elseif event == "UNIT_SPELLCAST_DELAYED" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-		if frame:IsShown() then
-			local name, startTime, endTime, _
-			if event == "UNIT_SPELLCAST_DELAYED" then
-				name, _, _, _, startTime, endTime = UnitCastingInfo(unit)
-			else
-				name, _, _, _, startTime, endTime = UnitChannelInfo(unit)
-			end
-
-			if not name then
-				resetAttributes(castBar)
-				castBar:Hide()
-				return
-			end
-
-			endTime = endTime / 1000
-			startTime = startTime / 1000
-
-			local delta
-			if castBar.casting then
-				delta = startTime - castBar.startTime
-				castBar.value = GetTime() - startTime
-			else
-				delta = castBar.startTime - startTime
-				castBar.value = endTime - GetTime()
-			end
-
-			if delta < 0 then
-				delta = 0
-			end
-
-			castBar.Name:SetText(name)
-			castBar.max = endTime - startTime
-			castBar.startTime = startTime
-			castBar.delay = castBar.delay + delta
-			castBar:SetMinMaxValues(0, castBar.max)
-			castBar:SetValue(castBar.value)
-		end
-	elseif event == "UNIT_SPELLCAST_INTERRUPTIBLE" or event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" then
-		castBar.notInterruptible = event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"
-	end
-
-	if not castBar.notInterruptible then
-		if castBar.interrupted then
-			castBar:SetStatusBarColor(self.db.colors.castInterruptedColor.r, self.db.colors.castInterruptedColor.g, self.db.colors.castInterruptedColor.b)
-		else
-			castBar:SetStatusBarColor(self.db.colors.castColor.r, self.db.colors.castColor.g, self.db.colors.castColor.b)
-		end
-		castBar.Icon.texture:SetDesaturated(false)
+		unitFrame.CastBar.Name:SetText(spellName)
 	else
-		castBar:SetStatusBarColor(self.db.colors.castNoInterruptColor.r, self.db.colors.castNoInterruptColor.g, self.db.colors.castNoInterruptColor.b)
+		unitFrame.CastBar.Name:SetText()
+	end
 
-		if self.db.colors.castbarDesaturate then
-			castBar.Icon.texture:SetDesaturated(true)
+	unitFrame.CastBar.Icon.texture:SetTexture(self.Icon:GetTexture())
+	self.Icon:Hide()
+	if not self.Shield:IsShown() then
+		unitFrame.CastBar:SetStatusBarColor(NP.db.colors.castColor.r, NP.db.colors.castColor.g, NP.db.colors.castColor.b)
+		unitFrame.CastBar.Icon.texture:SetDesaturated(false)
+	else
+		unitFrame.CastBar:SetStatusBarColor(NP.db.colors.castNoInterruptColor.r, NP.db.colors.castNoInterruptColor.g, NP.db.colors.castNoInterruptColor.b)
+
+		if NP.db.colors.castbarDesaturate then
+			unitFrame.CastBar.Icon.texture:SetDesaturated(true)
 		end
 	end
 
-	self:StyleFilterUpdate(frame, "FAKE_Casting")
+	NP:StyleFilterUpdate(unitFrame, "FAKE_Casting")
 end
 
 function NP:Configure_CastBarScale(frame, scale, noPlayAnimation)
@@ -316,7 +184,6 @@ end
 function NP:Construct_CastBar(parent)
 	local frame = CreateFrame("StatusBar", "$parentCastBar", parent)
 	NP:StyleFrame(frame)
-	frame:SetScript("OnUpdate", NP.Update_CastBarOnUpdate)
 
 	frame.Icon = CreateFrame("Frame", nil, frame)
 	frame.Icon.texture = frame.Icon:CreateTexture(nil, "BORDER")

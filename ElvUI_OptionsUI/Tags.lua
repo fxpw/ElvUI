@@ -23,19 +23,19 @@ E.Options.args.tagGroup = {
 		},
 		Colors = {
 			type = "group",
-			name = "Colors",
+			name = L["Colors"],
 			args = {
 				header = {
 					order = 0,
 					type = "header",
-					name = E.InfoColor.."Colors",
+					name = L["Colors"],
 				},
 				customTagColorInfo = {
 					order = 1,
 					type = "input",
 					width = "full",
-					name = "Custom color your Text: replace the XXXXXX with a Hex color code",
-					get = function() return "||cffXXXXXX [tags] or text here ||r" end
+					name = L["Custom color your Text: replace the XXXXXX with a Hex color code"],
+					get = function() return "||cffXXXXXX [теги] или текст здесь ||r" end
 				}
 			}
 		},
@@ -44,7 +44,7 @@ E.Options.args.tagGroup = {
 
 for Tag in next, E.oUF.Tags.Methods do
 	if not E.TagInfo[Tag] then
-		E.TagInfo[Tag] = {category = "Miscellaneous", description = ""}
+		E.TagInfo[Tag] = {category = L["Miscellaneous"], description = ""}
 		--E:Print("['"..Tag.."'] = { category = 'Miscellaneous', description = '' }")
 	end
 

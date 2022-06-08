@@ -114,6 +114,7 @@ function UF:Update_TargetFrame(frame, db)
 
 	--Portrait
 	UF:Configure_Portrait(frame)
+	
 
 	--Threat
 	UF:Configure_Threat(frame)
@@ -158,6 +159,7 @@ function UF:Update_TargetFrame(frame, db)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")
+
 end
 
 tinsert(UF.unitstoload, "target")

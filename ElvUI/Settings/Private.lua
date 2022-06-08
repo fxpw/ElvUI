@@ -5,6 +5,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 V.general = {
 	loot = true,
 	lootRoll = true,
+	hideLootAlerts = false,
 	normTex = "ElvUI Norm",
 	glossTex = "ElvUI Norm",
 	dmgfont = "PT Sans Narrow",
@@ -141,3 +142,18 @@ V.actionbar = {
 V.worldmap = {
 	enable = true
 }
+--Skins
+V.skins.cleanExtraButton = false
+
+V.skins.blizzard.deathRecap = true
+V.skins.blizzard.guild = true
+V.skins.blizzard.losscontrol = true
+V.skins.blizzard.store = true
+V.skins.blizzard.timer = true
+V.skins.blizzard.transmogrify = true
+V.skins.blizzard.collections = true
+V.skins.blizzard.encounterjournal = true
+V.skins.blizzard.roulette = true
+V.skins.blizzard.mountChest = true
+V.skins.blizzard.extraButton = true
+V.skins.blizzard.headhunting = true

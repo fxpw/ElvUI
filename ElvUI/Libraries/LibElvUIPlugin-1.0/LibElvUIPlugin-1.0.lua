@@ -68,7 +68,7 @@ if locale == "deDE" then
 	INFO_NEW = "Neuste:"
 	LIBRARY = "Bibliothek"
 elseif locale == "ruRU" then
-	MSG_OUTDATED = "Ваша версия %s %s устарела (последняя версия %s). Вы можете скачать последнюю версию на https://github.com/ElvUI-WotLK/ElvUI/"
+	MSG_OUTDATED = "Ваша версия %s %s устарела (последняя версия %s). Вы можете скачать последнюю версию на https://github.com/fxpw/ElvUI/"
 	HDR_CONFIG = "Плагины"
 	HDR_INFORMATION = "LibElvUIPlugin-1.0.%d - загруженные плагины (зеленый означает, что у вас последняя версия, красный - устаревшая)"
 	INFO_BY = "от"

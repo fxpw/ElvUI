@@ -10,18 +10,15 @@ local CreateFrame = CreateFrame
 local InCombatLockdown = InCombatLockdown
 local RegisterStateDriver = RegisterStateDriver
 
-local MICRO_BUTTONS = {
-	"CharacterMicroButton",
-	"SpellbookMicroButton",
-	"TalentMicroButton",
-	"AchievementMicroButton",
-	"QuestLogMicroButton",
-	"SocialsMicroButton",
-	"PVPMicroButton",
-	"LFDMicroButton",
-	"MainMenuMicroButton",
-	"HelpMicroButton"
-}
+local MICRO_BUTTONS = SHARED_MICROMENU_BUTTONS
+
+-- if E.private.actionbar.enable then
+-- 	for _, frame in pairs({"ShapeshiftBarFrame", "PossessBarFrame", "PETACTIONBAR_YPOS", "MULTICASTACTIONBAR_YPOS", "MultiBarBottomLeft", "MultiCastActionBarFrame"}) do
+-- 		if UIPARENT_MANAGED_FRAME_POSITIONS[frame] then
+-- 			UIPARENT_MANAGED_FRAME_POSITIONS[frame].ignoreFramePositionManager = true
+-- 		end
+-- 	end
+-- end
 
 local function onEnter(button)
 	if AB.db.microbar.mouseover then
@@ -59,7 +56,6 @@ function AB:HandleMicroButton(button)
 	button:HookScript("OnEnter", onEnter)
 	button:HookScript("OnLeave", onLeave)
 	button:SetHitRectInsets(0, 0, 0, 0)
-	button:Show()
 
 	pushed:SetTexCoord(0.17, 0.87, 0.5, 0.908)
 	pushed:SetInside(f)
@@ -79,8 +75,6 @@ function AB:UpdateMicroButtonsParent()
 	for i = 1, #MICRO_BUTTONS do
 		_G[MICRO_BUTTONS[i]]:SetParent(ElvUI_MicroBar)
 	end
-
-	AB:UpdateMicroPositionDimensions()
 end
 
 function AB:UpdateMicroBarVisibility()
@@ -91,8 +85,8 @@ function AB:UpdateMicroBarVisibility()
 	end
 
 	local visibility = self.db.microbar.visibility
-	if visibility and match(visibility, "[\n\r]") then
-		visibility = gsub(visibility, "[\n\r]", "")
+	if visibility and visibility:match("[\n\r]") then
+		visibility = visibility:gsub("[\n\r]", "")
 	end
 
 	RegisterStateDriver(ElvUI_MicroBar.visibility, "visibility", (self.db.microbar.enabled and visibility) or "hide")
@@ -132,8 +126,8 @@ function AB:UpdateMicroPositionDimensions()
 		ElvUI_MicroBar:SetAlpha(self.db.microbar.alpha)
 	end
 
-	AB.MicroWidth = (((CharacterMicroButton:GetWidth() + spacing) * self.db.microbar.buttonsPerRow) - spacing) + (offset * 2)
-	AB.MicroHeight = (((CharacterMicroButton:GetHeight() + spacing) * numRows) - spacing) + (offset * 2)
+	AB.MicroWidth = (((_G["CharacterMicroButton"]:GetWidth() + spacing) * self.db.microbar.buttonsPerRow) - spacing) + (offset * 2)
+	AB.MicroHeight = (((_G["CharacterMicroButton"]:GetHeight() + spacing) * numRows) - spacing) + (offset * 2)
 	ElvUI_MicroBar:Size(AB.MicroWidth, AB.MicroHeight)
 
 	if ElvUI_MicroBar.mover then
@@ -147,10 +141,24 @@ function AB:UpdateMicroPositionDimensions()
 	self:UpdateMicroBarVisibility()
 end
 
+function AB:UpdateMicroButtons()
+	self:UpdateMicroPositionDimensions()
+	-- GuildMicroButtonTabard:SetPoint("TOPLEFT", -5, 24)
+	-- for k,v in pairs(GuildMicroButtonTabard) do
+		-- print(k,v)
+	-- end
+
+	GuildMicroButtonTabard.emblem:ClearAllPoints()
+	GuildMicroButtonTabard.emblem:SetAllPoints(GuildMicroButton)
+	GuildMicroButtonTabard.background:ClearAllPoints()
+	-- local a,d = GuildMicroButton:GetSize()
+	-- GuildMicroButtonTabard.background:Size(a,d)
+	GuildMicroButtonTabard.background:SetAllPoints(GuildMicroButtonTabard.emblem)
+end
+
 function AB:SetupMicroBar()
 	local microBar = CreateFrame("Frame", "ElvUI_MicroBar", E.UIParent)
 	microBar:Point("TOPLEFT", E.UIParent, "TOPLEFT", 4, -48)
-	microBar:SetFrameStrata("LOW")
 	microBar:EnableMouse(true)
 	microBar:SetScript("OnEnter", onEnter)
 	microBar:SetScript("OnLeave", onLeave)
@@ -163,22 +171,12 @@ function AB:SetupMicroBar()
 		self:HandleMicroButton(_G[MICRO_BUTTONS[i]])
 	end
 
-	MicroButtonPortrait:SetAllPoints()
-
-	-- PvP Micro Button
-	PVPMicroButtonTexture:SetAllPoints()
-	PVPMicroButtonTexture:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\PVP-Icons]])
-
-	if E.myfaction == "Alliance" then
-		PVPMicroButtonTexture:SetTexCoord(0.545, 0.935, 0.070, 0.940)
-	else
-		PVPMicroButtonTexture:SetTexCoord(0.100, 0.475, 0.070, 0.940)
-	end
+	MicroButtonPortrait:SetInside(CharacterMicroButton.backdrop)
 
 	self:SecureHook("VehicleMenuBar_MoveMicroButtons", "UpdateMicroButtonsParent")
+	self:SecureHook("UpdateMicroButtons")
 
 	self:UpdateMicroPositionDimensions()
-	MainMenuBarPerformanceBar:Kill()
 
 	E:CreateMover(microBar, "MicrobarMover", L["Micro Bar"], nil, nil, nil, "ALL,ACTIONBARS", nil, "actionbar,microbar")
 end

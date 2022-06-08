@@ -612,8 +612,20 @@ E.Options.args.general = {
 						E:StaticPopup_Show("PRIVATE_RL")
 					end
 				},
-				hideErrorFrame = {
+				hideLootAlerts = {
 					order = 4,
+					type = "toggle",
+					name = "Прятать лут",
+					desc = "Прятать вспылающий лут?",
+					get = function(info) return E.private.general[info[#info]] end,
+					set = function(info, value)
+						E.private.general[info[#info]] = value
+						-- print(E.private.general[info[#info]])
+						E:StaticPopup_Show("PRIVATE_RL")
+					end
+				},
+				hideErrorFrame = {
+					order = 5,
 					type = "toggle",
 					name = L["Hide Error Text"],
 					desc = L["Hides the red error text at the top of the screen while in combat."],
@@ -623,7 +635,7 @@ E.Options.args.general = {
 					end
 				},
 				enhancedPvpMessages = {
-					order = 5,
+					order = 6,
 					type = "toggle",
 					name = L["Enhanced PVP Messages"],
 					desc = L["Display battleground messages in the middle of the screen."],
@@ -636,6 +648,7 @@ E.Options.args.general = {
 					get = function(info) return E.private.general[info[#info]] end,
 					set = function(info, value)
 						E.private.general[info[#info]] = value
+						-- print(E.private.general[info[#info]])
 						E:StaticPopup_Show("PRIVATE_RL")
 					end
 				},
@@ -704,7 +717,20 @@ E.Options.args.general = {
 					name = L["Auto Greed/DE"],
 					desc = L["Automatically select greed or disenchant (when available) on green quality items. This will only work if you are the max level."],
 					disabled = function() return not E.private.general.lootRoll end
-				}
+				},
+				spacer = {
+					order = 6,
+					type = "description",
+					name = ""
+				},
+				showWhenInCombat = {
+					order = 7,
+					type = "toggle",
+					name = "!!!!!!! Открывать настройки в бою !!!!!!!",
+					desc = "!!!!!!! Позволяет открывать настройки в бою, только для продвинутых юзеров !!!!!!!",
+					-- disabled = function() return not E.private.general.lootRoll end
+				},
+			
 			}
 		}
 	}

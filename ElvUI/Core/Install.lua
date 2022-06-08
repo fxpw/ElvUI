@@ -262,7 +262,15 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.general.totems.growthDirection = "HORIZONTAL"
 		E.db.general.totems.size = 50
 		E.db.general.totems.spacing = 8
-		E.db.general.reminder.enable = false
+		E.db.general.reminder.enable = true
+		E.db.general.reminder.pot = true
+		E.db.general.reminder.food = true
+		E.db.general.reminder.drubuff = true
+		E.db.general.reminder.palcask = true
+		E.db.general.reminder.inta = true
+		E.db.general.reminder.palmp5 = true
+		E.db.general.reminder.oil = true
+
 		--Movers
 		E.db.movers.AlertFrameMover = "TOP,ElvUIParent,TOP,-1,-18"
 		E.db.movers.BNETMover = "TOPRIGHT,ElvUIParent,TOPRIGHT,-4,-274"

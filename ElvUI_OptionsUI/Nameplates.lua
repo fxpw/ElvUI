@@ -2095,8 +2095,14 @@ local function GetUnitSettings(unit, name)
 						name = L["Y-Offset"],
 						min = -100, max = 100, step = 1
 					},
-					textGroup = {
+					showWhenHPHidden = {
 						order = 7,
+						type = "toggle",
+						name = L["ShowWhenHPHidden"],
+						desc = L["ShowWhenHPHidden"]
+					},
+					textGroup = {
+						order = 8,
 						type = "group",
 						name = L["Text"],
 						get = function(info)
@@ -2153,7 +2159,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					iconGroup = {
-						order = 8,
+						order = 9,
 						name = L["Icon"],
 						type = "group",
 						get = function(info)
@@ -3111,11 +3117,11 @@ local function GetUnitSettings(unit, name)
 						type = "toggle",
 						name = L["Enable"]
 					},
-					abbrev = {
-						order = 2,
-						type = "toggle",
-						name = L["Abbreviation"]
-					},
+					-- abbrev = {
+					-- 	order = 2,
+					-- 	type = "toggle",
+					-- 	name = L["Abbreviation"]
+					-- },
 					position = {
 						order = 3,
 						type = "select",
@@ -3191,6 +3197,21 @@ local function GetUnitSettings(unit, name)
 								values = C.Values.FontFlags
 							}
 						}
+					},
+					textFormat = {
+						order = 8,
+						type = "input",
+						name = L["Text Format"],
+						desc = L["NP_TEXT_FORMAT_DESC"],
+						width = "full",
+						get = function(info)
+							return E.db.nameplates.units[unit].name[info[#info]]
+						end,
+						set = function(info, value)
+							NP:UpdateAllNames(unit,value)
+							E.db.nameplates.units[unit].name[info[#info]] = value
+
+						end,
 					}
 				}
 			},
@@ -3310,32 +3331,78 @@ local function GetUnitSettings(unit, name)
 					},
 					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
 				},
+				-- positionHealth = {
+				-- 	order = 4,
+				-- 	type = "select",
+				-- 	name = L["Position"],
+				-- 	values = {
+				-- 		["LEFT"] = L["Left"],
+				-- 		["RIGHT"] = L["Right"],
+				-- 		["TOP"] = L["Top"],
+				-- 		["BOTTOM"] = L["Bottom"],
+				-- 		["CENTER"] = L["Center"]
+				-- 	},
+				-- 	disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
+				-- },
 				spacer = {
-					order = 4,
+					order = 5,
 					type = "description",
 					name = " "
 				},
 				size = {
-					order = 5,
+					order = 6,
 					type = "range",
 					name = L["Size"],
 					min = 12, max = 42, step = 1,
 					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
 				},
 				xOffset = {
-					order = 6,
+					order = 7,
 					type = "range",
 					name = L["X-Offset"],
 					min = -100, max = 100, step = 1,
 					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
 				},
 				yOffset = {
-					order = 7,
+					order = 8,
 					type = "range",
 					name = L["Y-Offset"],
 					min = -100, max = 100, step = 1,
 					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
+				},
+				spacer1 = {
+					order = 9,
+					type = "description",
+					name = " "
+				},
+				positionh = {
+					order = 10,
+					type = "select",
+					name = L["Position_Hided"],
+					values = {
+						["LEFT"] = L["Left"],
+						["RIGHT"] = L["Right"],
+						["TOP"] = L["Top"],
+						["BOTTOM"] = L["Bottom"],
+						["CENTER"] = L["Center"]
+					},
+					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
+				},
+				xOffseth = {
+					order = 11,
+					type = "range",
+					name = L["X-Offset_Hided"],
+					min = -100, max = 100, step = 1,
+					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
+				},
+				yOffseth = {
+					order = 12,
+					type = "range",
+					name = L["Y-Offset_Hided"],
+					min = -100, max = 100, step = 1,
+					disabled = function() return not E.db.nameplates.units[unit].eliteIcon.enable end
 				}
+
 			}
 		}
 		group.args.iconFrame = {

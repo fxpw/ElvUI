@@ -226,6 +226,7 @@ L["Reset Position"] = "Reestablecer Posición"
 L["Rested:"] = "Descansado:"
 L["Right Chat"] = "Chat Derecho"
 L["Right Click:"] = true
+L["Middle Click:"] = true
 L["SP"] = "PH"
 L["Save"] = "Guardar"
 L["Saved Dungeon(s)"] = "Mazmorra(s) Guardada"

@@ -46,11 +46,12 @@ function D:ModifyErrorFrame()
 	local BUTTON_WIDTH = 75
 	local BUTTON_HEIGHT = 24
 	local BUTTON_SPACING = 2
-
+	
+	ScriptErrorsFrame.firstButton = firstButton
 	-- Add a first button
 	local firstButton = CreateFrame("Button", nil, ScriptErrorsFrame, "UIPanelButtonTemplate")
 	firstButton:SetPoint("BOTTOM", -((BUTTON_WIDTH + BUTTON_WIDTH/2) + (BUTTON_SPACING * 4)), 8)
-	firstButton:SetText("First")
+	firstButton:SetText("Первый")
 	firstButton:SetHeight(BUTTON_HEIGHT)
 	firstButton:SetWidth(BUTTON_WIDTH)
 	firstButton:SetScript("OnClick", function()
@@ -59,12 +60,23 @@ function D:ModifyErrorFrame()
 	end)
 	ScriptErrorsFrame.firstButton = firstButton
 
+	-- add reload button
+	local reloadButton = CreateFrame("Button", nil, ScriptErrorsFrame, "UIPanelButtonTemplate")
+	reloadButton:SetPoint("LEFT", firstButton, "LEFT", -30, 0)
+	reloadButton:SetText("R")
+	reloadButton:SetHeight(BUTTON_HEIGHT)
+	reloadButton:SetWidth(30)
+	reloadButton:SetScript("OnClick", function()
+		ReloadUI()
+	end)
+	ScriptErrorsFrame.reloadButton = reloadButton
+
 	-- Also add a Last button for errors
 	local lastButton = CreateFrame("Button", nil, ScriptErrorsFrame, "UIPanelButtonTemplate")
 	lastButton:SetPoint("BOTTOMLEFT", ScriptErrorsFrame.next, "BOTTOMRIGHT", BUTTON_SPACING, 0)
 	lastButton:SetHeight(BUTTON_HEIGHT)
 	lastButton:SetWidth(BUTTON_WIDTH)
-	lastButton:SetText("Last")
+	lastButton:SetText("Последний")
 	lastButton:SetScript("OnClick", function()
 		ScriptErrorsFrame.index = #(ScriptErrorsFrame.order)
 		ScriptErrorsFrame_Update()

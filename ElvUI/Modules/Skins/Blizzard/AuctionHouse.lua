@@ -215,7 +215,7 @@ S:AddCallbackForAddon("Blizzard_AuctionUI", "Skin_Blizzard_AuctionUI", function(
 
 	BrowseSearchButton:Point("TOPRIGHT", 15, -34)
 
-	S:HandleNextPrevButton(BrowsePrevPageButton, "left", nil, true)
+	S:HandleNextPrevButton(BrowsePrevPageButton, "LEFT", nil, true)
 	BrowsePrevPageButton:Size(32)
 	BrowsePrevPageButton:Point("TOPLEFT", 636, -28)
 	BrowsePrevPageButton:SetHitRectInsets(6, 6, 6, 6)

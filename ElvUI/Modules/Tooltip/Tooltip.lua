@@ -1,6 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local TT = E:GetModule("Tooltip")
-
+local S = E:GetModule("Skins")
 --Lua functions
 local _G = _G
 local unpack, tonumber, select = unpack, tonumber, select
@@ -63,6 +63,7 @@ local AFK_LABEL = " |cffFFFFFF[|r|cffE7E716"..L["AFK"].."|r|cffFFFFFF]|r"
 local DND_LABEL = " |cffFFFFFF[|r|cffFF0000"..L["DND"].."|r|cffFFFFFF]|r"
 local keybindFrame
 
+
 local classification = {
 	worldboss = format("|cffAF5050 %s|r", BOSS),
 	rareelite = format("|cffAF5050+ %s|r", ITEM_QUALITY3_DESC),
@@ -70,6 +71,17 @@ local classification = {
 	rare = format("|cffAF5050 %s|r", ITEM_QUALITY3_DESC)
 }
 
+function TT:GetItemLvL(unit, giud)
+	local ilvl = ItemLevelMixIn:GetItemLevel(giud or UnitGUID(unit))
+	if ilvl and ilvl ~= -1 then
+		local color = ItemLevelMixIn:GetColor(ilvl)
+		if color then
+			return format("%s%s|r", E:RGBToHex(color.r, color.g, color.b), ilvl)
+		end
+	else
+		return TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL
+	end
+end
 local inventorySlots = {
 	"HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "WristSlot",
 	"HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot",
@@ -88,7 +100,21 @@ local updateUnitModifiers = {
 function TT:GameTooltip_SetDefaultAnchor(tt, parent)
 	if not E.private.tooltip.enable then return end
 	if not self.db.visibility then return end
-
+	local modifier2 = self.db.visibility.modifierToShow
+    -- if not modifier2 ~= "NONE" then
+        if (not(
+                (modifier2 == "SHIFT" and IsShiftKeyDown())
+                or
+                (modifier2 == "CTRL" and IsControlKeyDown())
+                or
+                (modifier2 == "ALT" and IsAltKeyDown())
+                or
+                modifier2 == "NONE"
+        )) then
+            tt:Hide()
+            return
+        end
+    -- end
 	if tt:GetAnchorType() ~= "ANCHOR_NONE" then return end
 	if InCombatLockdown() and self.db.visibility.combat then
 		local modifier = self.db.visibility.combatOverride
@@ -170,26 +196,26 @@ function TT:GameTooltip_SetDefaultAnchor(tt, parent)
 	end
 end
 
-function TT:GetItemLvL(unit)
-	local total, items = 0, 0
-	for i = 1, #inventorySlots do
-		local itemLink = GetInventoryItemLink(unit, GetInventorySlotInfo(inventorySlots[i]))
+-- function TT:GetItemLvL(unit)
+-- 	local total, items = 0, 0
+-- 	for i = 1, #inventorySlots do
+-- 		local itemLink = GetInventoryItemLink(unit, GetInventorySlotInfo(inventorySlots[i]))
 
-		if itemLink then
-			local iLvl = select(4, GetItemInfo(itemLink))
-			if iLvl and iLvl > 0 then
-				items = items + 1
-				total = total + iLvl
-			end
-		end
-	end
+-- 		if itemLink then
+-- 			local iLvl = select(4, GetItemInfo(itemLink))
+-- 			if iLvl and iLvl > 0 then
+-- 				items = items + 1
+-- 				total = total + iLvl
+-- 			end
+-- 		end
+-- 	end
 
-	if items == 0 then
-		return 0
-	end
+-- 	if items == 0 then
+-- 		return 0
+-- 	end
 
-	return E:Round(total / items, 2)
-end
+-- 	return E:Round(total / items, 2)
+-- end
 
 function TT:RemoveTrashLines(tt)
 	for i = 3, tt:NumLines() do
@@ -238,6 +264,11 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 			else
 				name = name..FOREIGN_SERVER_LABEL
 			end
+		end
+
+		local category = ElvUF.Tags.Methods["category:name:short"](unit)
+		if category then
+			name = name.." |cffffffff"..category.."|r"
 		end
 
 		if UnitIsAFK(unit) then
@@ -301,6 +332,8 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 	return color
 end
 
+-- local inspectCache = {}
+
 function TT:INSPECT_TALENT_READY(event, unit)
 	if not unit then
 		if self.lastGUID ~= UnitGUID("mouseover") then return end
@@ -311,7 +344,7 @@ function TT:INSPECT_TALENT_READY(event, unit)
 		if not UnitExists(unit) then return end
 	end
 
-	local itemLevel = self:GetItemLvL(unit)
+	-- local itemLevel = self:GetItemLvL(unit)
 	local _, specName = E:GetTalentSpecInfo(true)
 	inspectCache[self.lastGUID] = {time = GetTime()}
 
@@ -319,10 +352,10 @@ function TT:INSPECT_TALENT_READY(event, unit)
 		inspectCache[self.lastGUID].specName = specName
 	end
 
-	if itemLevel then
-		inspectCache[self.lastGUID].itemLevel = itemLevel
-	end
-
+	-- if itemLevel then
+	-- 	inspectCache[self.lastGUID].itemLevel = itemLevel
+	-- end
+-- 
 	GameTooltip:SetUnit(unit)
 end
 
@@ -335,15 +368,15 @@ function TT:ShowInspectInfo(tt, unit, r, g, b)
 		local _, specName = E:GetTalentSpecInfo()
 
 		tt:AddDoubleLine(L["Talent Specialization:"], specName, nil, nil, nil, r, g, b)
-		tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL("player"), nil, nil, nil, 1, 1, 1)
+		-- tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL("player"), nil, nil, nil, 1, 1, 1)
 		return
 	elseif inspectCache[GUID] then
 		local specName = inspectCache[GUID].specName
-		local itemLevel = inspectCache[GUID].itemLevel
+		-- local itemLevel = inspectCache[GUID].itemLevel
 
-		if (GetTime() - inspectCache[GUID].time) < 900 and specName and itemLevel then
+		if (GetTime() - inspectCache[GUID].time) < 900 and specName then
 			tt:AddDoubleLine(L["Talent Specialization:"], specName, nil, nil, nil, r, g, b)
-			tt:AddDoubleLine(L["Item Level:"], itemLevel, nil, nil, nil, 1, 1, 1)
+			-- tt:AddDoubleLine(L["Item Level:"], itemLevel, nil, nil, nil, 1, 1, 1)
 			return
 		else
 			inspectCache[GUID] = nil
@@ -437,8 +470,14 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 	local isPlayerUnit = UnitIsPlayer(unit)
 	local color = self:SetUnitText(tt, unit, UnitLevel(unit), isShiftKeyDown)
 
-	if isShiftKeyDown and isPlayerUnit then
+	if isPlayerUnit then
 		self:ShowInspectInfo(tt, unit, color.r, color.g, color.b)
+
+		if not UnitIsEnemy("player", unit) then
+			ItemLevelMixIn:Request(unit)
+
+			tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
+		end
 	end
 
 	if unit and self.db.npcID and not isPlayerUnit then
@@ -724,8 +763,64 @@ function TT:Initialize()
 	--Variable is localized at top of file, then set here when we're sure the frame has been created
 	--Used to check if keybinding is active, if so then don"t hide tooltips on actionbars
 	keybindFrame = ElvUI_KeyBinder
+	if QueueStatusFrame then
+		QueueStatusFrame:SetTemplate("Transparent")
+	end
 
+	if SocialToastFrame then
+		SocialToastFrame:SetTemplate("Transparent")
+		S:HandleIcon(SocialToastFrame.Icon)
+		TT:SecureHook(SocialToastFrame, "ShowToast", function(self) self.Icon:SetTexCoord(unpack(E.TexCoords)) end)
+		SocialToastFrame.backdrop:SetFrameLevel(SocialToastFrame:GetFrameLevel() + 2)
+		SocialToastFrame.Icon:SetParent(SocialToastFrame.backdrop)
+		S:HandleCloseButton(SocialToastFrame.CloseButton)
+		SocialToastFrame:ClearAllPoints()
+		SocialToastFrame:Point("BOTTOMLEFT", E.UIParent, "BOTTOMLEFT", 4, 195)
+		E:CreateMover(SocialToastFrame, "SocialToastMover", L["Social Toast Frame"])
+		TT:SecureHook(SocialToastFrame, "SetPoint", "RepositionSocialToast")
+	elseif SocialToastAnchorFrame then
+		hooksecurefunc(SocialToastAnchorFrame, "ShowToast", function(self)
+			for _, toastFrame in ipairs(self.toastFrames) do
+				if not toastFrame.isSkinned then
+					toastFrame:SetTemplate("Transparent")
+					S:HandleIcon(toastFrame.Icon)
+					toastFrame.backdrop:SetFrameLevel(toastFrame:GetFrameLevel() + 2)
+					toastFrame.Icon:SetParent(toastFrame.backdrop)
+					S:HandleCloseButton(toastFrame.CloseButton)
+
+					toastFrame.isSkinned = true
+				end
+
+				toastFrame.Icon:SetTexCoord(unpack(E.TexCoords))
+			end
+		end)
+	end
+
+	TOOLTIP_UNIT_LEVEL_RACE_CLASS_TYPE = gsub(TOOLTIP_UNIT_LEVEL_RACE_CLASS_TYPE, "\n.+", "")
+
+	hooksecurefunc(ItemLevelMixIn, "Update", function(self, unit)
+		unit = unit or self.unit
+		local giud = unit and UnitGUID(unit) or self.guid
+
+		if unit and giud then
+			local _, tooltipUNIT = GameTooltip:GetUnit()
+			if tooltipUNIT and giud == UnitGUID(tooltipUNIT) then
+				local itemLevel = TT:GetItemLvL(unit, giud)
+
+				for lineID = 3, GameTooltip:NumLines() do
+					local line = _G["GameTooltipTextRight"..lineID]
+					local lineText = line:GetText()
+
+					if lineText and find(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL) then
+						line:SetText(gsub(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL, itemLevel))
+						break
+					end
+				end
+			end
+		end
+	end)
 	self.Initialized = true
+
 end
 
 local function InitializeCallback()
@@ -733,3 +828,68 @@ local function InitializeCallback()
 end
 
 E:RegisterModule(TT:GetName(), InitializeCallback)
+function TT:RepositionSocialToast(frame, _, anchor)
+	if anchor ~= SocialToastMover then
+		frame:ClearAllPoints()
+		frame:Point("TOPLEFT", SocialToastMover, "TOPLEFT")
+	end
+end
+
+-- if E.private.tooltip.enable then
+-- 	if QueueStatusFrame then
+-- 		QueueStatusFrame:SetTemplate("Transparent")
+-- 	end
+
+-- 	if SocialToastFrame then
+-- 		SocialToastFrame:SetTemplate("Transparent")
+-- 		S:HandleIcon(SocialToastFrame.Icon)
+-- 		TT:SecureHook(SocialToastFrame, "ShowToast", function(self) self.Icon:SetTexCoord(unpack(E.TexCoords)) end)
+-- 		SocialToastFrame.backdrop:SetFrameLevel(SocialToastFrame:GetFrameLevel() + 2)
+-- 		SocialToastFrame.Icon:SetParent(SocialToastFrame.backdrop)
+-- 		S:HandleCloseButton(SocialToastFrame.CloseButton)
+-- 		SocialToastFrame:ClearAllPoints()
+-- 		SocialToastFrame:Point("BOTTOMLEFT", E.UIParent, "BOTTOMLEFT", 4, 195)
+-- 		E:CreateMover(SocialToastFrame, "SocialToastMover", L["Social Toast Frame"])
+-- 		TT:SecureHook(SocialToastFrame, "SetPoint", "RepositionSocialToast")
+-- 	elseif SocialToastAnchorFrame then
+-- 		hooksecurefunc(SocialToastAnchorFrame, "ShowToast", function(self)
+-- 			for _, toastFrame in ipairs(self.toastFrames) do
+-- 				if not toastFrame.isSkinned then
+-- 					toastFrame:SetTemplate("Transparent")
+-- 					S:HandleIcon(toastFrame.Icon)
+-- 					toastFrame.backdrop:SetFrameLevel(toastFrame:GetFrameLevel() + 2)
+-- 					toastFrame.Icon:SetParent(toastFrame.backdrop)
+-- 					S:HandleCloseButton(toastFrame.CloseButton)
+
+-- 					toastFrame.isSkinned = true
+-- 				end
+
+-- 				toastFrame.Icon:SetTexCoord(unpack(E.TexCoords))
+-- 			end
+-- 		end)
+-- 	end
+
+-- 	TOOLTIP_UNIT_LEVEL_RACE_CLASS_TYPE = gsub(TOOLTIP_UNIT_LEVEL_RACE_CLASS_TYPE, "\n.+", "")
+
+-- 	hooksecurefunc(ItemLevelMixIn, "Update", function(self, unit)
+-- 		unit = unit or self.unit
+-- 		local giud = unit and UnitGUID(unit) or self.guid
+
+-- 		if unit and giud then
+-- 			local _, tooltipUNIT = GameTooltip:GetUnit()
+-- 			if tooltipUNIT and giud == UnitGUID(tooltipUNIT) then
+-- 				local itemLevel = TT:GetItemLvL(unit, giud)
+
+-- 				for lineID = 3, GameTooltip:NumLines() do
+-- 					local line = _G["GameTooltipTextRight"..lineID]
+-- 					local lineText = line:GetText()
+
+-- 					if lineText and find(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL) then
+-- 						line:SetText(gsub(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL, itemLevel))
+-- 						break
+-- 					end
+-- 				end
+-- 			end
+-- 		end
+-- 	end)
+-- end

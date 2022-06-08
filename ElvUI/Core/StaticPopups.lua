@@ -50,7 +50,7 @@ E.PopupDialogs.ELVUI_UPDATE_AVAILABLE = {
 		self.editBox:SetAutoFocus(false)
 		self.editBox.width = self.editBox:GetWidth()
 		self.editBox:Width(220)
-		self.editBox:SetText("https://github.com/ElvUI-WotLK/ElvUI")
+		self.editBox:SetText("https://github.com/fxpw/ElvUI")
 		self.editBox:HighlightText()
 		ChatEdit_FocusActiveWindow()
 	end,
@@ -70,8 +70,8 @@ E.PopupDialogs.ELVUI_UPDATE_AVAILABLE = {
 		self:GetParent():Hide()
 	end,
 	EditBoxOnTextChanged = function(self)
-		if self:GetText() ~= "https://github.com/ElvUI-WotLK/ElvUI" then
-			self:SetText("https://github.com/ElvUI-WotLK/ElvUI")
+		if self:GetText() ~= "https://github.com/fxpw/ElvUI" then
+			self:SetText("https://github.com/fxpw/ElvUI")
 		end
 		self:HighlightText()
 		self:ClearFocus()
@@ -397,6 +397,15 @@ E.PopupDialogs.RESET_PROFILE_PROMPT = {
 	hideOnEscape = 1,
 	OnAccept = function() E:ResetProfile() end,
 	whileDead = 1,
+}
+
+E.PopupDialogs.ELVUI_SIRUS_ENABLE = {
+	text = "Обнаружен несовместимый модуль ElvUI_Sirus, удалите его чтобы убрать проблемы с ElvUI \n (Принять, чтобы выключить модуль и перезагрузить интерфейс)",
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	-- hideOnEscape = 1,
+	OnAccept = function() DisableAddOn("ElvUI_Sirus") ReloadUI() end,
+	-- whileDead = 1,
 }
 
 E.PopupDialogs.APPLY_FONT_WARNING = {

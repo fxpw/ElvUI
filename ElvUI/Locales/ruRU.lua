@@ -24,6 +24,7 @@ L["Are you sure you want to disband the group?"] = "Вы уверены, что 
 L["Are you sure you want to reset all the settings on this profile?"] = "Вы уверены, что хотите сбросить все настройки для этого профиля?"
 L["Are you sure you want to reset every mover back to it's default position?"] = "Вы уверены, что хотите сбросить все фиксаторы на позиции по умолчанию?"
 L["Arena Frames"] = "Арена"
+L["Arena Frame"] = "Фрейм Арены"
 L["Aura Bars & Icons"] = "Полосы и иконки"
 L["Auras Set"] = "Ауры установлены"
 L["Auras"] = "Ауры"
@@ -90,10 +91,10 @@ L["Earned:"] = "Заработано"
 L["ElvUI Installation"] = "Установка ElvUI"
 L["ElvUI Plugin Installation"] = "Установка плагина ElvUI"
 L["ElvUI has a dual spec feature which allows you to load different profiles based on your current spec on the fly. You can enable this from the profiles tab."] = "В ElvUI присутствует функция двойной специализации, которая позволит Вам использовать разные профили для разных наборов талантов. Вы можете включить эту функцию в разделе профилей."
-L["ElvUI is five or more revisions out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"] = "Ваш ElvUI устарел более, чем на 5 версий. Обновите его на https://github.com/ElvUI-WotLK/ElvUI"
-L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"] = "ElvUI устарел. Вы можете скачать последнюю версию с https://github.com/ElvUI-WotLK/ElvUI"
+L["ElvUI is five or more revisions out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"] = "Ваш ElvUI устарел более, чем на 5 версий. Обновите его на https://github.com/fxpw/ElvUI "
+L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"] = "ElvUI устарел. Вы можете скачать последнюю версию с https://github.com/fxpw/ElvUI"
 L["ElvUI needs to perform database optimizations please be patient."] = "ElvUI нужно провести оптимизацию базы данных. Подождите, пожалуйста."
-L["ElvUI was updated while the game is still running. Please relaunch the game, as this is required for the files to be properly updated."] = "ElvUI обновился, пока игра была запущена. Перезапустите игру, чтобы обновления могли по человечески примениться."
+L["ElvUI was updated while the game is still running. Please relaunch the game, as this is required for the files to be properly updated."] = "ElvUI обновился, вы можете скачать последнюю версию с https://github.com/fxpw/ElvUI"
 L["Empty Slot"] = "Пустой слот"
 L["Enable"] = "Включить"
 L["Error resetting UnitFrame."] = "Ошибка сброса рамки юнита."
@@ -107,7 +108,7 @@ L["Fishy Loot"] = "Улов"
 L["Focus Castbar"] = "Полоса заклинаний фокуса"
 L["Focus Frame"] = "Фокус"
 L["FocusTarget Frame"] = "Цель фокуса"
-L["For technical support visit us at https://github.com/ElvUI-WotLK."] = "За технической поддержкой обращайтесь на https://github.com/ElvUI-WotLK."
+L["For technical support visit us at https://github.com/ElvUI-WotLK."] = "За технической поддержкой обращайтесь на https://github.com/fxpw/ElvUI"
 L["Frame"] = "Рамка"
 L["Friends List"] = "Список друзей"
 L["G"] = "Г"
@@ -116,10 +117,13 @@ L["General"] = "Общие"
 L["Ghost"] = "Призрак"
 L["Gold"] = "Золото"
 L["Grid Size:"] = "Размер сетки"
+L["Guild"] = "Гильдия"
 L["HP"] = "+ Исцел."
 L["HPS"] = "ИВС"
 L["Healer"] = "Лекарь"
-L["Hit"] = true
+L["Hit"] = "Хит"
+L["BlockC"] = "Блок"
+L["BlockA"] = "Блок у"
 L["Hold Control + Right Click:"] = "Зажать Control + ПКМ:"
 L["Hold Shift + Drag:"] = "Зажать shift и перетаскивать:"
 L["Hold Shift + Right Click:"] = "Shift + ПКМ:"
@@ -153,7 +157,7 @@ L["KEY_PAGEUP"] = "PU"
 L["KEY_SHIFT"] = "S"
 L["KEY_SPACE"] = "SpB"
 L["Key"] = "Клавиша"
-L["LOGIN_MSG"] = "Добро пожаловать в %sElvUI|r версии %s%s|r, наберите /ec для доступа в меню настроек. Если Вам нужна техническая поддержка, посетите наш форум на https://github.com/ElvUI-WotLK/ElvUI или присоединяйтесь к серверу Discord: https://discord.gg/UXSc7nt"
+L["LOGIN_MSG"] = "Добро пожаловать в %sElvUI|r версии %s%s|r, наберите /ec для доступа в меню настроек. Если Вам нужна техническая поддержка, посетите наш форум на https://github.com/fxpw/ElvUI или присоединяйтесь к серверу Discord: https://discord.gg/7cjU9xvcQY"
 L["Layout Set"] = "Расположение установлено"
 L["Layout"] = "Расположение"
 L["Left Chat"] = "Левый чат"
@@ -215,7 +219,7 @@ L["Raid Frames"] = "Рейд"
 L["Raid Menu"] = "Рейдовое меню"
 L["Raid Pet Frames"] = "Питомцы рейда"
 L["Raid-40 Frames"] = "Рейд 40"
-L["Reload UI"] = true
+L["Reload UI"] = "Перезагр UI"
 L["Remaining:"] = "Осталось:"
 L["Remove Bar %d Action Page"] = "Удалить панель %d из списка переключаемых"
 L["Reputation Bar"] = "Полоса репутации"
@@ -226,6 +230,8 @@ L["Reset Position"] = "Сбросить позицию"
 L["Rested:"] = "Бодрость:"
 L["Right Chat"] = "Правый чат"
 L["Right Click:"] = "ПКМ:"
+L["Middle Click:"] = "СКМ:"
+L["ReloadUI"] = "Перезагрузить интерфейс"
 L["SP"] = "+ Закл."
 L["Save"] = "Сохранить"
 L["Saved Dungeon(s)"] = "Сохраненнные подземелья"
@@ -235,7 +241,7 @@ L["Server: "] = "На сервере:"
 L["Session:"] = "За сеанс:"
 L["Setup CVars"] = "Сбросить настройки"
 L["Setup Chat"] = "Настроить чат"
-L["Show BG Texts"] = true
+L["Show BG Texts"] = "Показать статистику бг"
 L["Skip Process"] = "Пропустить установку"
 L["Sort Bags"] = "Сортировать"
 L["Spell/Heal Power"] = "Сила заклинаний"
@@ -328,3 +334,192 @@ Options:
   Shift + RightClick - Hides mover temporarily.
   Ctrl + RightClick - Resets mover position to default.
 ]=]
+
+--- ru ru tags
+L["Colors names by player class or NPC reaction"] = "Изменение цвета по класску игрока или реакции NPC"
+L["Colors the power text based upon its type"] = "Цвета текста энергии класса на основе его типа"
+L["Colors the following tags by difficulty, red for impossible, orange for hard, green for easy"] = "Цвета следующих тегов по сложности, красным для невозможного, оранжевый для сложного, зеленый для легкого"
+L["Changes color of health text, depending on the unit's current health"] = "Меняет цвет здоровья текста, в зависимости от текущего здоровья .ybnf"
+L["Changes color of health, depending on the unit's threat situation"] = "Меняет цвет здоровья, в зависимости от ситуации с угрозой"
+L["Changes color of health, depending on the unit's classification"] = "Меняет цвет здоровья, в зависимости от классификации юнита"
+L["Displays the unit's classification (e.g. 'ELITE' and 'RARE')"] = "Отображает классификацию юнита (например, «элита» и «редкий»)"
+L["Displays the unit's classification in short form (e.g. '+' for ELITE and 'R' for RARE)"] = "Отображает классификацию юнита в короткой форме (например, «+» для элиты и «R» для редких)"
+L["Displays 'Rare' when the unit is a rare or rareelite"] = "Отображает «редкий», когда юнит редкий или элитный"
+L["Displays the guild name"] = "Отображает имя гильдии"
+L["Displays the guild rank"] = "Отображает звание гильдии"
+L["Displays the guild name with < > brackets (e.g. <GUILD>)"] = "Отображает имя гильдии с помощью <> скобок (например, <Guild>)"
+L["Displays the guild name with < > and transliteration (e.g. <GUILD>)"]= "Отображает название гильдии с помощью <> и транслитерации (например, <Guild>))"
+L["Displays the guild name with transliteration for cyrillic letters"]= "Отображает имя гильдии с транслитерацией для кириллических букв"
+L["Displays the current HP without decimals"]= "Отображает текущие HP без десятичных"
+L["Displays max HP without decimals"] = "Отображает максимальный HP без десятичных действий"
+L["Displays percentage HP without decimals"]= "Отображает процент HP без десятичных"
+L["Displays the health as a deficit and the name at full health"] = "Отображает здоровье как дефицит и имя при полном здоровье"
+L["Displays the current health of the unit"] = "Отображает текущее здоровье юнита"
+L["Displays the current and maximum health of the unit, separated by a dash"] = "Отображает текущее и максимальное здоровье юнита, разделенного тире"
+L["Displays the current and maximum health of the unit, separated by a dash, without status"] = "Отображает текущее и максимальное здоровье юнита, разделенного тире, без статуса"
+L["Displays the current and max hp of the unit, separated by a dash (% when not full hp)"] = "Отображает текущий и максимальный HP юнита, разделенный тире (%, когда не полный HP)"
+L["Displays the current and max hp of the unit, separated by a dash (% when not full hp), without status"] = "Отображает текущий и максимальный HP юнита, разделенный тире (%, когда не полный HP) без статуса"
+L["Displays the current health of the unit, without status"] = "Отображает текущее здоровье юнита, без статуса"
+L["Displays the current hp of the unit (% when not full hp)"] = "Отображает текущий HP юнита (%, когда не полный HP)"
+L["Displays the current hp of the unit (% when not full hp), without status"] = "Отображает текущий HP юнита (%, когда не полный HP) без статуса"
+L["Displays the health of the unit as a deficit (Total Health - Current Health = -Deficit)"] = "Отображает здоровье юнита как дефицит (полное здоровье - нынешнее здоровье = -дефицит)"
+L["Displays the health of the unit as a deficit, without status"] = "Отображает здоровье юнита как дефицит, без статуса"
+L["Displays the health deficit as a percentage and the full name of the unit"] = "Отображает дефицит здоровья в процентах и полное имя юнита"
+L["Displays the health deficit as a percentage and the name of the unit (limited to 20 letters)"] = "Отображает дефицит здоровья в процентах и название юнита (ограничено 20 букв)"
+L["Displays the health deficit as a percentage and the name of the unit (limited to 15 letters)"] = "Отображает дефицит здоровья в процентах и название юнита (ограничено 15 букв)"
+L["Displays the health deficit as a percentage and the name of the unit (limited to 10 letters)"] = "Отображает дефицит здоровья в процентах и название юнита (ограничено 10 букв)"
+L["Displays the health deficit as a percentage and the name of the unit (limited to 5 letters)"] = "Отображает дефицит здоровья в процентах и название юнита (ограничено 5 букв)"
+L["Displays the maximum health of the unit"] = "Отображает максимальное здоровье юнита"
+L["Displays the current health of the unit as a percentage"] = "Отображает текущее здоровье юнита в процентах"
+L["Displays the unit's current health as a percentage, without status"] = "Отображает текущее здоровье юнита как процент, без статуса"
+L["Displays the missing health of the unit in whole numbers, when not at full health"] = "Отображает отсутствие здоровья юнита во всех числах, когда не полное здоровья"
+L["Only display the unit's level if it is not the same as yours"] = "Отображать только уровень юнита, если он не такой, как ваш"
+L["Displays the level of the unit"] = "Отображает уровень юнита"
+L["Displays the unit's current amount of mana (e.g. 97200)"] = "Отображает текущую ману юнита (например, 97200)"
+L["Displays the current amount of mana as a whole number and a percentage, separated by a dash"] = "Отображает текущее количество маны в целом и процент, разделенный тире"
+L["Displays the current mana and max mana, separated by a dash"] = "Отображает текущую ману и макс маны, разделенные тире"
+L["Displays the current mana and max mana, separated by a dash (% when not full power)"] = "Отображает текущую ману и макс маны,, разделенную тире (%, когда не фул энергия)"
+L["Displays the mana of the unit as a percentage value"] = "Отображает ману юнита как процентное значение"
+L["Displays the unit's maximum mana"] = "Отображает максимальную ману юнита"
+L["Displays the mana deficit (Total Mana - Current Mana = -Deficit)"] = "Отображает дефицит маны  (Какое общее количество - Текущая мана = -Дефицит)"
+L["Displays the current mana without decimals"] = "Отображает текущую ману без десятичных"
+L["Displays the max amount of mana the unit can have"] = "Отображает максимальное количество маны юнита которое он может иметь"
+L["Displays the full name of the unit without any letter limitation"] = "Отображает полное имя юнита без каких-либо ограничения букв"
+L["Displays the name of the unit (limited to 5 letters)"] = "Отображает имя юнита (ограничено 5 букв)"
+L["Displays the name of the unit (limited to 10 letters)"] = "Отображает имя юнита (ограничено 10 букв)"
+L["Displays the name of the unit (limited to 15 letters)"] = "Отображает имя юнита (ограничено 15 букв)"
+L["Displays the name of the unit (limited to 20 letters)"] = "Отображает имя юнита (ограничено 20 букв)"
+L["Displays the name of the unit with transliteration for cyrillic letters (limited to 5 letters)"] = "Отображает имя юнита с транслитерацией для кириллических букв (ограничено 5 букв)"
+L["Displays the name of the unit with transliteration for cyrillic letters (limited to 10 letters)"] = "Отображает имя юнита с транслитерацией для кириллических букв (ограничено 10 букв)"
+L["Displays the name of the unit with transliteration for cyrillic letters (limited to 15 letters)"] = "Отображает имя юнита с транслитерацией для кириллических букв (ограничено 15 букв)"
+L["Displays the name of the unit with transliteration for cyrillic letters (limited to 20 letters)"] = "Отображает имя юнита с транслитерацией для кириллических букв (ограничено 20 букв)"
+L["Displays the name of the unit with abbreviation (e.g. 'Shadowfury Witch Doctor' becomes 'S. W. Doctor')"] = "Отображает название юнита со сокращением (например, «ShadowFury Witch Doctor» становится «S. W. Doctor»)"
+L["Displays the name of the unit with abbreviation (limited to 5 letters)"] = "Отображает имя юнита с сокращением (ограничено 5 букв)"
+L["Displays the name of the unit with abbreviation (limited to 10 letters)"] = "Отображает имя юнита с сокращением (ограничено 10 букв)"
+L["Displays the name of the unit with abbreviation (limited to 15 letters)"] = "Отображает имя юнита с сокращением (ограничено 15 букв)"
+L["Displays the name of the unit with abbreviation (limited to 20 letters)"] = "Отображает имя юнита с сокращением (ограничено 20 букв)"
+L["Replace the name of the unit with 'DEAD' or 'OFFLINE' if applicable (limited to 5 letters)"] = "Заменяет имя юнита c «Dead» или «Offline», если применимо (ограничено 5 букв)"
+L["Replace the name of the unit with 'DEAD' or 'OFFLINE' if applicable (limited to 10 letters)"] = "Заменяет имя юнита c «Dead» или «Offline», если применимо (ограничено 10 букв)"
+L["Replace the name of the unit with 'DEAD' or 'OFFLINE' if applicable (limited to 15 letters)"] = "Заменяет имя юнита c «Dead» или «Offline», если применимо (ограничено 15 букв)"
+L["Replace the name of the unit with 'DEAD' or 'OFFLINE' if applicable (limited to 20 letters)"] = "Заменяет имя юнита c «Dead» или «Offline», если применимо (ограничено 20 букв)"
+L["Displays player name and title"] = "Отображает имя игрока и заголовок"
+L["Displays the group number the unit is in ('1' - '8')"] = "Отображает номер группы юнита находищегося в ('1' - '8')"
+L["Displays 'L' if the unit is the group/raid leader"] = "Отображает «L», если юнит является лидером группы / рейда"
+L["Displays 'Leader' if the unit is the group/raid leader"] = "Отображает «лидер», если юнит является лидером  группы /  рейда"
+L["Displays the unit's current amount of power"] = "Отображает текущий объем энергии юнита"
+L["Displays the current power and power as a percentage, separated by a dash"] = "Отображает текущую энергию и энергию в процентах, разделенную тире"
+L["Displays the current power and max power, separated by a dash"] = "Отображает текущую энергию и максимальную энергию, разделенную тире"
+L["Displays the current power and max power, separated by a dash (% when not full power)"] = "Отображает текущую энергию и максимальную энергию, разделенную тире (%, когда не полная мощность)"
+L["Displays the unit's power as a percentage"] = "Отображает энергию юнита в процентах"
+L["Displays the unit's maximum power"] = "Отображает максимальную энергию юнита"
+L["Displays the power as a deficit (Total Power - Current Power = -Deficit)"] = "Отображает энергию как дефицит (общая энергию - текущия энергию = -дефицит)"
+L["Displays the unit's current power without decimals"] = "Отображает текущую энергию юнита без десятичных чисел"
+L["Displays the unit's percentage power without decimals "] = "Отображает процентную энергию юнита без десятичных чисел"
+L["Displays the max amount of power of the unit in whole numbers without decimals"] = "Отображает максимальное количество энергию юнита во всех числах без десятичных чисел"
+L["Displays the missing power of the unit in whole numbers when not at full power"] = "Отображает отсутствующую энергию юнита во всех числах, когда не полная энергия"
+L["Displays the server name"] = "Отображает имя сервера"
+L["Displays the server name with transliteration for cyrillic letters"] = "Отображает имя сервера с транслитерацией для кириллических букв"
+L["Displays the server name with a dash in front (e.g. -Realm)"] = "Отображает имя сервера с помощью тире спереди (например, -realm)"
+L["Displays the server name with transliteration for cyrillic letters and a dash in front"] = "Отображает имя сервера с транслитерацией для кирилличных букв и тире спереди"
+L["Displays zzz, dead, ghost, offline"] = "Отображает ZZZ, Dead, Ghost, Offline"
+L["Displays a timer for how long a unit has had the status (e.g 'DEAD - 0:34')"] = "Отображает таймер для того, как долго юнит имеет статус (например, мертвый - 0:34 ')"
+L["Displays <AFK> if the Unit is afk"] = "Отображает <AFK> если юнит отошел"
+L["Displays <DEAD> if the unit is dead"] = "Отображает <Dead> если юнит мертв"
+L["Displays zzz if the unit is dead"] = "Отображает ZZZ, если юнит мертв"
+L["Displays 'PvP' if the unit is pvp flagged"] = "Отображает «PVP», если юнит является PVP помеченым"
+L["Displays 'OFFLINE' if the unit is disconnected"] = "Отображает 'OFFLINE', если юнит отключен"
+L["Displays the current target of the unit"] = "Отображает текущую цель юнита"
+L["Displays the current target of the unit (limited to 5 letters)"] = "Отображает текущую цель юнита (ограничена 5 букв)"
+L["Displays the current target of the unit (limited to 10 letters)"] = "Отображает текущую цель юнита (ограничена 10 букв)"
+L["Displays the current target of the unit (limited to 15 letters)"] = "Отображает текущую цель юнита (ограничена 15 букв)"
+L["Displays the current target of the unit (limited to 20 letters)"] = "Отображает текущую цель юнита (ограничена 20 букв)"
+L["Displays the current target of the unit with transliteration for cyrillic letters"] = "Отображает текущую цель юнита с транслитерацией для кириллических букв"
+L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 5 letters)"] = "Отображает текущую цель юнита с транслитерацией для кириллических букв (ограничена 5 букв)"
+L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 10 letters)"] = "Отображает текущую цель юнита с транслитерацией для кириллических букв (ограничена 10 букв)"
+L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 15 letters)"] = "Отображает текущую цель юнита с транслитерацией для кириллических букв (ограничена 15 букв)"
+L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 20 letters)"] = "Отображает текущую цель юнита с транслитерацией для кириллических букв (ограничена 20 букв)"
+L["Displays the current threat"] = "Отображает текущую угрозу"
+L["Displays the current threat as a percent"] = "Отображает текущую угрозу в процентах"
+L["Displays the current threat as a value"] = "Отображает текущую угрозу как значение"
+L["Displays the player's class or creature's type"] = "Отображает класс игрока или типа существа"
+L["Displays your current specialization as text"] = "Отображает вашу текущую специализацию в виде текста"
+L["Displays the class of the unit, if that unit is a player"] = "Отображает класс юнита, если этот юнит - это игрок"
+L["Changes color of the next tag based on how difficult the unit is compared to the players level"] = "Изменяет цвет следующего тега на основе того, насколько сложно юнит сравнивается с уровнем игрока"
+L["Displays 'Aliance' or 'Horde'"] = "Отображает «Альянс» или «Орда»"
+L["Displays the character '+' if the unit is an elite or rare-elite"] = "Отображает символ «+», если юнит является элитой или редкой элитой"
+L["Displays the arena number 1-5"] = "Отображает номер на арене 1-5"
+
+
+L["Colors"] = "Цвета"
+L["Classification"] = "Классификация"
+L["Guild"] = "Гильдия"
+L["Health"] = "Здоровье"
+L["Level"] = "Уровень"
+L["Mana"] = "Мана"
+L["Names"] = "Имена"
+L["Party and Raid"] = "Пати и Рейд"
+L["Power"] = "Энергия"
+L["Realm"] = "Область"
+L["Status"] = "Статус"
+L["Target"] = "Цель"
+L["Threat"] = "Угроза"
+L["Miscellaneous"] = "Разное"
+L["Collections"] = "Коллекции"
+L["EncounterJ"] = "Приключения"
+
+L["RandomWords"] ={ ---- не может быть только одной записи
+  "На все бабки в босса ©Сырсколбасой",
+  "Я потратил на эту строчку 20 минут ©fxpw",
+  "Не стой в огне!",
+  "Зеленое бей, красное хиль",
+  "Фельярд в 2020",
+  "А я сейчас вам покажу, откуда на Беларусь готовилось нападение...",
+  "Жизнь — странствие по пути познания себя",
+  "Ходят слухи что Эскобар все еще стоит у банка орды в Даларане",
+  "Слева это где левая рука, а справа - где правая",
+  "Упал жди ролл",
+  "Опять АФК да? А монетка все еще не покручена",
+  "Человека можно вытащить из раздела Аниме, но нельзя вытащить раздел Аниме из человека ©Dezuron",
+  "Три икс в кубе плюс константа...\n Ну что там?",
+  "Нужно больше золота",
+  "Знаете, я тут подумал. \nОтправляйтесь ка вы в Аниме ©Trautsolla",
+  "Хилы почему упал танк?!\n ХП кончилось",
+  "Make Love, Not WARcraft",
+  "ДХ в среду",
+  "Частица в сделку не входила",
+  "Меньше целей - проще хилить",
+  "Если серьезно, то мы стремимся сделать все классы в PvE равными ©Dezuron",
+  "Кто не курит, тот бьет треш",
+  "Во всем виновата сова",
+  "А чем диспеллят паладины?",
+  "Если отрубить Хищнику голову, он будет еще час разговаривать",
+  "Уже можно крутить? А щас? Я хочу нажать БШ ©Величайший",
+  "Тут может быть ваша реклама",
+  "Критический успех",
+  "Сон для слабых! Пока ты спишь, враг делает дейлики!",
+  "**аная *****, срочно переписать, ужасный быдлокод, пиздец просто ©Nyll",
+  "Оффтоп в спец разделе. Мем смешной, так что РО не будет",
+  "За аурой в пм ©fxpw",
+  "Продам гараж",
+  "ВСЁ КОРАБЛЬ, ВСЁ В АРТСТАЙЛА, МИНУС АРТСТАЙЛ, КУРОНИТИ УБИРАЕТ АРТСТАЙЛА",
+  "Человек родился усталым и живет, чтобы отдохнуть.",
+  "Как говорил мой дед: \"я твой дед\"",
+  "Отдохни днем, чтобы ночью ты мог поспать.",
+  "Если видишь, что кто-то отдыхает - помоги ему.",
+  "Делай меньше и только то, что можешь, а и то, что можешь, перепоручи другим.",
+  "Когда случайно захочешь поработать, сядь, подожди - увидишь, это пройдет.",
+  "Когда видишь место, где едят и пьют - присоединяйся, когда видишь место, где работают - уходи, чтобы не мешать.",
+  "Если волк молчит то лучше его не перебивать",
+  "Ты можешь быть бесконечно прав, но какой в этом смысл, если твой РЛ плачет ©Vakh",
+  "\"Зато у меня есть курочка\" ©Лирой Дженкинс",
+  "Чистите треш пока тут, а я пойду узнаю где надо",
+  "Вещей 303 не будет в бронзовом святилище и не планировалось ©Crystal",
+  "Он сам спулился",
+  "Для того чтобы выбежать из лужи нажмите W",
+  "А сколько у тебя брюлей?"
+
+
+
+
+
+}

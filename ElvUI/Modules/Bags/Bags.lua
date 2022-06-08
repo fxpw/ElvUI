@@ -433,6 +433,36 @@ function B:UpdateSlot(frame, bagID, slotID)
 	if GameTooltip:GetOwner() == slot and not slot.hasItem then
 		GameTooltip_Hide()
 	end
+
+	-- if (frame.Bags[bagID] and frame.Bags[bagID].numSlots ~= GetContainerNumSlots(bagID)) or not frame.Bags[bagID] or not frame.Bags[bagID][slotID] then return end
+
+	-- slot = frame.Bags[bagID][slotID]
+	-- clink = GetContainerItemLink(bagID, slotID)
+	local found
+	if clink then
+		for i = 1, 3 do
+			local _, glink = GetItemGem(clink, i)
+			if glink then
+				local _, _, itemRarity = GetItemInfo(glink)
+				if itemRarity == 5 then
+					if not slot.bagNewItemGlow then
+						slot.bagNewItemGlow = slot:CreateTexture(nil, "OVERLAY")
+						slot.bagNewItemGlow:SetInside()
+						slot.bagNewItemGlow:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\BagNewItemGlow]])
+						slot.bagNewItemGlow:SetVertexColor(GetItemQualityColor(5))
+					end
+
+					slot.bagNewItemGlow:Show()
+					found = true
+					break
+				end
+			end
+		end
+	end
+
+	if not found and slot.bagNewItemGlow then
+		slot.bagNewItemGlow:Hide()
+	end
 end
 
 function B:UpdateBagSlots(frame, bagID)
@@ -545,7 +575,7 @@ function B:Layout(isBank)
 		end
 
 		--Bag Containers
-		if (not isBank) or (isBank and bagID ~= -1 and numContainerSlots >= 1 and (i - 1 <= numContainerSlots)) then
+		if (not isBank) or (isBank and bagID ~= -1 and numContainerSlots >= 1 and not (i - 1 > numContainerSlots)) then
 			if not f.ContainerHolder[i] then
 				if isBank then
 					f.ContainerHolder[i] = CreateFrame("CheckButton", "ElvUIBankBag"..bagID - 4, f.ContainerHolder, "BankItemButtonBagTemplate")

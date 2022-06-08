@@ -75,6 +75,7 @@ function RU:ToggleRaidUtil(event)
 end
 
 function RU:Initialize()
+	-- print(E.private.general.raidUtility)
 	if not E.private.general.raidUtility then return end
 	self.Initialized = true
 
@@ -187,7 +188,7 @@ function RU:Initialize()
 	self:CreateUtilButton("RaidControlButton", RaidUtilityPanel, nil, MainTankButton:GetWidth(), 18, "TOPLEFT", ReadyCheckButton, "BOTTOMLEFT", 0, -5, L["Raid Menu"], nil)
 	RaidControlButton:SetScript("OnMouseUp", function()
 		if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
-		ToggleFriendsFrame(5)
+		ToggleFriendsFrame(4)
 	end)
 
 	self:CreateUtilButton("ConvertRaidButton", RaidUtilityPanel, nil, MainAssistButton:GetWidth(), 18, "TOPRIGHT", ReadyCheckButton, "BOTTOMRIGHT", 0, -5, CONVERT_TO_RAID, nil)

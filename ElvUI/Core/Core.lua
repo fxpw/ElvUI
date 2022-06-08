@@ -293,7 +293,15 @@ function E:GetColorTable(data)
 		return {data.r, data.g, data.b}
 	end
 end
+local function SetFont(obj, font, size, style, sr, sg, sb, sa, sox, soy, r, g, b)
+	if not obj then return end
 
+	obj:SetFont(font, size, style)
+	if sr and sg and sb then obj:SetShadowColor(sr, sg, sb, sa) end
+	if sox and soy then obj:SetShadowOffset(sox, soy) end
+	if r and g and b then obj:SetTextColor(r, g, b)
+	elseif r then obj:SetAlpha(r) end
+end
 function E:UpdateMedia()
 	if not self.db.general or not self.private.general then return end --Prevent rare nil value errors
 
@@ -357,6 +365,32 @@ function E:UpdateMedia()
 
 	self:ValueFuncCall()
 	self:UpdateBlizzardFonts()
+
+	local NORMAL = self.media.normFont
+	local MONOCHROME = ""
+
+	if self.db.general.font == "Homespun" then
+		MONOCHROME = "MONOCHROME"
+	end
+
+	if self.private.general.replaceBlizzFonts then
+		SetFont(GameFontNormal9, NORMAL, self.db.general.fontSize)
+		SetFont(GameFontNormal11, NORMAL, self.db.general.fontSize)
+		SetFont(GameFontNormal12, NORMAL, self.db.general.fontSize)
+		SetFont(GameFontNormal13, NORMAL, self.db.general.fontSize)
+		SetFont(GameFontNormal14, NORMAL, self.db.general.fontSize*1.1)
+		SetFont(GameFontNormal17, NORMAL, 18)
+		SetFont(SystemFont_Med2, NORMAL, self.db.general.fontSize)
+		SetFont(SystemFont_Outline, NORMAL, self.db.general.fontSize, MONOCHROME.."OUTLINE")
+		SetFont(SystemFont_Shadow_Med1, NORMAL, self.db.general.fontSize)
+		SetFont(SystemFont_Shadow_Med2, NORMAL, self.db.general.fontSize)
+		SetFont(SystemFont_Shadow_Med3, NORMAL, self.db.general.fontSize*1.1)
+		SetFont(QuestFont_Super_Huge, NORMAL, 22)
+		SetFont(Fancy15Font, NORMAL, 16)
+		SetFont(Fancy16Font, NORMAL, 16)
+		SetFont(Fancy17Font, NORMAL, 18)
+		SetFont(QuestFont15, NORMAL, 16)
+	end
 end
 
 do	--Update font/texture paths when they are registered by the addon providing them
@@ -792,16 +826,15 @@ do
 			local ver = tonumber(E.version)
 			message = tonumber(message)
 
-			if ver ~= G.general.version then
-				if not E.shownUpdatedWhileRunningPopup and not InCombatLockdown() then
-					E:StaticPopup_Show("ELVUI_UPDATED_WHILE_RUNNING")
+			-- if ver ~= G.general.version then
+			-- 	if not E.shownUpdatedWhileRunningPopup and not InCombatLockdown() then
+			-- 		E:StaticPopup_Show("ELVUI_UPDATED_WHILE_RUNNING")
 
-					E.shownUpdatedWhileRunningPopup = true
-				end
-			elseif message and (message > ver) then
+			-- 		E.shownUpdatedWhileRunningPopup = true
+			-- 	end
+			if message and (message > ver) then
 				if not E.recievedOutOfDateMessage then
 					E:Print(L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"])
-
 					if message and ((message - ver) >= 0.01) and not InCombatLockdown() then
 						E:StaticPopup_Show("ELVUI_UPDATE_AVAILABLE")
 					end
@@ -833,6 +866,71 @@ do
 	f:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	f:RegisterEvent("PLAYER_ENTERING_WORLD")
 	f:SetScript("OnEvent", SendRecieve)
+
+	
+end
+
+local ElvUIVersions = {
+
+
+}
+
+
+local function CheckVersionWhenRequest(_, event, prefix, message, _, sender)
+	if prefix == "ElvUICheckVerRequest" and sender then
+		if sender ~= E.myname then
+			if GetNumRaidMembers() > 1 then
+				local _, instanceType = IsInInstance()
+				if instanceType == "pvp" then
+					SendAddonMessage("ElvUICheckVerRequestRecieve", E.version, "BATTLEGROUND")
+				else
+					SendAddonMessage("ElvUICheckVerRequestRecieve", E.version, "RAID")
+				end
+			elseif GetNumPartyMembers() > 0 then
+				SendAddonMessage("ElvUICheckVerRequestRecieve", E.version, "PARTY")
+			elseif IsInGuild() then
+				SendAddonMessage("ElvUICheckVerRequestRecieve", E.version, "GUILD")
+			end
+		end
+	elseif prefix == "ElvUICheckVerRequestRecieve" then
+		if sender ~= E.myname then
+			ElvUIVersions[sender] = message
+		end
+	end
+
+end
+
+
+do
+	local cf = CreateFrame('Frame')
+	cf:RegisterEvent("CHAT_MSG_ADDON")
+	cf:SetScript("OnEvent",CheckVersionWhenRequest)
+end
+
+
+local function PrintElvUIUsers()
+	print("ElvUI Проверка версии")
+	for k,v in pairs(ElvUIVersions) do
+		print(k..": "..v)
+	end
+end
+
+SLASH_ELVUIVER1 = "/elvuiver"
+SlashCmdList.ELVUIVER = function()
+
+	if GetNumRaidMembers() > 1 then
+		local _, instanceType = IsInInstance()
+		if instanceType == "pvp" then
+			SendAddonMessage("ElvUICheckVerRequest", "nil", "BATTLEGROUND")
+		else
+			SendAddonMessage("ElvUICheckVerRequest", "nil", "RAID")
+		end
+	elseif GetNumPartyMembers() > 0 then
+		SendAddonMessage("ElvUICheckVerRequest", "nil", "PARTY")
+	elseif IsInGuild() then
+		SendAddonMessage("ElvUICheckVerRequest", "nil", "GUILD")
+	end
+	C_Timer:After(2,PrintElvUIUsers)
 end
 
 function E:UpdateAll(ignoreInstall)
@@ -1310,7 +1408,7 @@ function E:Initialize()
 		print(msg)
 	end
 
-	if GetCVar("scriptProfile") ~= "1" then
+	if not GetCVar("scriptProfile") == "1" then
 		collectgarbage("collect")
 	end
 end

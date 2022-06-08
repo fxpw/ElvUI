@@ -892,7 +892,7 @@ end
 LAB.RegisterCallback(AB, "OnButtonUpdate", AB.LAB_ButtonUpdate)
 
 local function OnCooldownUpdate(_, button, start, duration)
-	if button._state_type ~= "action" then return end
+	if not button._state_type == "action" then return end
 
 	if duration and duration > 1.5 then
 		button.saturationLocked = true --Lock any new actions that are created after we activated desaturation option
@@ -964,7 +964,6 @@ function AB:Initialize()
 	self.db = E.db.actionbar
 	if E.private.actionbar.enable ~= true then return end
 	self.Initialized = true
-
 	self.LBFGroup = LBF and LBF:Group("ElvUI", "ActionBars")
 
 	self.fadeParent = CreateFrame("Frame", "Elv_ABFade", UIParent)

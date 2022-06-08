@@ -226,6 +226,7 @@ L["Reset Position"] = "위치 초기화"
 L["Rested:"] = "휴식 경험치:"
 L["Right Chat"] = "우측 패널"
 L["Right Click:"] = true
+L["Middle Click:"] = true
 L["SP"] = "주문력"
 L["Save"] = "저장"
 L["Saved Dungeon(s)"] = "귀속된 던전"

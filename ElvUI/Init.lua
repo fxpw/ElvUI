@@ -5,7 +5,7 @@ To load the AddOn engine add this to the top of your file:
 
 	local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 ]]
-
+--
 --Lua functions
 local _G, min, pairs, strsplit, unpack, wipe, type, tcopy = _G, min, pairs, strsplit, unpack, wipe, type, table.copy
 --WoW API / Variables
@@ -104,7 +104,10 @@ AddOn.Tooltip = AddOn:NewModule("Tooltip","AceTimer-3.0","AceHook-3.0","AceEvent
 AddOn.TotemBar = AddOn:NewModule("Totems","AceEvent-3.0")
 AddOn.UnitFrames = AddOn:NewModule("UnitFrames","AceTimer-3.0","AceEvent-3.0","AceHook-3.0")
 AddOn.WorldMap = AddOn:NewModule("WorldMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
+AddOn.InstanceMap = AddOn:NewModule("InstanceMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
 
+AddOn.Sirus = AddOn:NewModule("Sirus","AceHook-3.0","AceEvent-3.0","AceTimer-3.0","AceComm-3.0","AceSerializer-3.0")
+AddOn.SirusCase = AddOn:NewModule("SirusCase","AceHook-3.0","AceEvent-3.0","AceTimer-3.0","AceComm-3.0","AceSerializer-3.0")
 do
 	local arg2, arg3 = "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1"
 	function AddOn:EscapeString(str)
@@ -171,6 +174,14 @@ function AddOn:OnInitialize()
 	if IsAddOnLoaded("Tukui") then
 		self:StaticPopup_Show("TUKUI_ELVUI_INCOMPATIBLE")
 	end
+	-- local sirusisload = IsAddOnLoaded("ElvUI_Sirus")
+	if self:IsAddOnEnabled("ElvUI_Sirus") then
+	-- if isSirusModuleLoad then
+		-- DisableAddOn("ElvUI_Sirus")
+		C_Timer:After(3,function() self:StaticPopup_Show("ELVUI_SIRUS_ENABLE") end)
+		-- self:StaticPopup_Show("ELVUI_SIRUS_ENABLE")
+	end
+	-- C_Timer:After(3,function()end)
 
 	local GameMenuButton = CreateFrame("Button", "ElvUI_MenuButton", GameMenuFrame, "GameMenuButtonTemplate")
 	GameMenuButton:SetText(self.title)
@@ -203,6 +214,7 @@ function AddOn:OnInitialize()
 	end)
 
 	self.loadedtime = GetTime()
+
 end
 
 local LoadUI = CreateFrame("Frame")
@@ -321,8 +333,9 @@ function AddOn:ConfigStopMovingOrSizing()
 end
 
 local pageNodes = {}
+-- local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 function AddOn:ToggleOptionsUI(msg)
-	if InCombatLockdown() then
+	if InCombatLockdown() and AddOn.db.general.showWhenInCombat == false then
 		self:Print(ERR_NOT_IN_COMBAT)
 		self:RegisterEvent("PLAYER_REGEN_ENABLED")
 		return
@@ -340,7 +353,7 @@ function AddOn:ToggleOptionsUI(msg)
 			if not IsAddOnLoaded("ElvUI_OptionsUI") then noConfig = true end
 
 			-- version check elvui options if it's actually enabled
-			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.06" then
+			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.07" then
 				self:StaticPopup_Show("CLIENT_UPDATE_REQUEST")
 			end
 		else
@@ -424,4 +437,5 @@ function AddOn:ToggleOptionsUI(msg)
 	end
 
 	GameTooltip:Hide() --Just in case you're mouseovered something and it closes.
+	
 end

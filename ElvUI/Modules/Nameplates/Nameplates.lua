@@ -1,9 +1,13 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local NP = E:GetModule("NamePlates")
---local LSM = E.Libs.LSM
+local LSM = E.Libs.LSM
+NP.LSM = E.Libs.LSM
 local LAI = E.Libs.LAI
-
 --Lua functions
+local _, ns = ...
+local ElvUF = ns.oUF
+assert(ElvUF, "ElvUI was unable to locate oUF.")
+
 local _G = _G
 local pcall = pcall
 local type = type
@@ -31,6 +35,8 @@ local UnitIsUnit = UnitIsUnit
 local UnitReaction = UnitReaction
 local UnitName = UnitName
 local WorldFrame = WorldFrame
+local utf8sub = string.utf8sub
+local utf8lower = string.utf8lower
 local WorldGetChildren = WorldFrame.GetChildren
 local WorldGetNumChildren = WorldFrame.GetNumChildren
 
@@ -64,6 +70,7 @@ NP.ResizeQueue = {}
 
 NP.Totems = {}
 NP.UniqueUnits = {}
+
 
 function NP:CheckBGHealers()
 	local name, _, classToken, damageDone, healingDone
@@ -382,7 +389,6 @@ function NP:OnShow(isConfig, dontHideHighlight)
 
 	frame.CutawayHealth:Hide()
 
-	NP:RegisterEvents(frame)
 	NP:UpdateElement_All(frame, nil, true)
 
 	NP:SetSize(self)
@@ -427,10 +433,6 @@ function NP:OnHide(isConfig, dontHideHighlight)
 
 	if frame.currentScale and frame.currentScale ~= 1 then
 		NP:SetFrameScale(frame, 1, true)
-	end
-
-	if frame.isEventsRegistered then
-		NP:UnregisterAllEvents(frame)
 	end
 
 	frame.TopIndicator:Hide()
@@ -518,7 +520,6 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 	if healthShown then
 		self:Update_Health(frame)
 		self:Update_HealthColor(frame)
-		self:Update_CastBar(frame, nil, frame.unit)
 		NP:UpdateElement_Auras(frame)
 	end
 
@@ -577,7 +578,6 @@ function NP:OnCreated(frame)
 	frame.UnitFrame = unitFrame
 	unitFrame:Hide()
 	unitFrame:SetAllPoints()
-	unitFrame:SetScript("OnEvent", self.OnEvent)
 	unitFrame.plateID = plateID
 
 	unitFrame.Health = self:Construct_HealthBar(unitFrame)
@@ -587,6 +587,7 @@ function NP:OnCreated(frame)
 	unitFrame.Name = self:Construct_Name(unitFrame)
 	unitFrame.CastBar = self:Construct_CastBar(unitFrame)
 	unitFrame.Elite = self:Construct_Elite(unitFrame)
+	-- unitFrame.EliteFrame = self:Construct_Elite(unitFrame)
 	unitFrame.Buffs = self:ConstructElement_Auras(unitFrame, "Buffs")
 	unitFrame.Debuffs = self:ConstructElement_Auras(unitFrame, "Debuffs")
 	unitFrame.HealerIcon = self:Construct_HealerIcon(unitFrame)
@@ -627,52 +628,12 @@ function NP:OnCreated(frame)
 	frame:HookScript("OnShow", self.OnShow)
 	frame:HookScript("OnHide", self.OnHide)
 	Health:HookScript("OnValueChanged", self.Update_HealthOnValueChanged)
+	CastBar:HookScript("OnShow", self.UpdateElement_CastBarOnShow)
+	CastBar:HookScript("OnHide", self.UpdateElement_CastBarOnHide)
+	CastBar:HookScript("OnValueChanged", self.UpdateElement_CastBarOnValueChanged)
 
 	self.CreatedPlates[frame] = true
 	self.VisiblePlates[unitFrame] = 1
-end
-
-function NP:OnEvent(event, unit, ...)
-	if not unit and not self.unit then return end
-	if self.unit ~= unit then return end
-
-	NP:Update_CastBar(self, event, unit, ...)
-end
-
-function NP:RegisterEvents(frame)
-	if not frame.unit then return end
-
-	if self.db.units[frame.UnitType].health.enable or (frame.isTarget and self.db.alwaysShowTargetHealth) then
-		if self.db.units[frame.UnitType].castbar.enable then
-			frame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-			frame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-			frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-			frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-			frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-			frame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-			frame:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
-			frame:RegisterEvent("UNIT_SPELLCAST_START")
-			frame:RegisterEvent("UNIT_SPELLCAST_STOP")
-			frame:RegisterEvent("UNIT_SPELLCAST_FAILED")
-			frame.isEventsRegistered = true
-		end
-
-		NP.OnEvent(frame, nil, frame.unit)
-	end
-end
-
-function NP:UnregisterAllEvents(frame)
-	frame:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	frame:UnregisterEvent("UNIT_SPELLCAST_DELAYED")
-	frame:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-	frame:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-	frame:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-	frame:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-	frame:UnregisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
-	frame:UnregisterEvent("UNIT_SPELLCAST_START")
-	frame:UnregisterEvent("UNIT_SPELLCAST_STOP")
-	frame:UnregisterEvent("UNIT_SPELLCAST_FAILED")
-	frame.isEventsRegistered = nil
 end
 
 function NP:QueueObject(object)
@@ -722,8 +683,6 @@ function NP:SetTargetFrame(frame)
 			if not frame.isGroupUnit then
 				frame.unit = "target"
 				frame.guid = UnitGUID("target")
-
-				self:RegisterEvents(frame)
 			end
 
 			self:UpdateElement_Auras(frame)
@@ -735,8 +694,6 @@ function NP:SetTargetFrame(frame)
 				self:Configure_CastBar(frame)
 				self:Configure_Elite(frame)
 				self:Configure_CPoints(frame)
-
-				self:RegisterEvents(frame)
 
 				self:UpdateElement_All(frame, true)
 			end
@@ -759,11 +716,6 @@ function NP:SetTargetFrame(frame)
 
 		if not frame.isGroupUnit then
 			frame.unit = nil
-
-			if frame.isEventsRegistered then
-				self:UnregisterAllEvents(frame)
-				self:Update_CastBar(frame)
-			end
 		end
 
 		if not self.db.units[frame.UnitType].health.enable then
@@ -816,8 +768,6 @@ function NP:SetMouseoverFrame(frame)
 			if not frame.isGroupUnit then
 				frame.unit = "mouseover"
 				frame.guid = UnitGUID("mouseover")
-
-				self:Update_CastBar(frame, nil, frame.unit)
 			end
 
 			self:UpdateElement_Auras(frame)
@@ -829,8 +779,6 @@ function NP:SetMouseoverFrame(frame)
 
 		if not frame.isGroupUnit then
 			frame.unit = nil
-
-			self:Update_CastBar(frame)
 		end
 	end
 end
@@ -923,7 +871,7 @@ end
 
 function NP:UpdateCVars()
 	SetCVar("ShowClassColorInNameplate", "1")
-	SetCVar("showVKeyCastbar", "0")
+	SetCVar("showVKeyCastbar", "1")
 	SetCVar("nameplateAllowOverlap", self.db.motionType == "STACKED" and "0" or "1")
 end
 
@@ -1200,7 +1148,27 @@ function NP:TogleTestFrame(unitType)
 	end
 end
 
+
+
+
+---------------------
+--------------tags
+---------------------
+
+function NP:SetNPText(frame, tag)
+	if tag == "" or tag == nil then return frame.UnitName end
+	local name = frame.UnitName
+	name = ElvUF.Tags.Methods[tag](name)
+	return name
+end
+---------------------
+--------------tags
+---------------------
+
+
+-----------------
 function NP:Initialize()
+
 	self.db = E.db.nameplates
 
 	if E.private.nameplates.enable ~= true then return end

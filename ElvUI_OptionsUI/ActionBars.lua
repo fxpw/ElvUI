@@ -1132,3 +1132,4 @@ E.Options.args.actionbar = {
 }
 group = E.Options.args.actionbar.args
 BuildABConfig()
+-- E.Options.args.actionbar.args.microbar.args.buttonsPerRow.max = #SHARED_MICROMENU_BUTTONS

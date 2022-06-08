@@ -5,7 +5,8 @@
 	<Script file="Raidmarker.lua"/>
 	<Script file="Loot.lua"/>
 	<Script file="LootRoll.lua"/>
-	<Script file="Raidbuffreminder.lua"/>
+	<Script file="RaidBuffReminder.lua"/>
+	<!-- <Script file="RaidBuffReminder_Sirus.lua"/> -->
 	<Script file="Threat.lua"/>
 	<Script file="TotemBar.lua"/>
 	<Script file="RaidUtility.lua"/>

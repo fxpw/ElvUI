@@ -61,7 +61,7 @@ local function OnClick(_, button)
 end
 
 local function ValueColorUpdate(hex)
-	displayString = join("", hex, "%s|r")
+	displayString = join("", "%s", hex)
 
 	if lastPanel ~= nil then
 		OnEvent(lastPanel, "ELVUI_COLOR_UPDATE")

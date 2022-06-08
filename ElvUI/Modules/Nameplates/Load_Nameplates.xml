@@ -1,8 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<!-- <Script file="Elements\Tags.lua"/> -->
 	<Script file="Nameplates.lua"/>
-	<Script file="StyleFilter.lua"/>
+	<!-- <Script file="Nameplates_Sirus.lua"/> -->
+	<Script file="StyleFilter.lua"/>	
 	<Script file="Elements\Auras.lua"/>
 	<Script file="Elements\CastBar.lua"/>
+	<!-- <Script file="Elements\CastBar_Sirus.lua"/> -->
 	<Script file="Elements\ComboPoints.lua"/>
 	<Script file="Elements\Glow.lua"/>
 	<Script file="Elements\HealthBar.lua"/>
