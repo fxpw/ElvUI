@@ -70,16 +70,16 @@ local Categories = {
 	[90033] = {id = 33, name = "1-я (+++++) Категория", icon = "INTERFACE\\ICONS\\one", name2 = "1-я (5+)"},
 	[90034] = {id = 34, name = "1-я (++++++) Категория", icon = "INTERFACE\\ICONS\\one", name2 = "1-я (6+)"},
 	[90035] = {id = 35, name = "1-я (+++++++) Категория", icon = "INTERFACE\\ICONS\\one", name2 = "1-я (7+)"},
-	[90036] = {id = 36, name = "Вне котегории", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК"},
+	[90036] = {id = 36, name = "Вне котегории", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К."},
 
-	[302100] = {id = 37, name = "Вне категории (+)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (1+)"},
-	[302101] = {id = 38, name = "Вне категории (++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (2+)"},
-	[302102] = {id = 39, name = "Вне категории (+++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (3+)"},
-	[302103] = {id = 40, name = "Вне категории (++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (4+)"},
-	[302104] = {id = 41, name = "Вне категории (+++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (5+)"},
-	[302105] = {id = 42, name = "Вне категории (++++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (6+)"},
-	[302106] = {id = 43, name = "Вне категории (+++++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (7+)"},
-	[302107] = {id = 44, name = "Вне категории (++++++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "ВК (8+)"},
+	[302100] = {id = 37, name = "Вне категории (+)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (1+)"},
+	[302101] = {id = 38, name = "Вне категории (++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (2+)"},
+	[302102] = {id = 39, name = "Вне категории (+++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (3+)"},
+	[302103] = {id = 40, name = "Вне категории (++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (4+)"},
+	[302104] = {id = 41, name = "Вне категории (+++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (5+)"},
+	[302105] = {id = 42, name = "Вне категории (++++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (6+)"},
+	[302106] = {id = 43, name = "Вне категории (+++++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (7+)"},
+	[302107] = {id = 44, name = "Вне категории (++++++++)", icon = "INTERFACE\\ICONS\\eternity", name2 = "В.К. (8+)"},
 }
 addon.Categories = Categories
 
@@ -139,10 +139,26 @@ ElvUF.Tags.Methods["category:name:short"] = function(unit)
 		if not name then break end
 
 		if Categories[spellID] then
+			-- return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
 			return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
 		end
 	end
 end
+
+
+ElvUF.Tags.Events["category:sirus"] = "UNIT_AURA"
+ElvUF.Tags.Methods["category:sirus"] = function(unit)
+	for i = 1, 40 do
+		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
+		if not name then break end
+
+		if Categories[spellID] then
+			-- return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
+			return Categories[spellID].name2
+		end
+	end
+end
+
 
 ElvUF.Tags.Events["category:name:veryshort"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:name:veryshort"] = function(unit)
@@ -358,6 +374,7 @@ E:AddTagInfo("category:name", "Sirus", "Показывает на юните к�
 E:AddTagInfo("category:name:short", "Sirus", "Показывает на юните категорию в виде текста (коротко)")
 E:AddTagInfo("category:name:veryshort", "Sirus", "Показывает на юните категорию в виде текста (коротко)")
 E:AddTagInfo("category:icon", "Sirus", "Показывает на юните категорию в виде иконки")
+E:AddTagInfo("category:sirus","Sirus","Показывает категорию в виде сокращенного текста")
 E:AddTagInfo("vip:name", "Sirus", "Показывает на юните VIP статус в виде текста")
 E:AddTagInfo("vip:icon", "Sirus", "Показывает на юните VIP статус в виде иконки")
 E:AddTagInfo("premium:name", "Sirus", "Показывает на юните Premium статус в виде текста")

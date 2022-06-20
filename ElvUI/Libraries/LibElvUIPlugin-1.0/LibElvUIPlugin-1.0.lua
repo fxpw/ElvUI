@@ -57,6 +57,7 @@ local INFO_BY = "by"
 local INFO_VERSION = "Version:"
 local INFO_NEW = "Newest:"
 local LIBRARY = "Library"
+local UCANASK = "You can also ask the %s where he downloaded his version from"
 
 local locale = GetLocale()
 if locale == "deDE" then
@@ -75,6 +76,7 @@ elseif locale == "ruRU" then
 	INFO_VERSION = "Версия:"
 	INFO_NEW = "Последняя:"
 	LIBRARY = "Библиотека"
+	UCANASK = "Вы так же можете спросить у %s откуда он скачал новую версию"
 elseif locale == "zhCN" then
 	MSG_OUTDATED = "你的 %s %s 版本已经过期 (最新版本是 %s)。你可以从 https://github.com/ElvUI-WotLK/ElvUI/ 下载最新版本"
 	HDR_CONFIG = "插件"
@@ -222,6 +224,7 @@ function lib:VersionCheck(event, prefix, message, _, sender)
 						plugin.old, plugin.newversion = true, version
 						local title = GetAddOnMetadata(plugin.name, "Title") or plugin.name
 						E:Print(format(MSG_OUTDATED, title, plugin.version, plugin.newversion))
+						E:Print(format(UCANASK, sender))
 						E.pluginRecievedOutOfDateMessage = true
 					end
 				end

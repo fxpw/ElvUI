@@ -145,17 +145,17 @@ local tagStrings = {
 		end
 	end]],
 
-	['leader'] = [[function(u)
-		if(UnitIsPartyLeader(u)) then
-			return 'L'
-		end
-	end]],
+	-- ['leader'] = [[function(u)
+	-- 	if(UnitIsPartyLeader(u)) then
+	-- 		return 'L'
+	-- 	end
+	-- end]],
 
-	['leaderlong'] = [[function(u)
-		if(UnitIsPartyLeader(u)) then
-			return 'Leader'
-		end
-	end]],
+	-- ['leaderlong'] = [[function(u)
+	-- 	if(UnitIsPartyLeader(u)) then
+	-- 		return 'Leader'
+	-- 	end
+	-- end]],
 
 	['level'] = [[function(u)
 		local l = UnitLevel(u)
@@ -339,19 +339,19 @@ local tagStrings = {
 		end
 	end]],
 
-	['group'] = [[function(unit)
-		local name, server = UnitName(unit)
-		if(server and server ~= '') then
-			name = format('%s-%s', name, server)
-		end
+	-- ['group'] = [[function(unit)
+	-- 	local name, server = UnitName(unit)
+	-- 	if(server and server ~= '') then
+	-- 		name = format('%s-%s', name, server)
+	-- 	end
 
-		for i=1, GetNumRaidMembers() do
-			local raidName, _, group = GetRaidRosterInfo(i)
-			if(raidName == name) then
-				return group
-			end
-		end
-	end]],
+	-- 	for i=1, GetNumRaidMembers() do
+	-- 		local raidName, _, group = GetRaidRosterInfo(i)
+	-- 		if(raidName == name) then
+	-- 			return group
+	-- 		end
+	-- 	end
+	-- end]],
 
 	['deficit:name'] = [[function(u)
 		local missinghp = _TAGS['missinghp'](u)
@@ -446,8 +446,8 @@ local tagEvents = {
 	['curpp']				= 'UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_RUNIC_POWER',
 	['maxpp']				= 'UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_MAXRUNIC_POWER',
 	['dead']				= 'UNIT_HEALTH',
-	['leader']				= 'PARTY_LEADER_CHANGED',
-	['leaderlong']			= 'PARTY_LEADER_CHANGED',
+	-- ['leader']				= 'PARTY_LEADER_CHANGED',
+	-- ['leaderlong']			= 'PARTY_LEADER_CHANGED',
 	['level']				= 'UNIT_LEVEL PLAYER_LEVEL_UP',
 	['missinghp']			= 'UNIT_HEALTH UNIT_MAXHEALTH',
 	['missingpp']			= 'UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_MAXRUNIC_POWER UNIT_RUNIC_POWER',
@@ -466,7 +466,7 @@ local tagEvents = {
 	['smartlevel']			= 'UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED',
 	['classification']		= 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification']	= 'UNIT_CLASSIFICATION_CHANGED',
-	['group']				= 'PARTY_MEMBERS_CHANGED RAID_ROSTER_UPDATE',
+	-- ['group']				= 'PARTY_MEMBERS_CHANGED RAID_ROSTER_UPDATE',
 	['curmana']				= 'UNIT_MANA UNIT_MAXMANA',
 	['maxmana']				= 'UNIT_MANA UNIT_MAXMANA',
 	['happiness']			= 'UNIT_HAPPINESS',

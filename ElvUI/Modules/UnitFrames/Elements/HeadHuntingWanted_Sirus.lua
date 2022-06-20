@@ -1,4 +1,4 @@
-local E, L, V, P, G = unpack(ElvUI); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule("UnitFrames")
 
 local ipairs = ipairs
@@ -63,8 +63,8 @@ function UF:Update_HeadHuntingWanted(frame, dontSendRequest)
 
 	if isWanted then
 		frame.HeadHuntingWantedFrame:Show()
-		frame.HeadHuntingWantedFrame:SetModel("SPELLS\\HuntersMark_Impact_Chest.m2")
-		frame.HeadHuntingWantedFrame:SetPosition(3, 0, 1.3)
+		frame.HeadHuntingWantedFrame:SetModel("SPELLS/DarkmoonVengeance_Impact_Head.m2")
+		frame.HeadHuntingWantedFrame:SetPosition(3, 0, 1.9)
 	else
 		frame.HeadHuntingWantedFrame:Hide()
 	end

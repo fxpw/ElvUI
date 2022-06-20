@@ -3,6 +3,7 @@ local _, L = unpack(select(2, ...))
 
 local format = format
 
+
 E.Options.args.tagGroup = {
 	order = 925,
 	type = "group",
@@ -21,24 +22,24 @@ E.Options.args.tagGroup = {
 			type = "header",
 			name = L["Available Tags"],
 		},
-		Colors = {
-			type = "group",
-			name = L["Colors"],
-			args = {
-				header = {
-					order = 0,
-					type = "header",
-					name = L["Colors"],
-				},
-				customTagColorInfo = {
-					order = 1,
-					type = "input",
-					width = "full",
-					name = L["Custom color your Text: replace the XXXXXX with a Hex color code"],
-					get = function() return "||cffXXXXXX [теги] или текст здесь ||r" end
-				}
-			}
-		},
+		-- Colors = {
+		-- 	type = "group",
+		-- 	name = L["Colors"],
+		-- 	args = {
+		-- 		header = {
+		-- 			order = 0,
+		-- 			type = "header",
+		-- 			name = L["Colors"],
+		-- 		},
+		-- 		customTagColorInfo = {
+		-- 			order = 1,
+		-- 			type = "input",
+		-- 			width = "full",
+		-- 			name = L["Custom color your Text: replace the XXXXXX with a Hex color code"],
+		-- 			get = function() return "||cffXXXXXX [теги] или текст здесь ||r" end
+		-- 		}
+		-- 	}
+		-- },
 	},
 }
 

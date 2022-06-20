@@ -593,12 +593,43 @@ ElvUF.Tags.Methods["specialization"] = function(unit)
 	end
 end
 
+
+ElvUF.Tags.Events["group"] = "PARTY_MEMBERS_CHANGED RAID_ROSTER_UPDATE"
+ElvUF.Tags.Methods["group"] = function(unit)
+	local name, server = UnitName(unit)
+	if(server and server ~= '') then
+		name = format('%s-%s', name, server)
+	end
+	for i=1, GetNumRaidMembers() do
+		local raidName, _, group = GetRaidRosterInfo(i)
+		if(raidName == name) then
+			return group
+		end
+	end
+end
+
+ElvUF.Tags.Events["leader"] = "PARTY_LEADER_CHANGED"
+ElvUF.Tags.Methods["leader"] =function(u)
+	if(UnitIsPartyLeader(u)) then
+		return 'L'
+	end
+end
+
+ElvUF.Tags.Events["leaderlong"] = "PARTY_LEADER_CHANGED"
+ElvUF.Tags.Methods["leaderlong"] =function(u)
+	if(UnitIsPartyLeader(u)) then
+		return 'Leader'
+	end
+end
+
+
 ElvUF.Tags.Events["name:title"] = "UNIT_NAME_UPDATE"
 ElvUF.Tags.Methods["name:title"] = function(unit)
 	if UnitIsPlayer(unit) then
 		return UnitPVPName(unit)
 	end
 end
+
 E.TagInfo = {
 	--Colors
 	["namecolor"] = {category = L["Colors"], description = L["Colors names by player class or NPC reaction"]},
@@ -728,11 +759,13 @@ E.TagInfo = {
 	["arena:number"] = {category = L["Miscellaneous"], description = L["Displays the arena number 1-5"]},
 }
 
-function E:AddTagInfo(tagName, category, description, order)
+function E:AddTagInfo(tagName, category, description, order, hidden)
 	if order then order = tonumber(order) + 10 end
 
 	E.TagInfo[tagName] = E.TagInfo[tagName] or {}
 	E.TagInfo[tagName].category = category or "Разное"
 	E.TagInfo[tagName].description = description or ""
 	E.TagInfo[tagName].order = order or nil
+	E.TagInfo[tagName].hidden = hidden or nil
+	return E.TagInfo[tagName]
 end

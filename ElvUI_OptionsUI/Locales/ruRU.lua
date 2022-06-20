@@ -1249,6 +1249,9 @@ L["TEXT_FORMAT_DESC"] = [=[Строка для изменения вида те�
 "name:long" - Имя с ограничением длины в 20 символов
 "name:short:translit" - Name restricted to 10 characters with transliteration
 
+Форматы цвета:
+|cff HEX [tag]|r
+|cffaaaaaa[name]|r
 Для отключения оставьте поле пустым, для дополнительной информации посетите https://www.tukui.org/forum/viewtopic.php?t=6]=]
 
 L["NP_TEXT_FORMAT_DESC"] = [=[Специальные теги для неймплейтов
@@ -1427,6 +1430,6 @@ L["right"] = "Справо"
 L["middle"] = "Средняя"
 
 --- tags ruRU
-L["Colors"] = "Цвета 2"
-L["Miscellaneous"] = "Разное 2"
+L["Colors"] = "Цвета"
+L["Miscellaneous"] = "Разное"
 L["Custom color your Text: replace the XXXXXX with a Hex color code"] = "Цвет для текста: замените XXXXXX Hex кодом цвета"

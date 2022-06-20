@@ -24,6 +24,5 @@ UnitFrames.lua
 DataBars.lua
 Maps.lua
 ModuleControl.lua
-Tags.lua
-
 Sirus.lua
+Tags.lua

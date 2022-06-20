@@ -174,14 +174,10 @@ function AddOn:OnInitialize()
 	if IsAddOnLoaded("Tukui") then
 		self:StaticPopup_Show("TUKUI_ELVUI_INCOMPATIBLE")
 	end
-	-- local sirusisload = IsAddOnLoaded("ElvUI_Sirus")
+
 	if self:IsAddOnEnabled("ElvUI_Sirus") then
-	-- if isSirusModuleLoad then
-		-- DisableAddOn("ElvUI_Sirus")
 		C_Timer:After(3,function() self:StaticPopup_Show("ELVUI_SIRUS_ENABLE") end)
-		-- self:StaticPopup_Show("ELVUI_SIRUS_ENABLE")
 	end
-	-- C_Timer:After(3,function()end)
 
 	local GameMenuButton = CreateFrame("Button", "ElvUI_MenuButton", GameMenuFrame, "GameMenuButtonTemplate")
 	GameMenuButton:SetText(self.title)

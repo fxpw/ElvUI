@@ -266,8 +266,13 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 			end
 		end
 
-		local category = ElvUF.Tags.Methods["category:name:short"](unit)
+		local category = ElvUF.Tags.Methods["category:sirus"](unit)
 		if category then
+			-- print(category)
+			-- if true then
+			-- 	local categoryicon = ElvUF.Tags.Methods["category:icon"](unit)
+			-- 	name =  name.."   "..categoryicon
+			-- end
 			name = name.." |cffffffff"..category.."|r"
 		end
 

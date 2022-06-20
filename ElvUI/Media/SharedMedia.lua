@@ -90,10 +90,11 @@ E.Media = {
 		ActionMan = M..[[Fonts\ActionMan.ttf]],
 		ContinuumMedium = M..[[Fonts\ContinuumMedium.ttf]],
 		DieDieDie = M..[[Fonts\DieDieDie.ttf]],
-		Expressway = M..[[Fonts\Expressway.ttf]],
+		Expressway = [[Interface\AddOns\ElvUI\Media\Fonts\Expressway.ttf]],
 		Homespun = M..[[Fonts\Homespun.ttf]],
 		Invisible = M..[[Fonts\Invisible.ttf]],
-		PTSansNarrow = M..[[Fonts\PTSansNarrow.ttf]]
+		PTSansNarrow = M..[[Fonts\PTSansNarrow.ttf]],
+		Magistral = M..[[Fonts\Magistral.ttf]]
 	},
 	Sounds = {
 		AwwCrap = M..[[Sounds\AwwCrap.ogg]],
@@ -192,6 +193,7 @@ E.Media = {
 		Mail = M..[[Textures\Mail.tga]],
 		Melli = M..[[Textures\Melli.tga]],
 		Minimalist = M..[[Textures\Minimalist.tga]],
+		HealBot14 = M..[[Textures\HealBot14.tga]],
 		Minus = M..[[Textures\Minus.tga]],
 		MinusButton = M..[[Textures\MinusButton.tga]],
 		Nameplates = M..[[Textures\Nameplates.blp]],
@@ -218,26 +220,35 @@ E.Media = {
 	}
 }
 
-LSM:Register("border", "ElvUI GlowBorder", E.Media.Textures.GlowTex)
-LSM:Register("font", "Continuum Medium", E.Media.Fonts.ContinuumMedium)
-LSM:Register("font", "Die Die Die!", E.Media.Fonts.DieDieDie, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
-LSM:Register("font", "Action Man", E.Media.Fonts.ActionMan)
-LSM:Register("font", "Expressway", E.Media.Fonts.Expressway, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
-LSM:Register("font", "PT Sans Narrow", E.Media.Fonts.PTSansNarrow, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
-LSM:Register("font", "Homespun", E.Media.Fonts.Homespun, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
-LSM:Register("sound", "ElvUI Aska", E.Media.Sounds.SndIncMsg)
-LSM:Register("sound", "Awww Crap", E.Media.Sounds.AwwCrap)
-LSM:Register("sound", "BBQ Ass", E.Media.Sounds.BbqAss)
-LSM:Register("sound", "Big Yankie Devil", E.Media.Sounds.YankieBangBang)
-LSM:Register("sound", "Dumb Shit", E.Media.Sounds.DumbShit)
-LSM:Register("sound", "Mama Weekends", E.Media.Sounds.MamaWeekends)
-LSM:Register("sound", "Runaway Fast", E.Media.Sounds.RunFast)
-LSM:Register("sound", "Stop Running", E.Media.Sounds.StopRunningSlimeBall)
-LSM:Register("sound", "Warning", E.Media.Sounds.Warning)
-LSM:Register("sound", "Whisper Alert", E.Media.Sounds.Whisper)
-LSM:Register("statusbar", "Melli", E.Media.Textures.Melli)
-LSM:Register("statusbar", "ElvUI Gloss", E.Media.Textures.NormTex)
-LSM:Register("statusbar", "ElvUI Norm", E.Media.Textures.NormTex2)
-LSM:Register("statusbar", "Minimalist", E.Media.Textures.Minimalist)
-LSM:Register("statusbar", "ElvUI Blank", E.Media.Textures.White8x8)
-LSM:Register("background", "ElvUI Blank", E.Media.Textures.White8x8)
+local MediaType_BACKGROUND = LSM.MediaType.BACKGROUND or "background"
+local MediaType_BORDER = LSM.MediaType.BORDER or "border"
+local MediaType_FONT = LSM.MediaType.FONT or "font"
+local MediaType_STATUSBAR = LSM.MediaType.STATUSBAR or "statusbar"
+local MediaType_SOUND = LSM.MediaType.SOUND or "sound"
+do
+	LSM:Register(MediaType_BORDER, "ElvUI GlowBorder", E.Media.Textures.GlowTex)
+	LSM:Register(MediaType_FONT, "Continuum Medium", E.Media.Fonts.ContinuumMedium)
+	LSM:Register(MediaType_FONT, "Die Die Die!", E.Media.Fonts.DieDieDie, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
+	LSM:Register(MediaType_FONT, "Action Man", E.Media.Fonts.ActionMan)
+	LSM:Register(MediaType_FONT, "Expressway", E.Media.Fonts.Expressway, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
+	LSM:Register(MediaType_FONT, "PT Sans Narrow", E.Media.Fonts.PTSansNarrow, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
+	LSM:Register(MediaType_FONT, "Homespun", E.Media.Fonts.Homespun, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
+	LSM:Register(MediaType_FONT, "Magistral",E.Media.Fonts.Magistral,LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)
+	LSM:Register(MediaType_SOUND, "ElvUI Aska", E.Media.Sounds.SndIncMsg)
+	LSM:Register(MediaType_SOUND, "Awww Crap", E.Media.Sounds.AwwCrap)
+	LSM:Register(MediaType_SOUND, "BBQ Ass", E.Media.Sounds.BbqAss)
+	LSM:Register(MediaType_SOUND, "Big Yankie Devil", E.Media.Sounds.YankieBangBang)
+	LSM:Register(MediaType_SOUND, "Dumb Shit", E.Media.Sounds.DumbShit)
+	LSM:Register(MediaType_SOUND, "Mama Weekends", E.Media.Sounds.MamaWeekends)
+	LSM:Register(MediaType_SOUND, "Runaway Fast", E.Media.Sounds.RunFast)
+	LSM:Register(MediaType_SOUND, "Stop Running", E.Media.Sounds.StopRunningSlimeBall)
+	LSM:Register(MediaType_SOUND, "Warning", E.Media.Sounds.Warning)
+	LSM:Register(MediaType_SOUND, "Whisper Alert", E.Media.Sounds.Whisper)
+	LSM:Register(MediaType_STATUSBAR, "Melli", E.Media.Textures.Melli)
+	LSM:Register(MediaType_STATUSBAR, "HealBot14", E.Media.Textures.HealBot14)
+	LSM:Register(MediaType_STATUSBAR, "ElvUI Gloss", E.Media.Textures.NormTex)
+	LSM:Register(MediaType_STATUSBAR, "ElvUI Norm", E.Media.Textures.NormTex2)
+	LSM:Register(MediaType_STATUSBAR, "Minimalist", E.Media.Textures.Minimalist)
+	LSM:Register(MediaType_STATUSBAR, "ElvUI Blank", E.Media.Textures.White8x8)
+	LSM:Register(MediaType_BACKGROUND, "ElvUI Blank", E.Media.Textures.White8x8)
+end
