@@ -245,7 +245,7 @@ do
 	LSM:Register(MediaType_SOUND, "Warning", E.Media.Sounds.Warning)
 	LSM:Register(MediaType_SOUND, "Whisper Alert", E.Media.Sounds.Whisper)
 	LSM:Register(MediaType_STATUSBAR, "Melli", E.Media.Textures.Melli)
-	LSM:Register(MediaType_STATUSBAR, "HealBot14", E.Media.Textures.HealBot14)
+	LSM:Register(MediaType_STATUSBAR, "HealBot 14", E.Media.Textures.HealBot14)
 	LSM:Register(MediaType_STATUSBAR, "ElvUI Gloss", E.Media.Textures.NormTex)
 	LSM:Register(MediaType_STATUSBAR, "ElvUI Norm", E.Media.Textures.NormTex2)
 	LSM:Register(MediaType_STATUSBAR, "Minimalist", E.Media.Textures.Minimalist)
