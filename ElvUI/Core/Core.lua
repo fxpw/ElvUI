@@ -837,6 +837,7 @@ do
 					E:Print(L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"])
 					if message and ((message - ver) >= 0.01) and not InCombatLockdown() then
 						E:StaticPopup_Show("ELVUI_UPDATE_AVAILABLE")
+						E:Print(format("Новая версия (%s) пришла от %s ",message,sender))
 					end
 
 					E.recievedOutOfDateMessage = true
