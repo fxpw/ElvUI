@@ -31,7 +31,7 @@
 
 ## Installation:
 
-1. Download **[Latest Version](https://github.com/ElvUI-WotLK/ElvUI/releases/latest)**
+1. Download **[Latest Version](https://github.com/fxpw/ElvUI/releases/latest)**
 2. Unpack the Zip file
 3. Open the folder "ElvUI-(#.##)"
 4. Copy (or drag and drop) **ElvUI** and **ElvUI_OptionsUI** into your Wow-Directory\Interface\AddOns
