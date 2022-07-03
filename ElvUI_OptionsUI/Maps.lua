@@ -243,6 +243,14 @@ E.Options.args.maps = {
 							get = function(info) return E.db.general.minimap.resetZoom.time end,
 							set = function(info, value) E.db.general.minimap.resetZoom.time = value MM:UpdateSettings() end,
 							disabled = function() return (not E.db.general.minimap.resetZoom.enable or not E.private.general.minimap.enable) end
+						},
+						fadeMinimap = {
+							order = 4,
+							type = "toggle",
+							name = L["FadeMinimap"],
+							-- min = 1, max = 15, step = 1,
+							get = function(info) return E.private.general.minimap[info[#info]] end,
+							set = function(info, value) E.private.general.minimap[info[#info]] = value MM:UpdateSettings() E:StaticPopup_Show("PRIVATE_RL") end
 						}
 					}
 				},

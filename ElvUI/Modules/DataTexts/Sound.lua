@@ -51,20 +51,20 @@ local function OnEnter(self)
 	-- lastPanel = self
 end
 
-local function OnEvent(self)
-	-- DT:SetupTooltip(self)
+local function OnEvent(self,...)
+	DT:SetupTooltip(self)
 
-	MasterVolume = GetCVar("Sound_MasterVolume") ---Громкость общего звука
-	SFXVolume = GetCVar("Sound_SFXVolume") --- Громкость звуковых эффектов
-	MusicVolume = GetCVar("Sound_MusicVolume") --- Громкость мызыки
-	AmbienceVolume = GetCVar("Sound_AmbienceVolume") --- Громкость звуков окружающего мира
+	MasterVolume = 1 - GetCVar("Sound_MasterVolume") ---Громкость общего звука
+	SFXVolume = 1 -  GetCVar("Sound_SFXVolume") --- Громкость звуковых эффектов
+	MusicVolume = 1 - GetCVar("Sound_MusicVolume") --- Громкость мызыки
+	AmbienceVolume = 1 - GetCVar("Sound_AmbienceVolume") --- Громкость звуков окружающего мира
 	-- OutboundChatVolume = (1 - GetCVar("OutboundChatVolume")) ---mocrophone
 	-- InboundChatVolume = (1 - GetCVar("InboundChatVolume")) ---speaker
 
 
 
 	-- local c = "Sound_EnableAllSound"
-	allVolume = GetCVar("Sound_EnableAllSound") or "0"
+	allVolume = (GetCVar("Sound_EnableAllSound")) or "0"
 	if allVolume == "0" then
 		-- SetCVar(c, "0")
 		self.text:SetFormattedText("%s", "Звук: |cffff0000Выкл|r")
@@ -180,4 +180,4 @@ local function ValueColorUpdate(hex)
 end
 E.valueColorUpdateFuncs[ValueColorUpdate] = true
 
-DT:RegisterDatatext("Звук", {"MODIFIER_STATE_CHANGED","PLAYER_ENTERING_WORLD"}, OnEvent, nil, OnClick, OnEnter, nil, "Звук",true, OnMouseWheel)
+DT:RegisterDatatext("Звук", {"MODIFIER_STATE_CHANGED","PLAYER_ENTERING_WORLD"}, OnEvent, nil, OnClick, OnEnter, nil, "Звук", OnMouseWheel)

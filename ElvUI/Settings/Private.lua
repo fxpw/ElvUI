@@ -20,6 +20,7 @@ V.general = {
 	minimap = {
 		enable = true,
 		hideCalendar = true,
+		fadeMinimap = false,
 	},
 	classColorMentionsSpeech = true,
 	raidUtility = true

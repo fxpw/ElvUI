@@ -102,7 +102,7 @@ local menuFrame = CreateFrame("Frame", "MinimapRightClickMenu", E.UIParent, "UID
 -- 		notCheckable = 1,
 -- 		func = ToggleTimeManager
 -- 	},
-	
+
 -- 	{
 -- 		text = MAINMENU_BUTTON,
 -- 		notCheckable = 1,
@@ -556,6 +556,40 @@ end
 -- 		Reminder:UpdateSettings()
 -- 	end
 -- end
+
+local function FadeOut(self)
+	if E.private.general.minimap.fadeMinimap then
+		UIFrameFadeOut(Minimap, 0.1, Minimap:GetAlpha(), 0)
+	end
+end
+
+local function FadeIn(self)
+	if E.private.general.minimap.fadeMinimap then
+		UIFrameFadeIn(Minimap, 0.1, Minimap:GetAlpha(), 1)
+	end
+end
+
+local frames ={
+	"Minimap",
+	"MiniMapMailFrame",
+	"MiniMapLFGFrame",
+	"LFDSearchStatus",
+	"QueueStatusMinimapButton",
+	"MiniMapInstanceDifficulty",
+
+}
+
+
+local function HookFadeMinimap()
+	for _,v in pairs(frames) do
+		local frame = _G[v]
+		if frame then
+			frame:HookScript("OnEnter",FadeIn)
+			frame:HookScript("OnLeave",FadeOut)
+		end
+	end
+end
+
 function M:UpdateSettings()
 	if InCombatLockdown() then
 		self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -744,6 +778,7 @@ function M:Initialize()
 		return
 	end
 
+	HookFadeMinimap()
 	--Support for other mods
 	function GetMinimapShape()
 		return "SQUARE"
@@ -762,14 +797,17 @@ function M:Initialize()
 	Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
 	Minimap:CreateBackdrop()
 	Minimap:SetFrameLevel(Minimap:GetFrameLevel() + 2)
-	Minimap:HookScript("OnEnter", function(mm)
+	Minimap:HookScript("OnEnter", function(self)
 		if E.db.general.minimap.locationText ~= "MOUSEOVER" or not E.private.general.minimap.enable then return end
-		mm.location:Show()
+		self.location:Show()
+
 	end)
 
 	Minimap:HookScript("OnLeave", function(self)
 		if E.db.general.minimap.locationText ~= "MOUSEOVER" or not E.private.general.minimap.enable then return end
 		self.location:Hide()
+
+
 	end)
 
 	Minimap.location = Minimap:CreateFontString(nil, "OVERLAY")
@@ -826,6 +864,9 @@ function M:Initialize()
 
 	self:CreateFarmModeMap()
 
+	if E.private.general.minimap.fadeMinimap then
+		Minimap:SetAlpha(0)
+	end
 	self.Initialized = true
 end
 

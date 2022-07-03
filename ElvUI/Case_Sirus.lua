@@ -27,20 +27,20 @@ local honorIcon = "PVPCurrency-Honor-"..faction
 local arenaIcon = "PVPCurrency-Conquest-"..faction
 
 local ITEMS_TABLE = {
-	{icon = honorIcon, name == "Очки чести", count = 100, quality = 3},
-	{icon = arenaIcon, name == "Очки арены", count = 25, quality = 3},
-	{icon = "pvecurrency-valor", name == "Очки доблести", count = 50, quality = 4},
-	{icon = "INV_MISC_TRINKETPANDA_08", name == "Жетон запределья", count = 3, quality = 3},
-	{icon = "Spell_Frost_FrozenCore", name == "Ледяной шар", count = 1, quality = 3},
-	{icon = "spell_monk_diffusemagic", name == "Руна Лили", count = 1, quality = 4},
+	{icon = honorIcon, name = "Очки чести", count = 100, quality = 3},
+	{icon = arenaIcon, name = "Очки арены", count = 25, quality = 3},
+	{icon = "pvecurrency-valor", name = "Очки доблести", count = 50, quality = 4},
+	{icon = "INV_MISC_TRINKETPANDA_08", name = "Жетон запределья", count = 3, quality = 3},
+	{icon = "Spell_Frost_FrozenCore", name = "Ледяной шар", count = 1, quality = 3},
+	{icon = "spell_monk_diffusemagic", name = "Руна Лили", count = 1, quality = 4},
 
-	{icon = honorIcon, name == "Очки чести", count = 500, quality = 3},
-	{icon = arenaIcon, name == "Очки арены", count = 125, quality = 3},
-	{icon = "pvecurrency-valor", name == "Очки доблести", count = 250, quality = 4},
-	{icon = "INV_MISC_TRINKETPANDA_08", name == "Жетон запределья", count = 9, quality = 3},
-	{icon = "INV_Elemental_Primal_Nether", name == "Изначальная пустота", count = 1, quality = 3},
-	{icon = "ability_monk_touchofdeath", name == "Руна Сируса", count = 1, quality = 4},
-	{icon = "INV_LEGENDARY_CHIMERAOFFEAR", name == "Черный бриллиант", count = 1, quality = 5},
+	{icon = honorIcon, name = "Очки чести", count = 500, quality = 3},
+	{icon = arenaIcon, name = "Очки арены", count = 125, quality = 3},
+	{icon = "pvecurrency-valor", name = "Очки доблести", count = 250, quality = 4},
+	{icon = "INV_MISC_TRINKETPANDA_08", name = "Жетон запределья", count = 9, quality = 3},
+	{icon = "INV_Elemental_Primal_Nether", name = "Изначальная пустота", count = 1, quality = 3},
+	{icon = "ability_monk_touchofdeath", name = "Руна Сируса", count = 1, quality = 4},
+	{icon = "INV_LEGENDARY_CHIMERAOFFEAR", name = "Черный бриллиант", count = 1, quality = 5},
 }
 
 local ITEMS_MSG = {

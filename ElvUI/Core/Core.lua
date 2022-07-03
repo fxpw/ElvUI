@@ -835,7 +835,7 @@ do
 			if message and (message > ver) then
 				if not E.recievedOutOfDateMessage then
 					E:Print(L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"])
-					if message and ((message - ver) >= 0.01) and not InCombatLockdown() then
+					if message and ((message - ver) >= 0.05) and not InCombatLockdown() then
 						E:StaticPopup_Show("ELVUI_UPDATE_AVAILABLE")
 						E:Print(format("Новая версия (%s) пришла от %s ",message,sender))
 					end
@@ -1404,7 +1404,7 @@ function E:Initialize()
 	end
 
 	if self.db.general.loginmessage then
-		local msg = format(L["LOGIN_MSG"], self.media.hexvaluecolor, self.media.hexvaluecolor, self.version)
+		local msg = format(L["LOGIN_MSG"], "|cff00BFFF", "|cff00ed3b", self.version)
 		if Chat.Initialized then msg = select(2, Chat:FindURL("CHAT_MSG_DUMMY", msg)) end
 		print(msg)
 	end

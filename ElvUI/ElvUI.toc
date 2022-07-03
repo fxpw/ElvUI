@@ -1,6 +1,6 @@
 ## Interface: 30300
 ## Author: Elv, Bunny, fxpw
-## Version: 7.03
+## Version: 7.04
 ## Title: |cff1784d1E|r|cffe5e3e3lvUI|r for sirus
 ## Notes: User Interface replacement AddOn for World of Warcraft.
 ## SavedVariables: ElvDB, ElvPrivateDB, ElvSirusDB
@@ -24,7 +24,7 @@ Modules\Load_Modules.xml
 
 # Fonts_Sirus.lua
 Tags_Sirus.lua
-Case_Sirus.lua
+# Case_Sirus.lua
 # OptionsUI_Sirus.lua
 # Settings_Sirus\Load_Config.xml
 # Modules_Sirus\Load_Modules.xml

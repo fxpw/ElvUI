@@ -1,6 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local ElvUF = E.oUF
-local LSM = E.Libs.LSM
+-- local LSM = E.Libs.LSM
 local addon = E:GetModule("Sirus")
 local Translit = E.Libs.Translit
 local translitMark = "!"
@@ -13,7 +13,7 @@ local format = string.format
 local gmatch = gmatch
 local gsub = gsub
 local match = string.match
-local utf8upper = string.utf8upper
+-- local utf8upper = string.utf8upper
 local utf8lower = string.utf8lower
 local utf8sub = string.utf8sub
 --WoW API / Variables

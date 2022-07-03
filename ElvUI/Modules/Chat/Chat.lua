@@ -166,8 +166,8 @@ local ElvBlue = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
 
 	local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
-	["Vakh-Scourge x2 - 3.3.5a+"] = Vakh,
-	["Язло-Scourge x2 - 3.3.5a+"] = Vakh,
+	["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
+	["Миленький-Scourge x2 - 3.3.5a+"] = Apolexis, -- миленький а играет за бабу кста
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Шутка-Scourge x2 - 3.3.5a+"] = Fxpw,

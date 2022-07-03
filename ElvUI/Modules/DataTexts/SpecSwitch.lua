@@ -154,4 +154,4 @@ end
 E.valueColorUpdateFuncs[ValueColorUpdate] = true
 
 
-DT:RegisterDatatext("Специализации", {"PLAYER_ENTERING_WORLD", "PLAYER_ALIVE", "CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "ACTIVE_TALENT_GROUP_CHANGED","INSPECT_TALENT_READY"}, OnEvent, nil, OnClick, OnEnter, nil, "Специализации",true, OnMouseWheel)
+DT:RegisterDatatext("Специализации", {"PLAYER_ENTERING_WORLD", "PLAYER_ALIVE", "CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "ACTIVE_TALENT_GROUP_CHANGED","INSPECT_TALENT_READY"}, OnEvent, nil, OnClick, OnEnter, nil, "Специализации", OnMouseWheel)

@@ -107,7 +107,7 @@ AddOn.WorldMap = AddOn:NewModule("WorldMap","AceHook-3.0","AceEvent-3.0","AceTim
 AddOn.InstanceMap = AddOn:NewModule("InstanceMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
 
 AddOn.Sirus = AddOn:NewModule("Sirus","AceHook-3.0","AceEvent-3.0","AceTimer-3.0","AceComm-3.0","AceSerializer-3.0")
-AddOn.SirusCase = AddOn:NewModule("SirusCase","AceHook-3.0","AceEvent-3.0","AceTimer-3.0","AceComm-3.0","AceSerializer-3.0")
+-- AddOn.SirusCase = AddOn:NewModule("SirusCase","AceEvent-3.0")
 do
 	local arg2, arg3 = "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1"
 	function AddOn:EscapeString(str)

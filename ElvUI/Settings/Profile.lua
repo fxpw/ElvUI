@@ -43,6 +43,7 @@ P.general = {
 			enable = false,
 			time = 3
 		},
+		fadeMinimap = false,
 		icons = {
 			calendar = {
 				scale = 1,

@@ -508,6 +508,7 @@ function LO:CreateMinimapPanels()
 	f:Width(75)
 	f:Height(20)
 	f:SetFrameLevel(Minimap:GetFrameLevel() + 5)
+
 	DT:RegisterPanel(f, 1, "ANCHOR_BOTTOMRIGHT", 0, -10)
 end
 

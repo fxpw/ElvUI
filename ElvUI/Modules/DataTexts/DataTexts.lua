@@ -34,6 +34,7 @@ function DT:Initialize()
 	LDB.RegisterCallback(E, "LibDataBroker_DataObjectCreated", DT.SetupObjectLDB)
 
 	self:LoadDataTexts()
+	self:FadeHook()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
@@ -57,6 +58,7 @@ function DT:PLAYER_ENTERING_WORLD()
 		self:LoadDataTexts()
 		self.ShowingBGStats = not self.ShowingBGStats
 	end
+	self:FadeHook()
 end
 
 local LDBHex = "|cffFFFFFF"
@@ -162,12 +164,52 @@ function DT:SetupTooltip(panel)
 	self.tooltip:ClearLines()
 	GameTooltip:Hide()
 end
+local function FadeOut(self)
+	if E.private.general.minimap.fadeMinimap then
+		UIFrameFadeOut(Minimap, 0.1, Minimap:GetAlpha(), 0)
+		-- self.ishooked1 = true
+		-- print(self:GetName())
+	end
+end
+
+local function FadeIn(self)
+	if E.private.general.minimap.fadeMinimap then
+		UIFrameFadeIn(Minimap, 0.1, Minimap:GetAlpha(), 1)
+		-- self.ishooked2 = true
+	end
+end
+local framesForHook = {
+	["LeftMiniPanel"] = true,
+	["RightMiniPanel"] = true,
+	["BottomMiniPanel"] = true,
+	["BottomLeftMiniPanel"] = true,
+	["BottomRightMiniPanel"] = true,
+	["TopMiniPanel"] = true,
+	["TopLeftMiniPanel"] = true,
+	["TopRightMiniPanel"] = true,
+	["ElvConfigToggle"] = true,
+}
+
+function DT:FadeHook()
+	for panelName, panel in pairs(DT.RegisteredPanels) do
+		for i = 1, panel.numPoints do
+			if framesForHook[panelName] then
+				for k,button in pairs({panel:GetChildren()}) do
+					if not button.name then
+						button:SetScript("OnEnter",FadeIn)
+						button:SetScript("OnLeave",FadeOut)
+					end
+				end
+			end
+		end
+	end
+end
+
 
 function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 	DT.RegisteredPanels[panel:GetName()] = panel
 	panel.dataPanels = {}
 	panel.numPoints = numPoints
-
 	panel.xOff = xOff
 	panel.yOff = yOff
 	panel.anchor = anchor
@@ -182,15 +224,22 @@ function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 			panel.dataPanels[pointIndex].text:SetJustifyH("CENTER")
 			panel.dataPanels[pointIndex].text:SetJustifyV("MIDDLE")
 		end
-
+		if framesForHook[panel:GetName()] then
+			panel.dataPanels[pointIndex]:SetScript("OnEnter",FadeIn)
+			panel.dataPanels[pointIndex]:SetScript("OnLeave",FadeOut)
+		end
 		panel.dataPanels[pointIndex]:Point(DT:GetDataPanelPoint(panel, i, numPoints))
 	end
-
 	panel:SetScript("OnSizeChanged", DT.UpdateAllDimensions)
 	DT.UpdateAllDimensions(panel)
 end
 
 function DT:AssignPanelToDataText(panel, data)
+
+	local isNeedHookForFade = false
+	if framesForHook[panel:GetParent():GetName()] then
+		isNeedHookForFade = true
+	end
 	panel.name = ""
 	if data.name then
 		panel.name = data.name
@@ -224,15 +273,28 @@ function DT:AssignPanelToDataText(panel, data)
 			if E.db.datatexts.noCombatHover and InCombatLockdown() then return end
 			data.onEnter(p)
 		end)
+		if isNeedHookForFade then
+			panel:HookScript("OnEnter",FadeIn)
+		end
+	else
+		if isNeedHookForFade then
+			panel:SetScript("OnEnter",FadeIn)
+		end
 	end
 
 	if data.onLeave then
 		panel:SetScript("OnLeave", data.onLeave)
+		if isNeedHookForFade then
+			panel:HookScript("OnLeave",FadeOut)
+		end
 	else
 		panel:SetScript("OnLeave", DT.Data_OnLeave)
+		if isNeedHookForFade then
+			panel:HookScript("OnLeave",FadeOut)
+		end
 	end
 
-	if data.onMouseWheel then            ------------------ why ? need for spec switch
+	if data.onMouseWheel then
 		panel:EnableMouseWheel(1)
 		panel:SetScript("OnMouseWheel", function(p, delta)
 			if E.db.datatexts.noCombatHover and InCombatLockdown() then return end
@@ -251,10 +313,8 @@ function DT:LoadDataTexts()
 	if ElvConfigToggle then
 		ElvConfigToggle.text:FontTemplate(fontTemplate, self.db.fontSize, self.db.fontOutline)
 	end
-
 	for panelName, panel in pairs(DT.RegisteredPanels) do
 		showBGPanel = enableBGPanel and (panelName == "LeftChatDataPanel" or panelName == "RightChatDataPanel")
-
 		--Restore Panels
 		for i = 1, panel.numPoints do
 			pointIndex = DT.PointLocation[i]
@@ -262,6 +322,7 @@ function DT:LoadDataTexts()
 			panel.dataPanels[pointIndex]:SetScript("OnUpdate", nil)
 			panel.dataPanels[pointIndex]:SetScript("OnEnter", nil)
 			panel.dataPanels[pointIndex]:SetScript("OnLeave", nil)
+
 			panel.dataPanels[pointIndex]:SetScript("OnClick", nil)
 			panel.dataPanels[pointIndex].text:FontTemplate(fontTemplate, self.db.fontSize, self.db.fontOutline)
 			panel.dataPanels[pointIndex].text:SetWordWrap(self.db.wordWrap)
@@ -300,7 +361,7 @@ function DT:LoadDataTexts()
 end
 
 --[[
-	DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc, localizedName)
+	DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc, localizedName,  onMouseWheelFunc)
 
 	name - name of the datatext (required)
 	events - must be a table with string values of event names to register
@@ -310,9 +371,9 @@ end
 	onEnterFunc - function to fire OnEnter
 	onLeaveFunc - function to fire OnLeave, if not provided one will be set for you that hides the tooltip.
 	localizedName - localized name of the datetext
-	onMouseWheel,onMouseWheelFunc      true if need and func for mouse wheel
+	onMouseWheelFunc  -  func for mouse wheel
 ]]
-function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc, localizedName,onMouseWheel,onMouseWheelFunc)
+function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc, localizedName, onMouseWheelFunc)
 	if name then
 		DT.RegisteredDataTexts[name] = {}
 	else
@@ -347,7 +408,7 @@ function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onE
 	if localizedName and type(localizedName) == "string" then
 		DT.RegisteredDataTexts[name].localizedName = localizedName
 	end
-	if onMouseWheel and onMouseWheel == true and type(onMouseWheelFunc) == "function" then ------------------ why ? need for spec switch
+	if onMouseWheelFunc and type(onMouseWheelFunc) == "function" then ------------------ why ? need for spec switch
 		DT.RegisteredDataTexts[name].onMouseWheel = onMouseWheelFunc
 	end
 end

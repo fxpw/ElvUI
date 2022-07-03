@@ -1429,6 +1429,7 @@ L["left"] = "Слево"
 L["right"] = "Справо"
 L["middle"] = "Средняя"
 
+L["FadeMinimap"] = "Исчезновение миникарты при наведении(тест)"
 --- tags ruRU
 L["Colors"] = "Цвета"
 L["Miscellaneous"] = "Разное"
