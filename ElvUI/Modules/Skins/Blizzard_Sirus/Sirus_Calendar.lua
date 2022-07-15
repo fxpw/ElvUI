@@ -49,7 +49,7 @@ local function LoadSkin()
 		hooksecurefunc(button, "SetPoint", function(self, point, attachTo, anchorPoint, xOffset, yOffset)
 			if point ~= "RIGHT" or attachTo ~= frame or anchorPoint ~= "RIGHT" or xOffset ~= -10 or yOffset ~= 3 then
 				self:ClearAllPoints()
-				self:Point("RIGHT", frame, "RIGHT", -10, 3)
+				self:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
 			end
 		end)
 

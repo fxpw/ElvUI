@@ -264,9 +264,9 @@ S:AddCallbackForAddon("Blizzard_Calendar", "Skin_Blizzard_Calendar", function()
 	S:HandleEditBox(CalendarMassInviteGuildMaxLevelEdit)
 
 	S:HandleButton(CalendarMassInviteGuildAcceptButton)
-	S:HandleButton(CalendarMassInviteArenaButton2)
-	S:HandleButton(CalendarMassInviteArenaButton3)
-	S:HandleButton(CalendarMassInviteArenaButton5)
+	-- S:HandleButton(CalendarMassInviteArenaButton2)
+	-- S:HandleButton(CalendarMassInviteArenaButton3)
+	-- S:HandleButton(CalendarMassInviteArenaButton5)
 
 	CalendarMassInviteFrame:Size(307, 179)
 	CalendarMassInviteFrame:ClearAllPoints()
@@ -285,9 +285,9 @@ S:AddCallbackForAddon("Blizzard_Calendar", "Skin_Blizzard_Calendar", function()
 
 	CalendarMassInviteGuildAcceptButton:Point("TOPRIGHT", -8, -100)
 
-	CalendarMassInviteArenaButton2:Point("TOPLEFT", 8, -149)
-	CalendarMassInviteArenaButton3:Point("TOP", 0, -149)
-	CalendarMassInviteArenaButton5:Point("TOPRIGHT", -8, -149)
+	-- CalendarMassInviteArenaButton2:Point("TOPLEFT", 8, -149)
+	-- CalendarMassInviteArenaButton3:Point("TOP", 0, -149)
+	-- CalendarMassInviteArenaButton5:Point("TOPRIGHT", -8, -149)
 
 	select(6, CalendarMassInviteFrame:GetRegions()):Point("TOP", 0, -130)
 
@@ -330,7 +330,7 @@ S:AddCallbackForAddon("Blizzard_Calendar", "Skin_Blizzard_Calendar", function()
 	CalendarViewEventFrameModalOverlay:SetFrameStrata("DIALOG")
 
 	S:HandleButton(CalendarViewEventAcceptButton)
-	S:HandleButton(CalendarViewEventTentativeButton)
+	-- S:HandleButton(CalendarViewEventTentativeButton)
 	S:HandleButton(CalendarViewEventRemoveButton)
 	S:HandleButton(CalendarViewEventDeclineButton)
 

@@ -1,5 +1,5 @@
 local E, L, V, P, G = unpack(ElvUI)
-local S = E:GetModule("Sirus")
+-- local S = E:GetModule("Sirus")
 local DT = E:GetModule("DataTexts")
 local DB = E:GetModule("DataBars")
 
@@ -48,16 +48,16 @@ local DB = E:GetModule("DataBars")
 	}
 
 	-- General
-	E.Options.args.general.args.blizzUIImprovements.args.case = {
-		order = 10,
-		type = "toggle",
-		name = E.NewSign.."Улучшенная рулетка",
-		get = function(info) return E.db.sirus[info[#info]] end,
-		set = function(info, value)
-			E.db.sirus[info[#info]] = value
-			E:StaticPopup_Show("PRIVATE_RL")
-		end
-	}
+	-- E.Options.args.general.args.blizzUIImprovements.args.case = {
+	-- 	order = 10,
+	-- 	type = "toggle",
+	-- 	name = E.NewSign.."Улучшенная рулетка",
+	-- 	get = function(info) return E.db.sirus[info[#info]] end,
+	-- 	set = function(info, value)
+	-- 		E.db.sirus[info[#info]] = value
+	-- 		E:StaticPopup_Show("PRIVATE_RL")
+	-- 	end
+	-- }
 
 	--Skins
 	E.Options.args.skins.args.blizzard.args.deathRecap = {

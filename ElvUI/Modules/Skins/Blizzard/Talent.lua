@@ -11,8 +11,8 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 
 	PlayerTalentFrame:StripTextures(true)
 	PlayerTalentFrame:CreateBackdrop("Transparent")
-	PlayerTalentFrame.backdrop:Point("TOPLEFT", 11, -12)
-	PlayerTalentFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
+	-- PlayerTalentFrame.backdrop:Point("TOPLEFT", 11, -12)
+	-- PlayerTalentFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
 
 	S:SetBackdropHitRect(PlayerTalentFrame)
 
@@ -29,11 +29,11 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 			S:SetUIPanelWindowInfo(PlayerTalentFrame, "width")
 		end
 
-		hooksecurefunc("PlayerTalentFrame_UpdateSpecs", function(_, numTalentGroups, _, numPetTalentGroups)
-			if offset and numTalentGroups + numPetTalentGroups <= 1 then
+		hooksecurefunc("PlayerTalentFrame_UpdateSpecs", function(activeTalentGroup, numTalentGroups)
+			if offset and numTalentGroups  <= 1 then
 				S:SetUIPanelWindowInfo(PlayerTalentFrame, "width")
 				offset = nil
-			elseif not offset and numTalentGroups + numPetTalentGroups > 1 then
+			elseif not offset and numTalentGroups  > 1 then
 				S:SetUIPanelWindowInfo(PlayerTalentFrame, "width", nil, 31)
 				offset = true
 			end
@@ -61,9 +61,9 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 
 	PlayerTalentFramePreviewBarFiller:StripTextures()
 
-	PlayerTalentFrameScrollFrame:StripTextures()
-	PlayerTalentFrameScrollFrame:CreateBackdrop("Default")
-	S:HandleScrollBar(PlayerTalentFrameScrollFrameScrollBar)
+	-- PlayerTalentFrameScrollFrame:StripTextures()
+	-- PlayerTalentFrameScrollFrame:CreateBackdrop("Default")
+	-- S:HandleScrollBar(PlayerTalentFrameScrollFrameScrollBar)
 
 	for i = 1, MAX_NUM_TALENTS do
 		local talent = _G["PlayerTalentFrameTalent"..i]
@@ -87,35 +87,45 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 		S:HandleTab(_G["PlayerTalentFrameTab"..i])
 	end
 
-	for i = 1, MAX_TALENT_TABS do
+	for i = 1, C_Talent.GetNumTalentGroups() do
 		local tab = _G["PlayerSpecTab"..i]
-		tab:GetRegions():Hide()
+		if tab then
+			tab:GetRegions():Hide()
 
-		tab:SetTemplate("Default")
-		tab:StyleButton(nil, true)
+			tab:SetTemplate("Default")
+			tab:StyleButton(nil, true)
 
-		tab:GetNormalTexture():SetInside()
-		tab:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
+			tab:GetNormalTexture():SetInside()
+			tab:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
+		end
 	end
 
 	PlayerTalentFrameStatusFrame:Point("TOPLEFT", 57, -40)
 	PlayerTalentFrameActivateButton:Point("TOP", 0, -40)
 
-	PlayerTalentFrameScrollFrame:Width(302)
-	PlayerTalentFrameScrollFrame:Point("TOPRIGHT", PlayerTalentFrame, "TOPRIGHT", -62, -77)
-	PlayerTalentFrameScrollFrame:SetPoint("BOTTOM", PlayerTalentFramePointsBar, "TOP", 0, 0)
+	-- PlayerTalentFrameScrollFrame:Width(302)
+	-- PlayerTalentFrameScrollFrame:Point("TOPRIGHT", PlayerTalentFrame, "TOPRIGHT", -62, -77)
+	-- PlayerTalentFrameScrollFrame:SetPoint("BOTTOM", PlayerTalentFramePointsBar, "TOP", 0, 0)
 
-	PlayerTalentFrameScrollFrameScrollBar:Point("TOPLEFT", PlayerTalentFrameScrollFrame, "TOPRIGHT", 4, -18)
-	PlayerTalentFrameScrollFrameScrollBar:Point("BOTTOMLEFT", PlayerTalentFrameScrollFrame, "BOTTOMRIGHT", 4, 18)
+	-- PlayerTalentFrameScrollFrameScrollBar:Point("TOPLEFT", PlayerTalentFrameScrollFrame, "TOPRIGHT", 4, -18)
+	-- PlayerTalentFrameScrollFrameScrollBar:Point("BOTTOMLEFT", PlayerTalentFrameScrollFrame, "BOTTOMRIGHT", 4, 18)
 
 	PlayerTalentFrameResetButton:Point("RIGHT", -4, 1)
 	PlayerTalentFrameLearnButton:Point("RIGHT", PlayerTalentFrameResetButton, "LEFT", -3, 0)
 
-	PlayerSpecTab1:Point("TOPLEFT", PlayerTalentFrame, "TOPRIGHT", -33, -65)
-	PlayerSpecTab1.ClearAllPoints = E.noop
-	PlayerSpecTab1.SetPoint = E.noop
+	-- PlayerSpecTab1:Point("TOPLEFT", PlayerTalentFrame, "TOPRIGHT", -33, -65)
+	-- PlayerSpecTab1.ClearAllPoints = E.noop
+	-- PlayerSpecTab1.SetPoint = E.noop
 
 	PlayerTalentFrameTab1:Point("BOTTOMLEFT", 11, 46)
 
-	
+	-- S:HandleButton(PlayerTalentFrameImportButton)
+	PlayerTalentFrameImportButton:StripTextures()
+	local importtexture = PlayerTalentFrameImportButton:CreateTexture("PlayerTalentFrameImportButtonTexture")
+	PlayerTalentFrameImportFrameButton:ClearAllPoints()
+	PlayerTalentFrameImportFrameButton:SetPoint("LEFT", PlayerTalentLinkButton, "LEFT",-30,0)
+	PlayerTalentFrameImportFrameButton:SetParent(PlayerTalentLinkButton)
+	importtexture:SetAllPoints(PlayerTalentFrameImportButton)
+	importtexture:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\copy]])
+
 end)

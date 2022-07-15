@@ -11,8 +11,8 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 
 	MacroFrame:StripTextures()
 	MacroFrame:CreateBackdrop("Transparent")
-	MacroFrame.backdrop:Point("TOPLEFT", 11, -12)
-	MacroFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
+	-- MacroFrame.backdrop:Point("TOPLEFT", 11, -12)
+	-- MacroFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
 
 	S:SetUIPanelWindowInfo(MacroFrame, "width")
 	S:SetBackdropHitRect(MacroFrame)
@@ -34,9 +34,9 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 	MacroFrameSelectedMacroButtonIcon:SetInside()
 
 	MacroFrameTextBackground:StripTextures()
-	MacroFrameTextBackground:CreateBackdrop()
-	MacroFrameTextBackground.backdrop:Point("TOPLEFT", 1, -3)
-	MacroFrameTextBackground.backdrop:Point("BOTTOMRIGHT", -17, 3)
+	-- MacroFrameTextBackground:CreateBackdrop()
+	-- MacroFrameTextBackground.backdrop:Point("TOPLEFT", 1, -3)
+	-- MacroFrameTextBackground.backdrop:Point("BOTTOMRIGHT", -17, 3)
 
 	S:HandleButton(MacroEditButton)
 	S:HandleButton(MacroDeleteButton)
@@ -76,7 +76,7 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 	end
 
 	MacroButtonScrollFrame:Size(302, 142)
-	MacroButtonScrollFrame:Point("TOPLEFT", 20, -76)
+	MacroButtonScrollFrame:Point("TOPLEFT", 10, -76)
 
 	MacroButtonScrollFrameScrollBar:Point("TOPLEFT", MacroButtonScrollFrame, "TOPRIGHT", 4, -18)
 	MacroButtonScrollFrameScrollBar:Point("BOTTOMLEFT", MacroButtonScrollFrame, "BOTTOMRIGHT", 4, 18)
@@ -85,21 +85,28 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 
 	MacroEditButton:Point("TOPLEFT", MacroFrameSelectedMacroBackground, "TOPLEFT", 60, -28)
 
-	MacroFrameTextBackground:Point("TOPLEFT", 18, -290)
+	-- MacroFrameTextBackground:Point("TOPLEFT", 18, -290)
 
 	MacroFrameText:Width(297)
 
-	MacroFrameSelectedMacroBackground:Point("TOPLEFT", 16, -213)
+	MacroFrameSelectedMacroBackground:Point("TOPLEFT", 6, -213)
+
+
+	MacroFrameScrollFrame:StripTextures()
+	MacroFrameScrollFrame:CreateBackdrop("Transparent")
+	S:SetBackdropHitRect(MacroFrameScrollFrame)
 
 	MacroFrameScrollFrame:Size(300, 81)
-	MacroFrameScrollFrame:Point("TOPLEFT", MacroFrameSelectedMacroBackground, "BOTTOMLEFT", 5, -20)
+
+	MacroFrameScrollFrame:Point("TOPLEFT", MacroFrameSelectedMacroBackground, "BOTTOMLEFT", 10, -20)
 
 	MacroFrameScrollFrameScrollBar:Point("TOPLEFT", MacroFrameScrollFrame, "TOPRIGHT", 5, -15)
 	MacroFrameScrollFrameScrollBar:Point("BOTTOMLEFT", MacroFrameScrollFrame, "BOTTOMRIGHT", 5, 15)
 
-	MacroFrameCharLimitText:Point("BOTTOM", -15, 113)
+	MacroFrameCharLimitText:Point("BOTTOMLEFT", 15, 32)
 
-	MacroDeleteButton:Point("BOTTOMLEFT", 19, 84)
+	-- MacroDeleteButton:Point("BOTTOMLEFT", 19, 84)
+	MacroDeleteButton:Point("CENTER", MacroFrame, "TOPLEFT", 386, -417)
 	MacroExitButton:Point("CENTER", MacroFrame, "TOPLEFT", 304, -417)
 	MacroNewButton:Point("CENTER", MacroFrame, "TOPLEFT", 221, -417)
 
@@ -113,9 +120,9 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 
 	S:HandleScrollBar(MacroPopupScrollFrameScrollBar)
 
-	local text1, text2 = select(5, MacroPopupFrame:GetRegions())
-	text1:Point("TOPLEFT", 24, -18)
-	text2:Point("TOPLEFT", 24, -60)
+	-- local text1, text2 = select(5, MacroPopupFrame:GetRegions())
+	-- text1:Point("TOPLEFT", 24, -18)
+	-- text2:Point("TOPLEFT", 24, -60)
 
 	MacroPopupEditBox:Point("TOPLEFT", 61, -35)
 
@@ -123,6 +130,8 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 
 	MacroPopupScrollFrame:Size(247, 180)
 	MacroPopupScrollFrame:Point("TOPRIGHT", -32, -76)
+
+	MacroFrameTextBackground:Hide()
 
 	MacroPopupScrollFrameScrollBar:Point("TOPLEFT", MacroPopupScrollFrame, "TOPRIGHT", 3, -19)
 	MacroPopupScrollFrameScrollBar:Point("BOTTOMLEFT", MacroPopupScrollFrame, "BOTTOMRIGHT", 3, 19)

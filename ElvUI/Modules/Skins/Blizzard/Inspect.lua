@@ -14,8 +14,8 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 
 	InspectFrame:StripTextures(true)
 	InspectFrame:CreateBackdrop("Transparent")
-	InspectFrame.backdrop:Point("TOPLEFT", 11, -12)
-	InspectFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
+	-- InspectFrame.backdrop:Point("TOPLEFT", 11, -12)
+	-- InspectFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
 
 	S:SetUIPanelWindowInfo(InspectFrame, "width")
 
@@ -23,8 +23,8 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 	S:SetBackdropHitRect(InspectPVPFrame, InspectFrame.backdrop)
 	S:SetBackdropHitRect(InspectTalentFrame, InspectFrame.backdrop)
 
-	InspectPVPFrameHonor:SetHitRectInsets(0, 120, 0, 0)
-	InspectPVPFrameArena:SetHitRectInsets(0, 120, 0, 0)
+	-- InspectPVPFrameHonor:SetHitRectInsets(0, 120, 0, 0)
+	-- InspectPVPFrameArena:SetHitRectInsets(0, 120, 0, 0)
 
 	S:HandleCloseButton(InspectFrameCloseButton, InspectFrame.backdrop)
 
@@ -101,8 +101,8 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 
 	hooksecurefunc("InspectPaperDollItemSlotButton_Update", styleButton)
 
-	S:HandleRotateButton(InspectModelRotateLeftButton)
-	S:HandleRotateButton(InspectModelRotateRightButton)
+	-- S:HandleRotateButton(InspectModelRotateLeftButton)
+	-- S:HandleRotateButton(InspectModelRotateRightButton)
 
 	InspectPVPFrame:StripTextures()
 
@@ -118,7 +118,7 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 
 	InspectTalentFrame:StripTextures()
 
-	S:HandleCloseButton(InspectTalentFrameCloseButton, InspectFrame.backdrop)
+	-- S:HandleCloseButton(InspectTalentFrameCloseButton, InspectFrame.backdrop)
 
 	for i = 1, MAX_TALENT_TABS do
 		local headerTab = _G["InspectTalentFrameTab"..i]
@@ -156,22 +156,24 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 	end
 
 	InspectHeadSlot:Point("TOPLEFT", 19, -76)
-	InspectHandsSlot:Point("TOPLEFT", 307, -76)
-	InspectMainHandSlot:Point("TOPLEFT", InspectPaperDollFrame, "BOTTOMLEFT", 121, 131)
+	-- InspectHandsSlot:Point("TOPLEFT", 307, -76)
+	InspectHandsSlot:ClearAllPoints()
+	InspectHandsSlot:Point("TOPRIGHT", InspectFrameInset, "TOPRIGHT", -4, -15)
+	-- InspectMainHandSlot:Point("TOPLEFT", InspectPaperDollFrame, "BOTTOMLEFT", 121, 131)
 
 	InspectModelFrame:Size(237, 324)
 	InspectModelFrame:Point("TOPLEFT", 63, -76)
 
-	InspectModelRotateLeftButton:Point("TOPLEFT", 4, -4)
+	-- InspectModelRotateLeftButton:Point("TOPLEFT", 4, -4)
 
 	InspectTalentFrameScrollFrame:StripTextures()
-	InspectTalentFrameScrollFrame:CreateBackdrop("Transparent")
-	InspectTalentFrameScrollFrame.backdrop:Point("TOPLEFT", -1, 1)
-	InspectTalentFrameScrollFrame.backdrop:Point("BOTTOMRIGHT", 5, -4)
+	-- InspectTalentFrameScrollFrame:CreateBackdrop("Transparent")
+	-- InspectTalentFrameScrollFrame.backdrop:Point("TOPLEFT", -1, 1)
+	-- InspectTalentFrameScrollFrame.backdrop:Point("BOTTOMRIGHT", 5, -4)
 
 	InspectTalentFramePointsBar:StripTextures()
 
-	InspectModelRotateRightButton:Point("TOPLEFT", InspectModelRotateLeftButton, "TOPRIGHT", 3, 0)
+	-- InspectModelRotateRightButton:Point("TOPLEFT", InspectModelRotateLeftButton, "TOPRIGHT", 3, 0)
 
 	InspectFrameTab1:Point("CENTER", InspectFrame, "BOTTOMLEFT", 54, 62)
 	InspectFrameTab2:Point("LEFT", InspectFrameTab1, "RIGHT", -15, 0)
@@ -179,12 +181,18 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 
 	InspectTalentFrameBackgroundTopLeft:Point("TOPLEFT", 21, -77)
 
-	InspectTalentFrameTab1:Point("TOPLEFT", 17, -40)
+	InspectTalentFrameTab1:ClearAllPoints()
+	InspectTalentFrameTab1:SetPoint("BOTTOMLEFT", InspectFrameInset, "TOPLEFT", 10, 0)
 
-	InspectTalentFrameScrollFrame:Width(298)
-	InspectTalentFrameScrollFrame:Point("TOPRIGHT", -66, -77)
+	-- InspectTalentFrameScrollFrame:Width(298)
+	-- InspectTalentFrameScrollFrame:Point("TOPRIGHT", -66, -77)
+	-- InspectTalentFrameScrollFrame:ClearAllPoints()
+	-- InspectTalentFrameScrollFrame:Point("CENTER", -7, -28)
+	InspectTalentFrameBackgroundTopLeft:ClearAllPoints() -- 4 текстуры жесть я считаю
+	InspectTalentFrameBackgroundTopLeft:SetPoint("TOPLEFT", 10, -63)
+
 
 	S:HandleScrollBar(InspectTalentFrameScrollFrameScrollBar)
-	InspectTalentFrameScrollFrameScrollBar:Point("TOPLEFT", InspectTalentFrameScrollFrame, "TOPRIGHT", 8, -18)
-	InspectTalentFrameScrollFrameScrollBar:Point("BOTTOMLEFT", InspectTalentFrameScrollFrame, "BOTTOMRIGHT", 8, 15)
+	InspectTalentFrameScrollFrameScrollBar:Point("TOPLEFT", InspectTalentFrameScrollFrame, "TOPRIGHT", 10, -18)
+	InspectTalentFrameScrollFrameScrollBar:Point("BOTTOMLEFT", InspectTalentFrameScrollFrame, "BOTTOMRIGHT", 10, 15)
 end)
