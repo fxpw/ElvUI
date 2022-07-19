@@ -1,4 +1,4 @@
-name: lint
+name: LuaTest
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - '**.lua'
 
 jobs:
-  lint:
+  LuaTest:
     runs-on: ubuntu-latest
 
     env:
