@@ -140,10 +140,10 @@ end
 -- 		-- print("da")
 -- 	end
 -- end
-
-local displayString = ""
+-- 
+-- local displayString = ""
 local function ValueColorUpdate(hex)
-	displayString = join("", "|cffFFFFFF%s:|r ")
+	-- displayString = join("", "|cffFFFFFF%s:|r ")
 
 	if lastPanel ~= nil then
 		OnEvent(lastPanel)
