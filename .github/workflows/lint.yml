@@ -62,11 +62,3 @@ jobs:
 
     - name: Luacheck
       run: .luarocks/bin/luacheck . -q
-
-    - name: Notify on Failure
-      if: failure()
-      env:
-        BUILD_STATUS: ${{ job.status }}
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        DISCORD_WEBHOOK_SCRIPT: ${{ secrets.DISCORD_WEBHOOK_SCRIPT }}
-      run: curl -s $DISCORD_WEBHOOK_SCRIPT | bash
