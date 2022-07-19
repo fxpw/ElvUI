@@ -46,8 +46,7 @@ function D:ModifyErrorFrame()
 	local BUTTON_WIDTH = 75
 	local BUTTON_HEIGHT = 24
 	local BUTTON_SPACING = 2
-	
-	ScriptErrorsFrame.firstButton = firstButton
+
 	-- Add a first button
 	local firstButton = CreateFrame("Button", nil, ScriptErrorsFrame, "UIPanelButtonTemplate")
 	firstButton:SetPoint("BOTTOM", -((BUTTON_WIDTH + BUTTON_WIDTH/2) + (BUTTON_SPACING * 4)), 8)

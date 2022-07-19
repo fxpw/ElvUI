@@ -3,7 +3,7 @@ local M = E:GetModule("Minimap")
 local Reminder = E:GetModule("ReminderBuffs")
 
 --Lua functions
-local match, utf8sub = string.match, string.utf8sub
+local utf8sub = string.utf8sub
 --WoW API / Variables
 local CreateFrame = CreateFrame
 local ToggleCharacter = ToggleCharacter

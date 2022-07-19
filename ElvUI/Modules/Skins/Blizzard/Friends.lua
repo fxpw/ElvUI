@@ -3,17 +3,17 @@ local S = E:GetModule("Skins")
 
 --Lua functions
 local _G = _G
-local ipairs = ipairs
+-- local ipairs = ipairs
 local unpack = unpack
-local floor = math.floor
+-- local floor = math.floor
 --WoW API / Variables
-local GetGuildRosterInfo = GetGuildRosterInfo
-local GetNumRaidMembers = GetNumRaidMembers
-local GetNumWhoResults = GetNumWhoResults
+-- local GetGuildRosterInfo = GetGuildRosterInfo
+-- local GetNumRaidMembers = GetNumRaidMembers
+-- local GetNumWhoResults = GetNumWhoResults
 local GetWhoInfo = GetWhoInfo
-local PlaySound = PlaySound
+-- local PlaySound = PlaySound
 
-local GUILDMEMBERS_TO_DISPLAY = GUILDMEMBERS_TO_DISPLAY
+-- local GUILDMEMBERS_TO_DISPLAY = GUILDMEMBERS_TO_DISPLAY
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local WHOS_TO_DISPLAY = WHOS_TO_DISPLAY
 

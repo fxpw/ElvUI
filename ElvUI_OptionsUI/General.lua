@@ -730,7 +730,6 @@ E.Options.args.general = {
 					desc = "!!!!!!! Позволяет открывать настройки в бою, только для продвинутых юзеров !!!!!!!",
 					-- disabled = function() return not E.private.general.lootRoll end
 				},
-			
 			}
 		}
 	}

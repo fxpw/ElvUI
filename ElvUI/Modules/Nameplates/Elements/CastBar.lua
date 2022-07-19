@@ -7,7 +7,7 @@ local unpack = unpack
 local abs = math.abs
 --WoW API / Variables
 local CreateFrame = CreateFrame
-local GetTime = GetTime
+-- local GetTime = GetTime
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
 

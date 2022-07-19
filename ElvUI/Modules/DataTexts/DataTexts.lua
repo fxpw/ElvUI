@@ -194,7 +194,7 @@ function DT:FadeHook()
 	for panelName, panel in pairs(DT.RegisteredPanels) do
 		for i = 1, panel.numPoints do
 			if framesForHook[panelName] then
-				for k,button in pairs({panel:GetChildren()}) do
+				for _,button in pairs({panel:GetChildren()}) do
 					if not button.name then
 						button:SetScript("OnEnter",FadeIn)
 						button:SetScript("OnLeave",FadeOut)

@@ -102,9 +102,6 @@ local function LoadSkin()
 		-- путеводитель
 		S:HandleButton(MountDisplayModelSceneEJFrameOpenEJButton)
 		S:HandleButton(PetJournalPetDisplayModelSceneEJFrameOpenEJButton)
-
-		
-
 		-- pet tab
 		S:HandleRotateButton(PetJournalPetDisplayModelSceneRotateLeftButton)
 		S:HandleRotateButton(PetJournalPetDisplayModelSceneRotateRightButton)
@@ -120,7 +117,7 @@ local function LoadSkin()
 		--pet tab ListScrollFrame
 		for _, button in ipairs(PetJournal.ListScrollFrame.buttons) do
 
-			
+
 
 			local highlight = button:GetHighlightTexture()
 			button:SetHighlightTexture(E.Media.Textures.Highlight)
@@ -132,47 +129,25 @@ local function LoadSkin()
 
 			button.Icon:SetDrawLayer("BORDER")
 			S:HandleIcon(button.Icon)
-			
+
 			button.DragButton.Favorite:SetParent(button.backdrop)
 
-			
+
 		end
 
-		-- right frame
+	-- right frame
+	PetJournal.LeftInset:StripTextures()
+	PetJournal.RightInset:StripTextures()
+	PetJournal.PetDisplay:StripTextures()
+	PetJournal.PetDisplay.ShadowOverlay:Hide()
+	--pet count
+	PetJournal.PetCount:StripTextures()
+	-- pet icon
+	S:HandleIcon(PetJournal.PetDisplay.InfoButton.Icon)
+	S:HandleItemButton(_G.PetJournal.SummonRandomFavoritePetButton, true)
 
-		PetJournal.LeftInset:StripTextures()
-		PetJournal.RightInset:StripTextures()
-		PetJournal.PetDisplay:StripTextures()
-		PetJournal.PetDisplay.ShadowOverlay:Hide()
 
-		--pet count
-		PetJournal.PetCount:StripTextures()
 
-		-- pet icon
-		S:HandleIcon(PetJournal.PetDisplay.InfoButton.Icon)
-
-		-- function fcngsirusjournal_onshow()
-		-- 	PetJournal:SetScript("OnUpdate",function()
-		-- 		if PetJournalSummonRandomFavoriteButton ~= nil then 
-		-- 			S:HandleItemButton(PetJournalSummonRandomFavoriteButton)
-		-- 		end
-		-- 						end)
-		-- end
-										
-
-		-- PetJournal:HookScript("OnUpdate",fcngsirusjournal_onshow)
-		-- S:SkinProfessionButton(PetJournal.SummonRandomFavoritePetButton)
-			S:HandleItemButton(_G.PetJournal.SummonRandomFavoritePetButton, true)
-			-- E:RegisterCooldown(_G.PetJournalSummonRandomFavoritePetButtonCooldown)
-			-- _G.PetJournalSummonRandomFavoritePetButtonCooldown:SetAllPoints(_G.PetJournalSummonRandomFavoritePetButtonIconTexture)
-		-- S:HandleIcon(PetJournal.SummonRandomFavoritePetButton.Icon)
-		-- PetJournal.SummonRandomFavoritePetButton.Border:StripTextures()
-		-- S:HandleIcon(PetJournal.SummonRandomFavoritePetButton.IconTexture)
-		-- PetJournal.SummonRandomFavoritePetButton:StripTextures()
-		-- PetJournal.SummonRandomFavoritePetButton:CreateBackdrop("Default", true)
-		-- S:HandleIcon(PetJournal.SummonRandomFavoritePetButton)
-
-		
 end
 
 S:AddCallback("Skin_Collections", LoadSkin)

@@ -126,9 +126,9 @@ function RB.CheckForTimeChest(...)
             -- print(text)
             if text and (string.match(text, "(+52 к силе заклинаний)") or string.match(text, "(+90 к силе атаки)")) then
 				local hour,mins,seconds = nil,nil,nil
-				local sh,ch = string.find(text, "%d+ час")
-				local sm,em  = string.find(text, "%d+ мин%.")
-				local sc,ec = string.find(text, "%d+ cек%.")
+				local sh,_ = string.find(text, "%d+ час")
+				local sm,_  = string.find(text, "%d+ мин%.")
+				local sc,_ = string.find(text, "%d+ cек%.")
 
 				if sh then
 					hour = string.sub(text,sh,sh+1)
@@ -170,11 +170,9 @@ function RB:CheckItemForBuffOil(...)
 		RB.chestFrame:SetOwner(WorldFrame, "ANCHOR_NONE")
 	end
 
-    RB.chestFrame:SetInventoryItem("player", 5)
-    -- RB.checkTime = GetTime()
-    -- print(RB.checkTime)
+	RB.chestFrame:SetInventoryItem("player", 5)
 	do
-    	RB.CheckForTimeChest(RB.chestFrame:GetRegions())
+		RB.CheckForTimeChest(RB.chestFrame:GetRegions())
 	end
 end
 
@@ -198,7 +196,7 @@ function RB:CheckFilterForActiveBuff(filter,...)
 		RB:CheckItemForBuffOil(...)
 		for _, spell in ipairs(filter) do
 			local spellName = GetSpellInfo(spell)
-			local name, _, texture, _, _, duration, expirationTime = UnitAura("player",spellName)
+			local name, _, texture = UnitAura("player",spellName)
 			if name then
 				return texture, 3600, RB.remainingTime + GetTime()
 			end
@@ -453,7 +451,6 @@ function RB:Initialize()
 
 	RB.remainingTime = 0
 	-- RB.checkTime = 0
-	
 	-- local f = CreateFrame("Frame",nil,UIParent)
 	-- f:RegisterEvent("UNIT_INVENTORY_CHANGED")
 	-- f:RegisterEvent("PLAYER_ENTERING_WORLD")

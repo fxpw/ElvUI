@@ -2,12 +2,12 @@ local E, L, V, P, G = unpack(ElvUI); --Import: Engine, Locales, PrivateDB, Profi
 local S = E:GetModule("Skins")
 
 --Lua functions
-local format, split = string.format, string.split
+-- local format, split = string.format, string.split
 --WoW API / Variables
-local FauxScrollFrame_GetOffset = FauxScrollFrame_GetOffset
-local GetBattlefieldScore = GetBattlefieldScore
-local IsActiveBattlefieldArena = IsActiveBattlefieldArena
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+-- local FauxScrollFrame_GetOffset = FauxScrollFrame_GetOffset
+-- local GetBattlefieldScore = GetBattlefieldScore
+-- local IsActiveBattlefieldArena = IsActiveBattlefieldArena
+-- local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
 -- S:AddCallback("Skin_WorldStateScore", function()
 -- 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.bgscore then return end

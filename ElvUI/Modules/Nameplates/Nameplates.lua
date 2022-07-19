@@ -1,6 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local NP = E:GetModule("NamePlates")
-local LSM = E.Libs.LSM
+-- local LSM = E.Libs.LSM
 NP.LSM = E.Libs.LSM
 local LAI = E.Libs.LAI
 --Lua functions
@@ -35,8 +35,8 @@ local UnitIsUnit = UnitIsUnit
 local UnitReaction = UnitReaction
 local UnitName = UnitName
 local WorldFrame = WorldFrame
-local utf8sub = string.utf8sub
-local utf8lower = string.utf8lower
+-- local utf8sub = string.utf8sub
+-- local utf8lower = string.utf8lower
 local WorldGetChildren = WorldFrame.GetChildren
 local WorldGetNumChildren = WorldFrame.GetNumChildren
 

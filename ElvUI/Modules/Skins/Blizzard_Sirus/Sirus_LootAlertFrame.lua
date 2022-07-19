@@ -39,7 +39,7 @@ local function LoadSkin()
 		button.IconBorder:SetAlpha(0)
 		hooksecurefunc(button.ItemName, "SetTextColor", function(_, r, g, b) iconBackdrop:SetBackdropBorderColor(r, g, b) end)
 	end
-	
+
 --[[
 	function TestAlert()
 		local name, link, quality, _, _, _, _, _, _, texture, _ = GetItemInfo(100152)

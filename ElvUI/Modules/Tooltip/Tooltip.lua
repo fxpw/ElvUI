@@ -15,8 +15,8 @@ local InCombatLockdown = InCombatLockdown
 local IsShiftKeyDown = IsShiftKeyDown
 local IsControlKeyDown = IsControlKeyDown
 local IsAltKeyDown = IsAltKeyDown
-local GetInventoryItemLink = GetInventoryItemLink
-local GetInventorySlotInfo = GetInventorySlotInfo
+-- local GetInventoryItemLink = GetInventoryItemLink
+-- local GetInventorySlotInfo = GetInventorySlotInfo
 local UnitExists = UnitExists
 local CanInspect = CanInspect
 local NotifyInspect = NotifyInspect
@@ -82,11 +82,11 @@ function TT:GetItemLvL(unit, giud)
 		return TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL
 	end
 end
-local inventorySlots = {
-	"HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "WristSlot",
-	"HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot",
-	"Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot"
-}
+-- local inventorySlots = {
+-- 	"HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "WristSlot",
+-- 	"HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot",
+-- 	"Trinket0Slot", "Trinket1Slot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot"
+-- }
 
 local updateUnitModifiers = {
 	["LSHIFT"] = true,
@@ -360,7 +360,6 @@ function TT:INSPECT_TALENT_READY(event, unit)
 	-- if itemLevel then
 	-- 	inspectCache[self.lastGUID].itemLevel = itemLevel
 	-- end
--- 
 	GameTooltip:SetUnit(unit)
 end
 

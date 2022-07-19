@@ -45,12 +45,12 @@ local function updateMiniGames()
 				if quality then
 					local a = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i.."IconTexture"]
 					local name = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i.."Name"]
-					
+
 					if butt.Icon then
 						butt.Icon:StripTextures()
 						butt.Icon:CreateBackdrop("Transparent")
-						
-						
+
+
 						butt.Icon:SetTexCoord(unpack(E.TexCoords))
 						butt.Icon:SetDrawLayer("BORDER")
 
@@ -1030,7 +1030,6 @@ local function LoadSkin()
 		end
 
 		updateMiniGames()
-		
 	end)
 
 	MiniGameReadyDialog:HookScript("OnShow",function()
@@ -1039,9 +1038,7 @@ local function LoadSkin()
 		S:HandleButton(MiniGameReadyDialogEnterButton)
 		S:HandleButton(MiniGameReadyDialogLeaveQueueButton)
 		S:HandleCloseButton(MiniGameReadyDialogCloseButton)
-	
 	end)
-
 	MiniGameScoreFrame:HookScript("OnShow",function()
 		MiniGameScoreFrame:StripTextures()
 		MiniGameScoreFrameInset:StripTextures()
@@ -1051,7 +1048,6 @@ local function LoadSkin()
 		S:HandleCloseButton(MiniGameScoreFrameCloseButton)
 		S:HandleButton(MiniGameScoreFrameLeaveButton)
 		S:HandleScrollBar(MiniGameScoreFrameContentScrollFrameScrollBar)
-	
 	end)
 	MiniGameReadyStatus:HookScript("OnShow",function()
 		MiniGameReadyStatus:StripTextures()

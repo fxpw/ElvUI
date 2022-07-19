@@ -623,7 +623,7 @@ function A:Initialize()
 
 	self.Initialized = true
 	self.db = E.db.auras
-	
+
 	if LBF then
 		self.LBFGroup = LBF and LBF:Group("ElvUI", "Auras")
 	end

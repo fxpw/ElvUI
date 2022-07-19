@@ -8,10 +8,10 @@ local function HookSubButtons()
 	if StoreRefreshTransmogListButton then
 		S:HandleButton(StoreRefreshTransmogListButton)
 	end
-	for k,v in pairs(StoreFrame.SubCategoryFrames or {}) do
+	for _,v in pairs(StoreFrame.SubCategoryFrames or {}) do
 		S:HandleButton(v,true)
 		v.SelectedTexture:SetTexture(.9, .8, .1, .3)
-end
+	end
 end
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.store ~= true then return end
@@ -149,8 +149,9 @@ local function LoadSkin()
 				button.Icon:SetTexture(data.Texture)
 				button.Icon:SetTexCoord(unpack(E.TexCoords))
 			else
+				local r, g, b = GetItemQualityColor(data.Quality)
 				button.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
-				button.Highlight:SetVertexColor(r, g, b, .35)
+				button.Highlight:SetVertexColor(r or 1, g or 1, b or 1, .35)
 			end
 		end
 	end
@@ -413,10 +414,7 @@ local function LoadSkin()
 	StoreReferDetailsFrame:HookScript("OnShow", function()
 		S:HandleButton(StoreReferDetailsFrameBanner1InviteFriendButton, true)
 		S:HandleCloseButton(StoreReferDetailsFrame.CloseButton)
-		
 	end)
-
-
 	-- StoreTransmogrifyFrame
 	S:HandleEditBox(StoreTransmogrifyFrame.LeftContainer.searchBox)
 
@@ -558,7 +556,7 @@ local function LoadSkin()
 
 	LootCasePreviewFrame:HookScript("OnShow",function()
 		LootCasePreviewFrame:StripTextures()
-		
+
 		LootCasePreviewFrame:CreateBackdrop("Transparent")
 		LootCasePreviewFrameScrollFrame:StripTextures()
 		LootCasePreviewFrameScrollFrame:CreateBackdrop("Transparent")
@@ -568,7 +566,7 @@ local function LoadSkin()
 		S:HandleScrollBar(LootCasePreviewFrameScrollFrameScrollBar)
 		S:HandleCloseButton(LootCasePreviewFrameCloseButton)
 		LootCasePreviewFrameCloseButton:Show()
-		for k,v in pairs(LootCasePreviewFrameScrollFrame.buttons) do 
+		for _, v in pairs(LootCasePreviewFrameScrollFrame.buttons) do
 			if v then
 				S:HandleButton(v,true)
 				v.Icon:SetTexCoord(unpack(E.TexCoords))

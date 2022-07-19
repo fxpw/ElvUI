@@ -158,13 +158,13 @@ do --this can save some main file locals
 end
 
 local ElvBlue = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
-	local Vakh = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":16:16")
-	local Dodzo = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
-	local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
-	local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
-	local NightlyBlooD = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\NightlyBlooD]], ":24:24")
+-- local Vakh = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":16:16")
+local Dodzo = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
+local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
+local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
+local NightlyBlooD = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\NightlyBlooD]], ":24:24")
 
-	local specialChatIconsSirus = {
+local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Миленький-Scourge x2 - 3.3.5a+"] = Apolexis, -- миленький а играет за бабу кста
@@ -648,7 +648,7 @@ function CH:UpdateChatTabs()
 		local chat = _G[frameName]
 		local tab = _G[format("%sTab", frameName)]
 
-		if chat:IsShown() and not (id > NUM_CHAT_WINDOWS) and (id == self.RightChatWindowID) then
+		if chat:IsShown() and (id <= NUM_CHAT_WINDOWS) and (id == self.RightChatWindowID) then
 			if self.db.panelBackdrop == "HIDEBOTH" or self.db.panelBackdrop == "LEFT" then
 				CH:SetupChatTabs(tab, fadeTabsNoBackdrop and true or false)
 			else
@@ -697,7 +697,7 @@ function CH:PositionChat(override)
 		tab.isDocked = chat.isDocked
 		tab.owner = chat
 
-		if chat:IsShown() and not (id > NUM_CHAT_WINDOWS) and id == self.RightChatWindowID then
+		if chat:IsShown() and (id <= NUM_CHAT_WINDOWS) and id == self.RightChatWindowID then
 			chat:ClearAllPoints()
 
 			if E.db.datatexts.rightChatPanel then
@@ -733,7 +733,7 @@ function CH:PositionChat(override)
 			chat:SetParent(UIParent)
 			CH:SetupChatTabs(tab, fadeUndockedTabs and true or false)
 		else
-			if id ~= 2 and not (id > NUM_CHAT_WINDOWS) then
+			if id ~= 2 and (id <= NUM_CHAT_WINDOWS) then
 				chat:ClearAllPoints()
 				if E.db.datatexts.leftChatPanel then
 					chat:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 4)

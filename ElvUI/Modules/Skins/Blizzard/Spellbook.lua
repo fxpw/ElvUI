@@ -7,7 +7,7 @@ local unpack = unpack
 --WoW API / Variables
 --local SpellBook_GetCurrentPage = SpellBook_GetCurrentPage
 --local BOOKTYPE_SPELL = BOOKTYPE_SPELL
-local MAX_SKILLLINE_TABS = MAX_SKILLLINE_TABS
+-- local MAX_SKILLLINE_TABS = MAX_SKILLLINE_TABS
 
 -- S:AddCallback("Skin_Spellbook", function()
 -- 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.spellbook then return end

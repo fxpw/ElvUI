@@ -115,7 +115,6 @@ function UF:Update_TargetFrame(frame, db)
 
 	--Portrait
 	UF:Configure_Portrait(frame)
-	
 
 	--Threat
 	UF:Configure_Threat(frame)

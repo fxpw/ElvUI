@@ -101,10 +101,10 @@ local function LoadSkin()
 
 	HeadHuntingSetRewardExternalFrame:SetParent(UIParent)
 	SkinRewardFrame(HeadHuntingSetRewardExternalFrame)
-	--SearchBox and button 
+	--SearchBox and button
 	S:HandleEditBox(HeadHuntingFrame.Container.AllTargetsPanel.SearchFrame.SearchBox)
 	S:HandleButton(HeadHuntingFrame.Container.AllTargetsPanel.SearchFrame.SearchButton)
-	HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu:StripTextures(true)	
+	HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu:StripTextures(true)
 	S:HandleButton(HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu)
 end
 

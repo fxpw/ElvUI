@@ -4,7 +4,7 @@ local DT = E:GetModule("DataTexts")
 --Lua functions
 local join = string.join
 --WoW API / Variables
-local GetCombatRatingBonus = GetCombatRatingBonus
+-- local GetCombatRatingBonus = GetCombatRatingBonus
 
 
 local BlockAmount

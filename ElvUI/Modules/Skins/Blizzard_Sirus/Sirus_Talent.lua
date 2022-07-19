@@ -307,7 +307,7 @@ local function LoadSkin()
 		S:HandleEditBox(PlayerTalentPopupFrameEditBox)
 		S:HandleEditBox(PlayerTalentPopupFrameSearchBox)
 		S:HandleScrollBar(PlayerTalentPopupFrameScrollFrameScrollBar)
-		for k,v in pairs(PlayerTalentPopupFrame.buttons) do
+		for _,v in pairs(PlayerTalentPopupFrame.buttons) do
 			v:StripTextures()
 			-- S:HandleButton(v)
 			v:StyleButton(nil, true)

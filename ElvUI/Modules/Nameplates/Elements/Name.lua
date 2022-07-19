@@ -1,15 +1,15 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local NP = E:GetModule("NamePlates")
-local UF = E:GetModule("UnitFrames")
+-- local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
-local ElvUF = E.oUF
+-- local ElvUF = E.oUF
 --Lua functions
-local format = string.format
-local gmatch = gmatch
-local gsub = gsub
-local match = string.match
-local utf8lower = string.utf8lower
-local utf8sub = string.utf8sub
+-- local format = string.format
+-- local gmatch = gmatch
+-- local gsub = gsub
+-- local match = string.match
+-- local utf8lower = string.utf8lower
+-- local utf8sub = string.utf8sub
 --WoW API / Variables
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UNKNOWN = UNKNOWN

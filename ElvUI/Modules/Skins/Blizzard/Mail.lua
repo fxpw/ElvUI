@@ -3,7 +3,7 @@ local S = E:GetModule("Skins")
 
 --Lua functions
 local _G = _G
-local ipairs = ipairs
+-- local ipairs = ipairs
 local select = select
 local unpack = unpack
 --WoW API / Variables

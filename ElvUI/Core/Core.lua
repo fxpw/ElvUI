@@ -867,8 +867,6 @@ do
 	f:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	f:RegisterEvent("PLAYER_ENTERING_WORLD")
 	f:SetScript("OnEvent", SendRecieve)
-
-	
 end
 
 local ElvUIVersions = {
@@ -1409,7 +1407,7 @@ function E:Initialize()
 		print(msg)
 	end
 
-	if not GetCVar("scriptProfile") == "1" then
+	if (not (GetCVar("scriptProfile") == "1")) then
 		collectgarbage("collect")
 	end
 end

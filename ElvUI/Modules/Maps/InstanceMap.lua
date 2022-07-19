@@ -334,7 +334,7 @@ IM.PinDB = {
 local InstanceMapDB = {
 
 	--[[ Classic Dungeons ]]--
-	
+
 	[680]={"Огненная Пропасть", 1, 15, 1},
 	[749]={"Пещеры Стенаний", 1, 17, 1},
 	[756]={"Мертвые копи", 1, 17, 1},
@@ -532,14 +532,14 @@ function IM:ShowPin(locationIndex)
 		pin.Texture:SetTexCoord(unpack(ICON_COORDS_HUB))
 	end
 
-	pin:HookScript("OnEnter", function(pin, motion)
+	pin:HookScript("OnEnter", function(pinIn, motion)
 		if (type == 1) then
-			pin.Texture:SetTexCoord(unpack(ICON_COORDS_DUNGEON_HIGHLIGHTED))
+			pinIn.Texture:SetTexCoord(unpack(ICON_COORDS_DUNGEON_HIGHLIGHTED))
 		elseif (type == 2) then
-			pin.Texture:SetTexCoord(unpack(ICON_COORDS_RAID_HIGHLIGHTED))
+			pinIn.Texture:SetTexCoord(unpack(ICON_COORDS_RAID_HIGHLIGHTED))
 		end
 
-		MapTooltip:SetOwner(pin, "ANCHOR_RIGHT")
+		MapTooltip:SetOwner(pinIn, "ANCHOR_RIGHT")
 		MapTooltip:ClearLines()
 		MapTooltip:SetScale(GetCVar("uiScale"))
 		if (#subInstanceMapIDs > 1) then
@@ -547,9 +547,9 @@ function IM:ShowPin(locationIndex)
 		end
 		for i = 1, #subInstanceMapIDs do
 			local name = InstanceMapDB[subInstanceMapIDs[i]][1]
-			local type = InstanceMapDB[subInstanceMapIDs[i]][2]
+			local typeN = InstanceMapDB[subInstanceMapIDs[i]][2]
 			local requiredLevel = InstanceMapDB[subInstanceMapIDs[i]][3]
-			local tier = InstanceMapDB[subInstanceMapIDs[i]][4]
+			-- local tier = InstanceMapDB[subInstanceMapIDs[i]][4]
 
 			--local instanceID = FindInstanceByName(name, (type == 2))
 
@@ -558,7 +558,7 @@ function IM:ShowPin(locationIndex)
 			--DumpLootTable()
 
 			MapTooltip:AddDoubleLine(string.format("|cffffffff%s|r",name), string.format("|cffff7d0a%d|r", requiredLevel))
-			if (type == 1) then
+			if (typeN == 1) then
 				MapTooltip:AddTexture(IMDunge)
 			else
 				MapTooltip:AddTexture(IMRaid)
@@ -567,11 +567,11 @@ function IM:ShowPin(locationIndex)
 		MapTooltip:Show()
 	end
 	)
-	pin:HookScript("OnLeave", function(pin)
+	pin:HookScript("OnLeave", function(pinN)
 		if (type == 1) then
-			pin.Texture:SetTexCoord(unpack(ICON_COORDS_DUNGEON))
+			pinN.Texture:SetTexCoord(unpack(ICON_COORDS_DUNGEON))
 		elseif (type == 2) then
-			pin.Texture:SetTexCoord(unpack(ICON_COORDS_RAID))
+			pinN.Texture:SetTexCoord(unpack(ICON_COORDS_RAID))
 		end
 		MapTooltip:Hide()
 	end)

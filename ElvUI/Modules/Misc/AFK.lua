@@ -83,7 +83,7 @@ local function UpdateTip(_,elapsed)
 		tipNum = random(1, #L["RandomWords"])
 
 		while tipNum == oldTipNum do
-			tipNum = random(1, #L["RandomWords"]) 
+			tipNum = random(1, #L["RandomWords"])
 		end
 		mod.AFKMode.UpdateFor:AddMessage(L["RandomWords"][tipNum], 1, 1, 1)
 		OldTip = tipNum
@@ -130,7 +130,7 @@ function mod:SetAFK(status)
 		mod.AFKMode.UpdateFor:AddMessage(L["RandomWords"][tipNum], 1, 1, 1)
 		-- mod.AFKMode.UpdateFor:AddMessage(#L["RandomWords"], 1, 1, 1)
 		mod.AFKMode.UpdateFor:SetScript("OnUpdate",UpdateTip)
-		
+
 		self.isAFK = true
 	elseif not status and self.isAFK then
 		self.AFKMode:Hide()

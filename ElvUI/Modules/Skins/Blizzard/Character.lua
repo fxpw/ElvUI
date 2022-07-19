@@ -3,8 +3,8 @@ local S = E:GetModule("Skins")
 
 --Lua functions
 local _G = _G
-local getmetatable = getmetatable
-local ipairs = ipairs
+-- local getmetatable = getmetatable
+-- local ipairs = ipairs
 local select = select
 local unpack = unpack
 --WoW API / Variables
@@ -19,9 +19,9 @@ local HasPetUI = HasPetUI
 local UnitFactionGroup = UnitFactionGroup
 local hooksecurefunc = hooksecurefunc
 
-local NUM_COMPANIONS_PER_PAGE = NUM_COMPANIONS_PER_PAGE
+-- local NUM_COMPANIONS_PER_PAGE = NUM_COMPANIONS_PER_PAGE
 local NUM_FACTIONS_DISPLAYED = NUM_FACTIONS_DISPLAYED
-local NUM_GEARSET_ICONS_PER_ROW = NUM_GEARSET_ICONS_PER_ROW
+-- local NUM_GEARSET_ICONS_PER_ROW = NUM_GEARSET_ICONS_PER_ROW
 local find = string.find
 -- S:AddCallback("Skin_Character", function()
 -- 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.character then return end

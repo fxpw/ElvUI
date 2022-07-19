@@ -4,15 +4,15 @@ local DT = E:GetModule("DataTexts")
 local EP = LibStub("LibElvUIPlugin-1.0")
 
 --Lua functions
-local format, join = string.format, string.join
+local  join = string.join
 
 --WoW API / Variables
 
 local ToggleTalentFrame = ToggleTalentFrame
 
 
-local lastPanel, active, activeSet
-local displayString = ""
+local lastPanel
+-- local displayString = ""
 
 
 local maxSpecs
