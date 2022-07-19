@@ -64,6 +64,7 @@ local function updateMiniGames()
 				end
 			else
 				butt.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
+				local name = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i.."Name"]
 				name:SetTextColor(1, 1, 1)
 			end
 		end

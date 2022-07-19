@@ -28,7 +28,7 @@ local function LoadSkin()
 	end
 	--optframes
 --		local optionFrames = {
---		
+--
 --		}
 --		for _, frame in ipairs(optionFrames) do
 --			frame = _G[frame]

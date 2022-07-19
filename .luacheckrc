@@ -43,7 +43,16 @@ ignore = {
 
 globals = {
 
-
+	--fonts 
+	"GameFontNormal9",
+    "GameFontNormal11",
+    "GameFontNormal12",
+    "GameFontNormal13",
+    "GameFontNormal14",
+    "GameFontNormal17",
+    "Fancy15Font",
+    "Fancy16Font",
+    "Fancy17Font",
 	--CFunctions
 	"C_CacheInstance",
 	"C_Timer",
@@ -56,6 +65,7 @@ globals = {
 	--chat
 	"ChatUrlHyperlink_OnClick",
 	-- ElvUI
+	"displayString",
 	"AlertFrameHolder",
 	"AlertFrameMover",
 	"ArenaHeaderMover",
@@ -42198,6 +42208,7 @@ globals = {
 	"ClassTrainerSubSkillName",
 	"ClassTrainerTrainButtonText",
 	--Undefined vars
+	"MinimapRightClickMenu",
 	"DeathRecapFrame",
 	"ExtraActionBarFrame",
 	"OldTip",
@@ -42331,6 +42342,7 @@ globals = {
 	"RatedBattlegroundFrame",
 	"RatedBattlegroundFrame",
 	"ConquestTooltip",
+	"PVPLadderFrameCloseButton",
 	"PVPUI_ArenaTeamDetails",
 	"PVPUI_ArenaTeamDetails",
 	"PVPUI_ArenaTeamDetailsHbar",
@@ -42541,7 +42553,7 @@ globals = {
 	"AuctionHouseFrameItemSellFramePriceInputMoneyInputFrameSilverBox",
 	"AuctionHouseFrameItemSellFramePriceInput",
 	"AuctionHouseFrameItemSellFramePriceInputMoneyInputFrameSilverBoxIcon",
-	"AucionHouseFrameItemSellFrameSecondaryPriceInputMoneyInputFrameGoldBox",
+	"AuctionHouseFrameItemSellFrameSecondaryPriceInputMoneyInputFrameGoldBox",
 	"AuctionHouseFrameItemSellFrameSecondaryPriceInput",
 	"AuctionHouseFrameItemSellFrameSecondaryPriceInput",
 	"AuctionHouseFrameItemSellFrameSecondaryPriceInputMoneyInputFrameSilverBox",

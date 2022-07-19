@@ -1,7 +1,7 @@
 
 local E, L, V, P, G = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local DT = E:GetModule("DataTexts")
-local EP = LibStub("LibElvUIPlugin-1.0")
+-- local EP = LibStub("LibElvUIPlugin-1.0")
 
 --Lua functions
 local  join = string.join
@@ -12,7 +12,7 @@ local ToggleTalentFrame = ToggleTalentFrame
 
 
 local lastPanel
--- local displayString = ""
+
 
 
 local maxSpecs
@@ -141,7 +141,7 @@ end
 -- 	end
 -- end
 
-
+local displayString = ""
 local function ValueColorUpdate(hex)
 	displayString = join("", "|cffFFFFFF%s:|r ")
 

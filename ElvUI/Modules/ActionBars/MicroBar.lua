@@ -4,7 +4,7 @@ local AB = E:GetModule("ActionBars")
 --Lua functions
 local _G = _G
 local unpack = unpack
-local gsub, match = string.gsub, string.match
+-- local gsub, match = string.gsub, string.match
 --WoW API / Variables
 local CreateFrame = CreateFrame
 local InCombatLockdown = InCombatLockdown

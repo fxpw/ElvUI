@@ -153,7 +153,7 @@ local function LoadSkin()
 
 	skinStatusBar(WardrobeCollectionFrameProgressBar)
 
-	--buttons top 
+	--buttons top
 	-- S:HandleButton(WardrobeCollectionFrameItemsCollectionFrameSlotsFrameSlotButton1)
 	local function stripbutton_onup()
 		S:HandleButton(WardrobeCollectionFrameFilterButton)

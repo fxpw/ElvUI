@@ -10,7 +10,7 @@ local unpack = unpack
 --WoW API / Variables
 local GetCurrencyListInfo = GetCurrencyListInfo
 local GetInventoryItemQuality = GetInventoryItemQuality
-local GetInventoryItemTexture = GetInventoryItemTexture
+-- local GetInventoryItemTexture = GetInventoryItemTexture
 local GetItemInfo = GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local GetNumFactions = GetNumFactions
