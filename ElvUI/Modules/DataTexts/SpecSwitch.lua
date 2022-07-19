@@ -12,7 +12,7 @@ local ToggleTalentFrame = ToggleTalentFrame
 
 
 local lastPanel
-
+local displayString = ""
 
 
 local maxSpecs
@@ -46,9 +46,9 @@ local function OnEvent(self, event)
 	local name ,texture = C_Talent.GetTalentGroupSettings(activeSpec)
 
 	if specName == "None" then
-		self.text:SetFormattedText("%s", "Без специализации")
+		self.text:SetFormattedText(displayString, "Без специализации")
 	else
-		self.text:SetFormattedText("%s %s", AddTexture(texture and texture or talent), name and name or specName)
+		self.text:SetFormattedText("%s"..displayString, AddTexture(texture and texture or talent), name and name or specName)
 	end
 
 end
@@ -128,22 +128,8 @@ local function OnMouseWheel(self,delta)
 
 end
 
-
-
--- local function OnUpdate(self, elapsed)
--- 	timeSinceUpdate = timeSinceUpdate + elapsed
-
--- 	if timeSinceUpdate > 0.03333 then
--- 		timeSinceUpdate = 0
--- 		-- DT.tooltip:Hide()
--- 		-- OnEnter(self)
--- 		-- print("da")
--- 	end
--- end
--- 
--- local displayString = ""
 local function ValueColorUpdate(hex)
-	-- displayString = join("", "|cffFFFFFF%s:|r ")
+	displayString = join("", "|cffFFFFFF%s:|r ")
 
 	if lastPanel ~= nil then
 		OnEvent(lastPanel)
