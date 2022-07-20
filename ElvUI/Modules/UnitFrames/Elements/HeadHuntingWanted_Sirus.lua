@@ -7,11 +7,37 @@ local tinsert = table.insert
 local frames = {}
 
 local event = CreateFrame("Frame")
-local HeadHuntingWantedFrameMixin = {}
-function HeadHuntingWantedFrameMixin:OnLoad()
-	self:RegisterEventListener()
-end
-function HeadHuntingWantedFrameMixin:ASMSG_HEADHUNTING_IS_PLAYER_WANTED(msg)
+-- local HeadHuntingWantedFrameMixin = {}
+-- function HeadHuntingWantedFrameMixin:OnLoad()
+-- 	-- if self.RegisterEventListener then
+-- 		self:RegisterEventListener()
+-- 	-- end
+-- end
+-- function HeadHuntingWantedFrameMixin:ASMSG_HEADHUNTING_IS_PLAYER_WANTED(msg)
+-- 	local wantedStorage 	= C_CacheInstance:Get("ASMSG_HEADHUNTING_IS_PLAYER_WANTED", {})
+-- 	local messageStorage 	= C_Split(msg, ",")
+-- 	local GUID 				= tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.GUID])
+-- 	local isWanted 			= messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.ISWANTED] and tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.ISWANTED])
+
+-- 	if not isWanted then
+-- 		return
+-- 	end
+
+-- 	wantedStorage[GUID] = isWanted == 1
+
+-- 	for _, frame in ipairs(frames) do
+-- 		UF:Update_HeadHuntingWanted(frame, true)
+-- 	end
+-- end
+-- Mixin(event, HeadHuntingWantedFrameMixin)
+-- do
+-- 	event:OnLoad()
+-- end
+event:RegisterEvent("CHAT_MSG_ADDON")
+
+event:SetScript("OnEvent",function(a1, prefix, eventIn, msg, sender)
+	if not eventIn == "ASMSG_HEADHUNTING_IS_PLAYER_WANTED" then return end
+
 	local wantedStorage 	= C_CacheInstance:Get("ASMSG_HEADHUNTING_IS_PLAYER_WANTED", {})
 	local messageStorage 	= C_Split(msg, ",")
 	local GUID 				= tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.GUID])
@@ -20,16 +46,13 @@ function HeadHuntingWantedFrameMixin:ASMSG_HEADHUNTING_IS_PLAYER_WANTED(msg)
 	if not isWanted then
 		return
 	end
-
+	if not GUID then return end
 	wantedStorage[GUID] = isWanted == 1
 
 	for _, frame in ipairs(frames) do
 		UF:Update_HeadHuntingWanted(frame, true)
 	end
-end
-Mixin(event, HeadHuntingWantedFrameMixin)
-event:OnLoad()
-
+end)
 local function PostUpdate(frame, e)
 	if e == "OnShow" or e == "PLAYER_TARGET_CHANGED" then
 		UF:Update_HeadHuntingWanted(frame)

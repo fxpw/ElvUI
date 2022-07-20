@@ -149,9 +149,9 @@ local function LoadSkin()
 				button.Icon:SetTexture(data.Texture)
 				button.Icon:SetTexCoord(unpack(E.TexCoords))
 			else
-				local r, g, b = GetItemQualityColor(data.Quality)
+				-- local r, g, b = GetItemQualityColor(data.Quality)
 				button.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
-				button.Highlight:SetVertexColor(r or 1, g or 1, b or 1, .35)
+				button.Highlight:SetVertexColor(1, 1, 1, .35)
 			end
 		end
 	end

@@ -55,6 +55,7 @@ function UF:Construct_PlayerFrame(frame)
 	frame.PvPIndicator = self:Construct_PvPIcon(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
+	-- frame.HeadHuntingWantedFrame = self:Construct_HeadHuntingWanted(frame)
 	frame.customTexts = {}
 
 	frame:Point("BOTTOMLEFT", E.UIParent, "BOTTOM", -413, 68) --Set to default position
