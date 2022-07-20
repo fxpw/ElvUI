@@ -35,24 +35,6 @@ local event = CreateFrame("Frame")
 -- end
 event:RegisterEvent("CHAT_MSG_ADDON")
 
-
-local function PostUpdate(frame, e)
-	if e == "OnShow" or e == "PLAYER_TARGET_CHANGED" then
-		UF:Update_HeadHuntingWanted(frame)
-	end
-end
-
-function UF:Construct_HeadHuntingWanted(frame)
-	frame.PostUpdate = PostUpdate
-
-	local wantedFrame = CreateFrame("PlayerModel", nil, frame.RaisedElementParent)
-	wantedFrame:SetSize(100, 100)
-	wantedFrame:SetPoint("CENTER", frame.Health)
-
-	tinsert(frames, frame)
-	return wantedFrame
-end
-
 function UF:Update_HeadHuntingWanted(frame, dontSendRequest)
 	local isWanted
 	if frame.unit and UnitExists(frame.unit) and UnitIsPlayer(frame.unit) then
@@ -75,6 +57,24 @@ function UF:Update_HeadHuntingWanted(frame, dontSendRequest)
 		frame.HeadHuntingWantedFrame:Hide()
 	end
 end
+local function PostUpdate(frame, e)
+	if e == "OnShow" or e == "PLAYER_TARGET_CHANGED" then
+		UF:Update_HeadHuntingWanted(frame)
+	end
+end
+
+function UF:Construct_HeadHuntingWanted(frame)
+	frame.PostUpdate = PostUpdate
+
+	local wantedFrame = CreateFrame("PlayerModel", nil, frame.RaisedElementParent)
+	wantedFrame:SetSize(100, 100)
+	wantedFrame:SetPoint("CENTER", frame.Health)
+
+	tinsert(frames, frame)
+	return wantedFrame
+end
+
+
 event:SetScript("OnEvent",function(a1, prefix, eventIn, msg, sender)
 	if not eventIn == "ASMSG_HEADHUNTING_IS_PLAYER_WANTED" then return end
 
