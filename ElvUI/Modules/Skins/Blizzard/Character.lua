@@ -25,7 +25,6 @@ local NUM_FACTIONS_DISPLAYED = NUM_FACTIONS_DISPLAYED
 local find = string.find
 -- S:AddCallback("Skin_Character", function()
 -- 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.character then return end
-
 -- 	-- CharacterFrame
 -- 	CharacterFrame:StripTextures(true)
 -- 	CharacterFrame:CreateBackdrop("Transparent")

@@ -42289,6 +42289,17 @@ globals = {
 	"GuildRecruitmentCommentInputFrameScrollFrame",
 	"GuildRecruitmentCommentInputFrame",
 	"GuildFactionFrame",
+	"LookingForGuildFrame",
+	"LookingForGuildFrameCloseButton",
+	"LookingForGuildFrameOptionsListSearch",
+	"LookingForGuildFrameOptionsListFilterDropdown",
+	"LookingForGuildFrameOptionsListSizeDropdown",
+	"LookingForGuildFrameOptionsListSearchBox",
+	"LookingForGuildFrameOptionsListSearch",
+	"LookingForGuildFrameOptionsListSearch",
+	"LookingForGuildFrameOptionsListSearchBox",
+	"LookingForGuildFrameOptionsListSearchBox",
+	"LookingForGuildFrameInsetFrame",
 	--sirus help
 	"HelpFrameGMTalkStuck",
 	-- sirus collections
@@ -42380,6 +42391,11 @@ globals = {
 	"MiniGameScoreFrameContentScrollFrameScrollBar",
 	"MiniGameReadyStatus",
 	"MiniGameReadyStatusCloseButton",
+	"BattlegroundInviteFrame",
+	"BattlegroundInviteFramePopupFrameEnterButton",
+	"WorldStateTopCenterFrame",
+	"WorldStateTopCenterFrameRightBarStatusBar",
+	"WorldStateTopCenterFrameLeftBarStatusBar",
 	--sirus mail 
 	"OpenAllMailButton",
 	"AdditionalMailFunctionalButton",
@@ -42839,4 +42855,5 @@ globals = {
 	"SocialToastMover",
 	"GetUnitRatedBattlegroundRankInfo",
 	"EventHandler",
+	
 }
