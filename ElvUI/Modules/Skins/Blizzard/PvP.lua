@@ -152,4 +152,47 @@ S:AddCallback("Skin_PvP", function()
 	BattlefieldFrameGroupJoinButton:Point("RIGHT", BattlefieldFrameJoinButton, "LEFT", -3, 0)
 	BattlefieldFrameJoinButton:Point("RIGHT", BattlefieldFrameCancelButton, "LEFT", -3, 0)
 	BattlefieldFrameCancelButton:Point("CENTER", BattlefieldFrame, "TOPLEFT", 302, -417)
+
+	BattlegroundInviteFrame:HookScript("OnShow",function(self)
+		S:HandleButton(BattlegroundInviteFramePopupFrameEnterButton);
+	end)
+	WorldStateTopCenterFrame:HookScript("OnShow",function(self)
+
+		local bars = {
+			"WorldStateTopCenterFrameRightBar",
+			"WorldStateTopCenterFrameLeftBar",
+		}
+		for _, bar in ipairs(bars) do
+			bar = _G[bar]
+			if bar then
+				bar.BorderCenter:StripTextures()
+				bar.BorderLeft:StripTextures()
+				bar.BorderRight:StripTextures()
+				bar:SetSize(99,15)
+				-- bar:CreateBackdrop("Transparent")
+				-- bar.backdrop:SetAllPoints(bar.BG)
+				bar.BG:StripTextures()
+				-- bar.BarFillTexture:SetTexture(E.media.normTex)
+				bar.BarFillTexture:SetSize(99,15)
+				-- PVPQueueFrameCapTopFrameStatusBar.BarFillTexture
+				bar.NormalTexture =  CreateFrame("StatusBar", "$parentStatusBar", bar)
+				-- bar.NormalTexture:SetInside()
+				bar.NormalTexture:SetFrameLevel(bar.NormalTexture:GetFrameLevel() - 1)
+				bar.NormalTexture:SetStatusBarTexture(E.media.normTex)
+				bar.NormalTexture:SetStatusBarColor(1, 0, 0, 1)
+				bar.NormalTexture:SetAllPoints(bar.BarFillTexture)
+				bar.NormalTexture.parent = bar
+				E:RegisterStatusBar(bar.NormalTexture)
+			end
+		end
+		WorldStateTopCenterFrameRightBarStatusBar:SetStatusBarColor(1, 0, 0, 1)
+		WorldStateTopCenterFrameLeftBarStatusBar:SetStatusBarColor(0.2,0.2,1, 1)
+		-- /run WorldStateTopCenterFrame:Show()
+		-- /run WorldStateTopCenterFrameRightBar.BarFillTexture:GetVertexColor()
+		-- WorldStateTopCenterFrame.RightBar.BarFillTexture:SetColorTexture(1,0,0)
+		-- WorldStateTopCenterFrameLeftBar.BarFillTexture.SetColorTexture(0.2,0.2,1)
+		-- /run for k,v in pairs(WorldStateTopCenterFrameRightBar) do print (k,v) end
+		-- S:HandleStatusBar(WorldStateTopCenterFrameRightBarSubLayer,{1,0,0})
+		-- S:HandleStatusBar(WorldStateTopCenterFrameLeftBarSubLayer,{0.2,0.2,1})
+	end)
 end)

@@ -21,7 +21,7 @@ local function LoadSkin()
 	GuildXPBar:CreateBackdrop()
 	GuildXPBar.backdrop:SetOutside(GuildXPBarBG)
 
-	for i = 1, 4 do
+	for i = 1, 5 do
 		local tab = _G["GuildFrameRightTab"..i]
 		if i == 1 then
 			tab:Point("TOPLEFT", GuildFrame, "TOPRIGHT", -E.Border, -36)
@@ -138,126 +138,126 @@ local function LoadSkin()
 	S:HandleButton(CloseButton2)
 
 	--controltab
-		--frame
-			GuildControlPopupFrame:StripTextures()
-			GuildControlPopupFrame:SetTemplate("Transparent")
-			GuildControlPopupFrameCheckboxes:StripTextures()
+	--frame
+		GuildControlPopupFrame:StripTextures()
+		GuildControlPopupFrame:SetTemplate("Transparent")
+		GuildControlPopupFrameCheckboxes:StripTextures()
 
 
-		-- ddb
+	-- ddb
 
-			S:HandleDropDownBox(GuildControlPopupFrameDropDown,200)
-			GuildControlPopupFrameDropDown:Height(30)
-		--editbox
+		S:HandleDropDownBox(GuildControlPopupFrameDropDown,200)
+		GuildControlPopupFrameDropDown:Height(30)
+	--editbox
 
-			S:HandleEditBox(GuildControlPopupFrameEditBox)
-			GuildControlPopupFrameEditBox:Width(100)
-			GuildControlPopupFrameEditBox:Height(25)
-		--buttons
-			S:HandleButton(GuildControlPopupAcceptButton)
-			S:HandleButton(GuildControlPopupFrameCancelButton)
+		S:HandleEditBox(GuildControlPopupFrameEditBox)
+		GuildControlPopupFrameEditBox:Width(100)
+		GuildControlPopupFrameEditBox:Height(25)
+	--buttons
+		S:HandleButton(GuildControlPopupAcceptButton)
+		S:HandleButton(GuildControlPopupFrameCancelButton)
 
 --			S:HandleButton(GuildControlPopupFrameAddRankButton,true)
-			GuildControlPopupFrameAddRankButton:ClearAllPoints()
-			GuildControlPopupFrameAddRankButton:Point("RIGHT", GuildControlPopupFrameDropDown,"RIGHT", 10, 5)
-			GuildControlPopupFrameAddRankButton:GetNormalTexture():SetTexture(E.Media.Textures.Plus)
+		GuildControlPopupFrameAddRankButton:ClearAllPoints()
+		GuildControlPopupFrameAddRankButton:Point("RIGHT", GuildControlPopupFrameDropDown,"RIGHT", 10, 5)
+		GuildControlPopupFrameAddRankButton:GetNormalTexture():SetTexture(E.Media.Textures.Plus)
 
 
-			--S:HandleButton(GuildControlPopupFrameRemoveRankButton,true)
-			GuildControlPopupFrameRemoveRankButton:ClearAllPoints()
-			GuildControlPopupFrameRemoveRankButton:Point("RIGHT", GuildControlPopupFrameAddRankButton,"RIGHT", 20, 0)
-			GuildControlPopupFrameRemoveRankButton:GetNormalTexture():SetTexture(E.Media.Textures.Minus)
+		--S:HandleButton(GuildControlPopupFrameRemoveRankButton,true)
+		GuildControlPopupFrameRemoveRankButton:ClearAllPoints()
+		GuildControlPopupFrameRemoveRankButton:Point("RIGHT", GuildControlPopupFrameAddRankButton,"RIGHT", 20, 0)
+		GuildControlPopupFrameRemoveRankButton:GetNormalTexture():SetTexture(E.Media.Textures.Minus)
 
-		--hook
-			local function guildcontrol_OnShow(self)
-				for i = 1,13 do
-					S:HandleCheckBox(_G["GuildControlPopupFrameCheckbox"..i])
-				end
+	--hook
+		local function guildcontrol_OnShow(self)
+			for i = 1,13 do
+				S:HandleCheckBox(_G["GuildControlPopupFrameCheckbox"..i])
 			end
-			local function for17_OnShow(self)
-				for i = 15,17 do
-					S:HandleCheckBox(_G["GuildControlPopupFrameCheckbox"..i])
-				end
+		end
+		local function for17_OnShow(self)
+			for i = 15,17 do
+				S:HandleCheckBox(_G["GuildControlPopupFrameCheckbox"..i])
 			end
+		end
 
-			local gcontl = GuildControlPopupFrameCheckboxes
-				gcontl:HookScript("OnShow", guildcontrol_OnShow)
-			local gcontl2 = GuildControlPopupFrameCheckbox17
-				gcontl2:HookScript("OnShow", for17_OnShow)
+		local gcontl = GuildControlPopupFrameCheckboxes
+			gcontl:HookScript("OnShow", guildcontrol_OnShow)
+		local gcontl2 = GuildControlPopupFrameCheckbox17
+			gcontl2:HookScript("OnShow", for17_OnShow)
 
-			local function ebWithdrawGold(self)
-				S:HandleEditBox(GuildControlWithdrawGoldEditBox)
-				GuildControlWithdrawGoldEditBox:Width(70)
-				GuildControlWithdrawGoldEditBox:Height(20)
+		local function ebWithdrawGold(self)
+			S:HandleEditBox(GuildControlWithdrawGoldEditBox)
+			GuildControlWithdrawGoldEditBox:Width(70)
+			GuildControlWithdrawGoldEditBox:Height(20)
+		end
+
+		GuildControlWithdrawGold:HookScript("OnShow", ebWithdrawGold)
+
+		local function tabandhand(self)
+			for i = 1,6 do
+				_G["GuildBankTabPermissionsTab"..i]:StripTextures()
+				S:HandleTab(_G["GuildBankTabPermissionsTab"..i])
+				_G["GuildBankTabPermissionsTab"..i]:Width(35)
+				_G["GuildBankTabPermissionsTab"..i]:Height(25)
 			end
-
-			GuildControlWithdrawGold:HookScript("OnShow", ebWithdrawGold)
-
-			local function tabandhand(self)
-				for i = 1,6 do
-					_G["GuildBankTabPermissionsTab"..i]:StripTextures()
-					S:HandleTab(_G["GuildBankTabPermissionsTab"..i])
-					_G["GuildBankTabPermissionsTab"..i]:Width(35)
-					_G["GuildBankTabPermissionsTab"..i]:Height(25)
-				end
-				local xoff = -95
-				for i = 1,6 do
-					_G["GuildBankTabPermissionsTab"..i]:ClearAllPoints()
-					_G["GuildBankTabPermissionsTab"..i]:Point("TOPRIGHT", xoff, 17)
-					xoff = xoff + 21
-				end
-				S:HandleCheckBox(GuildControlTabPermissionsViewTab)
-				S:HandleCheckBox(GuildControlTabPermissionsDepositItems)
-				S:HandleCheckBox(GuildControlTabPermissionsUpdateText)
-				GuildControlWithdrawItemsEditBox:StripTextures()
-				S:HandleEditBox(GuildControlWithdrawItemsEditBox)
-				GuildControlWithdrawItemsEditBox:Width(70)
-				GuildControlWithdrawItemsEditBox:Height(20)
+			local xoff = -95
+			for i = 1,6 do
+				_G["GuildBankTabPermissionsTab"..i]:ClearAllPoints()
+				_G["GuildBankTabPermissionsTab"..i]:Point("TOPRIGHT", xoff, 17)
+				xoff = xoff + 21
 			end
+			S:HandleCheckBox(GuildControlTabPermissionsViewTab)
+			S:HandleCheckBox(GuildControlTabPermissionsDepositItems)
+			S:HandleCheckBox(GuildControlTabPermissionsUpdateText)
+			GuildControlWithdrawItemsEditBox:StripTextures()
+			S:HandleEditBox(GuildControlWithdrawItemsEditBox)
+			GuildControlWithdrawItemsEditBox:Width(70)
+			GuildControlWithdrawItemsEditBox:Height(20)
+		end
 
-			GuildControlPopupFrameTabPermissions:HookScript("OnShow", tabandhand)
-			GuildControlPopupFrameTabPermissions:StripTextures()
+		GuildControlPopupFrameTabPermissions:HookScript("OnShow", tabandhand)
+		GuildControlPopupFrameTabPermissions:StripTextures()
 --			GuildControlPopupFrameTabPermissions:SetTemplate("Transparent")
 
-			local function handlelvl(self)
-				GuildLevelFrame:StripTextures()
+		local function handlelvl(self)
+			GuildLevelFrame:StripTextures()
 --				GuildLevelFrame:SetTemplate("Transparent")
-				GuildLevelFrame:ClearAllPoints()
-				GuildLevelFrame:Point("TOPLEFT", 20, -30)
+			GuildLevelFrame:ClearAllPoints()
+			GuildLevelFrame:Point("TOPLEFT", 20, -30)
 
-			end
-			GuildFrame:HookScript("OnShow", handlelvl)
+		end
+		GuildFrame:HookScript("OnShow", handlelvl)
 
-			-- 2 tab nabor
-			GuildRecruitmentInterestFrame:StripTextures()
-			GuildRecruitmentInterestFrame:SetTemplate("Transparent")
-			GuildRecruitmentAvailabilityFrame:StripTextures()
-			GuildRecruitmentAvailabilityFrame:SetTemplate("Transparent")
-			GuildRecruitmentRolesFrame:StripTextures()
-			GuildRecruitmentRolesFrame:SetTemplate("Transparent")
-			GuildRecruitmentLevelFrame:StripTextures()
-			GuildRecruitmentLevelFrame:SetTemplate("Transparent")
-			GuildRecruitmentCommentFrame:StripTextures()
-			GuildRecruitmentCommentFrame:SetTemplate("Transparent")
-			-- buttin 2 tab
-			GuildRecruitmentListGuildButton:StripTextures()
-			S:HandleButton(GuildRecruitmentListGuildButton)
+		-- 2 tab nabor
+		GuildRecruitmentInterestFrame:StripTextures()
+		GuildRecruitmentInterestFrame:SetTemplate("Transparent")
+		GuildRecruitmentAvailabilityFrame:StripTextures()
+		GuildRecruitmentAvailabilityFrame:SetTemplate("Transparent")
+		GuildRecruitmentRolesFrame:StripTextures()
+		GuildRecruitmentRolesFrame:SetTemplate("Transparent")
+		GuildRecruitmentLevelFrame:StripTextures()
+		GuildRecruitmentLevelFrame:SetTemplate("Transparent")
+		GuildRecruitmentCommentFrame:StripTextures()
+		GuildRecruitmentCommentFrame:SetTemplate("Transparent")
+		-- buttin 2 tab
+		GuildRecruitmentListGuildButton:StripTextures()
+		S:HandleButton(GuildRecruitmentListGuildButton)
 
-			--checkbox
-			S:HandleCheckBox(GuildRecruitmentQuestButton)
-			S:HandleCheckBox(GuildRecruitmentPvPButton)
-			S:HandleCheckBox(GuildRecruitmentDungeonButton)
-			S:HandleCheckBox(GuildRecruitmentRPButton)
-			S:HandleCheckBox(GuildRecruitmentRaidButton)
-			S:HandleCheckBox(GuildRecruitmentWeekdaysButton)
-			S:HandleCheckBox(GuildRecruitmentWeekendsButton)
+		--checkbox
+		S:HandleCheckBox(GuildRecruitmentQuestButton)
+		S:HandleCheckBox(GuildRecruitmentPvPButton)
+		S:HandleCheckBox(GuildRecruitmentDungeonButton)
+		S:HandleCheckBox(GuildRecruitmentRPButton)
+		S:HandleCheckBox(GuildRecruitmentRaidButton)
+		-- S:HandleCheckBox(GuildRecruitmentWeekdaysButton)
+		-- S:HandleCheckBox(GuildRecruitmentWeekendsButton)
 
-			S:HandleCheckBox(GuildRecruitmentLevelAnyButton)
-			S:HandleCheckBox(GuildRecruitmentLevelMaxButton)
+		S:HandleCheckBox(GuildRecruitmentLevelAnyButton)
+		S:HandleCheckBox(GuildRecruitmentLevelMaxButton)
 
-			GuildRecruitmentCommentInputFrameScrollFrameFocusButton:StripTextures()
-			GuildRecruitmentCommentInputFrameScrollFrame:StripTextures()
-			GuildRecruitmentCommentInputFrame:StripTextures()
+		GuildRecruitmentCommentInputFrameScrollFrameFocusButton:StripTextures()
+		GuildRecruitmentCommentInputFrameScrollFrame:StripTextures()
+		GuildRecruitmentCommentInputFrame:StripTextures()
 
 
 
@@ -265,6 +265,39 @@ local function LoadSkin()
 		GuildFactionFrame:ClearAllPoints()
 		GuildFactionFrame:SetPoint("TOPLEFT",GuildFrame, "TOPLEFT", 0, 0)
 
+		--look for guild
+		LookingForGuildFrame:StripTextures();
+		LookingForGuildFrame:CreateBackdrop("Transparent");
+		S:HandleCloseButton(LookingForGuildFrameCloseButton);
+		S:HandleButton(LookingForGuildFrameOptionsListSearch)
+		S:HandleDropDownBox(LookingForGuildFrameOptionsListFilterDropdown)
+		S:HandleDropDownBox(LookingForGuildFrameOptionsListSizeDropdown)
+		S:HandleEditBox(LookingForGuildFrameOptionsListSearchBox)
+		LookingForGuildFrameOptionsListSearch:ClearAllPoints()
+		LookingForGuildFrameOptionsListSearch:SetPoint("BOTTOM", LookingForGuildFrameOptionsListSearchBox, "BOTTOM", -5, -25)
+
+		LookingForGuildFrameOptionsListSearchBox:SetSize(145,20)
+		LookingForGuildFrameInsetFrame:StripTextures()
+
+		local chchbx = {
+			"Tank",
+			"Healer",
+			"Dps"
+		}
+		for _,checkbox in ipairs(chchbx) do
+			local frame = _G["LookingForGuildFrameOptionsList"..checkbox.."RoleFrameCheckBox"]
+			if frame then
+				S:HandleCheckBox(frame)
+			end
+		end
+		for i = 1,15 do
+			local btn = _G["GuildRosterContainerButton"..i]
+			if btn then
+				btn.CategoryIcon:SetTexCoord(unpack(E.TexCoords))
+
+			end
+
+		end
 end
 
 S:AddCallback("Guild", LoadSkin)

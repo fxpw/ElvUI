@@ -48,7 +48,7 @@ local function OnEvent(self, event)
 	if specName == "None" then
 		self.text:SetFormattedText(displayString, "Без специализации")
 	else
-		self.text:SetFormattedText("%s"..displayString, AddTexture(texture and texture or talent), name and name or specName)
+		self.text:SetFormattedText(displayString, AddTexture(texture and texture or talent), name and name or specName)
 	end
 
 end
@@ -129,7 +129,7 @@ local function OnMouseWheel(self,delta)
 end
 
 local function ValueColorUpdate(hex)
-	displayString = join("", "|cffFFFFFF%s:|r ")
+	displayString = join(" ", "%s%s")
 
 	if lastPanel ~= nil then
 		OnEvent(lastPanel)

@@ -296,12 +296,14 @@ end
 
 local statusBarColor = {0.01, 0.39, 0.1}
 function S:HandleStatusBar(frame, color)
+	if frame.isSkinned then return end
 	frame:SetFrameLevel(frame:GetFrameLevel() + 1)
 	frame:StripTextures()
 	frame:CreateBackdrop("Transparent")
 	frame:SetStatusBarTexture(E.media.normTex)
 	frame:SetStatusBarColor(unpack(color or statusBarColor))
 	E:RegisterStatusBar(frame)
+	frame.isSkinned = true
 end
 
 function S:HandleCheckBox(frame, noBackdrop, noReplaceTextures, forceSaturation)
