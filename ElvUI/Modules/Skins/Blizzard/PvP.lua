@@ -162,37 +162,56 @@ S:AddCallback("Skin_PvP", function()
 			"WorldStateTopCenterFrameRightBar",
 			"WorldStateTopCenterFrameLeftBar",
 		}
-		for _, bar in ipairs(bars) do
+		for i, bar in ipairs(bars) do
 			bar = _G[bar]
 			if bar then
-				bar.BorderCenter:StripTextures()
-				bar.BorderLeft:StripTextures()
-				bar.BorderRight:StripTextures()
-				bar:SetSize(99,15)
-				-- bar:CreateBackdrop("Transparent")
-				-- bar.backdrop:SetAllPoints(bar.BG)
-				bar.BG:StripTextures()
-				-- bar.BarFillTexture:SetTexture(E.media.normTex)
+				bar.BorderCenter:StripTextures();
+				bar.BorderLeft:StripTextures();
+				bar.BorderRight:StripTextures();
+				bar:SetSize(99,15);
+				bar:CreateBackdrop("Transparent");
+				bar.backdrop:SetAllPoints(bar);
+				bar.BG:StripTextures();
+				bar.BG:SetSize(99,15);
+				bar.BarFillTexture:StripTextures();
+				bar.BarFillTexture:SetTexture(E.media.normTex);
 				bar.BarFillTexture:SetSize(99,15)
 				-- PVPQueueFrameCapTopFrameStatusBar.BarFillTexture
-				bar.NormalTexture =  CreateFrame("StatusBar", "$parentStatusBar", bar)
-				-- bar.NormalTexture:SetInside()
-				bar.NormalTexture:SetFrameLevel(bar.NormalTexture:GetFrameLevel() - 1)
-				bar.NormalTexture:SetStatusBarTexture(E.media.normTex)
-				bar.NormalTexture:SetStatusBarColor(1, 0, 0, 1)
-				bar.NormalTexture:SetAllPoints(bar.BarFillTexture)
-				bar.NormalTexture.parent = bar
-				E:RegisterStatusBar(bar.NormalTexture)
+				-- bar.SmartStatusBar = bar.SmartStatusBar or CreateFrame("Frame", "$parentSmartStatusBar", bar);
+				-- -- bar.SmartStatusBar:SetMinMaxValues(0,bar.maxValue)
+				-- -- bar.SmartStatusBar:SetValue(bar.value)
+				-- -- bar.SmartStatusBar:SetInside()
+				-- bar.SmartStatusBar:SetSize(99,15);
+				-- -- bar.SmartStatusBar:SetFrameLevel(bar.SmartStatusBar:GetFrameLevel() - 1)
+				-- bar.SmartStatusBar.texture = bar.SmartStatusBar:CreateTexture();
+				-- bar.SmartStatusBar.texture:SetTexture(E.media.normTex);
+				-- -- bar.SmartStatusBar:SetStatusBarTexture(E.media.normTex)
+				-- -- bar.SmartStatusBar:SetStatusBarColor(1, 0, 0, 1)
+				-- bar.SmartStatusBar:SetAllPoints(bar.backdrop);
+				if i == 1 then
+					bar.BarFillTexture:SetVertexColor(1,0,0)
+					-- bar.SmartStatusBar.texture:SetVertexColor(1,0,0)
+				-- 	bar.SmartStatusBar.texture:SetPoint("RIGHT",bar.SmartStatusBar,"RIGHT",0,0)
+				else
+					bar.BarFillTexture:SetVertexColor(0,0,1)
+				-- 	bar.SmartStatusBar.texture:SetVertexColor(0,0,1)
+				-- 	bar.SmartStatusBar.texture:SetPoint("LEFT",bar.SmartStatusBar,"LEFT",0,0)
+				end
+				-- bar.SmartStatusBar:SetScript("OnUpdate",function(self,upd)
+				-- 	if (bar.value or 0) < 0 or (bar.value or 0) > (bar.maxValue or 1000) then return end
+				-- 	if (bar.value or 1) == 0 and self.texture:IsShown() then
+				-- 		self.texture:Hide();
+				-- 	elseif not self.texture:IsShown() then
+				-- 		self.texture:Show();
+				-- 	end
+				-- 	self.texture:SetSize(99 * ((bar.value and (bar.value ~= 0 and bar.value or 1) or 500) /(bar.maxValue or 1000)), 15);
+				-- end)
+				-- bar.SmartStatusBar.parent = bar
 			end
 		end
-		WorldStateTopCenterFrameRightBarStatusBar:SetStatusBarColor(1, 0, 0, 1)
-		WorldStateTopCenterFrameLeftBarStatusBar:SetStatusBarColor(0.2,0.2,1, 1)
 		-- /run WorldStateTopCenterFrame:Show()
+		-- /dump WorldStateTopCenterFrameRightBar.BG:GetPoint()
 		-- /run WorldStateTopCenterFrameRightBar.BarFillTexture:GetVertexColor()
-		-- WorldStateTopCenterFrame.RightBar.BarFillTexture:SetColorTexture(1,0,0)
-		-- WorldStateTopCenterFrameLeftBar.BarFillTexture.SetColorTexture(0.2,0.2,1)
 		-- /run for k,v in pairs(WorldStateTopCenterFrameRightBar) do print (k,v) end
-		-- S:HandleStatusBar(WorldStateTopCenterFrameRightBarSubLayer,{1,0,0})
-		-- S:HandleStatusBar(WorldStateTopCenterFrameLeftBarSubLayer,{0.2,0.2,1})
 	end)
 end)
