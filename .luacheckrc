@@ -62,6 +62,7 @@ globals = {
 	"C_Talent",
 	"Mixin",
 
+
 	--chat
 	"ChatUrlHyperlink_OnClick",
 	-- ElvUI
@@ -42223,6 +42224,13 @@ globals = {
 	"CharacterItemLevelFrame",
 	"InspectFrameInset",
 	--sirus guild
+	"LookingForGuildFrameGuildCardsFirstCardRequestJoin",
+	"LookingForGuildFrameRequestToJoinFrame",
+	"LookingForGuildFrameRequestToJoinFrameApply",
+	"LookingForGuildFrameRequestToJoinFrameCancel",
+	"LookingForGuildFrameRequestToJoinFrameMessageFrame",
+	"LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScroll",
+	"LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScrollScrollBar",
 	"GuildMicroButtonTabard",
 	"GuildMicroButton",
 	"GetGuildCharacterCategory",
