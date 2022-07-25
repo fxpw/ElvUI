@@ -78,7 +78,7 @@ function NP:UpdateElement_CastBarOnValueChanged(value)
 		if not spell then
 			_, _, spellName = UnitChannelInfo(unit)
 		end
-		print(spellName)
+		-- print(spellName)
 		-- if unitFrame.CastBar:IsShown() then
 			-- unitFrame.CastBar.Name:FontTemplate(LSM:Fetch("font", db.font), db.fontSize, db.fontOutline)
 			-- print(unitFrame.CastBar.Name)
