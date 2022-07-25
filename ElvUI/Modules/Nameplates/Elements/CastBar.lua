@@ -72,16 +72,24 @@ function NP:UpdateElement_CastBarOnValueChanged(value)
 		end
 	end
 
-	local unit = unitFrame.unit or unitFrame.UnitName
+	local unit = unitFrame.unit or unitFrame.unitName
 	if unit then
 		local spell, _, spellName = UnitCastingInfo(unit)
 		if not spell then
 			_, _, spellName = UnitChannelInfo(unit)
 		end
-
-		unitFrame.CastBar.Name:SetText(spellName)
+		print(spellName)
+		-- if unitFrame.CastBar:IsShown() then
+			-- unitFrame.CastBar.Name:FontTemplate(LSM:Fetch("font", db.font), db.fontSize, db.fontOutline)
+			-- print(unitFrame.CastBar.Name)
+		if spellName and unitFrame.Health:IsShown() then
+			unitFrame.CastBar.Name:SetText(spellName)
+		end
+		-- end
 	else
-		unitFrame.CastBar.Name:SetText()
+		if unitFrame.Health:IsShown() then
+			unitFrame.CastBar.Name:SetText("")
+		end
 	end
 
 	unitFrame.CastBar.Icon.texture:SetTexture(self.Icon:GetTexture())

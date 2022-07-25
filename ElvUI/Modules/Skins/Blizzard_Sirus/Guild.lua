@@ -298,6 +298,38 @@ local function LoadSkin()
 			end
 
 		end
+		local tabs ={
+			"LookingForGuildFrameSearchTab",
+			"LookingForGuildFramePendingTab"
+		}
+		for k,tabToSkin in ipairs(tabs) do
+			local tab = _G[tabToSkin]
+			if k == 1 then
+				tab:Point("TOPLEFT", LookingForGuildFrame, "TOPRIGHT", -E.Border, -36)
+			end
+			tab:GetRegions():Hide()
+			tab:StyleButton()
+			tab:SetTemplate("Default", true)
+			tab.Icon:SetInside()
+			tab.Icon:SetTexCoord(unpack(E.TexCoords))
+		end
+		-- S:HandleTab(LookingForGuildFrameSearchTab)
+		-- S:HandleTab(LookingForGuildFramePendingTab)
+		S:HandleButton(LookingForGuildFrameGuildCardsFirstCardRequestJoin)
+		S:HandleButton(LookingForGuildFrameGuildCardsSecondCardRequestJoin)
+		S:HandleButton(LookingForGuildFrameGuildCardsThirdCardRequestJoin)
+
+		LookingForGuildFrameRequestToJoinFrame:HookScript("OnShow",function()
+			LookingForGuildFrameRequestToJoinFrame:StripTextures()
+			LookingForGuildFrameRequestToJoinFrame:CreateBackdrop("Transparent")
+			S:HandleButton(LookingForGuildFrameRequestToJoinFrameApply)
+			S:HandleButton(LookingForGuildFrameRequestToJoinFrameCancel)
+			LookingForGuildFrameRequestToJoinFrame.BG:Hide()
+			LookingForGuildFrameRequestToJoinFrameMessageFrame:StripTextures()
+			LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScroll:StripTextures()
+			LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScroll:CreateBackdrop("Trasparent")
+			S:HandleScrollBar(LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScrollScrollBar)
+		end)
 end
 
 S:AddCallback("Guild", LoadSkin)
