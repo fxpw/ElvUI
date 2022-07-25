@@ -33,6 +33,7 @@ local event = CreateFrame("Frame")
 -- do
 -- 	event:OnLoad()
 -- end
+
 event:RegisterEvent("CHAT_MSG_ADDON")
 event:SetScript("OnEvent",function(a1, prefix, eventIn, msg, sender)
 

@@ -42224,6 +42224,8 @@ globals = {
 	"CharacterItemLevelFrame",
 	"InspectFrameInset",
 	--sirus guild
+	"LookingForGuildFrameGuildCardsSecondCardRequestJoin",
+	"LookingForGuildFrameGuildCardsThirdCardRequestJoin",
 	"LookingForGuildFrameGuildCardsFirstCardRequestJoin",
 	"LookingForGuildFrameRequestToJoinFrame",
 	"LookingForGuildFrameRequestToJoinFrameApply",
