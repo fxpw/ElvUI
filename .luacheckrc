@@ -42322,6 +42322,7 @@ globals = {
 	"EncounterJournal",
 	--sirus store
 	"ToggleStoreFrame",
+	"ChooseItemFrame",
 	--sirus queue
 	"QueueStatusFrame",
 	"PVPQueueFrame",
@@ -42333,6 +42334,8 @@ globals = {
 	"PVPQueueFrameBattlePassToggleButton",
 	"QueueStatusMinimapButton",
 	--sirus pvp
+	"BattlegroundInviteFramePopupFrameCancelButton",
+
 	"BattlegroundBalanceProgressBar",
 	"PVPHonorFrameBottomInsetTypeDropDown",
 	"PVPHonorFrameBottomInsetBonusBattlegroundRadioButton",
