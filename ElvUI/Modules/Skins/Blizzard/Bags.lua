@@ -18,7 +18,8 @@ local GetInventoryItemID = GetInventoryItemID
 local BANK_CONTAINER = BANK_CONTAINER
 
 S:AddCallback("Skin_Bags", function()
-	if E.private.bags.enable then return end
+	-- if E.private.bags.enable then return end
+
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.bags then return end
 
 	local professionColors = {
@@ -296,5 +297,14 @@ S:AddCallback("Skin_Bags", function()
 				button.ignoreBorderColors = nil
 			end
 		end
+	end)
+	ChooseItemFrame:HookScript("OnShow",function(self)
+		for i = 1,5 do
+			local opt = _G["ChooseItemOption"..i]
+			if opt then
+				S:HandleButton(opt.OptionButton)
+			end
+		end
+		S:HandleCloseButton(self.CloseButton)
 	end)
 end)
