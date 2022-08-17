@@ -126,10 +126,10 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 
 	MacroPopupEditBox:Point("TOPLEFT", 61, -35)
 
-	MacroPopupButton1:Point("TOPLEFT", 31, -82)
+	MacroPopupButton1:Point("TOPLEFT", 31, -95)
 
-	MacroPopupScrollFrame:Size(247, 180)
-	MacroPopupScrollFrame:Point("TOPRIGHT", -32, -76)
+	MacroPopupScrollFrame:Size(243, 310)
+	MacroPopupScrollFrame:Point("TOPRIGHT", -32, -90)
 
 	MacroFrameTextBackground:Hide()
 
@@ -137,4 +137,10 @@ S:AddCallbackForAddon("Blizzard_MacroUI", "Skin_Blizzard_MacroUI", function()
 	MacroPopupScrollFrameScrollBar:Point("BOTTOMLEFT", MacroPopupScrollFrame, "BOTTOMRIGHT", 3, 19)
 
 	MacroPopupOkayButton:Point("RIGHT", MacroPopupCancelButton, "LEFT", -3, 0)
+	MacroPopupFrame:HookScript("OnShow",function(self)
+		self:ClearAllPoints()
+		self:SetPoint("LEFT",MacroFrameInset,"RIGHT",0,16)
+	end)
+	-- MacroPopupFrame:ClearAllPoints()
+	-- MacroPopupFrame:SetPoint("LEFT",MacroFrameInset,"RIGHT",0,16)
 end)

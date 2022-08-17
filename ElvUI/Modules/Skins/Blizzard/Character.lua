@@ -793,8 +793,7 @@ local Slots = {"HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", 
 	}
 
 function S:ColorItemCharacterBorder()
-	-- if  CharacterFrameTab1:IsShown() == false then return end
-	-- print(797)
+
 	for _,slot in pairs(Slots)do
 		local clink = GetInventoryItemLink("player", GetInventorySlotInfo(slot))
 		slot = _G["Character"..slot]
