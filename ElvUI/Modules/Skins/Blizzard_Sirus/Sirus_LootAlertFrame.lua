@@ -12,7 +12,7 @@ local function LoadSkin()
 		-- print(E.private.general.hideLootAlerts)
 		for  i = 1, 4 do
 			local button = _G["LootAlertButton"..i]
-			button:HookScript("OnUpdate",function()
+			button:HookScript("OnShow",function()
 				button:Hide()
 			end)
 		end
