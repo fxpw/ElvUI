@@ -81,16 +81,19 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 
 		styleButton = function(button)
 			if button.hasItem then
-				local itemID = GetInventoryItemID(InspectFrame.unit, button:GetID())
-				if itemID then
-					local _, _, quality = GetItemInfo(itemID)
+				local id = button:GetID()
+				if id then
+					local itemID = GetInventoryItemID(InspectFrame.unit, id )
+					if itemID then
+						local _, _, quality = GetItemInfo(itemID)
 
-					if not quality then
-						E:Delay(0.1, awaitCache, button)
-						return
-					elseif quality then
-						button.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
-						return
+						if not quality then
+							E:Delay(0.1, awaitCache, button)
+							return
+						elseif quality then
+							button.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
+							return
+						end
 					end
 				end
 			end

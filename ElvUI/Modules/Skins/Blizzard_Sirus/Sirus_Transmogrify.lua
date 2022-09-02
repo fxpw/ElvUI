@@ -5,7 +5,17 @@ local S = E:GetModule("Skins")
 local _G = _G
 local unpack = unpack
 --WoW API / Variables
-
+local function AllStrip(self)
+    self.TopLeft:Hide();
+    self.TopRight:Hide();
+    self.BottomLeft:Hide();
+    self.BottomRight:Hide();
+    self.TopMiddle:Hide();
+    self.MiddleLeft:Hide();
+    self.MiddleRight:Hide();
+    self.BottomMiddle:Hide();
+    self.MiddleMiddle:Hide();
+end
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.transmogrify ~= true then return end
 
@@ -95,15 +105,16 @@ local function LoadSkin()
 		-- local iconrefresh = AuctionHouseFrameCommoditiesBuyFrameItemListRefreshFrameRefreshButtonIcon:GetTexture();
 		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.Icon:SetTexture(iconrefresh)
 		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.Icon:SetDrawLayer("ARTWORK")
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.TopLeft:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.TopRight:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomLeft:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomRight:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.TopMiddle:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.MiddleLeft:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.MiddleRight:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomMiddle:Hide()
-		WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.MiddleMiddle:Hide()
+		AllStrip(WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton)
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.TopLeft:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.TopRight:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomLeft:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomRight:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.TopMiddle:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.MiddleLeft:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.MiddleRight:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomMiddle:Hide()
+		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.MiddleMiddle:Hide()
 		-- WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton.BottomLeft:Hide()
 	end
 
@@ -155,21 +166,22 @@ local function LoadSkin()
 
 	--buttons top
 	-- S:HandleButton(WardrobeCollectionFrameItemsCollectionFrameSlotsFrameSlotButton1)
-	local function stripbutton_onup()
-		S:HandleButton(WardrobeCollectionFrameFilterButton)
+	-- local function stripbutton_onup()
 		-- WardrobeCollectionFrameFilterButton:CreateBackdrop()
-		WardrobeCollectionFrame.FilterButton.TopLeft:Hide()
-		WardrobeCollectionFrame.FilterButton.TopRight:Hide()
-		WardrobeCollectionFrame.FilterButton.BottomLeft:Hide()
-		WardrobeCollectionFrame.FilterButton.BottomRight:Hide()
-		WardrobeCollectionFrame.FilterButton.TopMiddle:Hide()
-		WardrobeCollectionFrame.FilterButton.MiddleLeft:Hide()
-		WardrobeCollectionFrame.FilterButton.MiddleRight:Hide()
-		WardrobeCollectionFrame.FilterButton.BottomMiddle:Hide()
-		WardrobeCollectionFrame.FilterButton.MiddleMiddle:Hide()
+		AllStrip(WardrobeCollectionFrame.FilterButton)
+		S:HandleButton(WardrobeCollectionFrameFilterButton)
+		-- WardrobeCollectionFrame.FilterButton.TopLeft:Hide()
+		-- WardrobeCollectionFrame.FilterButton.TopRight:Hide()
+		-- WardrobeCollectionFrame.FilterButton.BottomLeft:Hide()
+		-- WardrobeCollectionFrame.FilterButton.BottomRight:Hide()
+		-- WardrobeCollectionFrame.FilterButton.TopMiddle:Hide()
+		-- WardrobeCollectionFrame.FilterButton.MiddleLeft:Hide()
+		-- WardrobeCollectionFrame.FilterButton.MiddleRight:Hide()
+		-- WardrobeCollectionFrame.FilterButton.BottomMiddle:Hide()
+		-- WardrobeCollectionFrame.FilterButton.MiddleMiddle:Hide()
 
-	end
-	WardrobeCollectionFrameFilterButton:SetScript("OnUpdate",stripbutton_onup)
+	-- end
+	-- WardrobeCollectionFrameFilterButton:SetScript("OnUpdate",stripbutton_onup)
 
 	local function clearBackdrop(self)
 		self:SetBackdropColor(0, 0, 0, 0)

@@ -1,5 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local S = E:GetModule("Sirus")
+local Skin = E:GetModule("Skins")
 -- local DT = E:GetModule("DataTexts")
 -- local DB = E:GetModule("DataBars")
 
@@ -211,6 +212,12 @@ function S:Initialize()
 	for index = 1, 4 do
 		E.StaticPopupFrames[index]:HookScript("OnShow", StaticPopup_OnShow)
 	end
+	StaticPopup1:HookScript("OnShow",function(self)
+		if StaticPopup1WideEditBox:IsShown() then
+			StaticPopup1WideEditBox:StripTextures()
+			Skin:HandleEditBox(StaticPopup1WideEditBox)
+		end
+	end)
 end
 
 local function InitializeCallback()

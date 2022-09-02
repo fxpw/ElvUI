@@ -19,6 +19,13 @@ local function LoadSkin()
 	"InterfaceOptionsNotificationPanelBattlePassToast",
 	"InterfaceOptionsNotificationPanelToggleMove",
 	"InterfaceOptionsNotificationPanelAuctionHouseToast",
+	"InterfaceOptionsNotificationPanelToastSound",
+	"InterfaceOptionsNotificationPanelSocialToastSound",
+	"InterfaceOptionsNotificationPanelHeadHuntingToastSound",
+	"InterfaceOptionsNotificationPanelBattlePassToastSound",
+	"InterfaceOptionsNotificationPanelQueueToastSound",
+	"InterfaceOptionsNotificationPanelAuctionHouseToastSound",
+
 	}
 	for _, checkbox in ipairs(checkboxes) do
 		checkbox = _G[checkbox]

@@ -164,7 +164,7 @@ local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolex
 local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
 local NightlyBlooD = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\NightlyBlooD]], ":24:24")
 local Toss = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Toss]], ":24:24")
-
+local KolbaskaSir = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\KolbaskaSir]], ":24:24")
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
@@ -186,6 +186,10 @@ local specialChatIconsSirus = {
 	["Кологарн-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
 	["Сталелом-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
 	["Морхок-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Стоматолог-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
+	["Ghostbuste-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
+	["Усталыч-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
+	["Сырсколбасой-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 
 }
 

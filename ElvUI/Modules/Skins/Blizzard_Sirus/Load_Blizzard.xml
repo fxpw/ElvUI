@@ -38,4 +38,6 @@
 	<Script file="Custom_Headhunting.lua"/>
 	<Script file="Custom_Roulette.lua"/>
 	<Script file="Custom_Auction.lua"/>
+	<Script file="Custom_ToyCollection.lua"/>
+	
 </Ui>
