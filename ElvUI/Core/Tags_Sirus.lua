@@ -337,10 +337,10 @@ end
 
 local race_type = {
 	["Human"] = "Чл.",
-	["Dworf"] = "Дв.",
+	["Dwarf"] = "Дв.",
 	["Gnome"] = "Гн.",
-	["Drenei"] = "Др.",
-	["Vorgen"] = "Вр.",
+	["Draenei"] = "Др.",
+	["Worgen"] = "Вр.",
 	["NightElf"] = "Нэ.",
 	["Queldo"] = "Вэ.",
 	["VoidElf"] = "Эб.",
