@@ -21,4 +21,5 @@
 	<Script file="Cooldowns.lua"/>
 	<Script file="ModuleCopy.lua"/>
 	<Script file="Tags.lua"/>
+	<Script file="Tags_Sirus.lua"/>
 </Ui>

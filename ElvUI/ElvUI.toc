@@ -23,7 +23,7 @@ Modules\Load_Modules.xml
 
 
 # Fonts_Sirus.lua
-Tags_Sirus.lua
+# Tags_Sirus.lua
 # Case_Sirus.lua
 # OptionsUI_Sirus.lua
 # Settings_Sirus\Load_Config.xml
