@@ -335,7 +335,45 @@ ElvUF.Tags.Methods["happiness:icon"] = function(unit)
 	end
 end
 
+local race_type = {
+	["Human"] = "Чл.",
+	["Dworf"] = "Дв.",
+	["Gnome"] = "Гн.",
+	["Drenei"] = "Др.",
+	["Vorgen"] = "Вр.",
+	["NightElf"] = "Нэ.",
+	["Queldo"] = "Вэ.",
+	["VoidElf"] = "Эб.",
+	["DarkIronDwarf"] = "Дчж.",
+	["Lightforged"] = "ОДр.",
+	["Pandaren"] = "Пн.",
+	["Vulpera"] = "Вп.",
+	["Orc"] = "Орк",
+	["Scourge"] = "Отр.",
+	["Tauren"] = "Тн.",
+	["Troll"] = "Тр.",
+	["Goblin"] = "Гб.",
+	["Naga"] = "Нг.",
+	["BloodElf"] = "Сн.",
+	["NightBorn"] = "Нр.",
+	["Eredar"] = "Э.",
+	["ZandalariTroll"] = "Зн.",
+}
 
+
+
+ElvUF.Tags.Events["race:abbrev"] = "UNIT_FACTION UNIT_TARGET"
+ElvUF.Tags.Methods["race:abbrev"] = function(unit)
+	-- print(UnitRace(unit))
+	if unit and UnitIsPlayer(unit) then
+		if race_type[select(2,UnitRace(unit))] then
+			-- print(UnitRace(unit))
+			return race_type[select(2,UnitRace(unit))]
+		else
+			return ""
+		end
+	end
+end
 
 -----------------------------------
 -----------------------------------
@@ -383,6 +421,8 @@ E:AddTagInfo("premium:icon", "Sirus", "Показывает на юните Prem
 E:AddTagInfo("pvp:name", "Sirus", "Показывает на юните PvP ранк в виде текста")
 E:AddTagInfo("pvp:id", "Sirus", "Показывает на юните PvP ранк в виде ID")
 E:AddTagInfo("pvp:icon", "Sirus", "Показывает на юните PvP ранк в виде иконки")
+
+E:AddTagInfo("race:abbrev", "Sirus", "Показывает расу юнита сокращенно")
 
 E:AddTagInfo("happiness", "Sirus", "Счастье питомца строка")
 E:AddTagInfo("happiness:icon", "Sirus", "Счастье питомца в иконке")

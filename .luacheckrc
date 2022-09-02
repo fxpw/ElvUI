@@ -42483,6 +42483,16 @@ globals = {
 	"PlayerTalentFrameImportButton",
 	"PlayerTalentFrameImportFrameButton",
 	"PlayerTalentLinkButton",
+	--sirus toys
+	"CollectionsJournalTab4",
+	"ToyBoxIconsFrameOverlayFrame",
+	"ToyBoxIconsFrame",
+	"ToyBoxFilterButton",
+	"ToyBoxSearchBox",
+	"ToyBoxPagingFrameNextPageButton",
+	"ToyBoxPagingFramePrevPageButton",
+	"ToyBoxProgressBar",
+
 	--sirus watchframe
 	"WatchFrameHeaderMinimizeButton",
 	--sirus achivements
