@@ -25,9 +25,6 @@ local function LoadSkin()
     S:HandleNextPrevButton(ToyBoxPagingFrameNextPageButton,"right")
     S:HandleNextPrevButton(ToyBoxPagingFramePrevPageButton,"left")
     S:HandleStatusBar(ToyBoxProgressBar)
-
-
-    
 end
 
 
