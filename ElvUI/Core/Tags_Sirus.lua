@@ -355,7 +355,7 @@ local race_type = {
 	["Goblin"] = "Гб.",
 	["Naga"] = "Нг.",
 	["BloodElf"] = "Сн.",
-	["NightBorn"] = "Нр.",
+	["Nightborne"] = "Нр.",
 	["Eredar"] = "Э.",
 	["ZandalariTroll"] = "Зн.",
 }
