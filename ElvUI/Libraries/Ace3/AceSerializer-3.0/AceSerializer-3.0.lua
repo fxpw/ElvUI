@@ -241,8 +241,8 @@ function AceSerializer:Deserialize(str)
 	str = gsub(str, "[%c ]", "")	-- ignore all control characters; nice for embedding in email and stuff
 
 	local iter = gmatch(str, "(^.)([^^]*)")	-- Any ^x followed by string of non-^
-	local ctl,data = iter()
-	if not ctl or ctl~="^1" then
+	local ctl, data = iter()
+	if not ctl or ctl ~= "^1" then
 		-- we purposefully ignore the data portion of the start code, it can be used as an extension mechanism
 		return false, "Supplied data is not AceSerializer data (rev 1)"
 	end
