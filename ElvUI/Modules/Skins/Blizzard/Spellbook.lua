@@ -228,6 +228,12 @@ local function LoadSkin()
 		prof.Learn.statusBar.rankText:SetPoint("CENTER")
 		hooksecurefunc(prof.Learn.statusBar, "SetValue", StatusBarColor)
 	end
+	local _HookFunc = PrimaryProfession_Update
+	function PrimaryProfession_Update()
+		if not InCombatLockdown() then
+			_HookFunc()
+		end
+	end
 end
 
 -- S:RemoveCallback("Skin_Spellbook")
