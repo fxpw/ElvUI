@@ -44,6 +44,7 @@ ignore = {
 globals = {
 
 	--fonts 
+	
 	"GameFontNormal9",
     "GameFontNormal11",
     "GameFontNormal12",
@@ -42242,6 +42243,7 @@ globals = {
 	"classToken",
 	"MaximizeMinimizeFrame",
 	--sirus character 
+	"PrimaryProfession_Update",
 	"GearManagerDialogPopupSearchBox",
 	"PaperDollFrameStrengthenFrame",
 	"PaperDollSidebarTabs",
