@@ -25,6 +25,14 @@ local function LoadSkin()
     S:HandleNextPrevButton(ToyBoxPagingFrameNextPageButton,"right")
     S:HandleNextPrevButton(ToyBoxPagingFramePrevPageButton,"left")
     S:HandleStatusBar(ToyBoxProgressBar)
+    ToyBoxIconsFrame:HookScript("OnShow",function(self)
+        for i = 1,18 do
+            local button = _G["ToyBoxIconsFrameSpellButton"..i]
+            if button and button.Cooldown then
+                E:RegisterCooldown(button.Cooldown)
+            end
+        end
+    end)
 end
 
 
