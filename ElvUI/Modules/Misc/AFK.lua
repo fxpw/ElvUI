@@ -46,6 +46,23 @@ local printKeys = {
 	["PRINTSCREEN"] = true,
 }
 
+
+local classIcons = {
+	["SHAMAN"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_shaman.blp",
+	["WARRIOR"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_warrior.blp",
+	["MAGE"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_mage.blp",
+	["ROGUE"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_rogue.blp",
+	["DRUID"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_druid.blp",
+	["HUNTER"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_hunter.blp",
+	["PRIEST"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_priest.blp",
+	["WARLOCK"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_warlock.blp",
+	["PALADIN"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_paladin.blp",
+	["DEATHKNIGHT"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_dk.blp",
+	-- ["SHAMAN"] = "",
+}
+
+
+
 if E.isMacClient then
 	printKeys[_G["KEY_PRINTSCREEN_MAC"]] = true
 end
@@ -91,6 +108,7 @@ local function UpdateTip(_,elapsed)
 	end
 end
 function mod:SetAFK(status)
+	self:UpdateFactionLogo()
 	if status and not self.isAFK then
 		if InspectFrame then
 			InspectFrame:Hide()
@@ -327,6 +345,14 @@ function mod:Initialize()
 	self.AFKMode.bottom.logo:Point("CENTER", self.AFKMode.bottom, "CENTER", 0, 105)
 	self.AFKMode.bottom.logo:SetTexture(E.Media.Textures.Logo)
 
+
+
+	self.AFKMode.bottom.ClassLogo = self.AFKMode:CreateTexture(nil, "OVERLAY")
+	self.AFKMode.bottom.ClassLogo:Size(128, 128)
+	self.AFKMode.bottom.ClassLogo:Point("RIGHT", self.AFKMode.bottom, "RIGHT", -10, 10)
+	self.AFKMode.bottom.ClassLogo:SetTexture(classIcons[select(2,UnitClass("player"))])
+
+
 	self.AFKMode.bottom.faction = self.AFKMode.bottom:CreateTexture(nil, "OVERLAY")
 	self.AFKMode.bottom.faction:Point("BOTTOMLEFT", -10, -10)
 	self.AFKMode.bottom.faction:SetTexture("Interface\\AddOns\\ElvUI\\media\\textures\\"..E.myfaction.."-Logo")
@@ -378,6 +404,10 @@ function mod:Initialize()
 	self.Initialized = true
 end
 
+function mod:UpdateFactionLogo()
+	E.myfaction, E.myLocalizedFaction = UnitFactionGroup("player")
+	self.AFKMode.bottom.faction:SetTexture("Interface\\AddOns\\ElvUI\\media\\textures\\"..E.myfaction.."-Logo")
+end
 local function InitializeCallback()
 	mod:Initialize()
 end
