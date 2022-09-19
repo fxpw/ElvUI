@@ -19,15 +19,18 @@ E.ShortPrefixStyles = {
 	["ENGLISH"] = {{1e12, "T"}, {1e9, "B"}, {1e6, "M"}, {1e3, "K"}},
 	["GERMAN"] = {{1e12, "Bio"}, {1e9, "Mrd"}, {1e6, "Mio"}, {1e3, "Tsd"}},
 	["KOREAN"] = {{1e8, "억"}, {1e4, "만"}, {1e3, "천"}},
-	["METRIC"] = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}}
+	["METRIC"] = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}},
+	["NONE"] = {{1e12, ""}, {1e9, ""}, {1e6, ""}, {1e3, ""}}
 }
 
 E.GetFormattedTextStyles = {
+	["NOSIGN"] = "%s",
 	["CURRENT"] = "%s",
 	["CURRENT_MAX"] = "%s - %s",
 	["CURRENT_PERCENT"] = "%s - %.1f%%",
 	["CURRENT_MAX_PERCENT"] = "%s - %s | %.1f%%",
 	["PERCENT"] = "%.1f%%",
+	["PERCENT_NOSIGN"] = "%d",
 	["DEFICIT"] = "-%s"
 }
 
@@ -193,7 +196,7 @@ function E:GetFormattedText(style, min, max, dec)
 			return (deficit > 0 and format(useStyle, E:ShortValue(deficit, dec))) or ""
 		elseif style == "CURRENT_MAX" then
 			return format(useStyle, E:ShortValue(min, dec), E:ShortValue(max, dec))
-		elseif style == "PERCENT" or style == "CURRENT_PERCENT" or style == "CURRENT_MAX_PERCENT" then
+		elseif style == "PERCENT" or style == "CURRENT_PERCENT" or style == "CURRENT_MAX_PERCENT" or style == "PERCENT_NOSIGN" then
 			if dec then useStyle = gsub(useStyle, "%d", tonumber(dec) or 0) end
 			local perc = min / max * 100
 
@@ -203,7 +206,11 @@ function E:GetFormattedText(style, min, max, dec)
 				return format(useStyle, E:ShortValue(min, dec), perc)
 			elseif style == "CURRENT_MAX_PERCENT" then
 				return format(useStyle, E:ShortValue(min, dec), E:ShortValue(max, dec), perc)
+			elseif style == "PERCENT_NOSIGN" then
+				return format(useStyle,perc)
 			end
+		elseif style == "NOSIGN" then
+			return min
 		end
 	end
 end

@@ -151,7 +151,8 @@ E.Options.args.general = {
 						["ENGLISH"] = "English (K, M, B)",
 						["GERMAN"] = "German (Tsd, Mio, Mrd)",
 						["KOREAN"] = "Korean (천, 만, 억)",
-						["METRIC"] = "Metric (k, M, G)"
+						["METRIC"] = "Metric (k, M, G)",
+						["NONE"] = "Без сокращений"
 					}
 				},
 				smoothingAmount = {
