@@ -246,7 +246,7 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 
 		local name, realm = UnitName(unit)
 		local ShortName = name
-		local nameRealm = (realm and realm ~= '' and format('%s-%s', name, realm)) or name
+		-- local nameRealm = (realm and realm ~= '' and format('%s-%s', name, realm)) or name
 		local guildName, guildRankName = GetGuildInfo(unit)
 		local pvpName = UnitPVPName(unit)
 

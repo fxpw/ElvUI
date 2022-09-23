@@ -42242,6 +42242,22 @@ globals = {
 	"faction",
 	"classToken",
 	"MaximizeMinimizeFrame",
+	--sirus raid
+
+	"CompactRaidFrameManagerDisplayFrameProfileSelector",
+	"CompactRaidFrameManagerDisplayFrameLeaderOptionsCountdown",
+	"CompactRaidFrameManagerDisplayFrameLeaderOptionsInitiateReadyCheck",
+	"CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButton",
+
+	"CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton",
+	"CompactRaidFrameManagerDisplayFrameLockedModeToggle",
+	"RaidFrameAllAssistCheckButton",
+	"CompactRaidFrameManagerDisplayFrameOptionsButton",
+	"CompactRaidFrameManagerDisplayFrameOptionsButton",
+	"CompactRaidFrameContainer",
+
+
+
 	--sirus character 
 	"PrimaryProfession_Update",
 	"GearManagerDialogPopupSearchBox",

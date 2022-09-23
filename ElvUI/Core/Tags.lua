@@ -1,6 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local ElvUF = E.oUF
-local Tags = ElvUF.Tags
+-- local Tags = ElvUF.Tags
 local Translit = E.Libs.Translit
 local translitMark = "!"
 
@@ -654,7 +654,7 @@ do
 	local highestVersion = E.version
 	E:AddTag('ElvUI-Users', 20, function(unit)
 		if E.UserList and next(E.UserList) then
-			local name, realm = UnitName(unit)
+			local name = UnitName(unit)
 			if name then
 				-- local nameRealm = (realm and realm ~= '' and format('%s-%s', name, realm)) or name
 				local userVersion =  E.UserList[name]
