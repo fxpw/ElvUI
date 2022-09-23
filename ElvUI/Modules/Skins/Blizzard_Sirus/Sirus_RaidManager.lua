@@ -3,6 +3,21 @@ local S = E:GetModule("Skins")
 
 --Lua functions
 --WoW API / Variables
+local function AllHideAndHandle(self,bool)
+    self.TopLeft:Hide();
+    self.TopRight:Hide();
+    self.BottomLeft:Hide();
+    self.BottomRight:Hide();
+    self.TopMiddle:Hide();
+    self.MiddleLeft:Hide();
+    self.MiddleRight:Hide();
+    self.BottomMiddle:Hide();
+    self.MiddleMiddle:Hide();
+	if bool then
+		S:HandleButton(self)
+	end
+end
+
 
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true then return end
@@ -11,10 +26,10 @@ local function LoadSkin()
 	local displayFrame = frameManager.displayFrame
 
 	frameManager:StripTextures()
-	frameManager:CreateBackdrop("Transparent")
-	frameManager.backdrop:Point("TOPLEFT", 1, -1)
-	frameManager.backdrop:Point("BOTTOMRIGHT", -11, 1)
-
+	frameManager:CreateBackdrop()
+	-- frameManager.backdrop:Point("TOPLEFT", 0, 0)
+	-- frameManager.backdrop:Point("BOTTOMRIGHT", 0, 0)
+	-- frameManager:Size(200,100)
 	S:HandleButton(frameManager.toggleButton)
 	frameManager.toggleButton:ClearAllPoints()
 	frameManager.toggleButton:Width(10)
@@ -29,46 +44,56 @@ local function LoadSkin()
 	hooksecurefunc(frameManager.toggleButton:GetNormalTexture(), "SetTexCoord", function(_, a, b)
 		if a > 0 then
 			frameManager.toggleButton.Icon:SetRotation(S.ArrowRotation.left)
+			frameManager:Size(200,264)
 		elseif b < 1 then
 			frameManager.toggleButton.Icon:SetRotation(S.ArrowRotation.right)
+			frameManager:Size(200,100)
 		end
 	end)
-
-	S:HandleButton(frameManager.resizer)
-	frameManager.resizer:Size(64, 10)
-	frameManager.resizer:Point("BOTTOM", 0, -3)
-
-	frameManager.resizer.UpIcon = frameManager.resizer:CreateTexture()
-	frameManager.resizer.UpIcon:Size(16)
-	frameManager.resizer.UpIcon:SetPoint("LEFT", 12, 0)
-	frameManager.resizer.UpIcon:SetTexture(E.Media.Textures.ArrowUp)
-	frameManager.resizer.UpIcon:SetRotation(S.ArrowRotation.up)
-
-	frameManager.resizer.DownIcon = frameManager.resizer:CreateTexture()
-	frameManager.resizer.DownIcon:Size(16)
-	frameManager.resizer.DownIcon:SetPoint("RIGHT", -12, 0)
-	frameManager.resizer.DownIcon:SetTexture(E.Media.Textures.ArrowUp)
-	frameManager.resizer.DownIcon:SetRotation(S.ArrowRotation.down)
-
+	frameManager:Size(200,100)
 	displayFrame:StripTextures()
 
 	displayFrame.memberCountLabel:SetPoint("TOPRIGHT", -18, -8)
 
 	for i = 1, 8 do
 		_G["CompactRaidFrameManagerDisplayFrameRaidMarkersRaidMarker"..i]:SetNormalTexture(E.Media.Textures.RaidIcons)
+		-- _G["CompactRaidFrameManagerDisplayFrameFilterOptionsFilterGroup"..i]:StripTextures()
+		AllHideAndHandle(_G["CompactRaidFrameManagerDisplayFrameFilterOptionsFilterGroup"..i],true)
+		-- S:HandleButton(_G["CompactRaidFrameManagerDisplayFrameFilterOptionsFilterGroup"..i])
 	end
+
+	S:HandleDropDownBox(CompactRaidFrameManagerDisplayFrameProfileSelector)
 
 	displayFrame.convertToRaid:StripTextures(nil, true)
 	S:HandleButton(displayFrame.convertToRaid, true)
 
-	displayFrame.readyCheckButton:StripTextures(nil, true)
-	S:HandleButton(displayFrame.readyCheckButton)
+	AllHideAndHandle(CompactRaidFrameManagerDisplayFrameLeaderOptionsCountdown,true)
+	AllHideAndHandle(CompactRaidFrameManagerDisplayFrameLeaderOptionsInitiateReadyCheck,true)
 
-	displayFrame.RaidWorldMarkerButton:StripTextures(nil, true)
-	S:HandleButton(displayFrame.RaidWorldMarkerButton)
-	displayFrame.RaidWorldMarkerButton:Width(39)
-	displayFrame.RaidWorldMarkerButton:Point("TOPLEFT", displayFrame.readyCheckButton, "TOPRIGHT", 2, 0)
-	displayFrame.RaidWorldMarkerButton:SetNormalTexture("Interface\\RaidFrame\\Raid-WorldPing")
+	AllHideAndHandle(CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButton,false)
+	CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButton:SetTemplate(nil, true)
+	CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButton:SetHighlightTexture("")
+	CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButton:HookScript("OnEnter", S.SetModifiedBackdrop)
+	CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButton:HookScript("OnLeave", S.SetOriginalBackdrop)
+
+
+	-- AllHideAndHandle(CompactRaidFrameManagerDisplayFrameLockedModeToggle,true)
+	-- AllHideAndHandle(CompactRaidFrameManagerDisplayFrameHiddenModeToggle,true)
+
+	S:HandleCheckBox(CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton,true)
+	if E.private.unitframe.disabledBlizzardFrames.raidFrames then
+		CompactRaidFrameManagerDisplayFrameLockedModeToggle:Kill()
+		CompactRaidFrameManagerDisplayFrameHiddenModeToggle:Kill()
+	else
+		AllHideAndHandle(CompactRaidFrameManagerDisplayFrameLockedModeToggle,true)
+		AllHideAndHandle(CompactRaidFrameManagerDisplayFrameHiddenModeToggle,true)
+	end
+	-- /run print(RaidFrameAllAssistCheckButton.text:GetText())
+	CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton.text:ClearAllPoints()
+	CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton.text:SetPoint("RIGHT",50,0)
+	CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton.text:SetText(RaidFrameAllAssistCheckButton.text:GetText())
+	CompactRaidFrameManagerDisplayFrameOptionsButton:ClearAllPoints()
+	CompactRaidFrameManagerDisplayFrameOptionsButton:SetPoint("TOPRIGHT", 0, -7)
 end
 
 S:AddCallback("Skin_RaidManager", LoadSkin)

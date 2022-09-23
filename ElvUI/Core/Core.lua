@@ -59,6 +59,7 @@ E.myLocalizedClass, E.myclass = UnitClass("player")
 E.myLocalizedRace, E.myrace = UnitRace("player")
 E.myname = UnitName("player")
 E.myrealm = GetRealmName()
+E.mynameRealm = format('%s - %s', E.myname, E.myrealm) -- contains spaces/dashes in realm (for profile keys)
 E.version = GetAddOnMetadata("ElvUI", "Version")
 E.wowpatch, E.wowbuild = GetBuildInfo()
 E.wowbuild = tonumber(E.wowbuild)
@@ -67,7 +68,7 @@ E.screenwidth, E.screenheight = tonumber(match(E.resolution, "(%d+)x+%d")), tonu
 E.isMacClient = IsMacClient()
 E.NewSign = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:14:14|t"
 E.InfoColor = "|cfffe7b2c"
-
+E.UserList = {}
 --Tables
 E.media = {}
 E.frames = {}
@@ -186,6 +187,27 @@ do -- used in optionsUI
 		E.DEFAULT_FILTER[filter] = tbl.type
 	end
 end
+
+do -- used in optionsUI
+	E.DEFAULT_FILTER = {}
+	for filter, tbl in pairs(G.unitframe.aurafilters) do
+		E.DEFAULT_FILTER[filter] = tbl.type
+	end
+end
+
+do
+	local a1,a2 = '','[%s%-]'
+	function E:ShortenRealm(realm)
+		return gsub(realm, a2, a1)
+	end
+
+	local a3 = format('%%-%s', E:ShortenRealm(E.myrealm))
+	function E:StripMyRealm(name)
+		return gsub(name, a3, a1)
+	end
+end
+
+
 
 function E:Print(...)
 	(_G[self.db.general.messageRedirect] or DEFAULT_CHAT_FRAME):AddMessage(strjoin(" ", self:ColorizedName("ElvUI", true), ...)) -- I put DEFAULT_CHAT_FRAME as a fail safe.
@@ -820,23 +842,30 @@ do
 
 	local function SendRecieve(_, event, prefix, message, _, sender)
 		if event == "CHAT_MSG_ADDON" then
+			-- print(845)
 			if prefix ~= "ELVUI_VERSIONCHK" then return end
+			-- print(847)
 			if not sender or sender == E.myname then return end
+			-- print(849)
 
-			local ver = tonumber(E.version)
-			message = tonumber(message)
-
+			local ver,msg = tonumber(E.version), tonumber(message)
+			-- local msg = tonumber(message)
+			if msg then
+				E.UserList[sender] = msg
+				-- print(msg,sender)
+				-- print(852)
+			end
 			-- if ver ~= G.general.version then
 			-- 	if not E.shownUpdatedWhileRunningPopup and not InCombatLockdown() then
 			-- 		E:StaticPopup_Show("ELVUI_UPDATED_WHILE_RUNNING")
 
 			-- 		E.shownUpdatedWhileRunningPopup = true
 			-- 	end
-			if message and (message > ver) then
-				if not E.recievedOutOfDateMessage then
+			if msg and (msg > ver) then
+				if not E.recievedOutOfDateMessage and not E.db.general.updateAlert then
 					E:Print(L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"])
-					E:Print(format("Информация о новой версии ElvUI (%s) получена от %s ", message, sender))
-					if message and ((message - ver) >= 0.05) and not InCombatLockdown() then
+					E:Print(format("Информация о новой версии ElvUI (%s) получена от %s", msg, sender))
+					if msg and ((msg - ver) >= 0.05) and not InCombatLockdown() then
 						E:StaticPopup_Show("ELVUI_UPDATE_AVAILABLE")
 					end
 
@@ -892,8 +921,9 @@ local function CheckVersionWhenRequest(_, event, prefix, message, _, sender)
 			end
 		end
 	elseif prefix == "ElvUICheckVerRequestRecieve" then
-		if sender ~= E.myname then
+		if sender ~= E.myname and message then
 			ElvUIVersions[sender] = message
+			E.UserList[sender] = message
 		end
 	end
 

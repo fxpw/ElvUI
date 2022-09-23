@@ -724,8 +724,20 @@ E.Options.args.general = {
 					type = "description",
 					name = ""
 				},
-				showWhenInCombat = {
+				updateAlert = {
 					order = 7,
+					type = "toggle",
+					name = "Выкл Уведомление об обновлении",
+					desc = "Выключает уведомления об обновлениях",
+					-- disabled = function() return not E.private.general.lootRoll end
+				},
+				spacer1 = {
+					order = 8,
+					type = "description",
+					name = ""
+				},
+				showWhenInCombat = {
+					order = 9,
 					type = "toggle",
 					name = "!!!!!!! Открывать настройки в бою !!!!!!!",
 					desc = "!!!!!!! Позволяет открывать настройки в бою, только для продвинутых юзеров !!!!!!!",

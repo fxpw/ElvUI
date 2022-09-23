@@ -527,6 +527,43 @@ local function createOnUpdate(timer)
 	end
 end
 
+
+--[[ Tags: frame:UpdateTags()
+Used to update all tags on a frame.
+
+* self - the unit frame from which to update the tags
+--]]
+local function Update(self)
+	if(self.__tags) then
+		for fs in next, self.__tags do
+			fs:UpdateTag()
+		end
+	end
+end
+
+-- ElvUI block
+local onUpdateDelay = {}
+local function escapeSequence(a) return format('|%s', a) end
+local function makeDeadTagFunc(bracket)
+	return function()
+		return format('|cFFffffff%s|r', bracket)
+	end
+end
+
+local function makeTagFunc(tag, prefix, suffix)
+	return function(unit, realUnit, customArgs)
+		local str = tag(unit, realUnit, customArgs)
+		if str then
+			return format('%s%s%s', prefix or '', str, suffix or '')
+		end
+	end
+end
+-- end block
+
+local tagPool = {}
+local funcPool = {}
+local tmp = {}
+
 local function onShow(self)
 	for _, fs in next, self.__tags do
 		fs:UpdateTag()
@@ -539,6 +576,52 @@ local function getTagName(tag)
 	tagEnd = (tagEnd and tagEnd - 1) or -2
 
 	return tag:sub(tagStart, tagEnd), tagStart, tagEnd
+end
+local function getTagFunc(tagstr)
+	local func = tagPool[tagstr]
+	if not func then
+		local frmt, numTags = tagstr:gsub('%%', '%%%%'):gsub(_PATTERN, '%%s')
+		local args = {}
+
+		-- ElvUI changed
+		for bracket in tagstr:gmatch(_PATTERN) do
+			local tagFunc = funcPool[bracket] or tags[bracket:sub(2, -2)]
+			if not tagFunc then
+				local tagName, tagStart, tagEnd = getTagName(bracket)
+
+				local tag = tags[tagName]
+				if tag then
+					tagStart, tagEnd = tagStart - 2, tagEnd + 2
+					tagFunc = makeTagFunc(tag, tagStart ~= 0 and bracket:sub(2, tagStart), tagEnd ~= 0 and bracket:sub(tagEnd, -2))
+					funcPool[bracket] = tagFunc
+				end
+			end
+
+			tinsert(args, tagFunc or makeDeadTagFunc(bracket))
+		end
+
+		func = function(self)
+			local parent = self.parent
+			local unit = parent.unit
+			local realUnit = self.overrideUnit and parent.realUnit
+			local customArgs = parent.__customargs[self]
+
+			_ENV._FRAME = parent
+			_ENV._COLORS = parent.colors
+
+			for i, fnc in next, args do
+				tmp[i] = fnc(unit, realUnit, customArgs) or ''
+			end
+
+			-- We do 1, numTags because tmp can hold several unneeded variables.
+			self:SetFormattedText(frmt, unpack(tmp, 1, numTags))
+		end
+
+		tagPool[tagstr] = func
+		-- end block
+	end
+
+	return func
 end
 
 local function registerEvent(fontstr, event)
@@ -574,6 +657,32 @@ local function unregisterEvents(fontstr)
 	end
 end
 
+-- this bullshit is to fix texture strings not adjusting to its inherited alpha
+-- it is a blizzard issue with how texture strings are rendered
+local alphaFix = CreateFrame('Frame')
+alphaFix.fontStrings = {}
+alphaFix:SetScript('OnUpdate', function()
+	local strs = alphaFix.fontStrings
+	if next(strs) then
+		for fs in next, strs do
+			strs[fs] = nil
+
+			local a = fs:GetAlpha()
+			fs:SetAlpha(0)
+			fs:SetAlpha(a)
+		end
+	else
+		alphaFix:Hide()
+	end
+end)
+
+local function fixAlpha(self)
+	alphaFix.fontStrings[self] = true
+	alphaFix:Show()
+end
+
+local taggedFS = {}
+
 local OnEnter = function(self)
 	for _, fs in pairs(self.__mousetags) do
 		fs:SetAlpha(1)
@@ -587,9 +696,9 @@ local OnLeave = function(self)
 end
 
 local onUpdateDelay = {}
-local tagPool = {}
-local funcPool = {}
-local tmp = {}
+-- local tagPool = {}
+-- local funcPool = {}
+-- local tmp = {}
 local escapeSequences = {
 	["||c"] = "|c",
 	["||r"] = "|r",
@@ -621,6 +730,12 @@ local function Tag(self, fs, tagstr)
 				self:Untag(fs)
 			end
 		end
+	end
+	-- ElvUI
+	if not fs.__HookedAlphaFix then
+		hooksecurefunc(fs, 'SetText', fixAlpha)
+		hooksecurefunc(fs, 'SetFormattedText', fixAlpha)
+		fs.__HookedAlphaFix = true
 	end
 
 	fs.parent = self
@@ -837,12 +952,63 @@ local function Untag(self, fs)
 	fs.UpdateTag = nil
 end
 
+local function strip(tag)
+	-- remove prefix, custom args, and suffix
+	return tag:gsub("%[[^%[%]]*>", "["):gsub("<[^%[%]]*%]", "]") -- ElvUI uses old tag format
+end
+
 oUF.Tags = {
 	Methods = tags,
 	Events = tagEvents,
 	SharedEvents = unitlessEvents,
 	OnUpdateThrottle = onUpdateDelay,
+	RefreshMethods = function(self, tag)
+		if(not tag) then return end
+
+		-- If a tag's name contains magic chars, there's a chance that string.match will fail to find the match.
+		tag = '%[' .. tag:gsub('[%^%$%(%)%%%.%*%+%-%?]', '%%%1') .. '%]'
+
+		for bracket in next, funcPool do
+			if(strip(bracket):match(tag)) then
+				funcPool[bracket] = nil
+			end
+		end
+
+		for tagstr, func in next, tagPool do
+			if(strip(tagstr):match(tag)) then
+				tagPool[tagstr] = nil
+
+				for fs in next, taggedFS do
+					if(fs.UpdateTag == func) then
+						fs.UpdateTag = getTagFunc(tagstr)
+
+						if(fs:IsVisible()) then
+							fs:UpdateTag()
+						end
+					end
+				end
+			end
+		end
+	end,
+	RefreshEvents = function(self, tag)
+		if(not tag) then return end
+
+		-- If a tag's name contains magic chars, there's a chance that string.match will fail to find the match.
+		tag = '%[' .. tag:gsub('[%^%$%(%)%%%.%*%+%-%?]', '%%%1') .. '%]'
+
+		for tagstr in next, tagPool do
+			if(strip(tagstr):match(tag)) then
+				for fs, ts in next, taggedFS do
+					if(ts == tagstr) then
+						unregisterEvents(fs)
+						registerEvents(fs, tagstr)
+					end
+				end
+			end
+		end
+	end,
 }
 
 oUF:RegisterMetaFunction('Tag', Tag)
 oUF:RegisterMetaFunction('Untag', Untag)
+oUF:RegisterMetaFunction('UpdateTags', Update)

@@ -2,10 +2,9 @@ local E = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalD
 local D = E:GetModule("Distributor")
 
 local _, Engine = ...
-Engine[1] = {}
+Engine[1] = {Blank = function() return '' end }
 Engine[2] = E.Libs.ACL:GetLocale("ElvUI", E.global.general.locale or "enUS")
 local C, L = Engine[1], Engine[2]
-
 local format = string.format
 
 C.Values = {
@@ -48,7 +47,7 @@ E.Options.args = {
 		width = "full"
 	},
 	RepositionWindow = {
-		order = 2,
+		order = 3,
 		type = "execute",
 		name = L["Reposition Window"],
 		desc = L["Reset the size and position of this frame."],
@@ -58,7 +57,7 @@ E.Options.args = {
 		end
 	},
 	ToggleTutorial = {
-		order = 3,
+		order = 4,
 		type = "execute",
 		name = L["Toggle Tutorials"],
 		customWidth = 150,
@@ -68,7 +67,7 @@ E.Options.args = {
 		end
 	},
 	Install = {
-		order = 4,
+		order = 5,
 		type = "execute",
 		name = L["Install"],
 		customWidth = 100,
@@ -79,7 +78,7 @@ E.Options.args = {
 		end
 	},
 	ResetAllMovers = {
-		order = 5,
+		order = 6,
 		type = "execute",
 		name = L["Reset Anchors"],
 		customWidth = 150,
@@ -89,7 +88,7 @@ E.Options.args = {
 		end
 	},
 	ToggleAnchors = {
-		order = 6,
+		order = 7,
 		type = "execute",
 		name = L["Toggle Anchors"],
 		customWidth = 150,
@@ -99,7 +98,7 @@ E.Options.args = {
 		end
 	},
 	LoginMessage = {
-		order = 7,
+		order = 8,
 		type = "toggle",
 		name = L["Login Message"],
 		customWidth = 150,

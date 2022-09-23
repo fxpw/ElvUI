@@ -245,6 +245,8 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 		if not localeClass or not class then return end
 
 		local name, realm = UnitName(unit)
+		local ShortName = name
+		local nameRealm = (realm and realm ~= '' and format('%s-%s', name, realm)) or name
 		local guildName, guildRankName = GetGuildInfo(unit)
 		local pvpName = UnitPVPName(unit)
 
@@ -300,6 +302,18 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 			local diffColor = GetQuestDifficultyColor(level)
 			local race = UnitRace(unit)
 			levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s %s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", E:RGBToHex(color.r, color.g, color.b), localeClass)
+		end
+		if self.db.showElvUIUsers then
+			local addonUser = E.UserList[ShortName]
+			-- print(UnitName(unit))
+			-- print(name)
+			-- print(addonUser)
+			-- print(308)
+			if addonUser then
+				local same = addonUser == E.version
+				-- print(addonUser)
+				tt:AddDoubleLine(L["ElvUI Version:"], format('%.2f', addonUser), nil, nil, nil, same and 0.2 or 1, same and 1 or 0.2, 0.2)
+			end
 		end
 	else
 		if UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then

@@ -61,6 +61,7 @@ do
 	AddOn:AddLib("EP", "LibElvUIPlugin-1.0")
 	AddOn:AddLib("LSM", "LibSharedMedia-3.0")
 	AddOn:AddLib("ACL", "AceLocale-3.0-ElvUI")
+	AddOn:AddLib('ACH', 'LibAceConfigHelper')
 	AddOn:AddLib("LAB", "LibActionButton-1.0-ElvUI")
 	AddOn:AddLib("LAI", "LibAuraInfo-1.0-ElvUI", true)
 	AddOn:AddLib("LBF", "LibButtonFacade", true)
@@ -121,6 +122,18 @@ do
 	DisableAddOn("ElvUI_VisualAuraTimers")
 	DisableAddOn("ElvUI_MinimapButtons")
 	DisableAddOn("ElvUI_ChannelAlerts")
+end
+
+
+do
+	local a,b,c = '','([%(%)%.%%%+%-%*%?%[%^%$])','%%%1'
+	function AddOn:EscapeString(s) return gsub(s,b,c) end
+
+	local d = {'|[TA].-|[ta]','|c[fF][fF]%x%x%x%x%x%x','|r','^%s+','%s+$'}
+	function AddOn:StripString(s, ignoreTextures)
+		for i = ignoreTextures and 2 or 1, #d do s = gsub(s,d[i],a) end
+		return s
+	end
 end
 
 function AddOn:OnInitialize()

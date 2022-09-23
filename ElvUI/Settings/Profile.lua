@@ -14,6 +14,7 @@ P.general = {
 	autoRepair = "NONE",
 	autoRoll = false,
 	showWhenInCombat = false,
+	updateAlert = false,
 	autoAcceptInvite = false,
 	bottomPanel = true,
 	hideLootAlerts = false,
@@ -1195,6 +1196,7 @@ P.datatexts = {
 
 --Tooltip
 P.tooltip = {
+	showElvUIUsers = false,
 	cursorAnchor = false,
 	cursorAnchorType = "ANCHOR_CURSOR",
 	cursorAnchorX = 0,

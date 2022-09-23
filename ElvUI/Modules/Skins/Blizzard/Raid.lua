@@ -18,6 +18,13 @@ S:AddCallbackForAddon("Blizzard_RaidUI", "Skin_Blizzard_RaidUI", function()
 	end
 
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.raid then return end
+	-- CompactRaidFrameManagerDisplayFrameHiddenModeToggle.shownMode = not E.private.skins.blizzard.raid
+	-- print(E.private.unitframe.raid.enabled)
+	-- local _CompactRaidFrameContainer_OnLoad = CompactRaidFrameContainer_OnLoad
+	-- function CompactRaidFrameContainer_OnLoad()
+	-- 	return
+	-- end
+
 
 	local StripAllTextures = {
 		RaidGroup1,
@@ -34,10 +41,11 @@ S:AddCallbackForAddon("Blizzard_RaidUI", "Skin_Blizzard_RaidUI", function()
 		object:StripTextures()
 	end
 
-	RaidFrameRaidBrowserButton:Point("TOPLEFT", RaidFrame, 45, -33)
+	-- RaidFrameRaidBrowserButton:Point("TOPLEFT", RaidFrame, 45, -33)
 
-	S:HandleButton(RaidFrameRaidBrowserButton)
+	-- S:HandleButton(RaidFrameRaidBrowserButton)
 	S:HandleButton(RaidFrameReadyCheckButton)
+	S:HandleCheckBox(RaidFrameAllAssistCheckButton)
 --	S:HandleButton(RaidFrameRaidInfoButton)		-- skinned in Friends.lua
 
 	for i = 1, MAX_RAID_GROUPS * 5 do

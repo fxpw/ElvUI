@@ -1011,8 +1011,8 @@ function UF:UpdateAllHeaders(event)
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 	end
 
-	if E.private.unitframe.disabledBlizzardFrames.party then
-		ElvUF:DisableBlizzard("party")
+	if E.private.unitframe.disabledBlizzardFrames.raidFrames then
+		ElvUF:DisableBlizzard("raidFrames")
 	end
 
 	self:RegisterRaidDebuffIndicator()
@@ -1104,17 +1104,22 @@ function ElvUF:DisableBlizzard(unit)
 				HandleFrame(format("Boss%dTargetFrame", i))
 			end
 		end
-	elseif (unit:match"(party)%d?$" == "party") and E.private.unitframe.disabledBlizzardFrames.party then
-		local id = unit:match"party(%d)"
+	elseif (unit == "raidFrames") and E.private.unitframe.disabledBlizzardFrames.raidFrames then
+		-- local id = unit:match"party(%d)"
 
-		if id then
-			HandleFrame("PartyMemberFrame"..id)
-		else
-			for i = 1, 4 do
-				HandleFrame(format("PartyMemberFrame%d", i))
-			end
+		-- if id then
+		-- 	HandleFrame("PartyMemberFrame"..id)
+		-- else
+		-- 	for i = 1, 4 do
+		-- 		HandleFrame(format("PartyMemberFrame%d", i))
+		-- 	end
+		-- end
+		-- HandleFrame(PartyMemberBackground)
+		for i = 1,40 do
+			-- /run CompactRaidFrameContainer:Hide()
+			HandleFrame("CompactRaidFrame"..i)
 		end
-		HandleFrame(PartyMemberBackground)
+		HandleFrame(CompactRaidFrameContainer)
 	elseif (unit:match"(arena)%d?$" == "arena") and E.private.unitframe.disabledBlizzardFrames.arena then
 		local id = unit:match"arena(%d)"
 

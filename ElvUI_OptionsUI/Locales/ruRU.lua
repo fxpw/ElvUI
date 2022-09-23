@@ -1436,3 +1436,6 @@ L["FadeMinimap"] = "Исчезновение миникарты при наве�
 L["Colors"] = "Цвета"
 L["Miscellaneous"] = "Разное"
 L["Custom color your Text: replace the XXXXXX with a Hex color code"] = "Цвет для текста: замените XXXXXX Hex кодом цвета"
+
+--- search ru
+L["Search"] = "|cff00ff22Поиск|r"

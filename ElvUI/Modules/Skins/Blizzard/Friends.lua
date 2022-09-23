@@ -951,7 +951,7 @@ local function LoadSkin()
 	-- Raid Frame
 	S:HandleButton(RaidFrameConvertToRaidButton)
 	S:HandleButton(RaidFrameRaidInfoButton)
-	S:HandleButton(RaidFrameNotInRaidRaidBrowserButton)
+	-- S:HandleButton(RaidFrameNotInRaidRaidBrowserButton)
 
 	-- Raid Info Frame
 	RaidInfoFrame:StripTextures(true)

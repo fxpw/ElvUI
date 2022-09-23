@@ -1,6 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local ElvUF = E.oUF
-
+local Tags = ElvUF.Tags
 local Translit = E.Libs.Translit
 local translitMark = "!"
 
@@ -69,6 +69,26 @@ local function abbrev(name)
 	end
 	return name
 end
+
+local RefreshNewTags -- will turn true at EOF
+function E:AddTag(tagName, eventsOrSeconds, func, block)
+	if block then return end -- easy killer for tags
+
+	if type(eventsOrSeconds) == 'number' then
+		ElvUF.Tags.OnUpdateThrottle[tagName] = eventsOrSeconds
+	else
+
+		ElvUF.Tags.Events[tagName] = (E.Retail and gsub(eventsOrSeconds, 'UNIT_HEALTH_FREQUENT', 'UNIT_HEALTH')) or gsub(eventsOrSeconds, 'UNIT_HEALTH([^_])', 'UNIT_HEALTH_FREQUENT%1')
+	end
+
+	ElvUF.Tags.Methods[tagName] = func
+
+	if RefreshNewTags then
+		ElvUF.Tags:RefreshEvents(tagName)
+		ElvUF.Tags:RefreshMethods(tagName)
+	end
+end
+
 
 ElvUF.Tags.Events["afk"] = "PLAYER_FLAGS_CHANGED"
 ElvUF.Tags.Methods["afk"] = function(unit)
@@ -630,6 +650,27 @@ ElvUF.Tags.Methods["name:title"] = function(unit)
 	end
 end
 
+do
+	local highestVersion = E.version
+	E:AddTag('ElvUI-Users', 20, function(unit)
+		if E.UserList and next(E.UserList) then
+			local name, realm = UnitName(unit)
+			if name then
+				-- local nameRealm = (realm and realm ~= '' and format('%s-%s', name, realm)) or name
+				local userVersion =  E.UserList[name]
+				if userVersion then
+					if highestVersion < userVersion then
+						highestVersion = userVersion
+					end
+					return (userVersion < highestVersion) and '|cffFF3333E|r' or '|cff3366ffE|r'
+				end
+			end
+		end
+	end)
+end
+
+
+
 E.TagInfo = {
 	--Colors
 	["namecolor"] = {category = L["Colors"], description = L["Colors names by player class or NPC reaction"]},
@@ -733,6 +774,7 @@ E.TagInfo = {
 	["dead"] = {category = L["Status"], description = L["Displays <DEAD> if the unit is dead"]},
 	["resting"] = {category = L["Status"], description = L["Displays zzz if the unit is dead"]},
 	["pvp"] = {category = L["Status"], description = L["Displays 'PvP' if the unit is pvp flagged"]},
+	['ElvUI-Users'] = { category = L["Status"], description = "Displays current ElvUI users" },
 	["offline"] = {category = L["Status"], description = L["Displays 'OFFLINE' if the unit is disconnected"]},
 	--Target
 	["target"] = {category = L["Target"], description = L["Displays the current target of the unit"]},
