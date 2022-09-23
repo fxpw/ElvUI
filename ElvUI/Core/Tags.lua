@@ -86,6 +86,8 @@ function E:AddTag(tagName, eventsOrSeconds, func, block)
 	if RefreshNewTags then
 		ElvUF.Tags:RefreshEvents(tagName)
 		ElvUF.Tags:RefreshMethods(tagName)
+
+		RefreshNewTags = true
 	end
 end
 
@@ -811,3 +813,5 @@ function E:AddTagInfo(tagName, category, description, order, hidden)
 	E.TagInfo[tagName].hidden = hidden or nil
 	return E.TagInfo[tagName]
 end
+
+RefreshNewTags = true

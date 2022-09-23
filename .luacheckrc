@@ -42255,6 +42255,7 @@ globals = {
 	"CompactRaidFrameManagerDisplayFrameOptionsButton",
 	"CompactRaidFrameManagerDisplayFrameOptionsButton",
 	"CompactRaidFrameContainer",
+	"CompactRaidFrameManagerDisplayFrameHiddenModeToggle",
 
 
 
