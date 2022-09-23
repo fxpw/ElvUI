@@ -3576,7 +3576,7 @@ E.Options.args.unitframe = {
 						raidFrames = {
 							order = 8,
 							type = "toggle",
-							name = "Фреймы рейда/группы"
+							name = "Новые фреймы рейда/группы"
 						}
 					}
 				},
