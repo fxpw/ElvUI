@@ -127,6 +127,7 @@ V.unitframe = {
 		focus = true,
 		boss = true,
 		arena = true,
+		pary = true,
 		raidFrames = true,
 	}
 }

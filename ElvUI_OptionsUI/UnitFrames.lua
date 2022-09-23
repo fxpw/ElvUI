@@ -3568,8 +3568,13 @@ E.Options.args.unitframe = {
 							type = "toggle",
 							name = L["Arena"]
 						},
-						raidFrames = {
+						party = {
 							order = 7,
+							type = "toggle",
+							name = L["Party"]
+						},
+						raidFrames = {
+							order = 8,
 							type = "toggle",
 							name = "Фреймы рейда/группы"
 						}
