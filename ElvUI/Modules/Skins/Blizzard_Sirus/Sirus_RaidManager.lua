@@ -30,7 +30,6 @@ local classIcons = {
 	["WARLOCK"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_warlock.blp",
 	["PALADIN"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_paladin.blp",
 	["DEATHKNIGHT"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_dk.blp",
-	-- ["SHAMAN"] = "",
 }
 local function GetNumClasses(class)
 	local int = 0;

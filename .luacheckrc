@@ -42256,9 +42256,9 @@ globals = {
 	"CompactRaidFrameManagerDisplayFrameOptionsButton",
 	"CompactRaidFrameContainer",
 	"CompactRaidFrameManagerDisplayFrameHiddenModeToggle",
+	"CompactRaidFrameManagerDisplayFrameFilterOptions",
 
-
-
+	"IsInRaid",
 	--sirus character 
 	"PrimaryProfession_Update",
 	"GearManagerDialogPopupSearchBox",
