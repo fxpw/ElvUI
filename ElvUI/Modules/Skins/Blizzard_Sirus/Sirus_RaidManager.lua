@@ -51,12 +51,17 @@ function ui:CreateClassFrame(parent,class,point)
 
 	frame:SetScript("OnEvent",function(self,upd)
 		local num = GetNumClasses(self.class)
-		if num == 0 then
-			self.texture:SetDesaturated(1)
+		if IsInRaid() then
+			self:Show()
+			if num == 0 then
+				self.texture:SetDesaturated(1)
+			else
+				self.texture:SetDesaturated(nil)
+			end
+			self.fs:SetText(num)
 		else
-			self.texture:SetDesaturated(nil)
+			self:Hide()
 		end
-		self.fs:SetText(num)
 	end)
 	frame:SetSize(28,28)
 	frame:SetPoint(point[1],point[2],point[3],point[4],point[5])
@@ -172,15 +177,25 @@ local function LoadSkin()
 
 		-- создал локально потому что нет имен и потом сделаю обновление чутка по другому
 		local SHAMAN = ui:CreateClassFrame(frameManager,"SHAMAN",{"TOPLEFT",frameManager,"TOPLEFT",15,-40})
+		SHAMAN:Hide()
 		local WARRIOR = ui:CreateClassFrame(frameManager,"WARRIOR",{"TOPLEFT",frameManager,"TOPLEFT",50,-40})
+		WARRIOR:Hide()
 		local MAGE = ui:CreateClassFrame(frameManager,"MAGE",{"TOPLEFT",frameManager,"TOPLEFT",80,-40})
+		MAGE:Hide()
 		local ROGUE = ui:CreateClassFrame(frameManager,"ROGUE",{"TOPLEFT",frameManager,"TOPLEFT",110,-40})
+		ROGUE:Hide()
 		local DRUID = ui:CreateClassFrame(frameManager,"DRUID",{"TOPLEFT",frameManager,"TOPLEFT",140,-40})
+		DRUID:Hide()
 		local HUNTER = ui:CreateClassFrame(frameManager,"HUNTER",{"TOPLEFT",frameManager,"TOPLEFT",15,-80})
+		HUNTER:Hide()
 		local PRIEST = ui:CreateClassFrame(frameManager,"PRIEST",{"TOPLEFT",frameManager,"TOPLEFT",50,-80})
+		PRIEST:Hide()
 		local WARLOCK = ui:CreateClassFrame(frameManager,"WARLOCK",{"TOPLEFT",frameManager,"TOPLEFT",80,-80})
+		WARLOCK:Hide()
 		local PALADIN = ui:CreateClassFrame(frameManager,"PALADIN",{"TOPLEFT",frameManager,"TOPLEFT",110,-80})
+		PALADIN:Hide()
 		local DEATHKNIGHT = ui:CreateClassFrame(frameManager,"DEATHKNIGHT",{"TOPLEFT",frameManager,"TOPLEFT",140,-80})
+		DEATHKNIGHT:Hide()
 
 	else
 		AllHideAndHandle(CompactRaidFrameManagerDisplayFrameLockedModeToggle,true)
