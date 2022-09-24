@@ -31,37 +31,59 @@ local classIcons = {
 	["PALADIN"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_paladin.blp",
 	["DEATHKNIGHT"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_dk.blp",
 }
-local function GetNumClasses(class)
-	local int = 0;
-	for i = 1,GetNumRaidMembers() do
-		local unit = "raid"..i;
-		if UnitExists(unit) and select(2,UnitClass(unit)) == class then
-			int = int+1;
-		end
-	end
-	return int
-end
 local ui = {}
 function ui:CreateClassFrame(parent,class,point)
 	local frame = CreateFrame("Frame",nil,parent)
-	frame.class = class
+	frame.classtable = {}
+	frame.classtable.class = class
+	frame.classtable.names = {}
+	frame.classtable.num = 0
 	frame:RegisterEvent("RAID_ROSTER_UPDATE")
 	frame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 
 	frame:SetScript("OnEvent",function(self,upd)
-		local num = GetNumClasses(self.class)
+		self:Update()
 		if IsInRaid() then
 			self:Show()
-			if num == 0 then
+			if self.classtable.num == 0 then
 				self.texture:SetDesaturated(1)
 			else
 				self.texture:SetDesaturated(nil)
 			end
-			self.fs:SetText(num)
+			self.fs:SetText(self.classtable.num)
 		else
 			self:Hide()
 		end
 	end)
+
+	function frame:Update()
+		local int = 0;
+		table.wipe(self.classtable.names)
+		self.classtable.num = 0
+		for i = 1,GetNumRaidMembers() do
+			local unit = "raid"..i;
+			if UnitExists(unit) and select(2,UnitClass(unit)) == class then
+				int = int+1;
+				self.classtable.names[#self.classtable.names+1] = UnitName(unit)
+			end
+		end
+		self.classtable.num = int
+		self.fs:SetText(self.classtable.num)
+	end
+	frame:SetScript("OnEnter", function(self)
+		self:Update()
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+		for i = 1,#self.classtable.names do
+			GameTooltip:AddLine(self.classtable.names[i])
+		end
+		if not (self.classtable.num == 0) then
+			GameTooltip:Show()
+		end
+	end)
+	frame:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	frame:EnableMouse(true)
 	frame:SetSize(28,28)
 	frame:SetPoint(point[1],point[2],point[3],point[4],point[5])
 	frame.texture = frame:CreateTexture(nil,"ARTWORK")
@@ -70,8 +92,9 @@ function ui:CreateClassFrame(parent,class,point)
 	frame.fs = frame:CreateFontString("OVERLAY")
 	frame.fs:FontTemplate()
 	frame.fs:SetPoint("CENTER", frame, "CENTER", 5, -5)
-	frame.fs:SetText(GetNumClasses(self.class))
+	-- frame.fs:SetText(frame.classtable.num)
 	-- fs:Point(point[1],point[2],point[3],point[4],point[5])
+	frame:Update()
 	return frame
 end
 
