@@ -31,6 +31,22 @@ local classIcons = {
 	["PALADIN"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_paladin.blp",
 	["DEATHKNIGHT"] = "Interface\\AddOns\\ElvUI\\Media\\Textures\\flat_dk.blp",
 }
+-- local function GetNumClasses()
+-- 	local int = 0;
+-- 	table.wipe(self.classtable.names)
+-- 	for i = 1,GetNumRaidMembers() do
+-- 		local unit = "raid"..i;
+-- 		if UnitExists(unit) and select(2,UnitClass(unit)) == class then
+-- 			int = int+1;
+-- 			self.classtable.names[#self.classtable.names+1] = UnitName(unit)
+-- 		end
+-- 	end
+-- 	self.classtable.num = int
+-- 	return int
+-- end
+local function IsInRaid()
+	return (GetNumRaidMembers() > 0)
+end
 local ui = {}
 function ui:CreateClassFrame(parent,class,point)
 	local frame = CreateFrame("Frame",nil,parent)
