@@ -119,7 +119,7 @@ local function LoadSkin()
 	end
 
 
-	WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton:SetScript("OnUpdate",refreshbutton_onshow)
+	WardrobeTransmogFrame.ModelFrame.ClearAllPendingButton:SetScript("OnShow",refreshbutton_onshow)
 
 	S:HandleNextPrevButton(WardrobeCollectionFrameItemsCollectionFramePagingFramePrevPageButton, nil, nil, true)
 	S:HandleNextPrevButton(WardrobeCollectionFrameItemsCollectionFramePagingFrameNextPageButton, nil, nil, true)
