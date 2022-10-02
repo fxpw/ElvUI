@@ -21,18 +21,15 @@ function NP:UpdateAllNames(unit,tag)
 		end
 	end
 end
-
 function NP:Update_Name(frame, triggered)
 	if not triggered then
 		if not self.db.units[frame.UnitType].name.enable then return end
 	end
 
-
 	local name = frame.Name
 	local nameText = frame.UnitName or UNKNOWN
 	-- local nametr:SetText(NP.db.units[frame.UnitType].name.textFormat)
 	name:SetText(NP:SetNPText(frame,NP.db.units[frame.UnitType].name.textFormat) or nameText)
-	-- name:SetText("das")
 	-- frame:Tag(name, self.db.units[frame.UnitType].name.textFormat)
 
 	if not triggered then

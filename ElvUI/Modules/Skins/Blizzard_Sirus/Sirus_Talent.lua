@@ -125,15 +125,22 @@ local function LoadSkin()
 		end
 	end)
 
+	local function setHighlightTexture(self, texPath)
+		if texPath ~= "" then self:SetHighlightTexture("") end
+	end
+	local function setPushedTexture(self, texPath)
+		if texPath ~= "" then self:SetPushedTexture("") end
+	end
+
 	local function TalentButtons(i, j)
 		local button = _G["PlayerTalentFramePanel"..i.."Talent"..j]
 		button:StripTextures()
 		button:CreateBackdrop()
 		button:StyleButton()
 
-		button.SetHighlightTexture = E.noop
+		hooksecurefunc(button, "SetHighlightTexture", setHighlightTexture)
 		button:GetHighlightTexture():SetAllPoints()
-		button.SetPushedTexture = E.noop
+		hooksecurefunc(button, "SetPushedTexture", setPushedTexture)
 		button:GetPushedTexture():SetAllPoints()
 		button:GetPushedTexture():SetTexCoord(unpack(E.TexCoords))
 		button:SetNormalTexture("")

@@ -165,23 +165,9 @@ local function LoadSkin()
 	skinStatusBar(WardrobeCollectionFrameProgressBar)
 
 	--buttons top
-	-- S:HandleButton(WardrobeCollectionFrameItemsCollectionFrameSlotsFrameSlotButton1)
-	-- local function stripbutton_onup()
-		-- WardrobeCollectionFrameFilterButton:CreateBackdrop()
 		AllStrip(WardrobeCollectionFrame.FilterButton)
 		S:HandleButton(WardrobeCollectionFrameFilterButton)
-		-- WardrobeCollectionFrame.FilterButton.TopLeft:Hide()
-		-- WardrobeCollectionFrame.FilterButton.TopRight:Hide()
-		-- WardrobeCollectionFrame.FilterButton.BottomLeft:Hide()
-		-- WardrobeCollectionFrame.FilterButton.BottomRight:Hide()
-		-- WardrobeCollectionFrame.FilterButton.TopMiddle:Hide()
-		-- WardrobeCollectionFrame.FilterButton.MiddleLeft:Hide()
-		-- WardrobeCollectionFrame.FilterButton.MiddleRight:Hide()
-		-- WardrobeCollectionFrame.FilterButton.BottomMiddle:Hide()
-		-- WardrobeCollectionFrame.FilterButton.MiddleMiddle:Hide()
 
-	-- end
-	-- WardrobeCollectionFrameFilterButton:SetScript("OnUpdate",stripbutton_onup)
 
 	local function clearBackdrop(self)
 		self:SetBackdropColor(0, 0, 0, 0)

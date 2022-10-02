@@ -9,7 +9,7 @@ local unpack = unpack
 S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.talent then return end
 
-	PlayerTalentFrame:StripTextures(true)
+	PlayerTalentFrame:StripTextures(nil, true)
 	PlayerTalentFrame:CreateBackdrop("Transparent")
 	-- PlayerTalentFrame.backdrop:Point("TOPLEFT", 11, -12)
 	-- PlayerTalentFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)

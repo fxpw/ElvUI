@@ -48,11 +48,11 @@ function B:Initialize()
 		MINUTE_ONELETTER_ABBR = "%d m"
 	end
 
-	CreateFrame("Frame"):SetScript("OnUpdate", function()
-		if LFRBrowseFrame.timeToClear then
-			LFRBrowseFrame.timeToClear = nil
-		end
-	end)
+	-- CreateFrame("Frame"):SetScript("OnUpdate", function()
+	-- 	if LFRBrowseFrame.timeToClear then
+	-- 		LFRBrowseFrame.timeToClear = nil
+	-- 	end
+	-- end)
 
 	MinimapPing:HookScript("OnUpdate", function(self)
 		if self.fadeOut or self.timer > MINIMAPPING_FADE_TIMER then

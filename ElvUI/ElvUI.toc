@@ -1,6 +1,6 @@
 ## Interface: 30300
 ## Author: Elv, Bunny, fxpw
-## Version: 7.28
+## Version: 7.29
 ## Title: |cff1784d1E|r|cffe5e3e3lvUI|r for sirus
 ## Notes: User Interface replacement AddOn for World of Warcraft.
 ## SavedVariables: ElvDB, ElvPrivateDB, ElvSirusDB

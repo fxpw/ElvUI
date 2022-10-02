@@ -43,14 +43,14 @@ function C_BattlefieldScoreManager:GenerateScoreData()
     end
 end
 
-do
-	local oldPlayerTalentFrame_Refresh = PlayerTalentFrame_Refresh
-	function PlayerTalentFrame_Refresh()
-		if not PlayerTalentFrame:IsShown() then return end
+-- do
+-- 	local oldPlayerTalentFrame_Refresh = PlayerTalentFrame_Refresh
+-- 	function PlayerTalentFrame_Refresh()
+-- 		if not PlayerTalentFrame:IsShown() then return end
 
-		return oldPlayerTalentFrame_Refresh()
-	end
-end
+-- 		return oldPlayerTalentFrame_Refresh()
+-- 	end
+-- end
 
 do -- temp fix extra ab
 	local LAB = E.Libs.LAB

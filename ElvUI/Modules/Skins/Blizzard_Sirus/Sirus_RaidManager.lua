@@ -92,7 +92,7 @@ function ui:CreateClassFrame(parent,class,point)
 		for i = 1,#self.classtable.names do
 			GameTooltip:AddLine(self.classtable.names[i])
 		end
-		if (self.classtable.num ~= 0) then
+		if not (self.classtable.num == 0) then
 			GameTooltip:Show()
 		end
 	end)
