@@ -39,7 +39,7 @@ local function LoadSkin()
 	AuctionHouseFrameItemBuyFrameItemList:StripTextures()
 	AuctionHouseFrameItemBuyFrameItemList:CreateBackdrop("Transparent")
 	-- end
-	local aucpanitemlistnineslice = AuctionHouseFrameItemBuyFrameItemListHeaderContainer
+	-- local aucpanitemlistnineslice = AuctionHouseFrameItemBuyFrameItemListHeaderContainer
 	-- aucpanitemlistnineslice:HookScript("OnUpdate", aucpanitemlistnineslice_OnShow)
 	AuctionHouseFrameItemBuyFrameItemDisplay:StripTextures()
 	AuctionHouseFrameItemBuyFrameItemDisplay:CreateBackdrop("Transparent")

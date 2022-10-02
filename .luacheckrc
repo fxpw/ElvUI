@@ -42366,6 +42366,8 @@ globals = {
 	"EncounterJournal",
 	--sirus store
 	"ToggleStoreFrame",
+	"AuctionHouseTableHeaderStringMixin",
+	"AuctionHouseFramePortrait",
 	"ChooseItemFrame",
 	--sirus queue
 	"QueueStatusFrame",

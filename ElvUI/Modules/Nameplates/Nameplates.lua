@@ -2,7 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local NP = E:GetModule("NamePlates")
 -- local LSM = E.Libs.LSM
 NP.LSM = E.Libs.LSM
-local LAI = E.Libs.LAI
+-- local LAI = E.Libs.LAI
 --Lua functions
 local _, ns = ...
 local ElvUF = ns.oUF
