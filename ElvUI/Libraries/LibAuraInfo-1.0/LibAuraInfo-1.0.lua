@@ -63,22 +63,18 @@ end
 lib.callbacksUsed = {}
 -- "DEBUFF" and "HARMFUL" or "HELPFUL"
 lib.NPCEnemy = {
-	enabled = false,
 	HARMFUL = false,
 	HELPFUL = false
 }
 lib.NPCFriend = {
-	enabled = false,
 	HARMFUL = false,
 	HELPFUL = false
 }
 lib.PlayerEnemy = {
-	enabled = false,
 	HARMFUL = false,
 	HELPFUL = false
 }
 lib.PlayerFriend = {
-	enabled = false,
 	HARMFUL = false,
 	HELPFUL = false
 }
@@ -318,8 +314,14 @@ function lib.frame:UNIT_AURA(_, unitID)
 	if not unitID then return end
 	if not lib:CheckIfNeedMemorizeByUnitID(unitID) then return end
 	ResetUnitAuras(unitID)
-	CheckUnitAuras(unitID, "HELPFUL")
-	CheckUnitAuras(unitID, "HARMFUL")
+	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HELPFUL")
+	if bool then
+		CheckUnitAuras(unitID, "HELPFUL")
+	end
+	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HARMFUL")
+	if bool then
+		CheckUnitAuras(unitID, "HARMFUL")
+	end
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -882,11 +884,7 @@ function lib:AddAuraDose(dstGUID, spellID, srcGUID, filter)
 
 	return false
 end
--- end
 
--- do
-	-- local data
-	-- Remove 1 stack from a aura
 function lib:RemoveAuraDose(dstGUID, spellID, srcGUID, filter)
 	if self.GUIDAuras[dstGUID] and self.GUIDAuras[dstGUID][filter] then
 		if srcGUID then
@@ -914,11 +912,7 @@ function lib:RemoveAuraDose(dstGUID, spellID, srcGUID, filter)
 
 	return false
 end
--- end
 
--- do
-	-- local data
-	-- Refresh the start and expiration time of a aura
 function lib:RefreshAura(dstGUID, spellID, srcGUID, filter)
 	if self.GUIDAuras[dstGUID] and self.GUIDAuras[dstGUID][filter] then
 		if srcGUID then
@@ -944,11 +938,7 @@ function lib:RefreshAura(dstGUID, spellID, srcGUID, filter)
 
 	return false
 end
--- end
 
--- do
-	-- local data
-	-- Remove a aura from a GUID
 function lib:RemoveAuraFromGUID(dstGUID, spellID, srcGUID, filter)
 	if lib.GUIDAuras[dstGUID] and lib.GUIDAuras[dstGUID][filter] then
 		if srcGUID then
@@ -973,7 +963,7 @@ function lib:RemoveAuraFromGUID(dstGUID, spellID, srcGUID, filter)
 
 	end
 end
--- end
+
 
 -- Remove all auras on a GUID. They must have died
 -- function lib:RemoveAllAurasFromGUID(dstGUID)
@@ -1008,7 +998,6 @@ function lib.frame:SPELL_AURA_APPLIED(_, _, _, srcGUID, _, _, dstGUID, _, dstFla
 		lib:GUIDGainedDRAura(dstGUID, spellID, lib:FlagIsPlayer(dstFlags))
 	end
 	if not lib.spellDuration[spellID] then return end
-	-- if lib.spellDuration[spellID] then
 	lib:RemoveExpiredAuras(dstGUID)
 	lib:AddAuraToGUID(dstGUID, spellName, lib:GetSpellTexture(spellID), spellID, srcGUID, auraType == "DEBUFF" and "HARMFUL" or "HELPFUL")
 	lib.callbacks:Fire("LibAuraInfo_AURA_APPLIED", dstGUID, spellID, srcGUID, auraType)
@@ -1032,9 +1021,7 @@ function lib.frame:SPELL_AURA_REFRESH(event, timestamp, eventType, srcGUID, srcN
 
 	self:SPELL_AURA_APPLIED(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
 end
--- end
 
--- do
 local dosed
 --DOSE = spell stacking
 function lib.frame:SPELL_AURA_APPLIED_DOSE(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
@@ -1054,8 +1041,6 @@ function lib.frame:SPELL_AURA_APPLIED_DOSE(event, timestamp, eventType, srcGUID,
 	--Note this event could have fired on the 5th stack but our spell frame will only show it applied once.
 	self:SPELL_AURA_APPLIED(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
 end
--- end
-
 -- function lib.frame:SPELL_AURA_APPLIED_REMOVED_DOSE(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
 
 function lib.frame:SPELL_AURA_APPLIED_REMOVED_DOSE(_, _, _, srcGUID, _, _, dstGUID, _, dstFlags, spellID, _, spellSchool, auraType)
@@ -1066,7 +1051,6 @@ function lib.frame:SPELL_AURA_APPLIED_REMOVED_DOSE(_, _, _, srcGUID, _, _, dstGU
 		return
 	end
 end
--- end
 
 function lib.frame:SPELL_AURA_BROKEN_SPELL(...)
 	self:SPELL_AURA_REMOVED(...)
@@ -1104,8 +1088,7 @@ end
 --------------------------------------------------------------
 --~ API
 --------------------------------------------------------------
--- local GUIDIsPlayer
--- do
+
 	local B, maskedB
 local function GUIDIsPlayer(guid)
 	B = tonumber(sub(guid, 5, 5), 16);
@@ -1114,9 +1097,7 @@ local function GUIDIsPlayer(guid)
 --	print("Your target is a " .. (knownTypes[maskedB] or " unknown entity!"));
 	return maskedB == 0
 end
--- end
 
--- do
 local dur
 --Return the duration of a spell.
 function lib:GetDuration(spellID, srcGUID, dstGUID, dstIsPlayer)
@@ -1148,11 +1129,9 @@ function lib:GetDuration(spellID, srcGUID, dstGUID, dstIsPlayer)
 		return self.spellDuration[spellID]
 	end
 end
--- end
 
--- do
-	local debuffType
-	--Return the debuff type of a spell.
+local debuffType
+--Return the debuff type of a spell.
 function lib:GetDebuffType(spellID)
 	if self.spellDuration[spellID] then
 		debuffType = self.spellDebuffType[spellID]
@@ -1178,8 +1157,6 @@ function lib:GetNumGUIDAuras(dstGUID)
 	return 0
 end
 
--- do
--- local data
 function lib:GUIDAura(dstGUID, i, filter)
 	if self.GUIDAuras[dstGUID] and self.GUIDAuras[dstGUID][filter] and self.GUIDAuras[dstGUID][filter][i] then
 		data = self.GUIDAuras[dstGUID][filter][i]
@@ -1187,10 +1164,7 @@ function lib:GUIDAura(dstGUID, i, filter)
 	end
 	return false
 end
--- end
 
--- do
-	-- local data
 function lib:GUIDAuraID(dstGUID, spellID, srcGUID, filter)
 	if self.GUIDAuras[dstGUID] and self.GUIDAuras[dstGUID][filter] then
 		if srcGUID then
@@ -1210,10 +1184,7 @@ function lib:GUIDAuraID(dstGUID, spellID, srcGUID, filter)
 	end
 	return false
 end
--- end
 
--- do
-	-- local drType, key, reset
 function lib:HasDREffect(dstGUID, spellID)
 	drType = self.drSpells[spellID]
 	if drType then
@@ -1225,7 +1196,6 @@ function lib:HasDREffect(dstGUID, spellID)
 	end
 	return false
 end
--- end
 
 function lib:GetGUIDInfo(GUID)
 	return self.GUIDData_name[GUID], self.GUIDData_flags[GUID]
