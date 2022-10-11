@@ -466,8 +466,45 @@ L["Threat"] = "Угроза"
 L["Miscellaneous"] = "Разное"
 L["Collections"] = "Коллекции"
 L["EncounterJ"] = "Приключения"
+
+L["Absorbs"] = "Поглощение"
+L["Absorbs Prediction"] = "Прогноз поглощений"
+L["Absorb StatusBar Texture"] = "Текстура полос состояния"
+L["Display LFG Icons in chat."] = "Отображать иконки ролей в чате"
+L["Displays all incoming heals"] = "Отображать любое входящее исцеление"
+-- L["Displays an icon near your Guild Master in chat.\n\n|cffFF0000Note:|r Some messages in chat history may disappear on login."] = "Отображать иконку рядом с сообщениями главы вашей гильдии в чате.\n\n|cffFF0000Предупреждение:|r Некоторые сообщения могут исчезать из истории чата при входе в игру."
+L["Displays only incoming heals from other units"] = "Отображать только входящее исцеление от других юнитов"
+L["Displays only personal incoming heals"] = "Отображать только личное входящее исцеление"
+L["Displays the amount of absorbs"] = "Отображать количество поглощения"
+
+L["Group Units"] = "Групповые юниты"
+-- L["Guild Master Icon"] = "Иконка Главы гильдии"
+L["Heal Absorbs"] = "Поглощение исцеления"
+L["LFG Icons"] = "Стиль иконок"
+L["Individual Units"] = "Одиночные юниты"
+L["Links"] = "Ссылки"
+L["Max Overflow is set to zero. Absorb Overflows will be hidden when using Overflow style.\nIf used together Max Overflow at zero and Overflow mode will act like Normal mode without the ending sliver of overflow."] = "Макс. переполнение установлено на значение 0. Отображение прогноза поглощения в режиме \"Переполнение\" будет скрыто.\nИспользование режима \"Переполнение\" совместно со значением макс. переполнения равным нулю, будет выглядеть так же, как использование режима \"Нормальный\" - без отображения полосы прогноза вне рамки юнита."
+L["Modules"] = "Модули"
+L["Normal"] = "Нормальный"
+L["Options for customizing unit frames. Please don't change these setting when ElvUI's testing frames for bosses and arena teams are shown. That will make them invisible until retoggling."] = "Опции для дополнительной настройки рамок юнитов. Пожалуйста, не изменяйте эти настройки в то же время, когда включен тестовый режим рамок боссов и арены в ElvUI. Это сделает их невидимыми до повторного включения."
+L["Absorb Style"] = "Стиль отображения"
+L["Position"] = "Позиция"
+L["Anchor Point"] = "Позиция"
+L["Over Absorbs"] = "\"Лишнее\" поглощение"
+L["Over Heal Absorbs"] = "\"Лишнее\" поглощение исцеления"
+L["Overflow"] = "Переполнение"
+L["Party"] = "Группа"
+L["Raid"] = "Рейд"
+L["Reversed"] = "Перевернутый"
+L["Stacked"] = "Сложенный"
+L["Show a prediction bar with all absorbs on the unitframe. Also displays a slightly different colored bar for heal absorbing shields"] = "Панель прогноза всех поглощений в рамке юнита. Также, отображает немного другой цвет для отображения поглощающих исцеление щитов."
+L["Submodules and Coding:"] = "Модули и код:"
+L["Target"] = "Цель"
+L["You are using Overflow with Max Overflow at zero."] = "Вы используете режим \"Переполнение\" со значением макс. переполнения равным нулю."
+L["Wrapped"] = "Обернутый"
+
 --~afkwords
-L["RandomWords"] ={ ---- не может быть только одной записи
+L["RandomWords"] = { ---- не может быть только одной записи
 	"На все бабки в босса ©Сырсколбасой",
 	"Я потратил на эту строчку 20 минут ©fxpw",
 	"Не стой в огне!",
@@ -534,45 +571,9 @@ L["RandomWords"] ={ ---- не может быть только одной зап
 	"Маги могли топить противников, используя заклинания «Контроль»",
 	"Первоначальный дизайн WoW предполагал лишь по 100 квестов у обоих фракций",
 	"Обуржуазившегося конституционалиста нашли акклиматизировавшимся в Константинополе",
+	"Vae, fratelle, praestupidus es, sit tibi terra levis ©Сократ",
+	"Qui vocaris minus ad rem pertinet, plurimum interest cum te vocent ad bibendum",
+	"Vivo, ut non satis dormiam",
+	"Sit Vis tecum"
 
 }
-
-
-
-L["About"] = "Об аддоне"
-L["About/Help"] = "Информация"
-L["Absorbs"] = "Поглощение"
-L["Absorbs Prediction"] = "Прогноз поглощений"
-L["Absorb StatusBar Texture"] = "Текстура полос состояния"
-L["Display LFG Icons in chat."] = "Отображать иконки ролей в чате"
-L["Displays all incoming heals"] = "Отображать любое входящее исцеление"
-L["Displays an icon near your Guild Master in chat.\n\n|cffFF0000Note:|r Some messages in chat history may disappear on login."] = "Отображать иконку рядом с сообщениями главы вашей гильдии в чате.\n\n|cffFF0000Предупреждение:|r Некоторые сообщения могут исчезать из истории чата при входе в игру."
-L["Displays only incoming heals from other units"] = "Отображать только входящее исцеление от других юнитов"
-L["Displays only personal incoming heals"] = "Отображать только личное входящее исцеление"
-L["Displays the amount of absorbs"] = "Отображать количество поглощения"
-
-L["Group Units"] = "Групповые юниты"
-L["Guild Master Icon"] = "Иконка Главы гильдии"
-L["Heal Absorbs"] = "Поглощение исцеления"
-L["LFG Icons"] = "Стиль иконок"
-L["Individual Units"] = "Одиночные юниты"
-L["Links"] = "Ссылки"
-L["Max Overflow is set to zero. Absorb Overflows will be hidden when using Overflow style.\nIf used together Max Overflow at zero and Overflow mode will act like Normal mode without the ending sliver of overflow."] = "Макс. переполнение установлено на значение 0. Отображение прогноза поглощения в режиме \"Переполнение\" будет скрыто.\nИспользование режима \"Переполнение\" совместно со значением макс. переполнения равным нулю, будет выглядеть так же, как использование режима \"Нормальный\" - без отображения полосы прогноза вне рамки юнита."
-L["Modules"] = "Модули"
-L["Normal"] = "Нормальный"
-L["Options for customizing unit frames. Please don't change these setting when ElvUI's testing frames for bosses and arena teams are shown. That will make them invisible until retoggling."] = "Опции для дополнительной настройки рамок юнитов. Пожалуйста, не изменяйте эти настройки в то же время, когда включен тестовый режим рамок боссов и арены в ElvUI. Это сделает их невидимыми до повторного включения."
-L["Absorb Style"] = "Стиль отображения"
-L["Position"] = "Позиция"
-L["Anchor Point"] = "Позиция"
-L["Over Absorbs"] = "\"Лишнее\" поглощение"
-L["Over Heal Absorbs"] = "\"Лишнее\" поглощение исцеления"
-L["Overflow"] = "Переполнение"
-L["Party"] = "Группа"
-L["Raid"] = "Рейд"
-L["Reversed"] = "Перевернутый"
-L["Stacked"] = "Сложенный"
-L["Show a prediction bar with all absorbs on the unitframe. Also displays a slightly different colored bar for heal absorbing shields"] = "Панель прогноза всех поглощений в рамке юнита. Также, отображает немного другой цвет для отображения поглощающих исцеление щитов."
-L["Submodules and Coding:"] = "Модули и код:"
-L["Target"] = "Цель"
-L["You are using Overflow with Max Overflow at zero."] = "Вы используете режим \"Переполнение\" со значением макс. переполнения равным нулю."
-L["Wrapped"] = "Обернутый"

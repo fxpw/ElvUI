@@ -2,7 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local NP = E:GetModule("NamePlates")
 -- local LSM = E.Libs.LSM
 NP.LSM = E.Libs.LSM
--- local LAI = E.Libs.LAI
+local LAI = E.Libs.LAI
 --Lua functions
 local _, ns = ...
 local ElvUF = ns.oUF
@@ -1164,9 +1164,22 @@ end
 ---------------------
 --------------tags
 ---------------------
+function NP:UpdateLibAuraInfoInfo()
 
+	LAI.NPCEnemy.HARMFUL = E.db.nameplates.units.ENEMY_NPC.debuffs.enable -- Debuffs
+	LAI.NPCEnemy.HELPFUL = E.db.nameplates.units.ENEMY_NPC.buffs.enable -- Buffs
 
------------------
+	LAI.NPCFriend.HARMFUL = E.db.nameplates.units.FRIENDLY_NPC.debuffs.enable -- Debuffs
+	LAI.NPCFriend.HELPFUL = E.db.nameplates.units.FRIENDLY_NPC.buffs.enable -- Buffs
+
+	LAI.PlayerEnemy.HARMFUL = E.db.nameplates.units.ENEMY_PLAYER.debuffs.enable -- Debuffs
+	LAI.PlayerEnemy.HELPFUL = E.db.nameplates.units.ENEMY_PLAYER.buffs.enable -- Buffs
+
+	LAI.PlayerFriend.HARMFUL = E.db.nameplates.units.FRIENDLY_PLAYER.debuffs.enable -- Debuffs
+	LAI.PlayerFriend.HELPFUL = E.db.nameplates.units.FRIENDLY_PLAYER.buffs.enable -- Buffs
+
+end
+
 function NP:Initialize()
 
 	self.db = E.db.nameplates
@@ -1244,13 +1257,17 @@ function NP:Initialize()
 	self:CacheGroupPetUnits()
 	self:RegisterEvent("UNIT_NAME_UPDATE", "CacheGroupPetUnits")
 
-	-- LAI.UnregisterAllCallbacks(self)
-	-- LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED")
-	-- LAI.RegisterCallback(self, "LibAuraInfo_AURA_REMOVED")
-	-- LAI.RegisterCallback(self, "LibAuraInfo_AURA_REFRESH")
-	-- LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED_DOSE")
-	-- LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
-	-- LAI.RegisterCallback(self, "LibAuraInfo_UNIT_AURA")
+	LAI.UnregisterAllCallbacks(self)
+
+	self:UpdateLibAuraInfoInfo() -- save params for cache
+
+	LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED")
+	LAI.RegisterCallback(self, "LibAuraInfo_AURA_REMOVED")
+	LAI.RegisterCallback(self, "LibAuraInfo_AURA_REFRESH")
+	LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED_DOSE")
+	LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
+	LAI.RegisterCallback(self, "LibAuraInfo_UNIT_AURA")
+
 end
 
 local function InitializeCallback()
