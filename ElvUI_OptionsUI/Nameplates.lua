@@ -2251,7 +2251,9 @@ local function GetUnitSettings(unit, name)
 				end,
 				set = function(info, value)
 					E.db.nameplates.units[unit].buffs[info[#info]] = value
+					NP:UpdateLibAuraInfoInfo()
 					NP:ConfigureAll()
+
 				end,
 				args = {
 					header = {
@@ -2627,6 +2629,7 @@ local function GetUnitSettings(unit, name)
 				end,
 				set = function(info, value)
 					E.db.nameplates.units[unit].debuffs[info[#info]] = value
+					NP:UpdateLibAuraInfoInfo()
 					NP:ConfigureAll()
 				end,
 				args = {
