@@ -39,6 +39,7 @@
 
 ## Plugins:
 Для сируса
+<br />
 [ElvUI_Enhanced](https://github.com/fxpw/ElvUI_Enhanced)
 <br />
 [ElvUI_AddOnSkins](https://github.com/fxpw/ElvUI_AddOnSkins)
@@ -46,6 +47,7 @@
 [ElvUI_DmgAtPlates](https://github.com/fxpw/ElvUI_DmgAtPlates)
 <br />
 Обычные
+<br />
 [ElvUI_AuraBarsMovers](https://github.com/ElvUI-WotLK/ElvUI_AuraBarsMovers)
 <br />
 [ElvUI_BagControl](https://github.com/ElvUI-WotLK/ElvUI_BagControl)
