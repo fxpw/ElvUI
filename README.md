@@ -38,7 +38,7 @@
 5. Перезапускаем полностью игру
 
 ## Plugins:
-Для сируса
+Для Sirus.su
 <br />
 [ElvUI_Enhanced](https://github.com/fxpw/ElvUI_Enhanced)
 <br />
