@@ -108,6 +108,7 @@ local function LoadSkin()
 	TradeSkillRankFrame:CreateBackdrop()
 	TradeSkillRankFrame:SetStatusBarTexture(E.media.normTex)
 	E:RegisterStatusBar(TradeSkillRankFrame)
+	E:SetSmoothing(TradeSkillRankFrame, 1)
 
 	TradeSkillFrame.FilterButton:StripTextures(true)
 	S:HandleButton(TradeSkillFrame.FilterButton)

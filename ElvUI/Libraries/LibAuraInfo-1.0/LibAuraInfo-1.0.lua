@@ -224,7 +224,7 @@ local function CheckUnitAuras(unitID, filterType)
 		if not name then break end
 
 		duration = Round(duration)
-
+		unitCaster = unitCaster or 'none'
 		if not lib.spellDuration[spellID] then
 			lib.spellDuration[spellID] = duration
 			lib.spellDebuffType[spellID] = (dispelType and lib.debuffTypes[dispelType] or 0)
