@@ -161,10 +161,18 @@ local ElvBlue = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
 -- local Vakh = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":16:16")
 local Dodzo = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
 local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
-local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
+-- local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
 local NightlyBlooD = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\NightlyBlooD]], ":24:24")
 local Toss = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Toss]], ":24:24")
 local KolbaskaSir = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\KolbaskaSir]], ":24:24")
+local Gadgetino = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Gadgetino]], ":24:24")
+
+local RaindomElvUIIcon = {
+	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
+}
+local function CreateRandomIcon()
+	return E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Elv]]..RaindomElvUIIcon[math.random(1,#RaindomElvUIIcon)], ":20:40")
+end
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
@@ -177,9 +185,7 @@ local specialChatIconsSirus = {
 	["Aiid-Scourge x2 - 3.3.5a+"] = Toss,
 	["Covenant-Scourge x2 - 3.3.5a+"] = Toss,
 	["Sheelby-Scourge x2 - 3.3.5a"] = Toss,
-	["Шутка-Scourge x2 - 3.3.5a+"] = Fxpw,
-	["Пьяная-Scourge x2 - 3.3.5a+"] = Fxpw,
-	["Лужица-Scourge x2 - 3.3.5a+"] = Fxpw,
+
 	["Мимирон-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
 	["Фьярнскаггл-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
 	["Амбасодор-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
@@ -190,7 +196,13 @@ local specialChatIconsSirus = {
 	["Ghostbuste-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 	["Усталыч-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 	["Сырсколбасой-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
+	["Gadgetino-Scourge x2 - 3.3.5a+"] = Gadgetino,
 
+}
+local randomChatIcons = {
+	["Шутка-Scourge x2 - 3.3.5a+"] = true,
+	["Пьяная-Scourge x2 - 3.3.5a+"] = true,
+	["Лужица-Scourge x2 - 3.3.5a+"] = true,
 }
 
 local function ChatFrame_OnMouseScroll(frame, delta)
@@ -2081,7 +2093,11 @@ local function GetChatIcon(_, name, realm)
 
 	if specialChatIconsSirus[name] then
 		return specialChatIconsSirus[name]
+	elseif randomChatIcons[name] then
+		local icon =CreateRandomIcon()
+		return icon
 	end
+
 end
 
 
