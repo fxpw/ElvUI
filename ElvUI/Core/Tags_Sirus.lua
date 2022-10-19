@@ -404,7 +404,7 @@ local ilvl
 local color
 local hex
 -- COLORTEST = nil
-E:AddTag(format('ilvl'), 'UNIT_FACTION', function(unit)
+E:AddTag(format('ilvl'), 'UNIT_FACTION UNIT_TARGET UNIT_CONNECTION PLAYER_FLAGS_CHANGED', function(unit)
 	ilvl =  ItemLevelMixIn:GetItemLevel(UnitGUID(unit))
 	if not ilvl then return "None" end
 	color = ItemLevelMixIn:GetColor( ilvl )
