@@ -673,6 +673,7 @@ end
 
 
 
+
 E.TagInfo = {
 	--Colors
 	["namecolor"] = {category = L["Colors"], description = L["Colors names by player class or NPC reaction"]},

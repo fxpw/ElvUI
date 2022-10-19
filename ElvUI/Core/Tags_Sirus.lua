@@ -400,8 +400,17 @@ for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 
 	end
 end
 
-
-
+local ilvl
+local color
+local hex
+-- COLORTEST = nil
+E:AddTag(format('ilvl'), 'UNIT_FACTION', function(unit)
+	ilvl =  ItemLevelMixIn:GetItemLevel(UnitGUID(unit))
+	if not ilvl then return "None" end
+	color = ItemLevelMixIn:GetColor( ilvl )
+	hex = color:GenerateHexColor()
+	return "|c"..hex..ilvl
+end)
 
 -----------------------------------
 -----------------------------------
@@ -426,6 +435,7 @@ E:AddTagInfo("race:abbrev", "Sirus", "Показывает расу юнита �
 
 E:AddTagInfo("happiness", "Sirus", "Счастье питомца строка")
 E:AddTagInfo("happiness:icon", "Sirus", "Счастье питомца в иконке")
+E:AddTagInfo("ilvl", "Sirus", "Показывает уровень предметов")
 
 
 for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 20}) do

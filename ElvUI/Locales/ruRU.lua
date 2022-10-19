@@ -328,11 +328,11 @@ L["|cFFE30000Lua error recieved. You can view the error message when you exit co
 L["RED_ENABLE"] = "|cFFff3333Включить|r"
 L["GREEN_ENABLE"] = "|cFF33ff33Включить|r"
 L["DESC_MOVERCONFIG"] = [=[Блокировка отключена. Передвиньте фреймы и нажмите "Закрепить", когда закончите.
-Options:
-  LeftClick - Toggle Nudge Frame.
-  RightClick - Open Config Section.
-  Shift + RightClick - Hides mover temporarily.
-  Ctrl + RightClick - Resets mover position to default.
+Настройки:
+  LeftClick - Показать фрейм сдвига.
+  RightClick - Открыть конфигурацию фрейма.
+  Shift + RightClick - Спрятать фрейм на время.
+  Ctrl + RightClick - Сбросить фрейм до началальных настроек.
 ]=]
 
 --- ru ru tags
