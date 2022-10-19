@@ -36,6 +36,10 @@ local function LoadSkin()
 	--results
 	AuctionHouseFrameItemBuyFrameItemListScrollFrame:StripTextures()
 	AuctionHouseFrameItemBuyFrameItemListScrollFrame:CreateBackdrop("Transparent")
+	AuctionHouseFrameItemBuyFrameItemListNineSlice:StripTextures()
+
+	S:HandleEditBox(AuctionHouseFrameItemBuyFrameBidFrameBidAmountGold)
+	S:HandleEditBox(AuctionHouseFrameItemBuyFrameBidFrameBidAmountSilver)
 	AuctionHouseFrameItemBuyFrameItemList:StripTextures()
 	AuctionHouseFrameItemBuyFrameItemList:CreateBackdrop("Transparent")
 	-- end
