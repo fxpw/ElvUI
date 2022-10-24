@@ -25,7 +25,7 @@ end
 
 
 local function switchSet()
-	if not E.db.datatexts.SAOSS then return end
+	-- if not E.db.datatexts.SAOSS then return end
 	local names ,_ = C_Talent.GetTalentGroupSettings(activeSpec)
 	for i = 1, GetNumEquipmentSets() do
 		local name = GetEquipmentSetInfo(i)
@@ -90,15 +90,19 @@ local function OnClick(self, button)
 		if indexToChangeSpec ~= C_Talent.GetSelectedTalentGroup() then
 
 			if indexToChangeSpec > 2 then
-				local selectedCurrencyID = C_Talent.GetSelectedCurrency() or 1
-
-				SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":"..selectedCurrencyID - 1)
-				C_Timer:After(11,switchSet)
-				C_Timer:After(12,switchSet)
+				-- local selectedCurrencyID = C_Talent.GetSelectedCurrency() or 1
+				-- SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":"..1)
+				SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":"..(IsResting() and 1 or 2))
+				if E.db.datatexts.SAOSS then
+					C_Timer:After(11,switchSet)
+					C_Timer:After(12,switchSet)
+				end
 			else
 				SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":0")
-				C_Timer:After(6,switchSet)
-				C_Timer:After(7,switchSet)
+				if E.db.datatexts.SAOSS then
+					C_Timer:After(6,switchSet)
+					C_Timer:After(7,switchSet)
+				end
 			end
 
 		end
@@ -108,7 +112,6 @@ local function OnClick(self, button)
 
 	elseif button == "MiddleButton" and IsShiftKeyDown() then
 		E.db.datatexts.SAOSS = not E.db.datatexts.SAOSS
-		-- print(E.db.datatexts.SAOSS)
 		DT.tooltip:Hide()
 		OnEnter(self)
 	end

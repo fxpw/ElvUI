@@ -494,7 +494,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 		if not UnitIsEnemy("player", unit) then
 			ItemLevelMixIn:Request(unit)
 
-			tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
+			tt:AddDoubleLine(L["Item Level:2"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
 		end
 	end
 

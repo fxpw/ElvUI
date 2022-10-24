@@ -24,6 +24,12 @@ local function LoadSkin()
 	--buy tab
 	AuctionHouseFrameBrowseResultsFrameItemList:StripTextures()
 	AuctionHouseFrameBrowseResultsFrameItemListNineSlice:StripTextures()
+
+	AuctionHouseFrameBuyDialog:StripTextures()
+	AuctionHouseFrameBuyDialogBorder:StripTextures()
+	AuctionHouseFrameBuyDialog:CreateBackdrop("Transparent")
+	S:HandleButton(AuctionHouseFrameBuyDialogBuyNowButton)
+	S:HandleButton(AuctionHouseFrameBuyDialogCancelButton)
 	--money
 	AuctionHouseFrameMoneyFrame:StripTextures()
 	--AuctionHouseFrameMoneyFrame:CreateBackdrop("Transparent")

@@ -49,6 +49,7 @@ S:AddCallback("Skin_Misc", function()
 		local closeButton = _G["StaticPopup"..i.."CloseButton"]
 		local wideBox = _G["StaticPopup"..i.."WideEditBox"]
 
+
 		staticPopup:SetTemplate("Transparent")
 
 		S:HandleEditBox(itemFrameBox)
@@ -96,7 +97,9 @@ S:AddCallback("Skin_Misc", function()
 		itemFrameNormal:SetAlpha(0)
 		itemFrameName:Kill()
 
-		select(8, wideBox:GetRegions()):Hide()
+		for ddd = 6,14 do
+			select(ddd,wideBox:GetRegions()):SetAlpha(0)
+		end
 		S:HandleEditBox(wideBox)
 		wideBox:Height(22)
 

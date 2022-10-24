@@ -212,12 +212,14 @@ function S:Initialize()
 	for index = 1, 4 do
 		E.StaticPopupFrames[index]:HookScript("OnShow", StaticPopup_OnShow)
 	end
-	StaticPopup1:HookScript("OnShow",function(self)
-		if StaticPopup1WideEditBox:IsShown() then
-			StaticPopup1WideEditBox:StripTextures()
-			Skin:HandleEditBox(StaticPopup1WideEditBox)
-		end
-	end)
+	-- StaticPopup1:HookScript("OnShow",function(self)
+	-- 	if StaticPopup1WideEditBox:IsShown() then
+	-- 		-- StaticPopup1WideEditBox:StripTextures()
+	-- 		-- Skin:HandleInsetFrame()
+			
+	-- 		-- Skin:HandleEditBox(StaticPopup1WideEditBox)
+	-- 	end
+	-- end)
 end
 
 local function InitializeCallback()
