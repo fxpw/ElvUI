@@ -1,6 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local S = E:GetModule("Sirus")
-local Skin = E:GetModule("Skins")
+-- local Skin = E:GetModule("Skins")
 -- local DT = E:GetModule("DataTexts")
 -- local DB = E:GetModule("DataBars")
 
@@ -216,7 +216,6 @@ function S:Initialize()
 	-- 	if StaticPopup1WideEditBox:IsShown() then
 	-- 		-- StaticPopup1WideEditBox:StripTextures()
 	-- 		-- Skin:HandleInsetFrame()
-			
 	-- 		-- Skin:HandleEditBox(StaticPopup1WideEditBox)
 	-- 	end
 	-- end)
