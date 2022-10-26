@@ -14,11 +14,16 @@ local UnitIsUnit = UnitIsUnit
 local UnitCanAttack = UnitCanAttack
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
-local function OnClick(self)
+local function OnClick(self,Click)
 	local mod = E.db.unitframe.auraBlacklistModifier
-	if mod == "NONE" or not ((mod == "SHIFT" and IsShiftKeyDown()) or (mod == "ALT" and IsAltKeyDown()) or (mod == "CTRL" and IsControlKeyDown())) then return end
 	local auraName = self:GetParent().aura.name
-
+	-- for i = 1,40 do
+	-- 	if auraName == UnitBuff("player",i) then
+	-- 		CancelUnitBuff("player", i)
+	-- 		break
+	-- 	end
+	-- end
+	if mod == "NONE" or not ((mod == "SHIFT" and IsShiftKeyDown()) or (mod == "ALT" and IsAltKeyDown()) or (mod == "CTRL" and IsControlKeyDown())) then return end
 	if auraName then
 		E:Print(format(L["The spell '%s' has been added to the Blacklist unitframe aura filter."], auraName))
 		E.global.unitframe.aurafilters.Blacklist.spells[auraName] = {enable = true, priority = 0}

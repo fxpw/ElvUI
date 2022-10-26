@@ -344,20 +344,22 @@ local function LoadSkin()
 	StoreSubscribeContainer.HeaderText:SetTextColor(1, 1, 1)
 
 	local function StoreSubscribeItemTemplate(button)
-		button:SetTemplate()
-		button:StyleButton()
+		if button then
+			button:SetTemplate()
+			button:StyleButton()
 
-		button.iconTexture:SetDrawLayer("BORDER")
-		button.iconTexture:SetTexCoord(unpack(E.TexCoords))
-		button.iconTexture:SetInside()
+			button.iconTexture:SetDrawLayer("BORDER")
+			button.iconTexture:SetTexCoord(unpack(E.TexCoords))
+			button.iconTexture:SetInside()
 
-		button.slotFrameCollected:Kill()
-		button.glow:Kill()
-		button.glow2:Kill()
-		button.CountBackground:Kill()
-		button.count:FontTemplate(nil, nil, "OUTLINE")
-		button.count:ClearAllPoints()
-		button.count:SetPoint("BOTTOMRIGHT", button, 5, 0)
+			button.slotFrameCollected:Kill()
+			button.glow:Kill()
+			button.glow2:Kill()
+			button.CountBackground:Kill()
+			button.count:FontTemplate(nil, nil, "OUTLINE")
+			button.count:ClearAllPoints()
+			button.count:SetPoint("BOTTOMRIGHT", button, 5, 0)
+		end
 	end
 
 	for i = 1, 3 do
