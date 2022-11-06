@@ -35,6 +35,8 @@ local UnitIsUnit = UnitIsUnit
 local UnitReaction = UnitReaction
 local UnitName = UnitName
 local WorldFrame = WorldFrame
+
+local INP = C_NamePlate and true or false
 -- local utf8sub = string.utf8sub
 -- local utf8lower = string.utf8lower
 local WorldGetChildren = WorldFrame.GetChildren
@@ -253,15 +255,21 @@ for class, color in pairs(RAID_CLASS_COLORS) do
 end
 
 function NP:UnitClass(frame, unitType)
-	if unitType == "FRIENDLY_PLAYER" then
-		if frame.unit then
-			local _, class = UnitClass(frame.unit)
-			if class then
-				return class
-			end
-		else
-			return NP:GetUnitClassByGUID(frame, frame.guid)
+	if frame.unit then
+		local _, class = UnitClass(frame.unit)
+		if class then
+			return class
 		end
+	end
+	if unitType == "FRIENDLY_PLAYER" then
+		-- if frame.unit then
+		-- 	local _, class = UnitClass(frame.unit)
+		-- 	if class then
+		-- 		return class
+		-- 	end
+		-- else
+			return NP:GetUnitClassByGUID(frame, frame.guid)
+		-- end
 	elseif unitType == "ENEMY_PLAYER" then
 		local _, g = frame.oldHealthBar:GetStatusBarColor()
 		return grenColorToClass[floor(g*100 + 0.5) / 100]
@@ -340,7 +348,7 @@ function NP:GetGUIDByName(name, unitType)
 	end
 end
 
-function NP:OnShow(isConfig, dontHideHighlight)
+function NP:OnShow(isConfig, dontHideHighlight, unit)
 	local frame = self.UnitFrame
 	NP:CheckRaidIcon(frame)
 
@@ -354,7 +362,7 @@ function NP:OnShow(isConfig, dontHideHighlight)
 	frame.UnitType = unitType
 	frame.UnitReaction = reaction
 
-	local unit = NP:GetUnitByName(frame, unitType)
+	local unit = unit or NP:GetUnitByName(frame, unitType)
 	if unit then
 		frame.unit = unit
 		frame.isGroupUnit = true
@@ -862,9 +870,19 @@ end
 
 function NP:SearchForFrame(guid, raidIcon, name)
 	local frame
-	if guid then frame = self:SearchNameplateByGUID(guid) end
-	if (not frame) and name then frame = self:SearchNameplateByName(name) end
-	if (not frame) and raidIcon then frame = self:SearchNameplateByIconName(raidIcon) end
+	if not INP then
+		if guid then frame = self:SearchNameplateByGUID(guid) end
+		if (not frame) and name then frame = self:SearchNameplateByName(name) end
+		if (not frame) and raidIcon then frame = self:SearchNameplateByIconName(raidIcon) end
+	else
+		for _,plate in pairs (C_NamePlate.GetNamePlates()) do
+			if plate and plate.UnitFrame then
+				if guid and plate.UnitFrame.guid and guid == plate.UnitFrame.guid then
+					return plate.UnitFrame
+				end
+			end
+		end
+	end
 
 	return frame
 end
@@ -911,9 +929,26 @@ function NP:PLAYER_ENTERING_WORLD()
 		end
 	end
 end
-
+local FrameForReuse
+-- local lastFrame
 function NP:PLAYER_TARGET_CHANGED()
 	hasTarget = UnitExists("target") == 1
+	if INP then
+		for frame in pairs(NP.VisiblePlates) do
+			frame.isTarget = false
+			self:SetTargetFrame(frame)
+		end
+		if hasTarget then
+			FrameForReuse = self:SearchForFrame(UnitGUID("target"))
+			if FrameForReuse then
+				-- lastFrame = FrameForReuse
+				FrameForReuse.alpha = 1
+				FrameForReuse.IsTarget = true
+				self:SetTargetFrame(FrameForReuse)
+			end
+			hasTarget = false
+		end
+	end
 end
 
 function NP:UPDATE_MOUSEOVER_UNIT()
@@ -932,6 +967,52 @@ function NP:UPDATE_MOUSEOVER_UNIT()
 		end
 	end
 end
+local name,guid,unitType
+----new plates
+function NP:NAME_PLATE_UNIT_ADDED(_,unit)
+	FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+	if FrameForReuse then
+		if not FrameForReuse.UnitFrame then
+			NP:OnCreated(FrameForReuse)
+		end
+		name = UnitName(unit)
+		guid = UnitGUID(unit)
+		unitType = self:GetUnitTypeFromUnit(unit)
+		if guid and not self.GUIDList[guid] then
+			self.GUIDList[guid] = {name = name, unitType = unitType}
+		end
+		NP.OnShow(FrameForReuse, false, true, unit)
+	end
+end
+
+function NP:NAME_PLATE_UNIT_REMOVED(_,unit)
+	FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+	if FrameForReuse and FrameForReuse.UnitFrame then
+		NP.OnHide(FrameForReuse, false, true)
+	end
+end
+
+function NP:UNIT_AURA(_,unit)
+	FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+	if FrameForReuse and FrameForReuse.UnitFrame then
+		guid = UnitGUID(unit)
+		if guid and not self.GUIDList[guid] then
+			self.GUIDList[guid] = {name = name, unitType = unitType}
+		end
+		NP:UpdateElement_Auras(FrameForReuse.UnitFrame)
+	end
+end
+
+function NP:UNIT_THREAT_LIST_UPDATE(_,unit)
+	if unit and string.find(unit,"nameplate") then
+		FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+		if FrameForReuse and FrameForReuse.UnitFrame then
+			FrameForReuse.UnitFrame.ThreatStatus = UnitThreatSituation("player", unit)
+		end
+	end
+end
+
+----new plates
 
 function NP:PLAYER_FOCUS_CHANGED()
 	local unitName
@@ -1226,8 +1307,9 @@ function NP:Initialize()
 	castbar.Icon.texture:SetTexture([[Interface\Icons\Spell_Holy_Penance]])
 	castbar:SetStatusBarColor(self.db.colors.castColor.r, self.db.colors.castColor.g, self.db.colors.castColor.b)
 	ElvNP_Test:Hide()
-
-	self.Frame = CreateFrame("Frame"):SetScript("OnUpdate", self.OnUpdate)
+	if not INP then
+		self.Frame = CreateFrame("Frame"):SetScript("OnUpdate", self.OnUpdate)
+	end
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -1238,7 +1320,12 @@ function NP:Initialize()
 	self:RegisterEvent("PLAYER_UPDATE_RESTING")
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
 	self:RegisterEvent("RAID_TARGET_UPDATE")
-	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	if not INP then
+		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	else
+		self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+		self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+	end
 	self:RegisterEvent("UNIT_COMBO_POINTS")
 	self:RegisterEvent("UNIT_HEALTH")
 	self:RegisterEvent("UNIT_MANA")
@@ -1256,17 +1343,18 @@ function NP:Initialize()
 	-- Group Pets
 	self:CacheGroupPetUnits()
 	self:RegisterEvent("UNIT_NAME_UPDATE", "CacheGroupPetUnits")
-
 	LAI.UnregisterAllCallbacks(self)
-
-	self:UpdateLibAuraInfoInfo() -- save params for cache
-
-	LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED")
-	LAI.RegisterCallback(self, "LibAuraInfo_AURA_REMOVED")
-	LAI.RegisterCallback(self, "LibAuraInfo_AURA_REFRESH")
-	LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED_DOSE")
-	LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
-	LAI.RegisterCallback(self, "LibAuraInfo_UNIT_AURA")
+	if not INP then
+		self:UpdateLibAuraInfoInfo() -- save params for cache
+		LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED")
+		LAI.RegisterCallback(self, "LibAuraInfo_AURA_REMOVED")
+		LAI.RegisterCallback(self, "LibAuraInfo_AURA_REFRESH")
+		LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED_DOSE")
+		LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
+	else
+		self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
+		self:RegisterEvent("UNIT_AURA")
+	end
 
 end
 

@@ -69,7 +69,7 @@ function DB:HonorBar_OnEnter()
 
 	GameTooltip:AddLine(PVP_TAB_SERVICES)
 
-	GameTooltip:AddDoubleLine(PVP_YOUR_RATING..":", format(RBG_SCORE_TOOLTIP_RANK, currTitle, level), 1, 1, 1)
+	GameTooltip:AddDoubleLine(PVP_YOUR_RATING..":", format(RBG_SCORE_TOOLTIP_RANK, currTitle, level or 0), 1, 1, 1)
 
 	if level < 14 then
 		GameTooltip:AddLine(" ")

@@ -51,6 +51,10 @@ local function handleFrame(baseName)
 	end
 end
 
+local function insecureOnShow(self)
+	self:Hide()
+end
+
 function oUF:DisableBlizzard(unit)
 	if(not unit) then return end
 
@@ -108,5 +112,15 @@ function oUF:DisableBlizzard(unit)
 		-- Blizzard_ArenaUI should not be loaded
 		Arena_LoadUI = function() end
 		SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
+	elseif(unit:match('nameplate%d+$')) then
+		local frame = C_NamePlate.GetNamePlateForUnit(unit)
+		if(frame and frame.UnitFrame) then
+			if(not frame.UnitFrame.isHooked) then
+				frame.UnitFrame:HookScript('OnShow', insecureOnShow)
+				frame.UnitFrame.isHooked = true
+			end
+
+			handleFrame(frame.UnitFrame)
+		end
 	end
 end

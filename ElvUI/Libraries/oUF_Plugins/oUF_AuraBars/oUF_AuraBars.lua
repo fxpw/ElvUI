@@ -82,6 +82,7 @@ local function CreateAuraBar(self, anchor)
 	statusBar:SetStatusBarTexture(element.auraBarTexture or [[Interface\TargetingFrame\UI-StatusBar]])
 	statusBar:SetAlpha(element.fgalpha or 1)
 	statusBar:SetAllPoints(frame)
+	-- statusBar:EnableMouse(true)
 
 	frame.statusBar = statusBar
 
@@ -105,6 +106,7 @@ local function CreateAuraBar(self, anchor)
 	spark:SetBlendMode("ADD")
 	spark:SetPoint("CENTER", statusBar:GetStatusBarTexture(), "RIGHT")
 	statusBar.spark = spark
+	
 
 	statusBar.iconHolder = CreateFrame("Button", nil, statusBar)
 	statusBar.iconHolder:Size(frame:GetHeight())

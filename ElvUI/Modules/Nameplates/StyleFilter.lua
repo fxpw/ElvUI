@@ -737,7 +737,9 @@ function mod:StyleFilterConfigure()
 							if value then
 								mod.StyleFilterTriggerEvents.FAKE_Casting = 0
 								break
-					end end end
+							end
+						end
+					end
 
 					if (t.casting.interruptible or t.casting.notInterruptible)
 					or (t.casting.isCasting or t.casting.isChanneling or t.casting.notCasting or t.casting.notChanneling) then
@@ -771,7 +773,9 @@ function mod:StyleFilterConfigure()
 						if value then
 							mod.StyleFilterTriggerEvents.UNIT_NAME_UPDATE = 1
 							break
-				end end end
+						end
+					end
+				end
 
 				if t.inCombat or t.outOfCombat then
 					mod.StyleFilterTriggerEvents.PLAYER_REGEN_DISABLED = true

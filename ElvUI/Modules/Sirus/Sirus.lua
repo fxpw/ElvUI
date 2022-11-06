@@ -4,7 +4,7 @@ local S = E:GetModule("Sirus")
 -- local DT = E:GetModule("DataTexts")
 -- local DB = E:GetModule("DataBars")
 
-
+local INP = C_NamePlate and true or false
 
 C_BattlefieldScoreManager.scoreData = {}
 
@@ -159,6 +159,28 @@ function S:UPDATE_MOUSEOVER_UNIT()
 	end
 end
 
+
+
+function S:NAME_PLATE_UNIT_ADDED(_,unit)
+	if UnitIsPlayer(unit) then
+		local name = UnitName(unit)
+		if not name or name == UNKNOWN then return end
+
+		for i = 1, 40 do
+			local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
+			if not spellID then break end
+
+			if self.Categories[spellID] then
+				local id = self.Categories[spellID].id
+				if ElvSirusDB[E.myrealm][name] ~= id then
+					ElvSirusDB[E.myrealm][name] = id
+				end
+				break
+			end
+		end
+	end
+end
+
 function S:FixArenaTaint()
 	ArenaEnemyFrames.ClearAllPoints = E.noop
 	ArenaEnemyFrames.SetPoint = E.noop
@@ -173,8 +195,11 @@ end
 function S:Initialize()
 	ElvSirusDB = ElvSirusDB or {}
 	ElvSirusDB[E.myrealm] = ElvSirusDB[E.myrealm] or {}
-
-	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	if not INP then
+		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	else
+		self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+	end
 
 	if E.private.unitframe.disabledBlizzardFrames.arena then
 		if not IsAddOnLoaded("Blizzard_ArenaUI") then

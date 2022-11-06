@@ -340,7 +340,7 @@ function B:UpdateSlot(frame, bagID, slotID)
 		slot.ignoreBorderColors = true
 	elseif clink then
 		local iLvl, iType, itemEquipLoc, itemPrice
-		slot.name, _, slot.rarity, iLvl, _, iType, _, _, itemEquipLoc, _, itemPrice = GetItemInfo(clink)
+		slot.name, _, slot.rarity, iLvl, _, iType, _, _, itemEquipLoc, _, itemPrice = C_Item.GetItemInfoCache(clink)
 
 		local isQuestItem, questId, isActiveQuest = GetContainerItemQuestInfo(bagID, slotID)
 		local r, g, b

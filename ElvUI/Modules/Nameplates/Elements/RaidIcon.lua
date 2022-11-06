@@ -7,7 +7,7 @@ local NP = E:GetModule("NamePlates")
 function NP:Update_RaidIcon(frame)
 	local db = self.db.units[frame.UnitType].raidTargetIndicator
 	local icon = frame.RaidIcon
-
+	if not icon then return end
 	icon:SetSize(db.size, db.size)
 
 	icon:ClearAllPoints()

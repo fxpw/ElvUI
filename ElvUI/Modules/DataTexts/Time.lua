@@ -243,10 +243,12 @@ local function OnLeave()
 end
 
 local function updateTooltipTime()
-	if E.db.datatexts.realmTime then
-		_G["DatatextTooltipTextRight" .. DT.tooltip:NumLines()]:SetText(GetCurrentDate(E.db.datatexts.timeFormat, true))
-	else
-		_G["DatatextTooltipTextRight" .. DT.tooltip:NumLines()]:SetText(GetCurrentDate(E.db.datatexts.timeFormat, nil, true))
+	if _G["DatatextTooltipTextRight" .. DT.tooltip:NumLines()] and E.db.datatexts.timeFormat then
+		if E.db.datatexts.realmTime then
+			_G["DatatextTooltipTextRight" .. DT.tooltip:NumLines()]:SetText(GetCurrentDate(E.db.datatexts.timeFormat, true))
+		else
+			_G["DatatextTooltipTextRight" .. DT.tooltip:NumLines()]:SetText(GetCurrentDate(E.db.datatexts.timeFormat, nil, true))
+		end
 	end
 end
 

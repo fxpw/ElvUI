@@ -49,7 +49,6 @@ S:AddCallback("Skin_Misc", function()
 		local closeButton = _G["StaticPopup"..i.."CloseButton"]
 		local wideBox = _G["StaticPopup"..i.."WideEditBox"]
 
-
 		staticPopup:SetTemplate("Transparent")
 
 		S:HandleEditBox(itemFrameBox)

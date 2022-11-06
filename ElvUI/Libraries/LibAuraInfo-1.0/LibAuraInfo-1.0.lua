@@ -15,7 +15,7 @@ if not lib then return end
 
 lib.callbacks = lib.callbacks or LibStub("CallbackHandler-1.0"):New(lib)
 if not lib.callbacks then error(MAJOR .. " requires CallbackHandler-1.0") return end
-
+local INP = C_NamePlate and true or false
 local pairs = pairs
 local select = select
 local tonumber = tonumber
@@ -141,10 +141,12 @@ function lib.callbacks:OnUsed(target, eventname)
 	tinsert(lib.callbacksUsed[eventname], #lib.callbacksUsed[eventname]+1, target)
 	-- lib.trackAuras = true
 	lib.frame:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
-
-	lib.frame:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
+	if not INP then
+		lib.frame:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
+		lib.frame:RegisterEvent('UNIT_TARGET')
+	end
 	-- lib.frame:RegisterEvent('PLAYER_TARGET_CHANGED')
-	lib.frame:RegisterEvent('UNIT_TARGET')
+	-- lib.frame:RegisterEvent('UNIT_TARGET')
 	lib.frame:RegisterEvent('UNIT_AURA')
 end
 
@@ -165,10 +167,14 @@ function lib.callbacks:OnUnused(target, eventname)
 
 	-- lib.trackAuras = false
 	lib.frame:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
-
-	lib.frame:UnregisterEvent('UPDATE_MOUSEOVER_UNIT')
+	if not INP then
+		lib.frame:UnregisterEvent('UPDATE_MOUSEOVER_UNIT')
+		lib.frame:UnregisterEvent('UNIT_TARGET')
+	-- else
+		-- lib.frame:UnregisterEvent('UNIT_AURA')
+	end
 	-- lib.frame:UnregisterEvent('PLAYER_TARGET_CHANGED')
-	lib.frame:UnregisterEvent('UNIT_TARGET')
+	-- lib.frame:UnregisterEvent('UNIT_TARGET')
 	lib.frame:UnregisterEvent('UNIT_AURA')
 end
 

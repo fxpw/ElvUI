@@ -288,9 +288,9 @@ S:AddCallbackForAddon("Blizzard_Calendar", "Skin_Blizzard_Calendar", function()
 	-- CalendarMassInviteArenaButton2:Point("TOPLEFT", 8, -149)
 	-- CalendarMassInviteArenaButton3:Point("TOP", 0, -149)
 	-- CalendarMassInviteArenaButton5:Point("TOPRIGHT", -8, -149)
-
-	select(6, CalendarMassInviteFrame:GetRegions()):Point("TOP", 0, -130)
-
+	if select(6, CalendarMassInviteFrame:GetRegions()) then
+		select(6, CalendarMassInviteFrame:GetRegions()):Point("TOP", 0, -130)
+	end
 	-- Raid View
 	CalendarViewRaidFrame:StripTextures()
 	CalendarViewRaidFrame:SetTemplate("Transparent")
