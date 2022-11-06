@@ -43,8 +43,8 @@ ignore = {
 
 globals = {
 
-	--fonts 
-	
+	--fonts
+
 	"GameFontNormal9",
     "GameFontNormal11",
     "GameFontNormal12",
@@ -42242,6 +42242,8 @@ globals = {
 	"faction",
 	"classToken",
 	"MaximizeMinimizeFrame",
+	"C_Item",
+	"C_NamePlate",
 	--sirus raid
 
 	"CompactRaidFrameManagerDisplayFrameProfileSelector",
@@ -42259,7 +42261,7 @@ globals = {
 	"CompactRaidFrameManagerDisplayFrameFilterOptions",
 
 	"IsInRaid",
-	--sirus character 
+	--sirus character
 	"PrimaryProfession_Update",
 	"GearManagerDialogPopupSearchBox",
 	"PaperDollFrameStrengthenFrame",
@@ -42455,7 +42457,7 @@ globals = {
 	"WorldStateTopCenterFrame",
 	"WorldStateTopCenterFrameRightBarStatusBar",
 	"WorldStateTopCenterFrameLeftBarStatusBar",
-	--sirus mail 
+	--sirus mail
 	"OpenAllMailButton",
 	"AdditionalMailFunctionalButton",
 	"UpdateMailButton",
@@ -42505,7 +42507,7 @@ globals = {
 	"MiniGamesParentFrameBottomInsetScrollFrameScrollBar",
 	"LFDParentFrameCloseButton",
 
-	--sirus merchant 
+	--sirus merchant
 	"MerchantFrameInset",
 	"MerchantArtFrame",
 	"MerchantMoneyBg",
@@ -42525,7 +42527,7 @@ globals = {
 	"SpellBookCompanionModelFrameRotateLeftButton",
 	"SpellBookCompanionModelFrameRotateRightButton",
 	"SpellBookCompanionSummonButton",
-	--sirus talent 
+	--sirus talent
 	"PlayerTalentFrameImportButton",
 	"PlayerTalentFrameImportFrameButton",
 	"PlayerTalentLinkButton",
@@ -42730,7 +42732,7 @@ globals = {
 	"HeadHuntingFrameContainerYouTargetsPanelScrollFrameScrollBar",
 	"HeadHuntingSetRewardExternalFrame",
 	"HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu",
-	--sirus journals 
+	--sirus journals
 	"Custom_MountChestFrame",
 	"Custom_RouletteFrame",
 	"Custom_RouletteFrameSkipAnimation",
@@ -42924,5 +42926,5 @@ globals = {
 	"SocialToastMover",
 	"GetUnitRatedBattlegroundRankInfo",
 	"EventHandler",
-	
+
 }

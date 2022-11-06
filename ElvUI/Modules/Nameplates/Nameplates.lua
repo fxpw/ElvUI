@@ -362,7 +362,7 @@ function NP:OnShow(isConfig, dontHideHighlight, unit)
 	frame.UnitType = unitType
 	frame.UnitReaction = reaction
 
-	local unit = unit or NP:GetUnitByName(frame, unitType)
+	unit = unit or NP:GetUnitByName(frame, unitType)
 	if unit then
 		frame.unit = unit
 		frame.isGroupUnit = true
@@ -967,47 +967,50 @@ function NP:UPDATE_MOUSEOVER_UNIT()
 		end
 	end
 end
-local name,guid,unitType
-----new plates
-function NP:NAME_PLATE_UNIT_ADDED(_,unit)
-	FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
-	if FrameForReuse then
-		if not FrameForReuse.UnitFrame then
-			NP:OnCreated(FrameForReuse)
-		end
-		name = UnitName(unit)
-		guid = UnitGUID(unit)
-		unitType = self:GetUnitTypeFromUnit(unit)
-		if guid and not self.GUIDList[guid] then
-			self.GUIDList[guid] = {name = name, unitType = unitType}
-		end
-		NP.OnShow(FrameForReuse, false, true, unit)
-	end
-end
 
-function NP:NAME_PLATE_UNIT_REMOVED(_,unit)
-	FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
-	if FrameForReuse and FrameForReuse.UnitFrame then
-		NP.OnHide(FrameForReuse, false, true)
-	end
-end
-
-function NP:UNIT_AURA(_,unit)
-	FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
-	if FrameForReuse and FrameForReuse.UnitFrame then
-		guid = UnitGUID(unit)
-		if guid and not self.GUIDList[guid] then
-			self.GUIDList[guid] = {name = name, unitType = unitType}
+if INP then
+	local name,guid,unitType
+	----new plates
+	function NP:NAME_PLATE_UNIT_ADDED(_,unit)
+		FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+		if FrameForReuse then
+			if not FrameForReuse.UnitFrame then
+				NP:OnCreated(FrameForReuse)
+			end
+			name = UnitName(unit)
+			guid = UnitGUID(unit)
+			unitType = self:GetUnitTypeFromUnit(unit)
+			if guid and not self.GUIDList[guid] then
+				self.GUIDList[guid] = {name = name, unitType = unitType}
+			end
+			NP.OnShow(FrameForReuse, false, true, unit)
 		end
-		NP:UpdateElement_Auras(FrameForReuse.UnitFrame)
 	end
-end
 
-function NP:UNIT_THREAT_LIST_UPDATE(_,unit)
-	if unit and string.find(unit,"nameplate") then
+	function NP:NAME_PLATE_UNIT_REMOVED(_,unit)
 		FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
 		if FrameForReuse and FrameForReuse.UnitFrame then
-			FrameForReuse.UnitFrame.ThreatStatus = UnitThreatSituation("player", unit)
+			NP.OnHide(FrameForReuse, false, true)
+		end
+	end
+
+	function NP:UNIT_AURA(_,unit)
+		FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+		if FrameForReuse and FrameForReuse.UnitFrame then
+			guid = UnitGUID(unit)
+			if guid and not self.GUIDList[guid] then
+				self.GUIDList[guid] = {name = name, unitType = unitType}
+			end
+			NP:UpdateElement_Auras(FrameForReuse.UnitFrame)
+		end
+	end
+
+	function NP:UNIT_THREAT_LIST_UPDATE(_,unit)
+		if unit and string.find(unit,"nameplate") then
+			FrameForReuse = C_NamePlate.GetNamePlateForUnit(unit)
+			if FrameForReuse and FrameForReuse.UnitFrame then
+				FrameForReuse.UnitFrame.ThreatStatus = UnitThreatSituation("player", unit)
+			end
 		end
 	end
 end

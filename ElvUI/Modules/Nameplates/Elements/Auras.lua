@@ -109,86 +109,88 @@ end
 
 local unstableAffliction = GetSpellInfo(30108)
 local vampiricTouch = GetSpellInfo(34914)
-local isAura, name, texture, count, debuffType, duration, expiration, caster, spellID, _
-function NP:SetAura(frame, unit, index, filter, isDebuff, visible)
+do
+	local isAura, name, texture, count, debuffType, duration, expiration, caster, spellID, _
+	function NP:SetAura(frame, unit, index, filter, isDebuff, visible)
 
-	if not unit or not index then return end
-	if INP then
-		if isDebuff then
-			name, _, texture, count, debuffType, duration, expiration, caster, _, _ , spellID = UnitDebuff(unit, index)
-		else
-			name, _, texture, count, debuffType, duration, expiration, caster, _, _ , spellID = UnitBuff(unit, index)
-		end
-		isAura = name and true or false
-	else
-		isAura, name, texture, count, debuffType, duration, expiration, caster, spellID, _ = LAI:GUIDAura(unit, index, filter)
-
-	end
-	if frame.forceShow or frame.forceCreate then
-		spellID = 47540
-		name, _, texture = GetSpellInfo(spellID)
-		if frame.forceShow then
-			isAura, count, debuffType, duration, expiration = true, 5, "Magic", 0, 0
-		end
-	end
-
-	if isAura then
-		local position = visible + 1
-		local button = frame[position] or NP:Construct_AuraIcon(frame, position)
-
-		button.caster = caster
-		button.filter = filter
-		button.isDebuff = isDebuff
-
-		local filterCheck = not frame.forceCreate
-		if not (frame.forceShow or frame.forceCreate) then
-			filterCheck = NP:AuraFilter(unit, button, name, texture, count, debuffType, duration, expiration, caster, spellID)
-		end
-
-		if filterCheck then
-			if button.icon then button.icon:SetTexture(texture) end
-			if button.count then button.count:SetText(count > 1 and count) end
-
-			if duration > 0 and expiration ~= 0 then
-				local timeLeft = expiration - GetTime()
-				if timeLeft > 0 then
-					button.timeLeft = timeLeft
-					button.nextUpdate = 0
-
-					button:SetMinMaxValues(0, duration)
-					button:SetValue(timeLeft)
-
-					button:SetScript("OnUpdate", NP.UpdateTime)
---				else
---					return HIDDEN
-				end
-			else
-				button.timeLeft = nil
-				button.text:SetText("")
-				button:SetScript("OnUpdate", nil)
-				button:SetMinMaxValues(0, 1)
-				button:SetValue(0)
-			end
-
-			button:SetID(index)
-			button:Show()
-
+		if not unit or not index then return end
+		if INP then
 			if isDebuff then
-				local color = (debuffType and DebuffTypeColor[debuffType]) or DebuffTypeColor.none
-				if button.name and (button.name == unstableAffliction or button.name == vampiricTouch) and E.myclass ~= "WARLOCK" then
-					self:StyleFrameColor(button, 0.05, 0.85, 0.94)
-				else
-					self:StyleFrameColor(button, color.r * 0.6, color.g * 0.6, color.b * 0.6)
-				end
+				name, _, texture, count, debuffType, duration, expiration, caster, _, _ , spellID = UnitDebuff(unit, index)
+			else
+				name, _, texture, count, debuffType, duration, expiration, caster, _, _ , spellID = UnitBuff(unit, index)
+			end
+			isAura = name and true or false
+		else
+			isAura, name, texture, count, debuffType, duration, expiration, caster, spellID, _ = LAI:GUIDAura(unit, index, filter)
+
+		end
+		if frame.forceShow or frame.forceCreate then
+			spellID = 47540
+			name, _, texture = GetSpellInfo(spellID)
+			if frame.forceShow then
+				isAura, count, debuffType, duration, expiration = true, 5, "Magic", 0, 0
+			end
+		end
+
+		if isAura then
+			local position = visible + 1
+			local button = frame[position] or NP:Construct_AuraIcon(frame, position)
+
+			button.caster = caster
+			button.filter = filter
+			button.isDebuff = isDebuff
+
+			local filterCheck = not frame.forceCreate
+			if not (frame.forceShow or frame.forceCreate) then
+				filterCheck = NP:AuraFilter(unit, button, name, texture, count, debuffType, duration, expiration, caster, spellID)
 			end
 
-			return VISIBLE
-		elseif frame.forceCreate then
-			button:Hide()
+			if filterCheck then
+				if button.icon then button.icon:SetTexture(texture) end
+				if button.count then button.count:SetText(count > 1 and count) end
 
-			return CREATED
-		else
-			return HIDDEN
+				if duration > 0 and expiration ~= 0 then
+					local timeLeft = expiration - GetTime()
+					if timeLeft > 0 then
+						button.timeLeft = timeLeft
+						button.nextUpdate = 0
+
+						button:SetMinMaxValues(0, duration)
+						button:SetValue(timeLeft)
+
+						button:SetScript("OnUpdate", NP.UpdateTime)
+	--				else
+	--					return HIDDEN
+					end
+				else
+					button.timeLeft = nil
+					button.text:SetText("")
+					button:SetScript("OnUpdate", nil)
+					button:SetMinMaxValues(0, 1)
+					button:SetValue(0)
+				end
+
+				button:SetID(index)
+				button:Show()
+
+				if isDebuff then
+					local color = (debuffType and DebuffTypeColor[debuffType]) or DebuffTypeColor.none
+					if button.name and (button.name == unstableAffliction or button.name == vampiricTouch) and E.myclass ~= "WARLOCK" then
+						self:StyleFrameColor(button, 0.05, 0.85, 0.94)
+					else
+						self:StyleFrameColor(button, color.r * 0.6, color.g * 0.6, color.b * 0.6)
+					end
+				end
+
+				return VISIBLE
+			elseif frame.forceCreate then
+				button:Hide()
+
+				return CREATED
+			else
+				return HIDDEN
+			end
 		end
 	end
 end
