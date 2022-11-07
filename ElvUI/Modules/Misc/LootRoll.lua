@@ -383,7 +383,7 @@ function M:START_LOOT_ROLL(_, rollID, rollTime)
 	f.itemButton.rollID = rollID
 	f.itemButton.link = GetLootRollItemLink(rollID)
 
-	if count > 1 then
+	if count and count > 1 then
 		f.itemName:SetFormattedText("%dx %s", count, name)
 	else
 		f.itemName:SetText(name)
