@@ -7,14 +7,14 @@ local S = E:GetModule("Sirus")
 local INP = C_NamePlate and true or false
 
 C_BattlefieldScoreManager.scoreData = {}
-
+local name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone
 function C_BattlefieldScoreManager:GenerateScoreData()
 	wipe(self.scoreData)
 
 	local factionID = C_FactionManager:GetFactionOverride()
 
     for i = 1, self._GetNumBattlefieldScores() do
-        local name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone = self._GetBattlefieldScore(i)
+        name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone = self._GetBattlefieldScore(i)
         local additionalStatData = {}
 
         if self:IsValidation() then
@@ -55,7 +55,7 @@ end
 do -- temp fix extra ab
 	local LAB = E.Libs.LAB
 	local function Update(self)
-		local name = self:GetName()
+		name = self:GetName()
 
 		if self:HasAction() then
 			local actionType, id, _, spellID = GetActionInfo(self._state_action)
@@ -141,7 +141,7 @@ end
 
 function S:UPDATE_MOUSEOVER_UNIT()
 	if UnitIsPlayer("mouseover") then
-		local name = UnitName("mouseover")
+		name = UnitName("mouseover")
 		if not name or name == UNKNOWN then return end
 
 		for i = 1, 40 do
@@ -163,7 +163,7 @@ end
 
 function S:NAME_PLATE_UNIT_ADDED(_,unit)
 	if UnitIsPlayer(unit) then
-		local name = UnitName(unit)
+		name = UnitName(unit)
 		if not name or name == UNKNOWN then return end
 
 		for i = 1, 40 do
@@ -208,10 +208,9 @@ function S:Initialize()
 			self:FixArenaTaint()
 		end
 	end
-
+	local _, nameText
 	hooksecurefunc("WorldStateScoreFrame_Update", function()
 		local offset = FauxScrollFrame_GetOffset(WorldStateScoreScrollFrame)
-		local _, name, nameText
 
 		for i = 1, MAX_WORLDSTATE_SCORE_BUTTONS do
 			name, _, _, _, _, faction, _, _, _, classToken = GetBattlefieldScore(offset + i)
