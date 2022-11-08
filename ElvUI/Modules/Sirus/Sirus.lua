@@ -83,11 +83,11 @@ do -- temp fix extra ab
 end
 
 local oldIsAddOnLoaded = IsAddOnLoaded
-function IsAddOnLoaded(name)
-	if name == "Blizzard_TimeManager" then
+function IsAddOnLoaded(nameA)
+	if nameA == "Blizzard_TimeManager" then
 		return true
 	else
-		return oldIsAddOnLoaded(name)
+		return oldIsAddOnLoaded(nameA)
 	end
 end
 
