@@ -444,15 +444,21 @@ function NP:CheckFilter(name, spellID, isPlayer, allowDuration, noDuration, ...)
 end
 
 -- self:UpdateLibAuraInfoInfo() -- save params for cache
-
+local isPlayer
 function NP:AuraFilter(unit, button, name, texture, count, debuffType, duration, expiration, caster, spellID)
 	local parent = button:GetParent()
 	local parentType = parent.type
 	local db = NP.db.units[parent:GetParent().UnitType][parentType]
 	if not db then return true end
 
-	local isPlayer = unit == "player"
-	if unit == E.myguid then isPlayer = true end
+
+	if INP then
+		isPlayer = caster == "player"
+	else
+		isPlayer = caster == E.myguid
+	end
+
+
 
 	-- keep these same as in `UF:AuraFilter`
 	button.isPlayer = isPlayer
