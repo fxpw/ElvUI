@@ -45,6 +45,12 @@ RB.Spell1Buffs = {
 	60347, -- Elixir of Mighty Thoughts
 	53763, -- Elixir of Protection
 	53747, -- Elixir of Spirit
+	46837, -- shattrat elixirs
+	46839, -- shattrat elixirs
+	41609, -- shattrat elixirs
+	41610, -- shattrat elixirs
+	41611, -- shattrat elixirs
+	41608, -- shattrat elixirs
 }
 
 RB.Spell2Buffs = {

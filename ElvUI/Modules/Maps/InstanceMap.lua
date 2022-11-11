@@ -291,7 +291,7 @@ IM.PinDB = {
 	[493]={ --[[ Icecrown ]]--
 
 		{51.4, 88.3, {601, 602, 603}, "Цитадель Ледяной Короны"}, --forge of souls, pit of saron, halls of reflection
-		{74, 20.9, {542}}, --trial of champion
+		-- {74, 20.9, {542}}, --trial of champion
 		{75.2, 21.9, {543}}, --trial of crusader
 		{53.4, 85.8, {604}}, --ICC
 	},

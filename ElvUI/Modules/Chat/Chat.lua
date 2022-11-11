@@ -175,8 +175,8 @@ local function CreateRandomIcon()
 end
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
-	["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
-	["Миленький-Scourge x2 - 3.3.5a+"] = Apolexis, -- миленький а играет за бабу кста
+	-- ["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
+	-- ["Миленький-Scourge x2 - 3.3.5a+"] = Apolexis, -- миленький а играет за бабу кста
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
