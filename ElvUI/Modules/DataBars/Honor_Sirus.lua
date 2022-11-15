@@ -66,7 +66,7 @@ function DB:HonorBar_OnEnter()
 	GameTooltip:SetOwner(self, "ANCHOR_CURSOR", 0, -4)
 
 	local currTitle, _, level, _, cur, _, _, _, max = GetRatedBattlegroundRankInfo()
-
+	currTitle = currTitle or ""
 	GameTooltip:AddLine(PVP_TAB_SERVICES)
 
 	GameTooltip:AddDoubleLine(PVP_YOUR_RATING..":", format(RBG_SCORE_TOOLTIP_RANK, currTitle, level or 0), 1, 1, 1)

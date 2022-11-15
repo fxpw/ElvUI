@@ -144,9 +144,9 @@ function lib.callbacks:OnUsed(target, eventname)
 	if not INP then
 		lib.frame:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
 		lib.frame:RegisterEvent('UNIT_TARGET')
+		lib.frame:RegisterEvent('PLAYER_TARGET_CHANGED')
 	end
-	-- lib.frame:RegisterEvent('PLAYER_TARGET_CHANGED')
-	-- lib.frame:RegisterEvent('UNIT_TARGET')
+
 	lib.frame:RegisterEvent('UNIT_AURA')
 end
 
@@ -170,11 +170,10 @@ function lib.callbacks:OnUnused(target, eventname)
 	if not INP then
 		lib.frame:UnregisterEvent('UPDATE_MOUSEOVER_UNIT')
 		lib.frame:UnregisterEvent('UNIT_TARGET')
-	-- else
-		-- lib.frame:UnregisterEvent('UNIT_AURA')
+		lib.frame:UnregisterEvent('PLAYER_TARGET_CHANGED')
+
 	end
-	-- lib.frame:UnregisterEvent('PLAYER_TARGET_CHANGED')
-	-- lib.frame:UnregisterEvent('UNIT_TARGET')
+
 	lib.frame:UnregisterEvent('UNIT_AURA')
 end
 
@@ -247,7 +246,7 @@ local function CheckUnitAuras(unitID, filterType)
 			end
 		end
 
-		if unitCaster and expirationTime > 0 then
+		if unitCaster and expirationTime >= 0 then
 			srcGUID = srcGUID or UnitGUID(unitCaster)
 			lib:AddAuraFromUnitID(
 				dstGUID,
@@ -302,23 +301,27 @@ function lib.frame:PLAYER_TARGET_CHANGED()
 	end
 end
 
--- do
--- local targetID
--- function lib.frame:UNIT_TARGET(_, unitID)
--- 	-- print(unitID)
--- 	if unitID ~= "player" then return end
--- 	-- if not UnitIsUnit(unitID, "player") then
--- 		-- targetID = unitID
--- 		ResetUnitAuras("target")
--- 		CheckUnitAuras("target", "HELPFUL")
--- 		CheckUnitAuras("target", "HARMFUL")
--- 	-- end
--- end
--- end
+function lib.frame:UNIT_TARGET(_, unitID)
+	if unitID ~= "player" then return end
+	-- if not UnitIsUnit(unitID, "player") then
+		-- targetID = unitID
+	ResetUnitAuras(unitID)
+	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HELPFUL")
+	if bool then
+		CheckUnitAuras(unitID, "HELPFUL")
+	end
+	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HARMFUL")
+	if bool then
+		CheckUnitAuras(unitID, "HARMFUL")
+	end
+
+end
+
 
 function lib.frame:UNIT_AURA(_, unitID)
 	if not unitID then return end
-	if not lib:CheckIfNeedMemorizeByUnitID(unitID) then return end
+	-- if not lib:CheckIfNeedMemorizeByUnitID(unitID) then return end
+	
 	ResetUnitAuras(unitID)
 	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HELPFUL")
 	if bool then
@@ -994,12 +997,7 @@ function lib.frame:SPELL_AURA_REMOVED(_, _, _, srcGUID, _, _, dstGUID, _, dstFla
 end
 -- function lib.frame:SPELL_AURA_APPLIED(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
 function lib.frame:SPELL_AURA_APPLIED(_, _, _, srcGUID, _, _, dstGUID, _, dstFlags, spellID, spellName, _, auraType)
-	bool, who = lib:CheckIfNeedMemorizeByFlag(dstFlags, auraType == "DEBUFF" and "HARMFUL" or "HELPFUL")
-	if not bool then
-		-- print(bool,who)
-		-- print(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
-		return
-	end
+	if not lib:CheckIfNeedMemorizeByFlag(dstFlags, auraType == "DEBUFF" and "HARMFUL" or "HELPFUL") then return end
 	if lib.drSpells[spellID] then
 		lib:GUIDGainedDRAura(dstGUID, spellID, lib:FlagIsPlayer(dstFlags))
 	end
@@ -1031,12 +1029,7 @@ end
 local dosed
 --DOSE = spell stacking
 function lib.frame:SPELL_AURA_APPLIED_DOSE(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
-	bool, who = lib:CheckIfNeedMemorizeByFlag(dstFlags, auraType == "DEBUFF" and "HARMFUL" or "HELPFUL")
-	if not bool then
-		-- print(bool,who)
-		-- print(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellID, spellName, spellSchool, auraType)
-		return
-	end
+	if not lib:CheckIfNeedMemorizeByFlag(dstFlags, auraType == "DEBUFF" and "HARMFUL" or "HELPFUL") then return end
 	dosed, stackCount, expirationTime = lib:AddAuraDose(dstGUID, spellID, srcGUID, auraType == "DEBUFF" and "HARMFUL" or "HELPFUL")
 	if dosed then
 		lib.callbacks:Fire("LibAuraInfo_AURA_APPLIED_DOSE", dstGUID, spellID, srcGUID, spellSchool, auraType, stackCount, expirationTime)
