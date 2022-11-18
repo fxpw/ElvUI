@@ -70,6 +70,7 @@ function NP:LibAuraInfo_AURA_CLEAR(event, destGUID)
 end
 
 function NP:LibAuraInfo_UNIT_AURA(event, destGUID)
+	-- print(event, destGUID)
 	self:UpdateElement_AurasByGUID(destGUID, event)
 end
 ---LibAuraInfo

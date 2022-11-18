@@ -18,25 +18,25 @@ local function LoadSkin()
 	LossOfControlFrame.AbilityName:ClearAllPoints()
 	LossOfControlFrame:Size(LossOfControlFrame.Icon:GetWidth() + 50)
 
-	hooksecurefunc("LossOfControlFrame_SetUpDisplay", function(self)
-		self.Icon:ClearAllPoints()
-		self.Icon:Point("CENTER", self, "CENTER", 0, 0)
+	-- hooksecurefunc("LossOfControlFrame_SetUpDisplay", function(self)
+	-- 	self.Icon:ClearAllPoints()
+	-- 	self.Icon:Point("CENTER", self, "CENTER", 0, 0)
 
-		self.AbilityName:ClearAllPoints()
-		self.AbilityName:Point("BOTTOM", self, 0, -2)
-		self.AbilityName.scrollTime = nil
-		self.AbilityName:FontTemplate(E.media.normFont, 20, "OUTLINE")
+	-- 	self.AbilityName:ClearAllPoints()
+	-- 	self.AbilityName:Point("BOTTOM", self, 0, -2)
+	-- 	self.AbilityName.scrollTime = nil
+	-- 	self.AbilityName:FontTemplate(E.media.normFont, 20, "OUTLINE")
 
-		self.TimeLeft.NumberText:ClearAllPoints()
-		self.TimeLeft.NumberText:Point("BOTTOM", self, 0, -22)
-		self.TimeLeft.NumberText.scrollTime = nil
-		self.TimeLeft.NumberText:FontTemplate(E.media.normFont, 20, "OUTLINE")
+	-- 	self.TimeLeft.NumberText:ClearAllPoints()
+	-- 	self.TimeLeft.NumberText:Point("BOTTOM", self, 0, -22)
+	-- 	self.TimeLeft.NumberText.scrollTime = nil
+	-- 	self.TimeLeft.NumberText:FontTemplate(E.media.normFont, 20, "OUTLINE")
 
-		self.TimeLeft.SecondsText:ClearAllPoints()
-		self.TimeLeft.SecondsText:Point("BOTTOM", self, 0, -42)
-		self.TimeLeft.SecondsText.scrollTime = nil
-		self.TimeLeft.SecondsText:FontTemplate(E.media.normFont, 20, "OUTLINE")
-	end)
+	-- 	self.TimeLeft.SecondsText:ClearAllPoints()
+	-- 	self.TimeLeft.SecondsText:Point("BOTTOM", self, 0, -42)
+	-- 	self.TimeLeft.SecondsText.scrollTime = nil
+	-- 	self.TimeLeft.SecondsText:FontTemplate(E.media.normFont, 20, "OUTLINE")
+	-- end)
 end
 
 S:AddCallback("Sirus_LossOfControl", LoadSkin)

@@ -12,9 +12,13 @@ local function LoadSkin()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.inspect then return end
 
 	S:HandlePortraitFrame(InspectFrame)
-
-	for i = 1, 4 do
-		S:HandleTab(_G["InspectFrameTab"..i])
+	local tab
+	for i = 1, 5 do
+		tab = _G["InspectFrameTab"..i]
+		if tab then
+			S:HandleTab(tab)
+			tab:SetWidth(25)
+		end
 	end
 
 	-- InspectPaperDollFrame
