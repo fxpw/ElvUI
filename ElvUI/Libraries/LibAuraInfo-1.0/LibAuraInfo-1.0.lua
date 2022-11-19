@@ -305,14 +305,14 @@ function lib.frame:UNIT_TARGET(_, unitID)
 	if unitID ~= "player" then return end
 	-- if not UnitIsUnit(unitID, "player") then
 		-- targetID = unitID
-	ResetUnitAuras(unitID)
+	ResetUnitAuras("target")
 	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HELPFUL")
 	if bool then
-		CheckUnitAuras(unitID, "HELPFUL")
+		CheckUnitAuras("target", "HELPFUL")
 	end
 	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HARMFUL")
 	if bool then
-		CheckUnitAuras(unitID, "HARMFUL")
+		CheckUnitAuras("target", "HARMFUL")
 	end
 
 end
@@ -320,7 +320,7 @@ end
 
 function lib.frame:UNIT_AURA(_, unitID)
 	if not unitID then return end
-	-- if not lib:CheckIfNeedMemorizeByUnitID(unitID) then return end
+	if not lib:CheckIfNeedMemorizeByUnitID(unitID) then return end
 	
 	ResetUnitAuras(unitID)
 	bool, who = lib:CheckIfNeedMemorizeByUnitID(unitID,"HELPFUL")
