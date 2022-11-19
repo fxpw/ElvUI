@@ -120,7 +120,7 @@ local function LoadSkin()
 	InspectPVPFrame.Ladder.TopContainer.StatisticsFrame:StripTextures()
 
 	for i = 1, 4 do
-		local tab = InspectPVPFrame.Ladder["RightTab"..i]
+		tab = InspectPVPFrame.Ladder["RightTab"..i]
 		tab:SetTemplate()
 		tab:StyleButton()
 		tab:GetRegions():Hide()
