@@ -123,6 +123,13 @@ local menuFrame = CreateFrame("Frame", "MinimapRightClickMenu", E.UIParent, "UID
 -- 	}
 -- }
 
+-- Interface\Buttons\UI-MicroButton-Achievement-Up
+local function CreateTextureString(path, size1, size2)
+	size1 = size1 or 32
+	size2 = size2 or 25
+	local textString = "|T"..path..":"..size1..":"..size2.."|t"
+	return ""
+end
 local menuList = {
 	{
 		text = CHARACTER_BUTTON,
@@ -132,7 +139,8 @@ local menuList = {
 		end
 	},
 	{
-		text = SPELLBOOK_ABILITIES_BUTTON,
+		icon = [[Interface\Buttons\UI-MicroButton-Spellbook-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Spellbook-Up]])..SPELLBOOK_ABILITIES_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(SpellBookFrame)
@@ -140,78 +148,92 @@ local menuList = {
 	},
 	{
 		-- text = "|cffADFF2F"..TALENTS_BUTTON,
-		text = TALENTS_BUTTON,
+		icon = [[Interface\Buttons\UI-MicroButton-Talents-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Talents-Up]])..TALENTS_BUTTON,
 		notCheckable = 1,
 		func = ToggleTalentFrame
 	},
 	{
-		text = ACHIEVEMENT_BUTTON,
+		icon = [[Interface\Buttons\UI-MicroButton-Achievement-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Achievement-Up]])..ACHIEVEMENT_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleAchievementFrame()
+			AchievementFrameTab1:Click()
 		end
 	},
 	{
-		text = QUESTLOG_BUTTON,
+		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..QUESTLOG_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(QuestLogFrame)
 		end
 	},
 	{
-		text = SOCIAL_BUTTON,
+		icon = [[Interface\Buttons\UI-MicroButton-Socials-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Socials-Up]])..SOCIAL_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleFriendsFrame(1)
 		end
 	},
 	{
-		text = PLAYER_V_PLAYER,
+		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..PLAYER_V_PLAYER,
 		notCheckable = 1,
 		func = TogglePVPUIFrame
 	},
 	{
-		text = LFG_TITLE,
+		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..LFG_TITLE,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(LFDParentFrame)
 		end
 	},
 	{
-		text = LOOKING_FOR_RAID,
+		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
+
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..LOOKING_FOR_RAID,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(LFRParentFrame)
 		end
 	},
 	{
-		text = L["Collections"],
+		icon = [[Interface\Buttons\UI-MicroButton-Mounts-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Mounts-Up]])..L["Collections"],
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(CollectionsJournal)
 		end
 	},
 	{
-		text = L["EncounterJ"],
+		icon = [[Interface\Buttons\UI-MicroButton-EJ-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-EJ-Up]])..L["EncounterJ"],
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(EncounterJournal)
 		end
 	},
 	{
-		text = L["Calendar"],
+		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..L["Calendar"],
 		notCheckable = 1,
 		func = function()
 			GameTimeFrame:Click()
 		end
 	},
 	{
-		text = L["Farm Mode"],
+		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..L["Farm Mode"],
 		notCheckable = 1,
 		func = FarmMode
 	},
 	{
-		text = BATTLEFIELD_MINIMAP,
+		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..BATTLEFIELD_MINIMAP,
 		notCheckable = 1,
 		func = ToggleBattlefieldMinimap
 	},
@@ -221,7 +243,20 @@ local menuList = {
 		func = ToggleTimeManager
 	},
 	{
-		text = MAINMENU_BUTTON,
+		icon = [[Interface\common\help-i]],
+		text = CreateTextureString([[Interface\common\help-i]])..HELP_BUTTON,
+		notCheckable = 1,
+		func = ToggleHelpFrame
+	},
+	{
+		icon = [[Interface\Buttons\UI-MicroButton-BStore-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-BStore-Up]]).."|cffFFD700МаГаЗиН|r",
+		notCheckable = 1,
+		func = ToggleStoreFrame
+	},
+	{
+		icon = [[Interface\Buttons\UI-MicroButton-MainMenu-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-MainMenu-Up]])..MAINMENU_BUTTON,
 		notCheckable = 1,
 		func = function()
 			if GameMenuFrame:IsShown() then
@@ -233,16 +268,6 @@ local menuList = {
 			end
 		end
 	},
-	{
-		text = HELP_BUTTON,
-		notCheckable = 1,
-		func = ToggleHelpFrame
-	},
-	{
-		text = "|cffFFD700МаГаЗиН|r",
-		notCheckable = 1,
-		func = ToggleStoreFrame
-	}
 }
 
 function M:GetLocTextColor()
@@ -288,9 +313,16 @@ function M:Minimap_OnMouseUp(btn)
 	local position = self:GetPoint()
 	if btn == "MiddleButton" or (btn == "RightButton" and IsShiftKeyDown()) then
 		if position:match("LEFT") then
-			EasyMenu(menuList, MinimapRightClickMenu, "cursor", 0, 0, "MENU", 2)
+			EasyMenu(menuList, menuFrame, "cursor", 0, 0, "MENU", 2)
 		else
-			EasyMenu(menuList, MinimapRightClickMenu, "cursor", -160, 0, "MENU", 2)
+			EasyMenu(menuList, menuFrame, "cursor", -160, 0, "MENU", 2)
+		end
+		for i = 1,18 do
+			if i ~= 16 then
+				_G["DropDownList1Button"..i].Icon:SetTexCoord(0.17, 0.87, 0.5, 0.908)
+			else
+				_G["DropDownList1Button"..i].Icon:SetTexCoord(0, 1, 0, 1)
+			end
 		end
 	elseif btn == "RightButton" then
 		ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "cursor")
