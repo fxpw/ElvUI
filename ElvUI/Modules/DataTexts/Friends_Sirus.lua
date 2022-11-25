@@ -64,7 +64,7 @@ local dataValid = false
 local lastPanel
 
 local function SortAlphabeticName(a, b)
-	if a[1] and b[1] then
+	if a and b and a[1] and b[1] then
 		return a[1] < b[1]
 	end
 end
