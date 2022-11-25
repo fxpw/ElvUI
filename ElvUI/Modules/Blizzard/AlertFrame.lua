@@ -17,12 +17,12 @@ function E:PostAlertMove()
 		POSITION = "TOP"
 		ANCHOR_POINT = "BOTTOM"
 		YOFFSET = -10
-		AlertFrameMover:SetText(AlertFrameMover.textString.." [Grow Down]")
+		AlertFrameMover:SetText(AlertFrameMover.textString.." [Рост вниз]")
 	else
 		POSITION = "BOTTOM"
 		ANCHOR_POINT = "TOP"
 		YOFFSET = 10
-		AlertFrameMover:SetText(AlertFrameMover.textString.." [Grow Up]")
+		AlertFrameMover:SetText(AlertFrameMover.textString.." [Рост вверх]")
 	end
 
 	if E.private.general.lootRoll then

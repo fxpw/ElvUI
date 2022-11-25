@@ -49,6 +49,6 @@ S:AddCallback("Skin_MirrorTimers", function()
 		mirrorTimer.timeSinceUpdate = 0
 		mirrorTimer:HookScript("OnUpdate", MirrorTimer_OnUpdate)
 
-		E:CreateMover(mirrorTimer, "MirrorTimer"..i.."Mover", L["MirrorTimer"]..i, nil, nil, nil, "ALL,SOLO")
+		E:CreateMover(mirrorTimer, "MirrorTimer"..i.."Mover", L["MirrorTimer"].. " " .. i, nil, nil, nil, "ALL,SOLO")
 	end
 end)

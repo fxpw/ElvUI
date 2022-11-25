@@ -82,7 +82,7 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 		styleButton = function(button)
 			if button.hasItem then
 				local id = button:GetID()
-				if id then
+				if id and InspectFrame.unit then
 					local itemID = GetInventoryItemID(InspectFrame.unit, id )
 					if itemID then
 						local _, _, quality = GetItemInfo(itemID)
