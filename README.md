@@ -2,7 +2,7 @@
 [![Discord](https://discordapp.com/api/guilds/259362419372064778/widget.png?style=shield)](https://discord.gg/UXSc7nt)
 [![GitHub Actions](https://github.com/ElvUI-WotLK/ElvUI/workflows/lint/badge.svg?branch=master&event=push)](https://github.com/ElvUI-WotLK/ElvUI/actions?query=workflow%3Alint+branch%3Amaster)
 
-# ElvUI - (3.3.5a) for sirus.su
+# ElvUI - Core (3.3.5a) for sirus.su
 Тут только код без настроек, настройки в https://github.com/fxpw/ElvUI_OptionsUI
 
 ## Screenshots:
