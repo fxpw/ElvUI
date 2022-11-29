@@ -1,1 +1,3 @@
 .luacheckcache
+.github/workflows/LuaTest.yml
+.vscode/settings.json
