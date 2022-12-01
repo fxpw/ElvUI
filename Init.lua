@@ -71,6 +71,7 @@ do
 	AddOn:AddLib("SpellRange", "SpellRange-1.0")
 	AddOn:AddLib("ItemSearch", "LibItemSearch-1.2-ElvUI")
 	AddOn:AddLib("Compress", "LibCompress")
+	AddOn:AddLib('Deflate', 'LibDeflate')
 	AddOn:AddLib("Base64", "LibBase64-1.0-ElvUI")
 	AddOn:AddLib("Translit", "LibTranslit-1.0")
 	-- added on ElvUI_OptionsUI load: AceGUI, AceConfig, AceConfigDialog, AceConfigRegistry, AceDBOptions
@@ -107,14 +108,15 @@ AddOn.UnitFrames = AddOn:NewModule("UnitFrames","AceTimer-3.0","AceEvent-3.0","A
 AddOn.WorldMap = AddOn:NewModule("WorldMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
 AddOn.InstanceMap = AddOn:NewModule("InstanceMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
 
+-- AddOn.TotemTracker = AddOn:NewModule('TotemTracker','AceEvent-3.0')
 AddOn.Sirus = AddOn:NewModule("Sirus","AceHook-3.0","AceEvent-3.0","AceTimer-3.0","AceComm-3.0","AceSerializer-3.0")
 -- AddOn.SirusCase = AddOn:NewModule("SirusCase","AceEvent-3.0")
-do
-	local arg2, arg3 = "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1"
-	function AddOn:EscapeString(str)
-		return gsub(str, arg2, arg3)
-	end
-end
+-- do
+-- 	local arg2, arg3 = "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1"
+-- 	function AddOn:EscapeString(str)
+-- 		return gsub(str, arg2, arg3)
+-- 	end
+-- end
 
 do
 	DisableAddOn("ElvUI_EverySecondCounts")

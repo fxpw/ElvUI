@@ -13,6 +13,7 @@
 	<Script file="LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
 	<!--  -->
 	<Script file='LibAceConfigHelper\LibAceConfigHelper.lua'/>
+	<Script file='LibDeflate\LibDeflate.lua'/>
 	<!--  -->
 	<Script file="LibSimpleSticky\LibSimpleSticky.lua"/>
 	<Script file="LibSpellRange-1.0\LibSpellRange-1.0.lua"/>

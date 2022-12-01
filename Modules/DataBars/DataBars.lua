@@ -74,6 +74,16 @@ function mod:UpdateDataBarDimensions()
 	self:ReputationBar_UpdateDimensions()
 end
 
+function mod:ToggleAll()
+	mod:ExperienceBar_Toggle()
+	mod:ReputationBar_Toggle()
+	mod:ThreatBar_Toggle()
+end
+
+function mod:UpdateAll()
+	self:UpdateDataBarDimensions()
+end
+
 function mod:Initialize()
 	self.db = E.db.databars
 

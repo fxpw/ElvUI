@@ -11,7 +11,7 @@
 -- @class file
 -- @name AceSerializer-3.0
 -- @release $Id$
-local MAJOR,MINOR = "AceSerializer-3.0", 3
+local MAJOR,MINOR = "AceSerializer-3.0", 5
 local AceSerializer, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceSerializer then return end
@@ -24,9 +24,11 @@ local pairs, select, frexp = pairs, select, math.frexp
 local tconcat = table.concat
 
 -- quick copies of string representations of wonky numbers
-local serNaN = tostring(0/0)
-local serInf = tostring(1/0)
-local serNegInf = tostring(-1/0)
+local inf = math.huge
+
+local serNaN  -- can't do this in 4.3, see ace3 ticket 268
+local serInf, serInfMac = "1.#INF", "inf"
+local serNegInf, serNegInfMac = "-1.#INF", "-inf"
 
 
 -- Serialization functions
@@ -60,10 +62,14 @@ local function SerializeValue(v, res, nres)
 
 	elseif t=="number" then	-- ^N = number (just tostring()ed) or ^F (float components)
 		local str = tostring(v)
-		if tonumber(str)==v  or str==serNaN or str==serInf or str==serNegInf then
+		if tonumber(str)==v  --[[not in 4.3 or str==serNaN]] then
 			-- translates just fine, transmit as-is
 			res[nres+1] = "^N"
 			res[nres+2] = str
+			nres=nres+2
+		elseif v == inf or v == -inf then
+			res[nres+1] = "^N"
+			res[nres+2] = v == inf and serInf or serNegInf
 			nres=nres+2
 		else
 			local m,e = frexp(v)
@@ -143,12 +149,12 @@ local function DeserializeStringHelper(escape)
 end
 
 local function DeserializeNumberHelper(number)
-	if number == serNaN then
+	--[[ not in 4.3 if number == serNaN then
 		return 0/0
-	elseif number == serNegInf then
-		return -1/0
-	elseif number == serInf then
-		return 1/0
+	else]]if number == serNegInf or number == serNegInfMac then
+		return -inf
+	elseif number == serInf or number == serInfMac then
+		return inf
 	else
 		return tonumber(number)
 	end
@@ -241,8 +247,8 @@ function AceSerializer:Deserialize(str)
 	str = gsub(str, "[%c ]", "")	-- ignore all control characters; nice for embedding in email and stuff
 
 	local iter = gmatch(str, "(^.)([^^]*)")	-- Any ^x followed by string of non-^
-	local ctl, data = iter()
-	if not ctl or ctl ~= "^1" then
+	local ctl,data = iter()
+	if not ctl or ctl~="^1" then
 		-- we purposefully ignore the data portion of the start code, it can be used as an extension mechanism
 		return false, "Supplied data is not AceSerializer data (rev 1)"
 	end

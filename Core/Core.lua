@@ -27,7 +27,7 @@ local Tooltip = E:GetModule("Tooltip")
 local Totems = E:GetModule("Totems")
 local ReminderBuffs = E:GetModule("ReminderBuffs")
 local UnitFrames = E:GetModule("UnitFrames")
-
+-- local TotemTracker = E:GetModule('TotemTracker')
 local LSM = E.Libs.LSM
 
 --Lua functions
@@ -530,13 +530,13 @@ function E:UpdateStatusBars()
 	end
 end
 
-function E:IncompatibleAddOn(addon, module)
-	E.PopupDialogs.INCOMPATIBLE_ADDON.button1 = addon
-	E.PopupDialogs.INCOMPATIBLE_ADDON.button2 = "ElvUI "..module
-	E.PopupDialogs.INCOMPATIBLE_ADDON.addon = addon
-	E.PopupDialogs.INCOMPATIBLE_ADDON.module = module
-	E:StaticPopup_Show("INCOMPATIBLE_ADDON", addon, module)
-end
+-- function E:IncompatibleAddOn(addon, module)
+-- 	E.PopupDialogs.INCOMPATIBLE_ADDON.button1 = addon
+-- 	E.PopupDialogs.INCOMPATIBLE_ADDON.button2 = "ElvUI "..module
+-- 	E.PopupDialogs.INCOMPATIBLE_ADDON.addon = addon
+-- 	E.PopupDialogs.INCOMPATIBLE_ADDON.module = module
+-- 	E:StaticPopup_Show("INCOMPATIBLE_ADDON", addon, module)
+-- end
 
 function E:IsAddOnEnabled(addon)
 	local _, _, _, enabled, _, reason = GetAddOnInfo(addon)
@@ -545,36 +545,104 @@ function E:IsAddOnEnabled(addon)
 	end
 end
 
-function E:CheckIncompatible()
-	if E.global.ignoreIncompatible then return end
-
-	if E.private.chat.enable then
-		if self:IsAddOnEnabled("Prat-3.0") then
-			self:IncompatibleAddOn("Prat-3.0", "Chat")
-		elseif self:IsAddOnEnabled("Chatter") then
-			self:IncompatibleAddOn("Chatter", "Chat")
-		end
+do
+	local cancel = function(popup)
+		DisableAddOn(popup.addon)
+		ReloadUI()
 	end
 
-	if E.private.nameplates.enable then
-		if self:IsAddOnEnabled("Aloft") then
-			self:IncompatibleAddOn("Aloft", "NamePlates")
-		elseif self:IsAddOnEnabled("Healers-Have-To-Die") then
-			self:IncompatibleAddOn("Healers-Have-To-Die", "NamePlates")
-		elseif self:IsAddOnEnabled("TidyPlates") then
-			self:IncompatibleAddOn("TidyPlates", "NamePlates")
-		end
-	end
+	function E:IncompatibleAddOn(addon, module, info)
+		local popup = E.PopupDialogs.INCOMPATIBLE_ADDON
+		popup.button2 = info.name or module
+		popup.button1 = addon
+		popup.module = module
+		popup.addon = addon
+		popup.accept = info.accept
+		popup.cancel = info.cancel or cancel
 
-	if E.private.tooltip.enable and self:IsAddOnEnabled("TipTac") then
-		self:IncompatibleAddOn("TipTac", "Tooltip")
-	end
-
-	if E.private.worldmap.enable and self:IsAddOnEnabled("Mapster") then
-		self:IncompatibleAddOn("Mapster", "WorldMap")
+		E:StaticPopup_Show('INCOMPATIBLE_ADDON', popup.button1, popup.button2)
 	end
 end
 
+-- function E:IsAddOnEnabled(addon)
+-- 	return GetAddOnEnableState(E.myname, addon) == 2
+-- end
+
+-- function E:IsIncompatible(module, addons)
+-- 	for _, addon in ipairs(addons) do
+-- 		if E:IsAddOnEnabled(addon) then
+-- 			E:IncompatibleAddOn(addon, module, addons.info)
+-- 			return true
+-- 		end
+-- 	end
+-- end
+
+do
+	local ADDONS = {
+		ActionBar = {
+			info = {
+				enabled = function() return E.private.actionbar.enable end,
+				accept = function() E.private.actionbar.enable = false; ReloadUI() end,
+				name = 'ElvUI ActionBars'
+			},
+			'Bartender4',
+			'Dominos'
+		},
+		Chat = {
+			info = {
+				enabled = function() return E.private.chat.enable end,
+				accept = function() E.private.chat.enable = false; ReloadUI() end,
+				name = 'ElvUI Chat'
+			},
+			'Prat-3.0',
+			'Chatter',
+			'Glass'
+		},
+		NamePlates = {
+			info = {
+				enabled = function() return E.private.nameplates.enable end,
+				accept = function() E.private.nameplates.enable = false; ReloadUI() end,
+				name = 'ElvUI NamePlates'
+			},
+			'TidyPlates',
+			'TidyPlates_ThreatPlates',
+			'Healers-Have-To-Die',
+			'Kui_Nameplates',
+			'Plater',
+			'Aloft'
+		},
+		Minimap = {
+			info = {
+				enabled = function()
+					local db = E.private.general.minimap.enable and _G.LeaPlusDB
+					return db and db.MinimapMod == 'On'
+				end,
+				accept = function() E.private.general.minimap.enable = false; ReloadUI() end,
+				name = 'ElvUI Minimap',
+			},
+			'Leatrix_Plus'
+		},
+	}
+
+	E.INCOMPATIBLE_ADDONS = ADDONS -- let addons have the ability to alter this list to trigger our popup if they want
+	function E:AddIncompatible(module, addonName)
+		if ADDONS[module] then
+			tinsert(ADDONS[module], addonName)
+		else
+			print(module, 'is not in the incompatibility list.')
+		end
+	end
+
+	function E:CheckIncompatible()
+		if E.global.ignoreIncompatible then return end
+
+		for module, addons in pairs(ADDONS) do
+			if addons[1] and addons.info.enabled() and E:IsIncompatible(module, addons) then
+				break
+			end
+		end
+	end
+end
 function E:CopyTable(currentTable, defaultTable)
 	if type(currentTable) ~= "table" then currentTable = {} end
 
@@ -1071,6 +1139,263 @@ function E:UpdateAll(ignoreInstall)
 	Blizzard:SetWatchFrameHeight()
 	E:SetMoversClampedToScreen(true) -- Go back to using clamp after resizing has taken place.
 end
+
+
+-------------------------------
+------------------------------- update all
+-------------------------------
+function E:UpdateDB()
+	E.private = E.charSettings.profile
+	E.global = E.data.global
+	E.db = E.data.profile
+
+	E:DBConversions()
+
+	Auras.db = E.db.auras
+	ActionBars.db = E.db.actionbar
+	Bags.db = E.db.bags
+	Chat.db = E.db.chat
+	DataBars.db = E.db.databars
+	DataTexts.db = E.db.datatexts
+	NamePlates.db = E.db.nameplates
+	Tooltip.db = E.db.tooltip
+	UnitFrames.db = E.db.unitframe
+	-- TotemTracker.db = E.db.general.totems
+
+	--Not part of staggered update
+end
+
+function E:UpdateMoverPositions()
+	--The mover is positioned before it is resized, which causes issues for unitframes
+	--Allow movers to be 'pushed' outside the screen, when they are resized they should be back in the screen area.
+	--We set movers to be clamped again at the bottom of this function.
+	E:SetMoversClampedToScreen(false)
+	E:SetMoversPositions()
+
+	--Not part of staggered update
+end
+
+function E:UpdateUnitFrames()
+	if E.private.unitframe.enable then
+		UnitFrames:Update_AllFrames()
+	end
+
+	--Not part of staggered update
+end
+
+function E:UpdateMediaItems(skipCallback)
+	E:UpdateMedia()
+	E:UpdateFrameTemplates()
+	E:UpdateStatusBars()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateLayout(skipCallback)
+	Layout:ToggleChatPanels()
+	-- Layout:UpdateBottomPanel()
+	-- Layout:UpdateTopPanel()
+	Layout:SetDataPanelStyle()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateActionBars(skipCallback)
+	-- ActionBars:ToggleCooldownOptions()
+	ActionBars:UpdateButtonSettings()
+	ActionBars:UpdateMicroButtons()
+	-- ActionBars:UpdatePetCooldownSettings()
+
+	-- if E.Retail then
+	-- 	ActionBars:UpdateExtraButtons()
+	-- end
+
+	if E.myclass == 'SHAMAN' then
+		ActionBars:UpdateTotemBindings()
+	end
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateNamePlates(skipCallback)
+	NamePlates:ConfigureAll()
+	NamePlates:StyleFilterInitialize()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateTooltip()
+	Tooltip:SetTooltipFonts()
+end
+
+function E:UpdateBags(skipCallback)
+	Bags:SizeAndPositionBagBar()
+	-- Bags:UpdateItemDisplay()
+	-- Bags:UpdateLayouts()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateChat(skipCallback)
+	Chat:SetupChat()
+	-- Chat:UpdateEditboxAnchors()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateDataBars(skipCallback)
+	DataBars:ToggleAll()
+	DataBars:UpdateAll()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateDataTexts(skipCallback)
+	DataTexts:LoadDataTexts()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateMinimap(skipCallback)
+	Minimap:UpdateSettings()
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateAuras(skipCallback)
+	if Auras.BuffFrame then Auras:UpdateHeader(Auras.BuffFrame) end
+	if Auras.DebuffFrame then Auras:UpdateHeader(Auras.DebuffFrame) end
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateMisc(skipCallback)
+	AFK:Toggle()
+
+	-- if E.Retail then
+	-- 	TotemTracker:PositionAndSize()
+	-- elseif E.Wrath then
+		-- ActionBars:PositionAndSizeTotemBar()
+	-- end
+
+	if not skipCallback then
+		E.callbacks:Fire('StaggeredUpdate')
+	end
+end
+
+function E:UpdateEnd()
+	E:UpdateCooldownSettings('all')
+
+	if E.RefreshGUI then
+		E:RefreshGUI()
+	end
+
+	E:SetMoversClampedToScreen(true) -- Go back to using clamp after resizing has taken place.
+
+	if E.staggerUpdateRunning then
+		--We're doing a staggered update, but plugins expect the old UpdateAll to be called
+		--So call it, but skip updates inside it
+		E:UpdateAll(false)
+	elseif not E.private.install_complete then
+		E:Install()
+	end
+
+	--Done updating, let code now
+	E.staggerUpdateRunning = false
+end
+
+do
+	local staggerDelay = 0.02
+	local staggerTable = {}
+	local function CallStaggeredUpdate()
+		local nextUpdate, nextDelay = staggerTable[1]
+		if nextUpdate then
+			tremove(staggerTable, 1)
+
+			if nextUpdate == 'UpdateNamePlates' or nextUpdate == 'UpdateBags' then
+				nextDelay = 0.05
+			end
+
+			E:Delay(nextDelay or staggerDelay, E[nextUpdate])
+		end
+	end
+	E:RegisterCallback('StaggeredUpdate', CallStaggeredUpdate)
+
+	function E:StaggeredUpdateAll(event)
+		if not E.initialized then
+			E:Delay(1, E.StaggeredUpdateAll, E, event)
+			return
+		end
+
+		if (not event or event == 'OnProfileChanged' or event == 'OnProfileCopied') and not E.staggerUpdateRunning then
+			tinsert(staggerTable, 'UpdateLayout')
+			if ActionBars.Initialized then
+				tinsert(staggerTable, 'UpdateActionBars')
+			end
+			if NamePlates.Initialized then
+				tinsert(staggerTable, 'UpdateNamePlates')
+			end
+			if Bags.Initialized then
+				tinsert(staggerTable, 'UpdateBags')
+			end
+			if Chat.Initialized then
+				tinsert(staggerTable, 'UpdateChat')
+			end
+			if Tooltip.Initialized then
+				tinsert(staggerTable, 'UpdateTooltip')
+			end
+			tinsert(staggerTable, 'UpdateDataBars')
+			tinsert(staggerTable, 'UpdateDataTexts')
+			if Minimap.Initialized then
+				tinsert(staggerTable, 'UpdateMinimap')
+			end
+			if Auras.BuffFrame or Auras.DebuffFrame then
+				tinsert(staggerTable, 'UpdateAuras')
+			end
+			tinsert(staggerTable, 'UpdateMisc')
+			tinsert(staggerTable, 'UpdateEnd')
+
+			--Stagger updates
+			E.staggerUpdateRunning = true
+			E:UpdateStart()
+		else
+			--Fire away
+			E:UpdateAll(true)
+		end
+	end
+end
+
+
+
+
+
+
+
+-------------------------------
+------------------------------- update all
+-------------------------------
+
+
 
 do
 	E.ObjectEventTable, E.ObjectEventFrame = {}, CreateFrame("Frame")
