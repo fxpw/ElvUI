@@ -286,8 +286,8 @@ function D:OnCommReceived(prefix, msg, dist, sender)
 						OnAccept = function(popup)
 							ElvDB.profiles[popup.editBox:GetText()] = data
 							E.Libs.AceAddon:GetAddon('ElvUI').data:SetProfile(popup.editBox:GetText())
-							-- E:UpdateAll(true)
-							E:StaggeredUpdateAll()
+							E:UpdateAll(true)
+							-- E:StaggeredUpdateAll()
 							Downloads[sender] = nil
 						end,
 						OnShow = function(popup) popup.editBox:SetText(profileKey) popup.editBox:SetFocus() end,
@@ -309,8 +309,8 @@ function D:OnCommReceived(prefix, msg, dist, sender)
 				OnAccept = function()
 					if profileKey == 'global' then
 						E:CopyTable(ElvDB.global, data)
-						-- E:UpdateAll(true)
-						E:StaggeredUpdateAll()
+						E:UpdateAll(true)
+						-- E:StaggeredUpdateAll()
 					else
 						E.Libs.AceAddon:GetAddon('ElvUI').data:SetProfile(profileKey)
 					end
