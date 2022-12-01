@@ -566,14 +566,14 @@ end
 -- 	return GetAddOnEnableState(E.myname, addon) == 2
 -- end
 
--- function E:IsIncompatible(module, addons)
--- 	for _, addon in ipairs(addons) do
--- 		if E:IsAddOnEnabled(addon) then
--- 			E:IncompatibleAddOn(addon, module, addons.info)
--- 			return true
--- 		end
--- 	end
--- end
+function E:IsIncompatible(module, addons)
+	for _, addon in ipairs(addons) do
+		if E:IsAddOnEnabled(addon) then
+			E:IncompatibleAddOn(addon, module, addons.info)
+			return true
+		end
+	end
+end
 
 do
 	local ADDONS = {
