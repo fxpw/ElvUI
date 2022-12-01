@@ -1310,6 +1310,7 @@ function NP:Initialize()
 	castbar.Icon.texture:SetTexture([[Interface\Icons\Spell_Holy_Penance]])
 	castbar:SetStatusBarColor(self.db.colors.castColor.r, self.db.colors.castColor.g, self.db.colors.castColor.b)
 	ElvNP_Test:Hide()
+
 	if not INP then
 		self.Frame = CreateFrame("Frame"):SetScript("OnUpdate", self.OnUpdate)
 	end

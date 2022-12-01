@@ -606,6 +606,7 @@ do
 			'TidyPlates_ThreatPlates',
 			'Healers-Have-To-Die',
 			'Kui_Nameplates',
+			"PlateBuffs",
 			'Plater',
 			'Aloft'
 		},
@@ -618,7 +619,8 @@ do
 				accept = function() E.private.general.minimap.enable = false; ReloadUI() end,
 				name = 'ElvUI Minimap',
 			},
-			'Leatrix_Plus'
+			'Leatrix_Plus',
+			"Mapster"
 		},
 	}
 

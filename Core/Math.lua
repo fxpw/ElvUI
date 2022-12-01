@@ -68,15 +68,20 @@ end
 
 -- http://www.wowwiki.com/ColorGradient
 function E:ColorGradient(perc, ...)
+	local value = select('#', ...)
 	if perc >= 1 then
-		return select(select("#", ...) - 2, ...)
+		return select(value - 2, ...)
 	elseif perc <= 0 then
 		return ...
 	end
 
-	local num = select("#", ...) / 3
+	local num = value / 3
 	local segment, relperc = modf(perc*(num - 1))
-	local r1, g1, b1, r2, g2, b2 = select((segment*3) + 1, ...)
+	local forSelect = (segment*3) + 1
+	if forSelect >= select("#",...) then
+		forSelect = select("#",...)
+	end
+	local r1, g1, b1, r2, g2, b2 = select(forSelect, ...)
 
 	return r1 + (r2 - r1)*relperc, g1 + (g2 - g1)*relperc, b1 + (b2 - b1)*relperc
 end
