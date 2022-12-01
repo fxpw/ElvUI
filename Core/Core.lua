@@ -207,8 +207,6 @@ do
 	end
 end
 
-
-
 function E:Print(...)
 	(_G[self.db.general.messageRedirect] or DEFAULT_CHAT_FRAME):AddMessage(strjoin(" ", self:ColorizedName("ElvUI", true), ...)) -- I put DEFAULT_CHAT_FRAME as a fail safe.
 end

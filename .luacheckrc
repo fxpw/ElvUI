@@ -87,7 +87,7 @@ globals = {
 	"C_FactionManager",
 	"C_Talent",
 	"Mixin",
-
+	"IsInGroup",
 
 	--chat
 	"ChatUrlHyperlink_OnClick",
