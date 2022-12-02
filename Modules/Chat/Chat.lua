@@ -13,6 +13,7 @@ local tinsert, tremove, tconcat, wipe = table.insert, table.remove, table.concat
 local gsub, find, gmatch, format, strtrim = string.gsub, string.find, string.gmatch, string.format, string.trim
 local strlower, strmatch, strsub, strlen, strupper = strlower, strmatch, strsub, strlen, strupper
 --WoW API / Variables
+local GetRealmName = GetRealmName
 local BetterDate = BetterDate
 local ChatEdit_ActivateChat = ChatEdit_ActivateChat
 local ChatEdit_ChooseBoxForSend = ChatEdit_ChooseBoxForSend
@@ -174,35 +175,37 @@ local function CreateRandomIcon()
 	return E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Elv]]..RaindomElvUIIcon[math.random(1,#RaindomElvUIIcon)], ":20:40")
 end
 local specialChatIconsSirus = {
-	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
-	-- ["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
-	-- ["Миленький-Scourge x2 - 3.3.5a+"] = Apolexis, -- миленький а играет за бабу кста
-	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
-	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
-	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
-	["Toss-Scourge x2 - 3.3.5a+"] = Toss,
-	["Toc-Scourge x2 - 3.3.5a+"] = Toss,
-	["Aiid-Scourge x2 - 3.3.5a+"] = Toss,
-	["Covenant-Scourge x2 - 3.3.5a+"] = Toss,
-	["Sheelby-Scourge x2 - 3.3.5a"] = Toss,
+	["Крольчонок-"..GetRealmName()] = ElvBlue,
+	-- ["Vakh-"..GetRealmName()] = Apolexis,
+	-- ["Миленький-"..GetRealmName()] = Apolexis, -- миленький а играет за бабу кста
+	["Додзё-"..GetRealmName()] = Dodzo,
+	["Apolexis-"..GetRealmName()] = Apolexis,
+	["Tossman-"..GetRealmName()] = Toss,
+	["Toss-"..GetRealmName()] = Toss,
+	["Toc-"..GetRealmName()] = Toss,
+	["Aiid-"..GetRealmName()] = Toss,
+	["Covenant-"..GetRealmName()] = Toss,
+	["Sheelby-"..GetRealmName()] = Toss,
 
-	["Мимирон-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Фьярнскаггл-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Амбасодор-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Кологарн-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Сталелом-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Морхок-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Стоматолог-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
-	["Ghostbuste-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
-	["Усталыч-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
-	["Сырсколбасой-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
-	["Gadgetino-Scourge x2 - 3.3.5a+"] = Gadgetino,
+	["Мимирон-"..GetRealmName()] = NightlyBlooD,
+	["Фьярнскаггл-"..GetRealmName()] = NightlyBlooD,
+	["Амбасодор-"..GetRealmName()] = NightlyBlooD,
+	["Кологарн-"..GetRealmName()] = NightlyBlooD,
+	["Сталелом-"..GetRealmName()] = NightlyBlooD,
+	["Морхок-"..GetRealmName()] = NightlyBlooD,
+	["Стоматолог-"..GetRealmName()] = KolbaskaSir,
+	["Ghostbuste-"..GetRealmName()] = KolbaskaSir,
+	["Усталыч-"..GetRealmName()] = KolbaskaSir,
+	["Сырсколбасой-"..GetRealmName()] = KolbaskaSir,
+	["Gadgetino-"..GetRealmName()] = Gadgetino,
 
 }
 local randomChatIcons = {
-	["Шутка-Scourge x2 - 3.3.5a+"] = true,
-	["Пьяная-Scourge x2 - 3.3.5a+"] = true,
-	["Лужица-Scourge x2 - 3.3.5a+"] = true,
+	["Шутка-"..GetRealmName()] = true,
+	["Пьяная-"..GetRealmName()] = true,
+	["Лужица-"..GetRealmName()] = true,
+	["Лягушечка-"..GetRealmName()] = true,
+	["Циркоманщица-"..GetRealmName()] = true,
 }
 
 local function ChatFrame_OnMouseScroll(frame, delta)
