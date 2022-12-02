@@ -42,6 +42,22 @@ function S:StatusBarColorGradient(bar, value, max, backdrop)
 	bar:SetStatusBarColor(r, g, b)
 end
 
+function S:HandleFrame(frame, strip, useCreateBackdrop, noSetTemplate)
+	if not frame then return end
+	if frame.isSkinned then return end
+	if strip then
+		frame:StripTextures()
+	end
+
+	if useCreateBackdrop then
+		frame:CreateBackdrop(nil, true)
+	elseif not noSetTemplate then
+		frame:SetTemplate(nil, true)
+	end
+
+	frame.isSkinned = true
+end
+
 function S:HandleButton(button, strip, isDeclineButton, useCreateBackdrop, noSetTemplate)
 	if button.isSkinned then return end
 
