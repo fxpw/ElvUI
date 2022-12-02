@@ -13,7 +13,7 @@ local UnitAura = UnitAura
 
 local addon = {}
 ns.oUF_RaidDebuffs = addon
-oUF_RaidDebuffs = ns.oUF_RaidDebuffs
+_G.oUF_RaidDebuffs = ns.oUF_RaidDebuffs
 if not _G.oUF_RaidDebuffs then
 	_G.oUF_RaidDebuffs = addon
 end
