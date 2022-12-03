@@ -167,7 +167,7 @@ local NightlyBlooD = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Ni
 local Toss = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Toss]], ":24:24")
 local KolbaskaSir = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\KolbaskaSir]], ":24:24")
 local Gadgetino = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Gadgetino]], ":24:24")
-
+local Sova = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Sova]], ":24:24")
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
 }
@@ -198,14 +198,14 @@ local specialChatIconsSirus = {
 	["Усталыч-"..GetRealmName()] = KolbaskaSir,
 	["Сырсколбасой-"..GetRealmName()] = KolbaskaSir,
 	["Gadgetino-"..GetRealmName()] = Gadgetino,
-
+	["Микросовушка-"..GetRealmName()] = Sova,
 }
 local randomChatIcons = {
 	["Шутка-"..GetRealmName()] = true,
 	["Пьяная-"..GetRealmName()] = true,
-	["Лужица-"..GetRealmName()] = true,
-	["Лягушечка-"..GetRealmName()] = true,
-	["Циркоманщица-"..GetRealmName()] = true,
+	-- ["Лужица-"..GetRealmName()] = true,
+	-- ["Лягушечка-"..GetRealmName()] = true,
+	-- ["Циркоманщица-"..GetRealmName()] = true,
 }
 
 local function ChatFrame_OnMouseScroll(frame, delta)
