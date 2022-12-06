@@ -42722,6 +42722,7 @@ globals = {
 	"AuctionHouseFrameBuyDialogCancelButton",
 	"AuctionHouseFrameSearchBarFilterButtonLevelRangeFrameMinLevel",
 	"AuctionHouseFrameSearchBarFilterButtonLevelRangeFrameMaxLevel",
+	"AuctionHouseMultisellProgressFrame",
 
 	--sirus extrabuttons
 	"ExtraActionBarFrame",
