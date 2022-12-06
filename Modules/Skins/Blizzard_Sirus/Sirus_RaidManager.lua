@@ -202,15 +202,6 @@ local function LoadSkin()
 		CompactRaidFrameManagerDisplayFrameOptionsButton:Kill()
 		CompactRaidFrameManagerDisplayFrameProfileSelector:Kill()
 		CompactRaidFrameManagerDisplayFrameFilterOptions:Kill()
-		-- C_Timer:After(5, function()
-		-- 	CompactRaidFrameManagerDisplayFrameRaidMarkers:ClearAllPoints()
-		-- 	CompactRaidFrameManagerDisplayFrameRaidMarkers:SetPoint("TOPLEFT",CompactRaidFrameManagerDisplayFrame,"TOPLEFT",0,-40)
-		-- 	CompactRaidFrameManagerDisplayFrameLeaderOptionsCountdown:ClearAllPoints()
-		-- 	CompactRaidFrameManagerDisplayFrameLeaderOptionsCountdown:SetPoint("TOPLEFT", 20, 55)
-		-- 	CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton:ClearAllPoints()
-		-- 	CompactRaidFrameManagerDisplayFrameEveryoneIsAssistButton:SetPoint("TOPLEFT", CompactRaidFrameManagerDisplayFrameOptionFlowContainer, "TOPLEFT", 20, -128)
-		-- 	CompactRaidFrameManager:Size(200,100)
-		-- end)
 
 
 		-- создал локально потому что нет имен и потом сделаю обновление чутка по другому
