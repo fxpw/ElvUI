@@ -12,7 +12,8 @@
 	<Script file="FrameGlow.lua"/>
 	<Script file="GPS.lua"/>
 	<Script file="Happiness.lua"/>
-	<Script file="HealComm.lua"/>
+	<!-- <Script file="HealComm.lua"/> -->
+	<Script file="Absorb.lua"/>
 	<Script file="Health.lua"/>
 	<Script file="InfoPanel.lua"/>
 	<Script file="Name.lua"/>
@@ -31,4 +32,5 @@
 	<Script file="Threat.lua"/>
 	<Script file="Trinket.lua"/>
 	<Script file="HeadHuntingWanted_Sirus.lua"/>
+
 </Ui>

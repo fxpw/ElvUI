@@ -46,6 +46,7 @@ function UF:Construct_Raid40Frames()
 	self.GPS = UF:Construct_GPS(self)
 	self.Fader = UF:Construct_Fader()
 	self.Cutaway = UF:Construct_Cutaway(self)
+	self.GroupRoleIndicator = UF:Construct_RoleIcon(self)
 	self.customTexts = {}
 
 	self.unitframeType = "raid40"

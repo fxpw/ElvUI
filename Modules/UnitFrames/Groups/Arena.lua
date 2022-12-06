@@ -33,6 +33,7 @@ function UF:Construct_ArenaFrames(frame)
 	frame.Trinket = self:Construct_Trinket(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
+	frame.GroupRoleIndicator = self:Construct_RoleIcon(frame)
 	frame:SetAttribute("type2", "focus")
 
 	frame.customTexts = {}

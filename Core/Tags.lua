@@ -671,7 +671,33 @@ do
 	end)
 end
 
-
+local SA = LibStub("SpecializedAbsorbs-1.0")
+local HealComm = LibStub("LibHealComm-4.0")
+-- Tags
+ElvUF.Tags.Methods["absorbs"] = function(tagUnit)
+	local abs = SA.UnitTotal(UnitGUID(tagUnit))
+	if abs > 0 then
+		return E:ShortValue(abs)
+	end
+end
+ElvUF.Tags.Methods["incomingheals:personal"] = function(tagUnit)
+	local incHealP = (HealComm:GetHealAmount(UnitGUID(tagUnit), HealComm.ALL_HEALS, nil--[[GetTime() + (element.lookAhead or 5)]], UnitGUID("player")) or 0) * ((HealComm:GetHealModifier(UnitGUID(tagUnit)) or 1) or 0)
+	if incHealP > 0 then
+		return E:ShortValue(incHealP)
+	end
+end
+ElvUF.Tags.Methods["incomingheals:others"] = function(tagUnit)
+	local incHealO = (HealComm:GetOthersHealAmount(UnitGUID(tagUnit), HealComm.ALL_HEALS, nil--[[GetTime() + (element.lookAhead or 5)]]) or 0) * ((HealComm:GetHealModifier(UnitGUID(tagUnit)) or 1) or 0)
+	if incHealO > 0 then
+		return E:ShortValue(incHealO)
+	end
+end
+ElvUF.Tags.Methods["incomingheals"] = function(tagUnit)
+	local incHeal = (HealComm:GetHealAmount(UnitGUID(tagUnit), HealComm.ALL_HEALS, nil--[[GetTime() + (element.lookAhead or 5)]]) or 0) * ((HealComm:GetHealModifier(UnitGUID(tagUnit)) or 1) or 0)
+	if incHeal > 0 then
+		return E:ShortValue(incHeal)
+	end
+end
 
 
 E.TagInfo = {

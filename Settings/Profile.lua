@@ -1,5 +1,28 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 
+
+local AbsorbPrediction = {
+	enable = true,
+	absorbStyle = "REVERSED",
+	anchorPoint = "BOTTOM",
+	absorbTexture = "ElvUI Norm",
+	height = -1
+}
+
+local RoleIcon = {
+	enable = false,
+	position = "BOTTOMRIGHT",
+	attachTo = "Health",
+	xOffset = 0,
+	yOffset = 0,
+	size = 15,
+	tank = true,
+	healer = true,
+	damager = true,
+	combatHide = false,
+}
+
+
 P.gridSize = 64
 P.farmSize = 340
 
@@ -1246,6 +1269,11 @@ P.tooltip = {
 
 --UnitFrame
 P.unitframe = {
+	-- general = {
+	roleIcons = {
+		icons = "ElvUI",
+	},
+	-- },
 	smoothbars = false,
 	statusbar = "ElvUI Norm",
 	font = "Homespun",
@@ -1390,6 +1418,12 @@ P.unitframe = {
 			Disease = {r = 0.6, g = 0.4, b = 0, a = 0.45},
 			Poison = {r = 0, g = 0.6, b = 0, a = 0.45},
 			blendMode = "ADD"
+		},
+		absorbPrediction = {
+			absorbs = {r = 0, g = 1, b = 1, a = 1},
+			healAbsorbs = {r = 1, g = 0, b = 0, a = 0.25},
+			overabsorbs = {r = 0, g = 1, b = 1, a = 1},
+			overhealabsorbs = {r = 1, g = 0, b = 0, a = 0.25},
 		}
 	},
 	units = {
@@ -1630,7 +1664,9 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
+			roleIcon = CopyTable(RoleIcon),
 		},
 		target = {
 			enable = true,
@@ -1840,7 +1876,9 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
+			roleIcon = CopyTable(RoleIcon),
 		},
 		targettarget = {
 			enable = true,
@@ -2265,7 +2303,9 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
+				roleIcon = CopyTable(RoleIcon),
 		},
 		focustarget = {
 			enable = false,
@@ -2556,7 +2596,8 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
 		},
 		pettarget = {
 			enable = false,
@@ -2978,7 +3019,9 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
+			roleIcon = CopyTable(RoleIcon),
 		},
 		party = {
 			enable = true,
@@ -3250,7 +3293,8 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
 		},
 		raid = {
 			enable = true,
@@ -3398,18 +3442,7 @@ P.unitframe = {
 					color = {r = 1, g = 0.9, b = 0, a = 1}
 				}
 			},
-			roleIcon = {
-				enable = false,
-				position = "TOPRIGHT",
-				attachTo = "Health",
-				xOffset = 0,
-				yOffset = 0,
-				size = 15,
-				tank = true,
-				healer = true,
-				damager = true,
-				combatHide = false
-			},
+			roleIcon = CopyTable(RoleIcon),
 			raidRoleIcons = {
 				enable = true,
 				position = "TOPLEFT"
@@ -3459,7 +3492,8 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
 		},
 		raid40 = {
 			enable = true,
@@ -3656,7 +3690,9 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
+			roleIcon = CopyTable(RoleIcon),
 		},
 		raidpet = {
 			enable = false,
@@ -3810,7 +3846,8 @@ P.unitframe = {
 					lengthBeforeFade = 0.3,
 					forceBlankTexture = true
 				}
-			}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
 		},
 		tank = {
 			enable = true,

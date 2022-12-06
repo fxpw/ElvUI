@@ -9,4 +9,6 @@
 	<Script file="oUF_GPS\oUF_GPS.lua"/>
 	<Script file="oUF_Fader\oUF_Fader.lua"/>
 	<Script file="oUF_Cutaway\oUF_Cutaway.lua"/>
+	<Script file="oUF_RoleIndicator\oUF_RoleIndicator.lua"/>
+	<Script file="oUF_HealthPrediction\oUF_HealthPrediction.lua"/>
 </Ui>

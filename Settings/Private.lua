@@ -129,7 +129,8 @@ V.unitframe = {
 		arena = true,
 		party = true,
 		raidFrames = true,
-	}
+	},
+
 }
 
 V.actionbar = {

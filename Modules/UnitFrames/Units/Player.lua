@@ -40,7 +40,7 @@ function UF:Construct_PlayerFrame(frame)
 			frame.ClassBar = "AdditionalPower"
 		end
 	end
-
+	frame.GroupRoleIndicator = self:Construct_RoleIcon(frame)
 	frame.MouseGlow = self:Construct_MouseGlow(frame)
 	frame.TargetGlow = self:Construct_TargetGlow(frame)
 	frame.RaidTargetIndicator = self:Construct_RaidIcon(frame)

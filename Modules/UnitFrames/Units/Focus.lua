@@ -36,6 +36,7 @@ function UF:Construct_FocusFrame(frame)
 	frame.DebuffHighlight = self:Construct_DebuffHighlight(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
+	frame.GroupRoleIndicator = self:Construct_RoleIcon(frame)
 
 	frame.customTexts = {}
 	frame:Point("BOTTOMRIGHT", ElvUF_Target, "TOPRIGHT", 0, 220)
