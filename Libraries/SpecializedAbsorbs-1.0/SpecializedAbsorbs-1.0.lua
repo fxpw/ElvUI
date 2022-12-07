@@ -1698,7 +1698,7 @@ local function Tanks_CLEU(self,...)
 			lastPalAbsorbTable[whoguid4] = {}
 			lastPalAbsorbTable[whoguid4][1] = 0
 		end
-		if time2 - lastPalAbsorbTable[whoguid4][1] <= 2 then
+		if time2 and lastPalAbsorbTable[whoguid4][1] and (time2 - lastPalAbsorbTable[whoguid4][1] <= 2) then
             lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + spelldmg13
             if lastPalAbsorbTable[whoguid4][2] > 50000 then
                 lastPalAbsorbTable[whoguid4][2] = 50000
