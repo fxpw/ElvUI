@@ -287,7 +287,8 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.movers.ElvUF_PlayerCastbarMover = "BOTTOM,ElvUIParent,BOTTOM,0,96"
 		E.db.movers.ElvUF_PlayerMover = "BOTTOM,ElvUIParent,BOTTOM,-341,138"
 		E.db.movers.ElvUF_Raid40Mover = "TOPLEFT,ElvUIParent,BOTTOMLEFT,4,482"
-		E.db.movers.ElvUF_RaidMover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,4,248"
+		E.db.movers.ElvUF_Raid25Mover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,4,248"
+		E.db.movers.ElvUF_Raid10Mover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,4,248"
 		E.db.movers.ElvUF_RaidpetMover = "TOPLEFT,ElvUIParent,BOTTOMLEFT,4,737"
 		E.db.movers.ElvUF_TargetCastbarMover = "BOTTOM,ElvUIParent,BOTTOM,0,242"
 		E.db.movers.ElvUF_TargetMover = "BOTTOM,ElvUIParent,BOTTOM,342,138"
@@ -385,21 +386,38 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.party.power.height = 13
 		E.db.unitframe.units.party.rdebuffs.font = "PT Sans Narrow"
 		E.db.unitframe.units.party.width = 231
-			--Raid
-		E.db.unitframe.units.raid.growthDirection = "RIGHT_UP"
-		E.db.unitframe.units.raid.health.frequentUpdates = true
-		E.db.unitframe.units.raid.infoPanel.enable = true
-		E.db.unitframe.units.raid.name.attachTextTo = "InfoPanel"
-		E.db.unitframe.units.raid.name.position = "BOTTOMLEFT"
-		E.db.unitframe.units.raid.name.xOffset = 2
-		E.db.unitframe.units.raid.numGroups = 8
-		E.db.unitframe.units.raid.rdebuffs.font = "PT Sans Narrow"
-		E.db.unitframe.units.raid.rdebuffs.size = 30
-		E.db.unitframe.units.raid.rdebuffs.xOffset = 30
-		E.db.unitframe.units.raid.rdebuffs.yOffset = 25
-		E.db.unitframe.units.raid.resurrectIcon.attachTo = "BOTTOMRIGHT"
-		E.db.unitframe.units.raid.visibility = "[@raid6,noexists] hide;show"
-		E.db.unitframe.units.raid.width = 92
+			--Raid 10
+
+		E.db.unitframe.units.raid10.growthDirection = "RIGHT_UP"
+		E.db.unitframe.units.raid10.health.frequentUpdates = true
+		E.db.unitframe.units.raid10.infoPanel.enable = true
+		E.db.unitframe.units.raid10.name.attachTextTo = "InfoPanel"
+		E.db.unitframe.units.raid10.name.position = "BOTTOMLEFT"
+		E.db.unitframe.units.raid10.name.xOffset = 2
+		E.db.unitframe.units.raid10.numGroups = 8
+		E.db.unitframe.units.raid10.rdebuffs.font = "PT Sans Narrow"
+		E.db.unitframe.units.raid10.rdebuffs.size = 30
+		E.db.unitframe.units.raid10.rdebuffs.xOffset = 30
+		E.db.unitframe.units.raid10.rdebuffs.yOffset = 25
+		E.db.unitframe.units.raid10.resurrectIcon.attachTo = "BOTTOMRIGHT"
+		E.db.unitframe.units.raid10.visibility = "[@raid6,noexists] hide;show"
+		E.db.unitframe.units.raid10.width = 92
+			--Raid 25
+		E.db.unitframe.units.raid25.growthDirection = "RIGHT_UP"
+		E.db.unitframe.units.raid25.health.frequentUpdates = true
+		E.db.unitframe.units.raid25.infoPanel.enable = true
+		E.db.unitframe.units.raid25.name.attachTextTo = "InfoPanel"
+		E.db.unitframe.units.raid25.name.position = "BOTTOMLEFT"
+		E.db.unitframe.units.raid25.name.xOffset = 2
+		E.db.unitframe.units.raid25.numGroups = 8
+		E.db.unitframe.units.raid25.rdebuffs.font = "PT Sans Narrow"
+		E.db.unitframe.units.raid25.rdebuffs.size = 30
+		E.db.unitframe.units.raid25.rdebuffs.xOffset = 30
+		E.db.unitframe.units.raid25.rdebuffs.yOffset = 25
+		E.db.unitframe.units.raid25.resurrectIcon.attachTo = "BOTTOMRIGHT"
+		E.db.unitframe.units.raid25.visibility = "[@raid6,noexists] hide;show"
+		E.db.unitframe.units.raid25.width = 92
+
 			--Raid40
 		E.db.unitframe.units.raid40.enable = false
 		E.db.unitframe.units.raid40.rdebuffs.font = "PT Sans Narrow"
@@ -415,7 +433,8 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		elseif layout == "healer" then
 			E.db.movers.ElvUF_PlayerCastbarMover = "BOTTOM,ElvUIParent,BOTTOM,0,243"
 			E.db.movers.ElvUF_TargetCastbarMover = "BOTTOM,ElvUIParent,BOTTOM,0,97"
-			E.db.movers.ElvUF_RaidMover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,202,373"
+			E.db.movers.ElvUF_Raid10Mover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,202,373"
+			E.db.movers.ElvUF_Raid25Mover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,202,373"
 			E.db.movers.LootFrameMover = "TOPLEFT,ElvUIParent,TOPLEFT,250,-104"
 			E.db.movers.ShiftAB = "TOPLEFT,ElvUIParent,BOTTOMLEFT,4,273"
 			E.db.unitframe.units.party.enable = false

@@ -730,6 +730,7 @@ end
 function UF.headerPrototype:Update()
 	local group = self.groupName
 	local db = UF.db.units[group]
+	-- print(E:StringTitle(group))
 	UF["Update_"..E:StringTitle(group).."Header"](UF, self, db)
 
 	local i = 1
@@ -1032,7 +1033,7 @@ function UF:UpdateAllHeaders(event)
 		end
 		self:CreateAndUpdateHeaderGroup(group, nil, nil, shouldUpdateHeader)
 
-		if group == "party" or group == "raid" or group == "raid40" then
+		if group == "party" or group == "raid" or group == "raid10" or group == "raid25" or group == "raid40" then
 			--Update BuffIndicators on profile change as they might be using profile specific data
 			self:UpdateAuraWatchFromHeader(group)
 		end

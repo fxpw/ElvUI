@@ -3296,11 +3296,210 @@ P.unitframe = {
 			},
 			absorbPrediction = CopyTable(AbsorbPrediction),
 		},
-		raid = {
+		raid10 = {
 			enable = true,
 			threatStyle = "GLOW",
 			orientation = "MIDDLE",
-			visibility = "[@raid6,noexists][@raid26,exists] hide;show",
+			visibility = "[@raid11,exists] hide;show",
+			growthDirection = "RIGHT_DOWN",
+			horizontalSpacing = 3,
+			verticalSpacing = 3,
+			numGroups = 2,
+			groupsPerRowCol = 1,
+			groupBy = "GROUP",
+			sortDir = "ASC",
+			showPlayer = true,
+			healPrediction = {
+				enable = false
+			},
+			colorOverride = "USE_DEFAULT",
+			width = 80,
+			height = 44,
+			groupSpacing = 0,
+			disableMouseoverGlow = false,
+			disableTargetGlow = false,
+			health = {
+				text_format = "[healthcolor][health:deficit]",
+				position = "BOTTOM",
+				orientation = "HORIZONTAL",
+				attachTextTo = "Health",
+				frequentUpdates = false,
+				yOffset = 2,
+				xOffset = 0,
+			},
+			fader = {
+				enable = true,
+				range = true,
+				hover = false,
+				combat = false,
+				playertarget = false,
+				unittarget = false,
+				focus = false,
+				health = false,
+				power = false,
+				vehicle = false,
+				casting = false,
+				smooth = 0.33,
+				minAlpha = 0.35,
+				maxAlpha = 1,
+				delay = 0
+			},
+			power = {
+				enable = true,
+				text_format = "",
+				width = "fill",
+				height = 7,
+				offset = 0,
+				position = "BOTTOMRIGHT",
+				hideonnpc = false,
+				yOffset = 2,
+				xOffset = -2
+			},
+			infoPanel = {
+				enable = false,
+				height = 12,
+				transparent = false
+			},
+			name = {
+				position = "CENTER",
+				attachTextTo = "Health",
+				text_format = "[namecolor][name:short]",
+				yOffset = 0,
+				xOffset = 0
+			},
+			portrait = {
+				enable = false,
+				width = 45,
+				overlay = false,
+				fullOverlay = false,
+				style = "3D",
+				overlayAlpha = 0.35
+			},
+			buffs = {
+				enable = false,
+				perrow = 3,
+				numrows = 1,
+				attachTo = "FRAME",
+				anchorPoint = "LEFT",
+				countFont = "PT Sans Narrow",
+				countFontOutline = "OUTLINE",
+				countFontSize = 12,
+				durationPosition = "CENTER",
+				sortMethod = "TIME_REMAINING",
+				sortDirection = "DESCENDING",
+				clickThrough = false,
+				minDuration = 0,
+				maxDuration = 300,
+				priority = "Blacklist,TurtleBuffs", --Raid Buffs
+				xOffset = 0,
+				yOffset = 0
+			},
+			debuffs = {
+				enable = false,
+				perrow = 3,
+				numrows = 1,
+				attachTo = "FRAME",
+				anchorPoint = "RIGHT",
+				countFont = "PT Sans Narrow",
+				countFontOutline = "OUTLINE",
+				countFontSize = 12,
+				durationPosition = "CENTER",
+				sortMethod = "TIME_REMAINING",
+				sortDirection = "DESCENDING",
+				clickThrough = false,
+				minDuration = 0,
+				maxDuration = 300,
+				priority = "Blacklist,RaidDebuffs,CCDebuffs,Dispellable", --Raid Debuffs
+				xOffset = 0,
+				yOffset = 0
+			},
+			buffIndicator = {
+				enable = true,
+				size = 8,
+				fontSize = 10,
+				profileSpecific = false
+			},
+			rdebuffs = {
+				enable = true,
+				showDispellableDebuff = true,
+				onlyMatchSpellID = false,
+				fontSize = 10,
+				font = "Homespun",
+				fontOutline = "MONOCHROMEOUTLINE",
+				size = 26,
+				xOffset = 0,
+				yOffset = 2,
+				duration = {
+					position = "CENTER",
+					xOffset = 0,
+					yOffset = 0,
+					color = {r = 1, g = 0.9, b = 0, a = 1}
+				},
+				stack = {
+					position = "BOTTOMRIGHT",
+					xOffset = 0,
+					yOffset = 2,
+					color = {r = 1, g = 0.9, b = 0, a = 1}
+				}
+			},
+			roleIcon = CopyTable(RoleIcon),
+			raidRoleIcons = {
+				enable = true,
+				position = "TOPLEFT"
+			},
+			raidicon = {
+				enable = true,
+				size = 18,
+				attachTo = "TOP",
+				attachToObject = "Frame",
+				xOffset = 0,
+				yOffset = 8
+			},
+			GPSArrow = {
+				enable = true,
+				size = 40,
+				xOffset = 0,
+				yOffset = 0,
+				onMouseOver = true,
+				outOfRange = true
+			},
+			readycheckIcon = {
+				enable = true,
+				size = 12,
+				attachTo = "Health",
+				position = "BOTTOM",
+				xOffset = 0,
+				yOffset = 2
+			},
+			resurrectIcon = {
+				enable = true,
+				size = 30,
+				attachTo = "CENTER",
+				attachToObject = "Frame",
+				xOffset = 0,
+				yOffset = 0
+			},
+			cutaway = {
+				health = {
+					enabled = false,
+					fadeOutTime = 0.6,
+					lengthBeforeFade = 0.3,
+					forceBlankTexture = true
+				},
+				power = {
+					enabled = false,
+					fadeOutTime = 0.6,
+					lengthBeforeFade = 0.3,
+					forceBlankTexture = true
+				}
+			},
+			absorbPrediction = CopyTable(AbsorbPrediction),
+		},
+		raid25 = {
+			enable = true,
+			threatStyle = "GLOW",
+			orientation = "MIDDLE",
+			visibility = "[@raid26,exists] hide;show",
 			growthDirection = "RIGHT_DOWN",
 			horizontalSpacing = 3,
 			verticalSpacing = 3,

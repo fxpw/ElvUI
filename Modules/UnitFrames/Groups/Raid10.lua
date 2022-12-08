@@ -12,7 +12,7 @@ local InCombatLockdown = InCombatLockdown
 local RegisterStateDriver = RegisterStateDriver
 local UnregisterStateDriver = UnregisterStateDriver
 
-function UF:Construct_RaidFrames()
+function UF:Construct_Raid10Frames()
 	self:SetScript("OnEnter", UnitFrame_OnEnter)
 	self:SetScript("OnLeave", UnitFrame_OnLeave)
 
@@ -51,17 +51,17 @@ function UF:Construct_RaidFrames()
 	self.customTexts = {}
 	self.InfoPanel = UF:Construct_InfoPanel(self)
 
-	self.unitframeType = "raid"
+	self.unitframeType = "raid10"
 	UF:Update_StatusBars()
 	UF:Update_FontStrings()
 
-	self.db = UF.db.units.raid
-	self.PostCreate = UF.Update_RaidFrames
+	self.db = UF.db.units.raid10
+	self.PostCreate = UF.Update_Raid10Frames
 
 	return self
 end
 
-function UF:RaidSmartVisibility(event)
+function UF:Raid10SmartVisibility(event)
 	if not self.db or (self.db and not self.db.enable) or (UF.db and not UF.db.smartRaidFilter) or self.isForced then
 		self.blockVisibilityChanges = false
 		return
@@ -80,11 +80,11 @@ function UF:RaidSmartVisibility(event)
 
 			UnregisterStateDriver(self, "visibility")
 
-			if maxPlayers < 40 then
+			if maxPlayers >= 1 and maxPlayers <= 10 then
 				self:Show()
 				self.isInstanceForced = true
 				self.blockVisibilityChanges = false
-				if ElvUF_Raid.numGroups ~= E:Round(maxPlayers/5) and event then
+				if ElvUF_Raid10.numGroups ~= E:Round(maxPlayers/5) and event then
 					UF:CreateAndUpdateHeaderGroup("raid")
 				end
 			else
@@ -94,8 +94,8 @@ function UF:RaidSmartVisibility(event)
 		elseif self.db.visibility then
 			RegisterStateDriver(self, "visibility", self.db.visibility)
 			self.blockVisibilityChanges = false
-			if ElvUF_Raid.numGroups ~= self.db.numGroups then
-				UF:CreateAndUpdateHeaderGroup("raid")
+			if ElvUF_Raid10.numGroups ~= self.db.numGroups then
+				UF:CreateAndUpdateHeaderGroup("raid10")
 			end
 		end
 	else
@@ -104,7 +104,7 @@ function UF:RaidSmartVisibility(event)
 	end
 end
 
-function UF:Update_RaidHeader(header, db)
+function UF:Update_Raid10Header(header, db)
 	header.db = db
 
 	local headerHolder = header:GetParent()
@@ -114,18 +114,18 @@ function UF:Update_RaidHeader(header, db)
 		headerHolder:ClearAllPoints()
 		headerHolder:Point("BOTTOMLEFT", E.UIParent, "BOTTOMLEFT", 4, 195)
 
-		E:CreateMover(headerHolder, headerHolder:GetName().."Mover", L["Raid Frames"], nil, nil, nil, "ALL,RAID", nil, "unitframe,raid,generalGroup")
+		E:CreateMover(headerHolder, headerHolder:GetName().."Mover", L["Raid-10"], nil, nil, nil, "ALL,RAID", nil, "unitframe,raid10,generalGroup")
 
 		headerHolder:RegisterEvent("PLAYER_LOGIN")
 		headerHolder:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		headerHolder:SetScript("OnEvent", UF.RaidSmartVisibility)
+		headerHolder:SetScript("OnEvent", UF.Raid10SmartVisibility)
 		headerHolder.positioned = true
 	end
 
-	UF.RaidSmartVisibility(headerHolder)
+	UF.Raid10SmartVisibility(headerHolder)
 end
 
-function UF:Update_RaidFrames(frame, db)
+function UF:Update_Raid10Frames(frame, db)
 	if not db then
 		db = frame.db
 	else
@@ -244,4 +244,4 @@ function UF:Update_RaidFrames(frame, db)
 	frame:UpdateAllElements("ForceUpdate")
 end
 
-UF.headerstoload.raid = true
+UF.headerstoload.raid10 = true

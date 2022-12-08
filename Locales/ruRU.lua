@@ -216,6 +216,8 @@ L["PvP"] = true
 L["R"] = "Р"
 L["RL"] = "РЛ"
 L["RW"] = "Объявление"
+L["Raid-10"] = "Рейд 10"
+L["Raid-25"] = "Рейд 25"
 L["Raid Frames"] = "Рейд"
 L["Raid Menu"] = "Рейдовое меню"
 L["Raid Pet Frames"] = "Питомцы рейда"
@@ -572,6 +574,7 @@ L["RandomWords"] = { ---- не может быть только одной за�
 	"Vae, fratelle, praestupidus es, sit tibi terra levis ©Сократ",
 	"Qui vocaris minus ad rem pertinet, plurimum interest cum te vocent ad bibendum",
 	"Vivo, ut non satis dormiam",
-	"Sit Vis tecum"
+	"Sit Vis tecum",
+	"Я тонко намекну, после реворка т5, НИКТО не будет дамажить 50к и 40к тоже никто ©Dezuron"
 
 }

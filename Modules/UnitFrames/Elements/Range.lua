@@ -20,7 +20,7 @@ local function AddTable(tbl)
 	SRT[E.myclass][tbl] = {}
 end
 
-local function AddSpell(tbl, spellID)
+local function AddSpell(tbl, spellID, enabled)
 	SRT[E.myclass][tbl][#SRT[E.myclass][tbl] + 1] = spellID
 end
 
