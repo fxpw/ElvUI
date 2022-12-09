@@ -158,6 +158,9 @@ function UF:Update_TargetFrame(frame, db)
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
 
+	--Role icon
+	UF:Configure_RoleIcon(frame)
+
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")
 

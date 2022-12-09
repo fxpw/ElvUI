@@ -128,6 +128,9 @@ function UF:Update_FocusFrame(frame, db)
 	--AuraBars
 	UF:Configure_AuraBars(frame)
 
+	--Role icon
+	UF:Configure_RoleIcon(frame)
+
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
 

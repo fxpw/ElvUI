@@ -187,7 +187,8 @@ function UF:Update_PlayerFrame(frame, db)
 	UF:Configure_PVPIcon(frame)
 
 	UF:Configure_RaidRoleIcons(frame)
-
+	--Role icon
+	UF:Configure_RoleIcon(frame)
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
 

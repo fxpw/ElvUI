@@ -229,7 +229,8 @@ function UF:Update_Raid40Frames(frame, db)
 
 	--Fader
 	UF:Configure_Fader(frame)
-
+	--Role icon
+	UF:Configure_RoleIcon(frame)
 	--Cutaway
 	UF:Configure_Cutaway(frame)
 

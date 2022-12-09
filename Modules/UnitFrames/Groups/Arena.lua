@@ -114,7 +114,8 @@ function UF:Update_ArenaFrames(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
-
+	--Role icon
+	UF:Configure_RoleIcon(frame)
 	frame:ClearAllPoints()
 	if frame.index == 1 then
 		local ArenaHeaderMover = ArenaHeaderMover

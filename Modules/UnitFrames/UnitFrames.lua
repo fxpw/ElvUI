@@ -57,6 +57,8 @@ UF.instanceMapIDs = {
 	[402] = 40,
 	[462] = 15,
 	[483] = 15,
+	[916] = 15,
+	[861] = 15,
 }
 
 UF.headerGroupBy = {
@@ -856,7 +858,7 @@ function UF:CreateAndUpdateHeaderGroup(group, groupFilter, template, headerUpdat
 			end
 		end
 
-	--	UF.headerFunctions[group]:AdjustVisibility(self[group])
+		-- UF.headerFunctions[group]:AdjustVisibility(self[group])
 
 		if headerUpdate or not self[group].mover then
 			UF.headerFunctions[group]:Configure_Groups(self[group])
@@ -891,7 +893,7 @@ function UF:CreateAndUpdateHeaderGroup(group, groupFilter, template, headerUpdat
 
 		if not UF.headerFunctions[group] then UF.headerFunctions[group] = {} end
 		UF.headerFunctions[group].Update = function()
-		--	local db = UF.db.units[group]
+			-- local db = UF.db.units[group]
 			if db.enable ~= true then
 				UnregisterStateDriver(UF[group], "visibility")
 				UF[group]:Hide()
