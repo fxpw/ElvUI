@@ -61,6 +61,7 @@ UF.instanceMapIDs = {
 	[861] = 15,
 	[611] = 15,
 	[917] = 10,
+	[933] = 10,
 }
 
 UF.headerGroupBy = {
