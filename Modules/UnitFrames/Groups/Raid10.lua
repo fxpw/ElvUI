@@ -80,12 +80,12 @@ function UF:Raid10SmartVisibility(event)
 
 			UnregisterStateDriver(self, "visibility")
 
-			if maxPlayers >= 1 and maxPlayers <= 10 then
+			if maxPlayers >= 6 and maxPlayers <= 10 then
 				self:Show()
 				self.isInstanceForced = true
 				self.blockVisibilityChanges = false
 				if ElvUF_Raid10.numGroups ~= E:Round(maxPlayers/5) and event then
-					UF:CreateAndUpdateHeaderGroup("raid")
+					UF:CreateAndUpdateHeaderGroup("raid10")
 				end
 			else
 				self.blockVisibilityChanges = true
