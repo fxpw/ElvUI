@@ -42244,6 +42244,19 @@ globals = {
 	"MaximizeMinimizeFrame",
 	"C_Item",
 	"C_NamePlate",
+	--sirus help
+	"HelpFrameTicket",
+	"HelpFrameCharacterStuckHearthstone",
+	"HelpFrameKnowledgebaseScrollFrameScrollBar",
+	"HelpFrameKnowledgebaseScrollFrame2ScrollBar",
+	"HelpFrameMainInset",
+	"HelpFrameLeftInset",
+	"HelpFrameKnowledgebaseSearchBox",
+	"HelpFrameKnowledgebaseSearchButton",
+	"HelpFrameCharacterStuckStuck",
+	"HelpFrameTicketSubmit",
+	"HelpFrameTicketCancel",
+	"HelpFrameTicketScrollFrameScrollBar",
 	--sirus raid
 
 	"CompactRaidFrameManagerDisplayFrameProfileSelector",

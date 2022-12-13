@@ -52,8 +52,6 @@ local function LoadSkin()
 	S:HandleButton(HelpFrameTicketCancel);
 	-- S:HandleEditBox(HelpFrameOpenTicketEditBox);
 	S:HandleScrollBar(HelpFrameTicketScrollFrameScrollBar);
-	-- f
-	-- S:HandleButton(HelpFrameAccountSecurityTwoFA)
 end
 
 -- S:RemoveCallback("Skin_Help")
