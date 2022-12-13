@@ -550,6 +550,7 @@ local function LoadSkin()
 		PromoCodeFrame:CreateBackdrop("Transparent")
 		S:HandleButton(PromoCodeFrameActionButton)
 		S:HandleEditBox(PromoCodeFrameContainerPromoCodeEditBoxFrame)
+		S:HandleCloseButton(PromoCodeFrame.CloseButton)
 		PromoCodeFrameHeaderFrame.description:SetTextColor(1, 1, 1)
 
 	end)
