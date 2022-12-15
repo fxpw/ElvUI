@@ -18,7 +18,7 @@ local GetInventoryItemID = GetInventoryItemID
 local BANK_CONTAINER = BANK_CONTAINER
 
 S:AddCallback("Skin_Bags", function()
-	if E.private.bags.enable then return end
+	if not E.private.bags.enable then return end
 
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.bags then return end
 
@@ -303,6 +303,7 @@ S:AddCallback("Skin_Bags", function()
 			local opt = _G["ChooseItemOption"..i]
 			if opt then
 				S:HandleButton(opt.OptionButton)
+				-- opt.Item.Icon:SetTexCoord(unpack(E.TexCoords))
 			end
 		end
 		S:HandleCloseButton(self.CloseButton)
