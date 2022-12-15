@@ -5,6 +5,8 @@ local S = E:GetModule("Skins")
 --WoW API / Variables
 
 local function LoadSkin()
+	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.blackMarket then return end
+
     BlackMarketFrame:StripTextures()
     BlackMarketFrameInset:StripTextures()
     BlackMarketFrame.Artwork:StripTextures()

@@ -160,3 +160,7 @@ V.skins.blizzard.roulette = true
 V.skins.blizzard.mountChest = true
 V.skins.blizzard.extraButton = true
 V.skins.blizzard.headhunting = true
+V.skins.blizzard.toyCollection = true
+V.skins.blizzard.legacyCollection = true
+V.skins.blizzard.blackMarket = true
+V.skins.blizzard.raidManager = true

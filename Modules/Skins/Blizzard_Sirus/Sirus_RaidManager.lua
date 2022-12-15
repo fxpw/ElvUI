@@ -115,7 +115,8 @@ function ui:CreateClassFrame(parent,class,point)
 end
 
 local function LoadSkin()
-	if E.private.skins.blizzard.enable ~= true then return end
+	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.raidManager then return end
+
 	-- CompactRaidFrameManager.displayFrame.label:Hide()
 	local frameManager = CompactRaidFrameManager
 	local displayFrame = frameManager.displayFrame

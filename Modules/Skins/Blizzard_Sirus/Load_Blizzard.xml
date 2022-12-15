@@ -32,12 +32,12 @@
 	<Script file="Sirus_Collections.lua"/>
 	<Script file="Sirus_Options.lua"/>
 
-	<Script file="Custom_Achievement.lua"/>
-	<Script file="Custom_ExtraActionButton.lua"/>
-	<Script file="Custom_MountChest.lua"/>
-	<Script file="Custom_Headhunting.lua"/>
-	<Script file="Custom_Roulette.lua"/>
-	<Script file="Custom_Auction.lua"/>
-	<Script file="Custom_ToyCollection.lua"/>
-	
+	<Script file="Sirus_Achievement.lua"/>
+	<Script file="Sirus_ExtraActionButton.lua"/>
+	<Script file="Sirus_MountChest.lua"/>
+	<Script file="Sirus_Headhunting.lua"/>
+	<Script file="Sirus_Roulette.lua"/>
+	<Script file="Sirus_Auction.lua"/>
+	<Script file="Sirus_ToyCollection.lua"/>
+	<Script file="Sirus_LegacyCollection.lua"/>
 </Ui>

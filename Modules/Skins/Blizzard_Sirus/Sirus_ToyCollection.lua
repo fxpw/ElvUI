@@ -15,6 +15,8 @@ end
 
 local function LoadSkin()
     -- print("Da")
+	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.toyCollection then return end
+
     S:HandleTab(CollectionsJournalTab4)
     ToyBoxIconsFrameOverlayFrame:StripTextures()
     ToyBoxIconsFrame:StripTextures()
