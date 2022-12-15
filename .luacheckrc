@@ -42244,6 +42244,17 @@ globals = {
 	"MaximizeMinimizeFrame",
 	"C_Item",
 	"C_NamePlate",
+		--sirus legacy
+	"HeirloomsJournalClassDropDown",
+	"CollectionsJournalTab5",
+	"HeirloomsJournalIconsFrameOverlayFrame",
+	"HeirloomsJournal",
+	"HeirloomsJournalIconsFrame",
+	"HeirloomsJournalFilterButton",
+	"HeirloomsJournalSearchBox",
+	"HeirloomsJournalNextPageButton",
+	"HeirloomsJournalPrevPageButton",
+	"HeirloomsJournalProgressBar",
 	--sirus help
 	"HelpFrameTicket",
 	"HelpFrameCharacterStuckHearthstone",
