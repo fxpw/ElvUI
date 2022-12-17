@@ -1725,7 +1725,7 @@ local function deathknight_T62FrostTankOnCreate(...)
 	if whog == PlayerGUID then
 		armor = select(2,UnitArmor("player"))
 	else
-		armor = UnitStatsTable[whog][7]
+		armor = UnitStatsTable[whog] and UnitStatsTable[whog][7] or 0
 	end
 	return armor,1.0
 end
