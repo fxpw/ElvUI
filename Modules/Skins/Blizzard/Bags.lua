@@ -18,7 +18,7 @@ local GetInventoryItemID = GetInventoryItemID
 local BANK_CONTAINER = BANK_CONTAINER
 
 S:AddCallback("Skin_Bags", function()
-	if not E.private.bags.enable then return end
+	-- if not E.private.bags.enable then return end
 
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.bags then return end
 
