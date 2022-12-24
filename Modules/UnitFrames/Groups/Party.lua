@@ -115,18 +115,55 @@ function UF:PartySmartVisibility(event)
 	end
 
 	if not InCombatLockdown() then
-		local _, instanceType = GetInstanceInfo()
+		self.isInstanceForced = nil
+		local _, instanceType, _, _, maxPlayers = GetInstanceInfo()
 		if instanceType == "raid" or instanceType == "pvp" then
+			local mapID = GetCurrentMapAreaID()
+			if UF.instanceMapIDs[mapID] then
+				maxPlayers = UF.instanceMapIDs[mapID]
+			end
+
 			UnregisterStateDriver(self, "visibility")
-			self.blockVisibilityChanges = true
-			self:Hide()
+
+			if maxPlayers <= 5 then
+				self:Show()
+				self.isInstanceForced = true
+				self.blockVisibilityChanges = false
+				if ElvUF_Party.numGroups ~= E:Round(maxPlayers/5) and event then
+					UF:CreateAndUpdateHeaderGroup("party")
+				end
+				-- print("da")
+			else
+				self.blockVisibilityChanges = true
+				self:Hide()
+			end
 		elseif self.db.visibility then
 			RegisterStateDriver(self, "visibility", self.db.visibility)
 			self.blockVisibilityChanges = false
+			if ElvUF_Party.numGroups ~= self.db.numGroups then
+				UF:CreateAndUpdateHeaderGroup("party")
+			end
 		end
 	else
 		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+		return
 	end
+
+
+	-- if not InCombatLockdown() then
+	-- 	-- local _, instanceType = GetInstanceInfo()
+	-- 	local _, instanceType, _, _, maxPlayers = GetInstanceInfo()
+	-- 	if instanceType == "raid" or instanceType == "pvp" then
+	-- 		UnregisterStateDriver(self, "visibility")
+	-- 		self.blockVisibilityChanges = true
+	-- 		self:Hide()
+	-- 	elseif self.db.visibility then
+	-- 		RegisterStateDriver(self, "visibility", self.db.visibility)
+	-- 		self.blockVisibilityChanges = false
+	-- 	end
+	-- else
+	-- 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	-- end
 end
 
 function UF:Update_PartyFrames(frame, db)
