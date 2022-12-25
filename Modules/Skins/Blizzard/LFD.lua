@@ -1041,11 +1041,15 @@ local function LoadSkin()
 		S:HandleCloseButton(MiniGameReadyDialogCloseButton)
 	end)
 	MiniGameScoreFrame:HookScript("OnShow",function()
-		MiniGameScoreFrame:StripTextures()
+		if MiniGameScoreFrame then
+			MiniGameScoreFrame:StripTextures()
+		end
 		MiniGameScoreFrameInset:StripTextures()
 		MiniGameScoreFrame:CreateBackdrop("Transparent")
-		MiniGameScoreFrameContentScrollFrame:StripTextures()
-		MiniGameScoreFrameContentScrollFrame:CreateBackdrop("Transparent")
+		if MiniGameScoreFrameContentScrollFrame then
+			MiniGameScoreFrameContentScrollFrame:StripTextures()
+			MiniGameScoreFrameContentScrollFrame:CreateBackdrop("Transparent")
+		end
 		S:HandleCloseButton(MiniGameScoreFrameCloseButton)
 		S:HandleButton(MiniGameScoreFrameLeaveButton)
 		S:HandleScrollBar(MiniGameScoreFrameContentScrollFrameScrollBar)
