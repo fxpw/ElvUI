@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
--- SpecializedAbsorbs
+-- SpecializedAbsorbs -fixes fxpw for sirus
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
