@@ -518,15 +518,15 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 	local destEffects = activeEffectsBySpell[dstGUID]
 	local effectInfo = Effects[spellid]
 	local effectEntry
-	-- print(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool,"----------------521")
+
 	-- if not destEffects then return end
-	-- print(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool,"------------523")
+
 	local value, quality = effectInfo[3](srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	if value == nil then return end
 	if t5TanksSpellId[spellid] and value > 50000 then
 		value = 50000
 	end
-	-- print(value,"------------528")
+
 	-- No entry yet for this unit
 	if not destEffects then
 		-- Not this specific effect yet
@@ -1666,7 +1666,6 @@ local palPokrovBuff = {}
 local function Tanks_CLEU(self,...)
 	-- local whoGUID = ...
 	-- time event whoguid whoname whoflag targetguid targetname targetflag spellid spellname
-	-- if privateScaling["2dktRaid5"] >= 1 then
 	local _, time2, subevent3, whoguid4, _, _, _, _, _,spellid10, spellname11, _, spelldmg13 = ...
 
 	if csd[subevent3] and spellname11 == "Ледяной удар" then
@@ -1675,7 +1674,6 @@ local function Tanks_CLEU(self,...)
 		------ 800 average for 270 ilvl
 		local parry = (UnitStatsTable[whoguid4] and UnitStatsTable[whoguid4][6] or 800) * 0.0237037037
 
-		-- local dodge,parry = UnitStatsTable[playerID][5], UnitStatsTable[playerID][6]
 		if (whoguid4 == PlayerGUID and privateScaling["4dktRaid5"] >= 2) or true then
 			dodge = GetCombatRating(3) * 0.0237735849
 			parry = GetCombatRating(4) * 0.0237037037
@@ -1947,7 +1945,7 @@ local function paladin_T5TankOnCreate(srcGUID, srcName, dstGUID, dstName, spelli
 end
 
 
--- t6PalTable= {
+-- t6PalTable = {
 -- 	[guid]= bool
 -- }
 local t6PalValue = 0
@@ -2621,10 +2619,10 @@ Core.Effects = {
 	[315529] = {1.0, 10, function() return 3660, 1.0 end, generic_Hit}, -- расколотое солнце
 
 	[317911] = {1.0, 10, function() return 722, 1.0 end, generic_Hit}, -- духовный барьер
-	[319738] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- чарка ттг 4
-	[319996] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- чарка ттг 3
-	[320110] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- чарка ттг 2
-	[320221] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- чарка ттг 1
+	[319738] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 4
+	[319996] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 3
+	[320110] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 2
+	[320221] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 1
 
 }
 
