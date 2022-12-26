@@ -145,7 +145,7 @@ local ApplyAreaEffect
 local CreateAreaTrigger
 local HitUnit
 local RemoveActiveEffect
-local cleu
+-- local cleu
 -- Constants
 local LOW_VALUE_TOLERANCE = 50
 local ZONE_MODIFIER = 1
