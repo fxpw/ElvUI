@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 6
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 7
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -464,7 +464,7 @@ end
 -- have accumulated. It will be called in case this library version gets
 -- replaced by a new one
 function Core.Disable()
-	for guid, effects in pairs(activeEffectsBySpell) do
+	for guid, _ in pairs(activeEffectsBySpell) do
 		callbacks:Fire("UnitCleared", guid)
 	end
 
@@ -850,7 +850,7 @@ function Core.AddCombatTrigger(target, event, func)
 			eventTriggers[listIndex] = funcList;
 
 			local handler = function(...)
-				for k, v in pairs(funcList) do
+				for _, v in pairs(funcList) do
 					v(...)
 				end
 			end
@@ -878,7 +878,7 @@ function Core.RemoveCombatTrigger(target, event, func)
 			local old_funcList = DeepTableCopy(funcList)
 			wipe(funcList)
 
-			for k, v in pairs(old_funcList) do
+			for _, v in pairs(old_funcList) do
 				if v ~= func then
 					tinsert(funcList, v)
 				end
@@ -896,9 +896,10 @@ function Core.SendUnitStats()
 		local dodge = UnitStatsTable[playerid][5]
 		local parry = UnitStatsTable[playerid][6]
 		local armor = UnitStatsTable[playerid][7]
+		local block = UnitStatsTable[playerid][8]
 		if (curAP ~= lastAP) or (curSP ~= lastSP) then
-			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry,armor), curChatChannel)
-			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry,armor), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block), curChatChannel)
 
 			lastAP, lastSP = curAP, curSP
 			CommStatsCooldown = true
@@ -1011,7 +1012,7 @@ local environmentSchools = {
 	LAVA = SCHOOL_MASK_FIRE,
 	SLIME = SCHOOL_MASK_NATURE
 }
-
+local t6PalTable ={}
 function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if lib.CheckFlags and not CheckFlags(srcFlags, dstFlags) then return end
 
@@ -1064,12 +1065,18 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 		if absorbHealSpells[spellid] then
 			Core.GUIDtoAbsorbHealSpells[dstGUID] = absorbHealSpells[spellid]
 		end
+		if spellid == 319544 then
+			t6PalTable[dstGUID] = true
+		end
 	elseif etype == "SPELL_AURA_REMOVED" then
 		local spellid, _, spellschool = ...
 		if Effects[spellid] then
 			if activeEffectsBySpell[dstGUID] and activeEffectsBySpell[dstGUID][spellid] then
 				RemoveActiveEffect(dstGUID, spellid)
 			end
+		end
+		if spellid == 319544 then
+			t6PalTable[dstGUID] = false
 		end
 		if CombatTriggersOnAuraRemoved[spellid] then
 			CombatTriggersOnAuraRemoved[spellid](srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
@@ -1131,7 +1138,10 @@ function Events.STATS_CHANGED()
 	UnitStatsTable[playerid][5] = GetCombatRating(3)
 	--5 parry for t5 tanks
 	UnitStatsTable[playerid][6] = GetCombatRating(4)
+	--6 armor for t6 fdk
 	UnitStatsTable[playerid][7] = select(2,UnitArmor("player"))
+	--7 block for t6 ppal
+	UnitStatsTable[playerid][8] = GetShieldBlock()
 	if curChatChannel then
 		Core:ScheduleUniqueTimer("comm_stats", Core.SendUnitStats, CommStatsCooldown and 15 or 5)
 		Core:ScheduleUniqueTimer("comm_scaling", Core.SendScaling, CommScalingCooldown and 30 or 5)
@@ -1141,12 +1151,12 @@ end
 function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 	if not text then return end
 
-	local success, guid, class, ap, sp, dodge, parry, armor = Core:Deserialize(text)
+	local success, guid, class, ap, sp, dodge, parry, armor, block = Core:Deserialize(text)
 	if not (success and guid and class and ap and sp) then return end
 	if guid == playerid then return end
 
 	if not UnitStatsTable[guid] then
-		UnitStatsTable[guid] = {class, ap, sp, 1.0, dodge, parry, armor}
+		UnitStatsTable[guid] = {class, ap, sp, 1.0, dodge, parry, armor, block}
 	else
 		UnitStatsTable[guid][2] = ap
 		UnitStatsTable[guid][3] = sp
@@ -1154,6 +1164,7 @@ function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 		UnitStatsTable[guid][5] = dodge
 		UnitStatsTable[guid][6] = parry
 		UnitStatsTable[guid][7] = armor
+		UnitStatsTable[guid][8] = block
 	end
 end
 
@@ -1929,16 +1940,25 @@ end
 
 -- Public Scaling: { [DivineGuardian] }
 local paladin_defaultScaling = {1.0}
-local function paladin_T5OTankOnCreate(...)
-	local whoguid = ...
-	local absorb = whoguid and lastPalAbsorbTable[whoguid] and lastPalAbsorbTable[whoguid][2] or 0
+local function paladin_T5TankOnCreate(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
+	-- local whoguid = ...
+	local absorb = srcGUID and lastPalAbsorbTable[srcGUID] and lastPalAbsorbTable[srcGUID][2] or 0
 	return absorb, 1.0
 end
 
+
+-- t6PalTable= {
+-- 	[guid]= bool
+-- }
+local t6PalValue = 0
 -- The base value is always 500
 local function paladin_SacredShield_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, paladin_defaultScaling, 0.2)
-	return floor((500 + (sp * 0.75)) * (sourceScaling[1] or paladin_defaultScaling[1]) * ZONE_MODIFIER), min(quality1, quality2)
+	t6PalValue = 0
+	if t6PalTable[dstGUID] and srcGUID == dstGUID then
+		t6PalValue = UnitStatsTable and UnitStatsTable[dstGUID] and UnitStatsTable[dstGUID][8] or 0
+	end
+	return floor((500 + t6PalValue + (sp * 0.75)) * (sourceScaling[1] or paladin_defaultScaling[1]) * ZONE_MODIFIER), min(quality1, quality2)
 end
 
 local function paladin_OnTalentUpdate()
@@ -2080,7 +2100,7 @@ local function priest_ApplyScaling(guid, level, baseFactor, spFactor, daFactor)
 
 	local rankValue, rankSP
 
-	for k, v in pairs(priest_PWS_Ranks) do
+	for _, v in pairs(priest_PWS_Ranks) do
 		if v[2] <= level then
 			if level == 80 then
 				rankValue = v[3] + v[4]
@@ -2593,7 +2613,7 @@ Core.Effects = {
 
 	[310210] = {1.0, 2, function() return 50000, 1.0 end, generic_Hit}, --t5 warrior
 
-	[307921]= {1.0, 10, paladin_T5OTankOnCreate, generic_Hit}, -- t5 paladin
+	[307921]= {1.0, 10, paladin_T5TankOnCreate, generic_Hit}, -- t5 paladin
 	--items
 	[319189] = {1.0, 4, function() return 18000, 1.0 end, generic_Hit}, --303 запястья
 
