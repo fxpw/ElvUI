@@ -145,7 +145,7 @@ local ApplyAreaEffect
 local CreateAreaTrigger
 local HitUnit
 local RemoveActiveEffect
-
+local cleu
 -- Constants
 local LOW_VALUE_TOLERANCE = 50
 local ZONE_MODIFIER = 1
@@ -1286,7 +1286,7 @@ function lib.RegisterAreaCallbacks(self, funcCreated, funcUpdated, funcCleared)
 end
 
 function lib.GetLowValueTolerance()
-	return LOW_VALUE_TOLERANE
+	return nil
 end
 
 function lib.SetLowValueTolerance(value)
@@ -1312,7 +1312,7 @@ function lib.PrintProfiling()
 		["ApplySingularEffect"] = ApplySingularEffect,
 		["HitUnit"] = HitUnit,
 		["RemoveActiveEffect"] = RemoveActiveEffect,
-		["OnCombatLogEvent"] = COMBAT_LOG_EVENT_UNFILTERED,
+		-- ["OnCombatLogEvent"] = COMBAT_LOG_EVENT_UNFILTERED,
 		["SortEffects"] = SortEffects
 	}
 
