@@ -109,6 +109,10 @@ P.general = {
 			}
 		}
 	},
+	mapMarkers = {
+		enable = true,
+		showRaidMarkers = true,
+	},
 	threat = {
 		enable = true,
 		position = "RIGHTCHAT",

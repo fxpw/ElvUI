@@ -1052,7 +1052,9 @@ local function LoadSkin()
 		end
 		S:HandleCloseButton(MiniGameScoreFrameCloseButton)
 		S:HandleButton(MiniGameScoreFrameLeaveButton)
+		if MiniGameScoreFrameContentScrollFrameScrollBar then
 		S:HandleScrollBar(MiniGameScoreFrameContentScrollFrameScrollBar)
+		end
 	end)
 	MiniGameReadyStatus:HookScript("OnShow",function()
 		MiniGameReadyStatus:StripTextures()

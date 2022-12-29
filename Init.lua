@@ -107,7 +107,7 @@ AddOn.TotemBar = AddOn:NewModule("Totems","AceEvent-3.0")
 AddOn.UnitFrames = AddOn:NewModule("UnitFrames","AceTimer-3.0","AceEvent-3.0","AceHook-3.0")
 AddOn.WorldMap = AddOn:NewModule("WorldMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
 AddOn.InstanceMap = AddOn:NewModule("InstanceMap","AceHook-3.0","AceEvent-3.0","AceTimer-3.0")
-
+AddOn.MapMarkers = AddOn:NewModule("MapMarkers","AceHook-3.0","AceComm-3.0","AceSerializer-3.0")
 -- AddOn.TotemTracker = AddOn:NewModule('TotemTracker','AceEvent-3.0')
 AddOn.Sirus = AddOn:NewModule("Sirus","AceHook-3.0","AceEvent-3.0","AceTimer-3.0","AceComm-3.0","AceSerializer-3.0")
 -- AddOn.SirusCase = AddOn:NewModule("SirusCase","AceEvent-3.0")
@@ -365,7 +365,7 @@ function AddOn:ToggleOptionsUI(msg)
 			if not IsAddOnLoaded("ElvUI_OptionsUI") then noConfig = true end
 
 			-- version check elvui options if it's actually enabled
-			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.13" then
+			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.14" then
 				self:StaticPopup_Show("CLIENT_UPDATE_REQUEST")
 			end
 		else
