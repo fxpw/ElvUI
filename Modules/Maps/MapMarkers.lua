@@ -28,7 +28,7 @@ function MM:SendMark(text, distribution)
 end
 local pname = UnitName("player");
 
-function MM:ReseiveMark(text, distributor, target)
+function MM:ReseiveMark(text, distribution, target)
 	dprint(text, distribution);
 	local success,mapid, x, y, who = MM:Deserialize(text);
 	mapid = tonumber(mapid)
@@ -136,12 +136,12 @@ function MM:RefreshAll()
 end
 
 local function createMark(self, link)
-	local linkT,type, mapid, x, y = strsplit(":", link);
+	local _,_, mapid, x, y = strsplit(":", link);
 	mapid = tonumber(mapid)
 	MM:CreateMark(mapid,true,x,y);
 end
 local function AddToIgnore(self,link)
-	local linkT,type, name = strsplit(":", link);
+	local _,_, name = strsplit(":", link);
 	-- MM:CreateMark(mapid,true,x,y)
 	IgnoreList[name] = true;
 	print(name.." был добавлен в игнор лист меток");
