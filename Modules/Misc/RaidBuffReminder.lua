@@ -139,9 +139,9 @@ function RB.CheckForTimeChest(...)
 				if sh then
 					hour = string.sub(text,sh,sh+1)
 				elseif sm then
-					mins = string.sub(text,sm,sm+2)
+					mins = string.sub(text,sm,sm+1)
 				elseif sc then
-					seconds = string.sub(text,sc,sc+2)
+					seconds = string.sub(text,sc,sc+1)
 				end
 				if hour then
 					RB.remainingTime = (tonumber(hour) or 1) * 60 * 60
