@@ -126,7 +126,6 @@ do
 	DisableAddOn("ElvUI_ChannelAlerts")
 end
 
-
 do
 	local a,b,c = '','([%(%)%.%%%+%-%*%?%[%^%$])','%%%1'
 	function AddOn:EscapeString(s) return gsub(s,b,c) end

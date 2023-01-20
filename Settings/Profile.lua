@@ -4449,7 +4449,7 @@ P.actionbar = {
 	},
 
 	microbar = {
-		enabled = false,
+		enabled = true, -- why its false? some peaple dont now how to show that whit mclick at minimap
 		mouseover = false,
 		buttonsPerRow = 10,
 		buttonSize = 20,

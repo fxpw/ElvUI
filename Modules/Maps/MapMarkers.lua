@@ -146,7 +146,6 @@ local function AddToIgnore(self,link)
 	IgnoreList[name] = true;
 	print(name.." был добавлен в игнор лист меток");
 end
-
 function MM:Initialize()
 	if not E.db.general.mapMarkers.enable then return end
 
@@ -195,3 +194,6 @@ local function InitializeCallback()
 end
 
 E:RegisterInitialModule(MM:GetName(), InitializeCallback)
+
+
+
