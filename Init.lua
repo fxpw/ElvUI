@@ -372,7 +372,7 @@ function AddOn:ToggleOptionsUI(msg)
 		end
 
 		if noConfig then
-			self:Print("|cffff0000Error -- Addon 'ElvUI_OptionsUI' not found or is disabled.|r")
+			self:Print("|cffff0000Error -- Addon 'ElvUI_OptionsUI' не найден или выключен.|r")
 			return
 		end
 	end
