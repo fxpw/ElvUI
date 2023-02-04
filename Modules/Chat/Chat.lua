@@ -13,7 +13,7 @@ local tinsert, tremove, tconcat, wipe = table.insert, table.remove, table.concat
 local gsub, find, gmatch, format, strtrim = string.gsub, string.find, string.gmatch, string.format, string.trim
 local strlower, strmatch, strsub, strlen, strupper = strlower, strmatch, strsub, strlen, strupper
 --WoW API / Variables
-local GetRealmName = GetRealmName
+-- local GetRealmName = GetRealmName
 local BetterDate = BetterDate
 local ChatEdit_ActivateChat = ChatEdit_ActivateChat
 local ChatEdit_ChooseBoxForSend = ChatEdit_ChooseBoxForSend
