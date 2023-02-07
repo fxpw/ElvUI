@@ -159,7 +159,7 @@ do --this can save some main file locals
 end
 
 local ElvBlue = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
--- local Vakh = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":16:16")
+local Vakh = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":24:24")
 local Dodzo = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
 local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
 -- local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
@@ -177,7 +177,7 @@ end
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	-- ["Vakh-Scourge x2 - 3.3.5a+"] = Apolexis,
-	-- ["Миленький-Scourge x2 - 3.3.5a+"] = Apolexis,
+	["Наглость-Scourge x2 - 3.3.5a+"] = Vakh,
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
