@@ -54,15 +54,19 @@ local function LoadSkin()
 			_G["SpellButton"..i.."Highlight"]:SetTexture(1, 1, 1, 0.3)
 		end
 	end)
-
+	local nt
 	for i = 1, 8 do
 		local button = _G["SpellBookSkillLineTab"..i]
 		button:GetRegions():SetAlpha(0)
 		button:SetTemplate()
 		button:StyleButton(nil, true)
-
-		button:GetNormalTexture():SetInside()
-		button:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
+		nt = button:GetNormalTexture()
+		if nt then
+			nt:SetInside()
+			nt:SetTexCoord(unpack(E.TexCoords))
+		end
+		-- button:GetNormalTexture():SetInside()
+		-- button:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
 	end
 
 	-- SpellBookCompanionsFrame
