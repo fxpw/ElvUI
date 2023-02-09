@@ -439,7 +439,8 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 			E.db.movers.ShiftAB = "TOPLEFT,ElvUIParent,BOTTOMLEFT,4,273"
 			E.db.unitframe.units.party.enable = false
 			E.db.unitframe.units.party.health.frequentUpdates = true
-			E.db.unitframe.units.raid.visibility = "[nogroup] hide;show"
+			E.db.unitframe.units.raid10.visibility = "[nogroup] hide;show"
+			E.db.unitframe.units.raid25.visibility = "[nogroup] hide;show"
 			E.db.unitframe.units.raid40.health.frequentUpdates = true
 		end
 	end
