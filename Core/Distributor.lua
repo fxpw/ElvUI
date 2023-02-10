@@ -143,13 +143,13 @@ function D:Initialize()
 end
 
 function D:UpdateSettings()
-	if E.global.general.allowDistributor then
+	-- if E.global.general.allowDistributor then
 		self:RegisterComm(REQUEST_PREFIX)
 		self:RegisterEvent('CHAT_MSG_ADDON')
-	else
-		self:UnregisterComm(REQUEST_PREFIX)
-		self:UnregisterEvent('CHAT_MSG_ADDON')
-	end
+	-- else
+	-- 	self:UnregisterComm(REQUEST_PREFIX)
+	-- 	self:UnregisterEvent('CHAT_MSG_ADDON')
+	-- end
 end
 
 -- Used to start uploads
@@ -162,7 +162,7 @@ function D:Distribute(target, otherServer, isGlobal)
 		profileKey = 'global'
 		data = ElvDB.global
 	end
-
+	-- print(165)
 	if not data then return end
 
 	local serialData = self:Serialize(data)
@@ -170,7 +170,7 @@ function D:Distribute(target, otherServer, isGlobal)
 	local message = format('%s:%d:%s', profileKey, length, target)
 
 	Uploads[profileKey] = {serialData = serialData, target = target}
-
+	-- print(173)
 	if otherServer then
 		if IsInRaid() and UnitInRaid('target') then
 			self:SendCommMessage(REQUEST_PREFIX, message,  'RAID')
@@ -181,11 +181,13 @@ function D:Distribute(target, otherServer, isGlobal)
 			return
 		end
 	else
+		-- print(REQUEST_PREFIX, message, 'WHISPER', target)
 		self:SendCommMessage(REQUEST_PREFIX, message, 'WHISPER', target)
 	end
-
+	-- print(186)
 	self:RegisterComm(REPLY_PREFIX)
 	E:StaticPopup_Show('DISTRIBUTOR_WAITING')
+	-- print(165)
 end
 
 function D:CHAT_MSG_ADDON(_, prefix, message, _, sender)

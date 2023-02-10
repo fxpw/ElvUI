@@ -813,7 +813,8 @@ function E:StaticPopup_OnEvent()
 end
 
 local tempButtonLocs = {} --So we don't make a new table each time.
-function E:StaticPopup_Show(which, text_arg1, text_arg2, data)
+
+function E:StaticPopup_Show(which, text_arg1, text_arg2, data, timed, t)
 	local info = E.PopupDialogs[which]
 	if not info then
 		return nil
@@ -1075,14 +1076,26 @@ function E:StaticPopup_Show(which, text_arg1, text_arg2, data)
 
 	-- Finally size and show the dialog
 	E:StaticPopup_SetUpPosition(dialog)
-	dialog:Show()
+	if timed then
+		local a = C_Timer:After(t and t or 3, function(self)
+			self.dialog:Show()
+			E:StaticPopup_Resize(self.dialog, self.which)
 
-	E:StaticPopup_Resize(dialog, which)
+			if self.info.sound then
+				PlaySound(self.info.sound)
+			end
+		end)
+		a.dialog = dialog
+		a.info = info
+		a.which = which
+	else
+		dialog:Show()
+		E:StaticPopup_Resize(dialog, which)
 
-	if info.sound then
-		PlaySound(info.sound)
+		if info.sound then
+			PlaySound(info.sound)
+		end
 	end
-
 	return dialog
 end
 
