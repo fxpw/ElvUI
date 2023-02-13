@@ -1054,7 +1054,6 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 		local spellid, _, spellschool = ...
 		if Effects[spellid] then
 			if Effects[spellid][1] > 0 then
-				-- print(...,"-----------------1048")
 				ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
 			else
 				ApplyAreaEffect(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
@@ -1710,6 +1709,9 @@ local function Tanks_CLEU(self,...)
 			lastPalAbsorbTable[whoguid4][1] = 0
 		end
 		if time2 and lastPalAbsorbTable[whoguid4] and lastPalAbsorbTable[whoguid4][1] and (time2 - lastPalAbsorbTable[whoguid4][1] <= 2) then
+			if spelldmg13 > 25000 then
+				spelldmg13 = 25000
+			end
             lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + spelldmg13
             if lastPalAbsorbTable[whoguid4][2] > 50000 then
                 lastPalAbsorbTable[whoguid4][2] = 50000
@@ -1717,6 +1719,9 @@ local function Tanks_CLEU(self,...)
         else
 			lastPalAbsorbTable[whoguid4][1] = time2
             lastPalAbsorbTable[whoguid4][2] = 0
+			if spelldmg13 > 25000 then
+				spelldmg13 = 25000
+			end
             lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + spelldmg13
             if lastPalAbsorbTable[whoguid4][2] > 50000 then
                 lastPalAbsorbTable[whoguid4][2] = 50000
