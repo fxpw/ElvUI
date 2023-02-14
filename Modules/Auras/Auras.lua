@@ -593,10 +593,8 @@ function A:UpdateHeader(header)
 end
 
 function A:CreateAuraHeader(filter)
-	local name = "ElvUIPlayerDebuffs"
-	if filter == "HELPFUL" then
-		name = "ElvUIPlayerBuffs"
-	end
+	local name = (filter == "HELPFUL" and "ElvUIPlayerBuffs") or "ElvUIPlayerDebuffs"
+
 
 	local header = CreateFrame("Frame", name, UIParent)
 	header:SetClampedToScreen(true)
