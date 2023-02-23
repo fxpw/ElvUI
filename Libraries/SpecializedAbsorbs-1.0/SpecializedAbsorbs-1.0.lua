@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 7
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 8
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2565,7 +2565,7 @@ Core.Effects = {
 	[47891] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 5)
 	[64413] = {1.0, 8, items_Valanyr_Create, generic_Hit}, -- Val'anyr (spellid of the created absorb effect)
 	[60218] = {5.0, 10, function() return 4000, 1.0 end, items_EssenceOfGossamer_Hit}, -- Essence of Gossamer
-	[71586] = {1.0, 10, function() return 6400, 1.0 end, generic_Hit}, -- Corroded Skeleton Key
+	[71586] = {1.0, 10, function() return 24600, 1.0 end, generic_Hit}, -- Corroded Skeleton Key
 	[36481] = {1.0, 4, function() return 100000, 1.0 end, generic_Hit}, -- Phaseshift Bulwark
 	[57350] = {1.0, 6, function() return 1500, 1.0 end, generic_Hit}, -- Darkmoon Card: Illusion
 	[17252] = {1.0, 1800, function() return 500, 1.0 end, generic_Hit}, -- Mark of the Dragon Lord
