@@ -197,6 +197,10 @@ local specialChatIconsSirus = {
 	["Ghostbuste-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 	["Усталыч-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 	["Сырсколбасой-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
+
+	["Сырсколбасой-Sirus x5 - 3.3.5a+"] = KolbaskaSir,
+	["Антидонат-Sirus x5 - 3.3.5a+"] = KolbaskaSir,
+
 	["Gadgetino-Scourge x2 - 3.3.5a+"] = Gadgetino,
 	["Микросовушка-Scourge x2 - 3.3.5a+"] = Sova,
 	["Микросовушка-ProxyEU Scourge x2 - 3.3.5a+"] = Sova,
