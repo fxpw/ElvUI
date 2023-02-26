@@ -188,11 +188,10 @@ local specialChatIconsSirus = {
 	["Sheelby-Scourge x2 - 3.3.5a+"] = Toss,
 
 	["Мимирон-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Фьярнскаггл-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Амбасодор-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Кологарн-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Сталелом-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
-	["Морхок-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Хальфбьерн-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Снэбьёрн-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+	["Йотонхейм-Scourge x2 - 3.3.5a+"] = NightlyBlooD,
+
 	["Стоматолог-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 	["Ghostbuste-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
 	["Усталыч-Scourge x2 - 3.3.5a+"] = KolbaskaSir,
