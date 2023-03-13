@@ -155,6 +155,11 @@ S:AddCallback("Skin_PvP", function()
 
 	BattlegroundInviteFrame:HookScript("OnShow",function(self)
 		S:HandleButton(BattlegroundInviteFramePopupFrameEnterButton);
+		-- S:HandleButton(BattlegroundInviteFramePopupFrameHideButton);
+		BattlegroundInviteFramePopupFrameHideButton:Size(25);
+		BattlegroundInviteFramePopupFrameHideButton:StripTextures();
+		BattlegroundInviteFramePopupFrameHideButton:SetNormalTexture(E.Media.Arrows.ArrowUp);
+		BattlegroundInviteFramePopupFrameHideButton:GetNormalTexture():SetRotation(S.ArrowRotation["down"]);
 		S:HandleCloseButton(BattlegroundInviteFramePopupFrameCancelButton)
 	end)
 	WorldStateTopCenterFrame:HookScript("OnShow",function(self)
