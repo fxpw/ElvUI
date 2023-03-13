@@ -144,7 +144,7 @@ function MC:CopyTable(CopyFrom, CopyTo, CopyDefault, module)
 			if module == true or (type(module) == "table" and (module.general == nil or (not CopyTo.general and module.general))) then --Some dark magic of a logic to figure out stuff
 				--This check is to see if the profile we are copying from has keys absent from defaults.
 				--If key exists, then copy. If not, then clear obsolite key from the profile.
-				if CopyDefault[key] ~= nil then
+				if CopyDefault and CopyDefault[key] ~= nil then
 					CopyTo[key] = CopyFrom[key] or CopyDefault[key]
 				else
 					CopyFrom[key] = nil
