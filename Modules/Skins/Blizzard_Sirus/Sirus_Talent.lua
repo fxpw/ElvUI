@@ -37,7 +37,7 @@ local function LoadSkin()
 	PlayerTalentLinkButton:GetHighlightTexture():Kill()
 	PlayerTalentLinkButton:CreateBackdrop()
 	PlayerTalentLinkButton:SetSize(19, 14)
-	PlayerTalentLinkButton:SetPoint("TOPRIGHT", -16, -36)
+	PlayerTalentLinkButton:SetPoint("TOPRIGHT", -50, 0)
 
 	local function StripTalentFramePanelTextures(object)
 		for i = 1, object:GetNumRegions() do
