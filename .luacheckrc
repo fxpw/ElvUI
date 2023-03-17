@@ -42489,6 +42489,7 @@ globals = {
 	"SendMailMoneyBg",
 
 	--sirus lfd
+	"BattlegroundInviteFramePopupFrameHideButton",
 	"MiniGamesParentFrameBottomInset",
 	"MiniGamesParentFrameBottomInsetScrollFrame",
 	"MiniGamesParentFrameTopInset",
