@@ -38,9 +38,9 @@
 5. Перезапускаем полностью игру
 
 ## Plugins:
-[ElvUI_Enhanced](https://github.com/ElvUI-WotLK/ElvUI_Enhanced)
+[ElvUI_Enhanced](https://github.com/fxpw/ElvUI_Enhanced)
 <br />
-[ElvUI_AddOnSkins](https://github.com/ElvUI-WotLK/ElvUI_AddOnSkins)
+[ElvUI_AddOnSkins](https://github.com/fxpw/ElvUI_AddOnSkins)
 <br />
 [ElvUI_AuraBarsMovers](https://github.com/ElvUI-WotLK/ElvUI_AuraBarsMovers)
 <br />
@@ -52,11 +52,11 @@
 <br />
 [ElvUI_CustomTweaks](https://github.com/ElvUI-WotLK/ElvUI_CustomTweaks)
 <br />
-[ElvUI_DTBars2](https://github.com/ElvUI-WotLK/ElvUI_DTBars2)
+[ElvUI_DTBars2](https://github.com/fxpw/ElvUI_DTBars2)
 <br />
 [ElvUI_DataTextColors](https://github.com/ElvUI-WotLK/ElvUI_DataTextColors)
 <br />
-[ElvUI_EnhancedFriendsList](https://github.com/ElvUI-WotLK/ElvUI_EnhancedFriendsList)
+[ElvUI_EnhancedFriendsList](https://github.com/fxpw/ElvUI_EnhancedFriendsList)
 <br />
 [ElvUI_ExtraActionBars](https://github.com/ElvUI-WotLK/ElvUI_ExtraActionBars)
 <br />
@@ -68,7 +68,7 @@
 <br />
 [ElvUI_SwingBar](https://github.com/ElvUI-WotLK/ElvUI_SwingBar)
 <br />
-[ElvUI_VisualProcs](https://github.com/ElvUI-WotLK/ElvUI_VisualProcs)
+[ElvUI_VisualProcs](https://github.com/fxpw/ElvUI_VisualProcs)
 <br />
 
 -- Please Note: These plugins will not function without ElvUI installed.
