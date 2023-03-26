@@ -127,7 +127,7 @@ ElvUI supports and contains language specific code for the following gameclients
 ## FAQ RU:
 
 ### Я хочу сообщить о баге. Что мне нужно делать?
-Убедитесь что вы используете последнюю версию [ElvUI](https://github.com/ElvUI-WotLK/ElvUI/releases/latest)
+Убедитесь что вы используете последнюю версию [ElvUI](https://github.com/fxpw/ElvUI/releases/latest)
 <br />
 Детально опишите свою проблему.
 <br />
@@ -142,12 +142,12 @@ ElvUI supports and contains language specific code for the following gameclients
 ### Я хотел бы попросить о добавлении возможности в ElvUI. Где написать?
 Данный репозиторий создан с целью воспроизведения оригинального функционал ElvUI.
 <br />
-Запросы на добавление нового функционала рассматриваются в репозитории [ElvUI_Enhanced](https://github.com/ElvUI-WotLK/ElvUI_Enhanced/issues)
+Запросы на добавление нового функционала рассматриваются в репозитории [ElvUI_Enhanced](https://github.com/fxpw/ElvUI_Enhanced/issues)
 <br />
-Запросы на изменение существующего функционала **ElvUI** рассматриваются в репозитории [ElvUI_CustomTweaks](https://github.com/ElvUI-WotLK/ElvUI_CustomTweaks/issues)
+Запросы на изменение существующего функционала **ElvUI** рассматриваются в репозитории [ElvUI_CustomTweaks](https://github.com/fxpw/ElvUI_CustomTweaks/issues)
 
 ### У меня проблема с ElvUI_"ИмяПлагина". Где написать?
-Создайте запрос в репозитории баг-трекере [ElvUI](https://github.com/ElvUI-WotLK)_"ИмяПлагина".
+Создайте запрос в репозитории баг-трекере [ElvUI](https://github.com/fxpw/ElvUI)_"ИмяПлагина".
 
 ### ElvUI конфликтует с "ИмяАддона".
 Убедитесь, что вы используете последнюю доступную версию "ИмяАддона" для WotLK, перед тем как создать тикет о конфликте.
