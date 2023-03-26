@@ -2655,6 +2655,10 @@ Core.Effects = {
 	[319996] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 3
 	[320110] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 2
 	[320221] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 1
+	[319795] = {1.0, 5, function() return 3235, 1.0 end, generic_Hit}, -- tg priest
+	[320059] = {1.0, 5, function() return 2587, 1.0 end, generic_Hit}, -- tg priest
+	[320173] = {1.0, 5, function() return 1940, 1.0 end, generic_Hit}, -- tg priest
+	[320284] = {1.0, 5, function() return 1213, 1.0 end, generic_Hit}, -- tg priest
 	[320439] = {1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit}, -- race pandaren absorb
 }
 
