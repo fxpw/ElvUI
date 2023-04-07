@@ -1992,7 +1992,7 @@ local function paladin_OnTalentUpdate()
 	lib.ScheduleScalingBroadcast()
 end
 local absorbPalPokrov = 0
-local function paladin_TTG_Absorb284(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
+local function paladin_TTG_Absorb(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 
 	absorbPalPokrov = 0
 	if spellid == 319738 then --4
@@ -2481,6 +2481,7 @@ local mage_FrostWard_Entry = {2.0, 30, generic_SpellScalingByTable_Create, mage_
 local mage_IceBarrier_Entry = {1.0, 60, mage_IceBarrier_Create, generic_Hit}
 local mage_ManaShield_Entry = {1.0, 60, generic_SpellScalingByTable_Create, generic_Hit, mage_Absorb_Spells, 0.8053}
 local priest_PWS_Entry = {1.0, 30, priest_PowerWordShield_Create, generic_Hit}
+local priest_PWS_EntryT4 = {1.0, 8, priest_PowerWordShield_Create, generic_Hit}
 local warlock_Sacrifice_Entry = {1.0, 30, generic_ConstantByTable_Create, generic_Hit, warlock_Sacrifice_Spells}
 local warlock_ShadowWard_Entry = {2.0, 30, generic_SpellScalingByTable_Create, warlock_ShadowWard_Hit, warlock_ShadowWard_Spells, 0.8053}
 
@@ -2632,7 +2633,7 @@ Core.Effects = {
 	[65684] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Dark Essence
 
 	--t4 priest dcp
-	[305082] = priest_PWS_Entry, -- Power Word: Shield (rank 14) t4 increase
+	[305082] = priest_PWS_EntryT4, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
 	[308143] = priest_PWS_Entry, -- Power Word: Shield (rank 15)
 
@@ -2651,15 +2652,28 @@ Core.Effects = {
 	[315529] = {1.0, 10, function() return 3660, 1.0 end, generic_Hit}, -- расколотое солнце
 
 	[317911] = {1.0, 10, function() return 722, 1.0 end, generic_Hit}, -- духовный барьер
-	[319738] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 4
-	[319996] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 3
-	[320110] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 2
-	[320221] = {1.0, 6, paladin_TTG_Absorb284, generic_Hit}, -- enchant ttg 1
+	[319738] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 4
+	[319996] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 3
+	[320110] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 2
+	[320221] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 1
 	[319795] = {1.0, 5, function() return 3235, 1.0 end, generic_Hit}, -- tg priest
 	[320059] = {1.0, 5, function() return 2587, 1.0 end, generic_Hit}, -- tg priest
 	[320173] = {1.0, 5, function() return 1940, 1.0 end, generic_Hit}, -- tg priest
 	[320284] = {1.0, 5, function() return 1213, 1.0 end, generic_Hit}, -- tg priest
 	[320439] = {1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit}, -- race pandaren absorb
+
+	--[[todos
+	[319797] = 10,
+	[320061] = 10,
+	[320175] = 10,
+	[320286] = 10,
+
+	[315521] = 10,
+	[315523] = 10,
+	[315525] = 10,
+	[315527] = 10,
+
+	]]--
 }
 
 Core.AreaTriggers = {
