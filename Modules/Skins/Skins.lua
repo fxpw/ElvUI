@@ -43,8 +43,12 @@ function S:StatusBarColorGradient(bar, value, max, backdrop)
 end
 
 function S:HandleFrame(frame, strip, useCreateBackdrop, noSetTemplate)
-	if not frame then return end
+	-- if not frame then return end
+	assert(frame, "doesn't exist!")
 	if frame.isSkinned then return end
+	strip = strip and strip or true
+	useCreateBackdrop = useCreateBackdrop and useCreateBackdrop or true
+	-- noSetTemplate = noSetTemplate or false
 	if strip then
 		frame:StripTextures()
 	end

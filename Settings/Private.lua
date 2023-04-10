@@ -111,7 +111,8 @@ V.skins = {
 		watchframe = true,
 		worldmap = true,
 		mirrorTimers = true,
-		WorldStateFrame = true
+		WorldStateFrame = true,
+		upgrade = true,
 	}
 }
 

@@ -2499,7 +2499,7 @@ Core.Effects = {
 	[52286] = {1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit3}, -- Will of the Necropolis (Rank 3)
 
 	[62606] = {1.1, 10, druid_SavageDefense_Create, druid_SavageDefense_Hit}, -- Savage Defense
-	[319521] = {1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit}, -- t6 absorb feral
+
 	[543] = mage_FireWard_Entry, -- Fire Ward (rank 1)
 	[8457] = mage_FireWard_Entry, -- Fire Ward (rank 2)
 	[8458] = mage_FireWard_Entry, -- Fire Ward (rank 3)
@@ -2636,7 +2636,7 @@ Core.Effects = {
 	[305082] = priest_PWS_EntryT4, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
 	[308143] = priest_PWS_Entry, -- Power Word: Shield (rank 15)
-
+	[319521] = {1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit}, -- t6 absorb feral
 	[308125] = {1.0, 10, deathknight_T52FrostTankOnCreate, generic_Hit}, --t5 fdk tank
 	[319552] = {1.0, 2, deathknight_T62FrostTankOnCreate, generic_Hit}, --t6 fdk tank
 

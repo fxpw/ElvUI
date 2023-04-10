@@ -912,7 +912,7 @@ local function LoadSkin()
 	S:HandleButton(GearManagerDialogEquipSet)
 	S:HandleButton(GearManagerDialogSaveSet)
 
-	PaperDollFrameItemFlyoutHighlight:Kill()
+	-- PaperDollFrameItemFlyoutHighlight:Kill()
 	local function SkinItemFlyouts(button)
 		if not button.isSkinned then
 			button.icon = _G[button:GetName().."IconTexture"]
@@ -940,7 +940,7 @@ local function LoadSkin()
 
 		button:SetBackdropBorderColor(r, g, b)
 	end
-	hooksecurefunc("PaperDollFrameItemFlyout_DisplayButton", SkinItemFlyouts)
+	-- hooksecurefunc("PaperDollFrameItemFlyout_DisplayButton", SkinItemFlyouts)
 
 	GearManagerDialogPopup:StripTextures()
 	GearManagerDialogPopup:CreateBackdrop("Transparent")
@@ -1085,33 +1085,33 @@ local function LoadSkin()
 	end
 
 
-	hooksecurefunc("PaperDollFrameItemFlyout_Show", function()
-		PaperDollFrameItemFlyoutButtons:StripTextures()
-	end)
+	-- hooksecurefunc("PaperDollFrameItemFlyout_Show", function()
+	-- 	PaperDollFrameItemFlyoutButtons:StripTextures()
+	-- end)
 
-	hooksecurefunc("PaperDollFrameItemPopoutButton_SetReversed", function(self, isReversed)
-		if self:GetParent().verticalFlyout then
-			if isReversed then
-				self.icon:SetRotation(S.ArrowRotation.up)
-				self.icon:SetRotation(S.ArrowRotation.up)
-				self.icon:SetRotation(S.ArrowRotation.up)
-			else
-				self.icon:SetRotation(S.ArrowRotation.down)
-				self.icon:SetRotation(S.ArrowRotation.down)
-				self.icon:SetRotation(S.ArrowRotation.down)
-			end
-		else
-			if isReversed then
-				self.icon:SetRotation(S.ArrowRotation.left)
-				self.icon:SetRotation(S.ArrowRotation.left)
-				self.icon:SetRotation(S.ArrowRotation.left)
-			else
-				self.icon:SetRotation(S.ArrowRotation.right)
-				self.icon:SetRotation(S.ArrowRotation.right)
-				self.icon:SetRotation(S.ArrowRotation.right)
-			end
-		end
-	end)
+	-- hooksecurefunc("PaperDollFrameItemPopoutButton_SetReversed", function(self, isReversed)
+	-- 	if self:GetParent().verticalFlyout then
+	-- 		if isReversed then
+	-- 			self.icon:SetRotation(S.ArrowRotation.up)
+	-- 			self.icon:SetRotation(S.ArrowRotation.up)
+	-- 			self.icon:SetRotation(S.ArrowRotation.up)
+	-- 		else
+	-- 			self.icon:SetRotation(S.ArrowRotation.down)
+	-- 			self.icon:SetRotation(S.ArrowRotation.down)
+	-- 			self.icon:SetRotation(S.ArrowRotation.down)
+	-- 		end
+	-- 	else
+	-- 		if isReversed then
+	-- 			self.icon:SetRotation(S.ArrowRotation.left)
+	-- 			self.icon:SetRotation(S.ArrowRotation.left)
+	-- 			self.icon:SetRotation(S.ArrowRotation.left)
+	-- 		else
+	-- 			self.icon:SetRotation(S.ArrowRotation.right)
+	-- 			self.icon:SetRotation(S.ArrowRotation.right)
+	-- 			self.icon:SetRotation(S.ArrowRotation.right)
+	-- 		end
+	-- 	end
+	-- end)
 
 	local function ColorItemBorder()
 		for _, slot in pairs(slots) do
