@@ -42966,7 +42966,6 @@ globals = {
 	"EquipmentFlyoutFrameNavigationFramePrevButton",
 	"ItemUpgradeFramePagingFrameNextPageButton",
 	"ItemUpgradeFramePagingFramePrevPageButton",
-	"SkinItemFlyouts",
 	"EquipmentFlyoutFrameNavigationFrame",
 
 
