@@ -1084,7 +1084,6 @@ local function LoadSkin()
 		end
 	end
 
-
 	-- hooksecurefunc("PaperDollFrameItemFlyout_Show", function()
 	-- 	PaperDollFrameItemFlyoutButtons:StripTextures()
 	-- end)
