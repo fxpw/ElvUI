@@ -42953,4 +42953,18 @@ globals = {
 	"GetUnitRatedBattlegroundRankInfo",
 	"EventHandler",
 
+	--sirus reforge
+	"ItemUpgradeFrame",
+	"ItemUpgradeFrameNineSlice",
+	"ItemUpgradeFrameNineSliceTutorialButton",
+	"ItemUpgradeFrameCloseButton",
+	"ItemUpgradeFrameUpgradeButton",
+	"ItemUpgradeFrameLeftItemPreviewFrame",
+	"ItemUpgradeFrameRightItemPreviewFrame",
+	"EquipmentFlyoutFrameButtons",
+	"EquipmentFlyoutFrameNavigationFrameNextButton",
+	"EquipmentFlyoutFrameNavigationFramePrevButton",
+	"ItemUpgradeFramePagingFrameNextPageButton",
+	"ItemUpgradeFramePagingFramePrevPageButton",
+
 }
