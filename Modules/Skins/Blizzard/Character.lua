@@ -913,33 +913,33 @@ local function LoadSkin()
 	S:HandleButton(GearManagerDialogSaveSet)
 
 	-- PaperDollFrameItemFlyoutHighlight:Kill()
-	local function SkinItemFlyouts(button)
-		if not button.isSkinned then
-			button.icon = _G[button:GetName().."IconTexture"]
+	-- local function SkinItemFlyouts(button)
+	-- 	if not button.isSkinned then
+	-- 		button.icon = _G[button:GetName().."IconTexture"]
 
-			button:GetNormalTexture():SetTexture(nil)
-			button:SetTemplate("Default")
-			button:StyleButton(false)
+	-- 		button:GetNormalTexture():SetTexture(nil)
+	-- 		button:SetTemplate("Default")
+	-- 		button:StyleButton(false)
 
-			button.icon:SetInside()
-			button.icon:SetTexCoord(unpack(E.TexCoords))
-		end
+	-- 		button.icon:SetInside()
+	-- 		button.icon:SetTexCoord(unpack(E.TexCoords))
+	-- 	end
 
-		local cooldown = _G[button:GetName() .."Cooldown"]
-		if cooldown then
-			E:RegisterCooldown(cooldown)
-		end
+	-- 	local cooldown = _G[button:GetName() .."Cooldown"]
+	-- 	if cooldown then
+	-- 		E:RegisterCooldown(cooldown)
+	-- 	end
 
-		local location = button.location
-		if not location then return end
-		if location >= PDFITEMFLYOUT_FIRST_SPECIAL_LOCATION then return end
+	-- 	local location = button.location
+	-- 	if not location then return end
+	-- 	if location >= PDFITEMFLYOUT_FIRST_SPECIAL_LOCATION then return end
 
-		local id = EquipmentManager_GetItemInfoByLocation(location)
-		local _, _, quality = GetItemInfo(id)
-		local r, g, b = GetItemQualityColor(quality)
+	-- 	local id = EquipmentManager_GetItemInfoByLocation(location)
+	-- 	local _, _, quality = GetItemInfo(id)
+	-- 	local r, g, b = GetItemQualityColor(quality)
 
-		button:SetBackdropBorderColor(r, g, b)
-	end
+	-- 	button:SetBackdropBorderColor(r, g, b)
+	-- end
 	-- hooksecurefunc("PaperDollFrameItemFlyout_DisplayButton", SkinItemFlyouts)
 
 	GearManagerDialogPopup:StripTextures()
