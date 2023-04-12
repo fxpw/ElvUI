@@ -44,7 +44,7 @@ S:AddCallback("Skin_UpgradeFrame", function()
 		S:HandleNextPrevButton(EquipmentFlyoutFrameNavigationFramePrevButton,"left")
 
 		S:HandleNextPrevButton(ItemUpgradeFramePagingFrameNextPageButton,"right")
-		S:HandleNextPrevButton(ItemUpgradeFramePagingFramePrevPageButton,"right")
+		S:HandleNextPrevButton(ItemUpgradeFramePagingFramePrevPageButton,"left")
 	end)
 
 end)
