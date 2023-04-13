@@ -24,6 +24,7 @@ S:AddCallback("Skin_UpgradeFrame", function()
 			S:HandleButton(self)
 		end)
 	end
+
 	local frameForIter
 	hooksecurefunc("EquipmentFlyout_UpdateItems",function()
 		EquipmentFlyoutFrameButtons.isSkinned = false
