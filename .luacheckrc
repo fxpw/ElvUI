@@ -42954,6 +42954,7 @@ globals = {
 	"EventHandler",
 
 	--sirus reforge
+	"ItemUpgradeFrameTutorialButton",
 	"ItemUpgradeFrame",
 	"ItemUpgradeFrameNineSlice",
 	"ItemUpgradeFrameNineSliceTutorialButton",

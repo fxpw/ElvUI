@@ -6,7 +6,6 @@ local S = E:GetModule("Skins")
 
 S:AddCallback("Skin_UpgradeFrame", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.upgrade then return end
-	-- print("da")
 	S:HandleFrame(ItemUpgradeFrame);
 	-- ItemUpgradeFrameNineSlice:StripTextures();
 	ItemUpgradeFrameTutorialButton:ClearAllPoints();
