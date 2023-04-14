@@ -8,9 +8,9 @@ S:AddCallback("Skin_UpgradeFrame", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.upgrade then return end
 	-- print("da")
 	S:HandleFrame(ItemUpgradeFrame);
-	ItemUpgradeFrameNineSlice:StripTextures();
-	ItemUpgradeFrameNineSliceTutorialButton:ClearAllPoints();
-	ItemUpgradeFrameNineSliceTutorialButton:SetPoint("TOPLEFT",0,0);
+	-- ItemUpgradeFrameNineSlice:StripTextures();
+	ItemUpgradeFrameTutorialButton:ClearAllPoints();
+	ItemUpgradeFrameTutorialButton:SetPoint("TOPLEFT",0,0);
 	S:HandleCloseButton(ItemUpgradeFrameCloseButton);
 	S:HandleButton(ItemUpgradeFrameUpgradeButton);
 	ItemUpgradeFrameLeftItemPreviewFrame:HookScript("OnShow",function(self)
@@ -19,10 +19,14 @@ S:AddCallback("Skin_UpgradeFrame", function()
 	ItemUpgradeFrameRightItemPreviewFrame:HookScript("OnShow",function(self)
 		self:StripTextures()
 	end)
+	local btn
 	for i =1,4 do
-		_G["ItemUpgradeFrameItemsListPreviewFrameItemButton"..i]:HookScript("OnShow",function(self)
-			S:HandleButton(self)
-		end)
+		btn = _G["ItemUpgradeFrameItemsListPreviewFrameItemButton"..i]
+		if btn then
+			_G["ItemUpgradeFrameItemsListPreviewFrameItemButton"..i]:HookScript("OnShow",function(self)
+				S:HandleButton(self)
+			end)
+		end
 	end
 
 	local frameForIter
@@ -41,11 +45,18 @@ S:AddCallback("Skin_UpgradeFrame", function()
 				break
 			end
 		end
-		S:HandleNextPrevButton(EquipmentFlyoutFrameNavigationFrameNextButton,"right")
-		S:HandleNextPrevButton(EquipmentFlyoutFrameNavigationFramePrevButton,"left")
-
-		S:HandleNextPrevButton(ItemUpgradeFramePagingFrameNextPageButton,"right")
-		S:HandleNextPrevButton(ItemUpgradeFramePagingFramePrevPageButton,"left")
+		if EquipmentFlyoutFrameNavigationFrameNextButton then
+			S:HandleNextPrevButton(EquipmentFlyoutFrameNavigationFrameNextButton,"right")
+		end
+		if EquipmentFlyoutFrameNavigationFramePrevButton then
+			S:HandleNextPrevButton(EquipmentFlyoutFrameNavigationFramePrevButton,"left")
+		end
+		if ItemUpgradeFramePagingFrameNextPageButton then
+			S:HandleNextPrevButton(ItemUpgradeFramePagingFrameNextPageButton,"right")
+		end
+		if ItemUpgradeFramePagingFramePrevPageButton then
+			S:HandleNextPrevButton(ItemUpgradeFramePagingFramePrevPageButton,"left")
+		end
 	end)
 
 end)
