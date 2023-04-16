@@ -22,7 +22,7 @@ S:AddCallback("Skin_UpgradeFrame", function()
 	for i =1,4 do
 		btn = _G["ItemUpgradeFrameItemsListPreviewFrameItemButton"..i]
 		if btn then
-			_G["ItemUpgradeFrameItemsListPreviewFrameItemButton"..i]:HookScript("OnShow",function(self)
+			btn:HookScript("OnShow",function(self)
 				S:HandleButton(self)
 			end)
 		end

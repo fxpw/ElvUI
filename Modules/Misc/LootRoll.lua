@@ -239,12 +239,15 @@ end
 
 local function statusbarOnUpdate(self)
 	local timeLeft = GetLootRollTimeLeft(self.parent.rollID)
-	if timeLeft < 0 or timeLeft > self.parent.rollTime then
+	if timeLeft < 0.3 or timeLeft > self.parent.rollTime then
 		timeLeft = 0
 	else
 		self.spark:Point("CENTER", self, "LEFT", (timeLeft / self.parent.rollTime) * self:GetWidth(), 0)
 	end
-
+	if timeLeft == 0 then
+		-- RollOnLoot(self.parent.rollID, 0)
+		self.parent.passButton:Click();
+	end
 	self:SetValue(timeLeft)
 end
 
