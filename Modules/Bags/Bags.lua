@@ -1374,7 +1374,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.keyButton.ttText = BINDING_NAME_TOGGLEKEYRING
 		f.keyButton:SetScript("OnEnter", self.Tooltip_Show)
 		f.keyButton:SetScript("OnLeave", GameTooltip_Hide)
-		f.keyButton:SetScript("OnClick", function() ToggleFrame(f.keyFrame) end)
+		f.keyButton:SetScript("OnClick", function() ToggleFrame(f.keyFrame) NPE_TutorialPointerFrame:SetKey("KeyRing", true) end)
 
 		--Bags Button
 		f.bagsButton = CreateFrame("Button", name.."BagsButton", f)
