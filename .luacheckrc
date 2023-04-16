@@ -31,6 +31,8 @@ ignore = {
 	"211/[E|L|V|P|G]",		-- Unused local variable
 	"213/i",				-- Unused loop variable
 	"432/self",				-- Shadowing an upvalue
+	"113/NPE_TutorialPointerFrame",
+
 
 	"131/GetMinimapShape",			-- Unused implicitly defined global variable
 	"131/RaidMark_HotkeyPressed",	-- Unused implicitly defined global variable
