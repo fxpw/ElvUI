@@ -687,10 +687,11 @@ function NP:SetTargetFrame(frame)
 			if self.db.useTargetScale then
 				self:SetFrameScale(frame, (frame.ThreatScale or 1) * self.db.targetScale)
 			end
-
-			if not frame.isGroupUnit then
-				frame.unit = "target"
-				frame.guid = UnitGUID("target")
+			if not INP then
+				if not frame.isGroupUnit then
+					frame.unit = "target"
+					frame.guid = UnitGUID("target")
+				end
 			end
 
 			self:UpdateElement_Auras(frame)
@@ -760,6 +761,72 @@ function NP:SetTargetFrame(frame)
 
 			self:StyleFilterUpdate(frame, "PLAYER_TARGET_CHANGED")
 		end
+	end
+
+	self:Configure_Glow(frame)
+	self:Update_Glow(frame)
+end
+
+function NP:UpdateTargetFrame(frame,isTarget)
+	if isTarget then
+		self:SetPlateFrameLevel(frame, self:GetPlateFrameLevel(frame), true)
+
+		if self.db.useTargetScale then
+			self:SetFrameScale(frame, (frame.ThreatScale or 1) * self.db.targetScale)
+		end
+		if not INP then
+			if not frame.isGroupUnit then
+				frame.unit = "target"
+				frame.guid = UnitGUID("target")
+			end
+		end
+
+		self:UpdateElement_Auras(frame)
+
+		if not self.db.units[frame.UnitType].health.enable and self.db.alwaysShowTargetHealth then
+			frame.Health.r, frame.Health.g, frame.Health.b = nil, nil, nil
+
+			self:Configure_HealthBar(frame)
+			self:Configure_CastBar(frame)
+			self:Configure_Elite(frame)
+			self:Configure_CPoints(frame)
+
+			self:UpdateElement_All(frame, true)
+		end
+
+		NP:PlateFade(frame, NP.db.fadeIn and 1 or 0, frame:GetAlpha(), 1)
+
+		self:Update_Highlight(frame)
+		self:Update_CPoints(frame)
+		self:StyleFilterUpdate(frame, "PLAYER_TARGET_CHANGED")
+		self:ForEachVisiblePlate("ResetNameplateFrameLevel") --keep this after `StyleFilterUpdate`
+	else
+		self:SetPlateFrameLevel(frame, self:GetPlateFrameLevel(frame))
+
+		if self.db.useTargetScale then
+			self:SetFrameScale(frame, (frame.ThreatScale or 1))
+		end
+
+		if not frame.isGroupUnit then
+			frame.unit = nil
+		end
+
+		if not self.db.units[frame.UnitType].health.enable then
+			self:UpdateAllFrame(frame, nil, true)
+		end
+
+		self:Update_CPoints(frame)
+
+		if not frame.AlphaChanged then
+			if hasTarget then
+				NP:PlateFade(frame, NP.db.fadeIn and 1 or 0, frame:GetAlpha(), self.db.nonTargetTransparency)
+			else
+				NP:PlateFade(frame, NP.db.fadeIn and 1 or 0, frame:GetAlpha(), 1)
+			end
+		end
+
+		self:StyleFilterUpdate(frame, "PLAYER_TARGET_CHANGED")
+		self:ForEachVisiblePlate("ResetNameplateFrameLevel") --keep this after `StyleFilterUpdate`
 	end
 
 	self:Configure_Glow(frame)
@@ -869,11 +936,12 @@ function NP:SearchNameplateByIconName(raidIcon)
 end
 
 function NP:SearchForFrame(guid, raidIcon, name)
-	local frame
+	local frameForSearch
 	if not INP then
-		if guid then frame = self:SearchNameplateByGUID(guid) end
-		if (not frame) and name then frame = self:SearchNameplateByName(name) end
-		if (not frame) and raidIcon then frame = self:SearchNameplateByIconName(raidIcon) end
+		if guid then frameForSearch = self:SearchNameplateByGUID(guid) end
+		if (not frameForSearch) and name then frameForSearch = self:SearchNameplateByName(name) end
+		if (not frameForSearch) and raidIcon then frameForSearch = self:SearchNameplateByIconName(raidIcon) end
+		return frameForSearch
 	else
 		for _,plate in pairs (C_NamePlate.GetNamePlates()) do
 			if plate and plate.UnitFrame then
@@ -884,7 +952,7 @@ function NP:SearchForFrame(guid, raidIcon, name)
 		end
 	end
 
-	return frame
+
 end
 
 function NP:UpdateCVars()
@@ -936,19 +1004,17 @@ function NP:PLAYER_TARGET_CHANGED()
 	if INP then
 		for frame in pairs(NP.VisiblePlates) do
 			frame.isTarget = false
-			self:SetTargetFrame(frame)
+			self:UpdateTargetFrame(frame,false)
 		end
 		if hasTarget then
 			FrameForReuse = self:SearchForFrame(UnitGUID("target"))
 			if FrameForReuse then
-				-- lastFrame = FrameForReuse
-				FrameForReuse.alpha = 1
-				FrameForReuse.IsTarget = true
-				self:SetTargetFrame(FrameForReuse)
+				FrameForReuse.isTarget = true
+				self:UpdateTargetFrame(FrameForReuse,true)
 			end
-			hasTarget = false
 		end
 	end
+
 end
 
 function NP:UPDATE_MOUSEOVER_UNIT()
