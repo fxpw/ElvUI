@@ -5,7 +5,7 @@ local S = E:GetModule("Sirus")
 -- local DB = E:GetModule("DataBars")
 
 local INP = C_NamePlate and true or false
-local name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone
+local name
 
 -- if C_BattlefieldScoreManager then
 -- C_BattlefieldScoreManager.scoreData = {}
