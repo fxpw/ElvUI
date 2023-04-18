@@ -5,44 +5,45 @@ local S = E:GetModule("Sirus")
 -- local DB = E:GetModule("DataBars")
 
 local INP = C_NamePlate and true or false
-
-C_BattlefieldScoreManager.scoreData = {}
 local name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone
-function C_BattlefieldScoreManager:GenerateScoreData()
-	wipe(self.scoreData)
 
-	local factionID = C_FactionManager:GetFactionOverride()
+-- if C_BattlefieldScoreManager then
+-- C_BattlefieldScoreManager.scoreData = {}
+-- 	function C_BattlefieldScoreManager:GenerateScoreData()
+-- 		wipe(self.scoreData)
 
-    for i = 1, self._GetNumBattlefieldScores() do
-        name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone = self._GetBattlefieldScore(i)
-        local additionalStatData = {}
+-- 		local factionID = C_FactionManager:GetFactionOverride()
 
-        if self:IsValidation() then
-            for statID = 1, GetNumBattlefieldStats() do
-                tinsert(additionalStatData, GetBattlefieldStatData(i, statID))
-            end
+-- 		for i = 1, self._GetNumBattlefieldScores() do
+-- 			name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone = self._GetBattlefieldScore(i)
+-- 			local additionalStatData = {}
 
-            if factionID then
-				if name then
-					local GUID = UnitGUID(name)
+-- 			if self:IsValidation() then
+-- 				for statID = 1, GetNumBattlefieldStats() do
+-- 					tinsert(additionalStatData, GetBattlefieldStatData(i, statID))
+-- 				end
 
-					if GUID then
-						faction = factionID
-					else
-						faction = factionID == PLAYER_FACTION_GROUP.Alliance and PLAYER_FACTION_GROUP.Horde or PLAYER_FACTION_GROUP.Alliance
-					end
-                else
-                    faction = factionID == PLAYER_FACTION_GROUP.Alliance and PLAYER_FACTION_GROUP.Horde or PLAYER_FACTION_GROUP.Alliance
-                end
-            end
-        end
+-- 				if factionID then
+-- 					if name then
+-- 						local GUID = UnitGUID(name)
 
-        if not self.selectedFaction or self.selectedFaction == faction then
-            tinsert(self.scoreData, {name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone, additionalStatData})
-        end
-    end
-end
+-- 						if GUID then
+-- 							faction = factionID
+-- 						else
+-- 							faction = factionID == PLAYER_FACTION_GROUP.Alliance and PLAYER_FACTION_GROUP.Horde or PLAYER_FACTION_GROUP.Alliance
+-- 						end
+-- 					else
+-- 						faction = factionID == PLAYER_FACTION_GROUP.Alliance and PLAYER_FACTION_GROUP.Horde or PLAYER_FACTION_GROUP.Alliance
+-- 					end
+-- 				end
+-- 			end
 
+-- 			if not self.selectedFaction or self.selectedFaction == faction then
+-- 				tinsert(self.scoreData, {name, killingBlows, honorableKills, deaths, honorGained, faction, rank, race, class, classToken, damageDone, healingDone, additionalStatData})
+-- 			end
+-- 		end
+-- 	end
+-- end
 -- do
 -- 	local oldPlayerTalentFrame_Refresh = PlayerTalentFrame_Refresh
 -- 	function PlayerTalentFrame_Refresh()
@@ -226,7 +227,6 @@ function S:Initialize()
 	end)
 
 	GameMenuFrame:HookScript("OnShow", GameMenuFrame_UpdateVisibleButtons)
-
 	local function StaticPopup_OnShow(self)
 		if self.ReplayInfoFrame then
 			self.ReplayInfoFrame:Hide()
