@@ -2104,7 +2104,7 @@ local function GetChatIcon(_, name, realm)
 	if specialChatIconsSirus[name] then
 		return specialChatIconsSirus[name]
 	elseif randomChatIcons[name] then
-		local icon =CreateRandomIcon()
+		local icon = CreateRandomIcon()
 		return icon
 	end
 

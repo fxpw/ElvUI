@@ -186,7 +186,7 @@ function AddOn:OnInitialize()
 	self:InitializeInitialModules()
 
 	if IsAddOnLoaded("Tukui") then
-		self:StaticPopup_Show("TUKUI_ELVUI_INCOMPATIBLE")
+		C_Timer:After(5,function() self:StaticPopup_Show("TUKUI_ELVUI_INCOMPATIBLE") end)
 	end
 
 	if self:IsAddOnEnabled("ElvUI_Sirus") then
