@@ -194,6 +194,3 @@ local function InitializeCallback()
 end
 
 E:RegisterInitialModule(MM:GetName(), InitializeCallback)
-
-
-

@@ -330,6 +330,29 @@ local function LoadSkin()
 			LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScroll:CreateBackdrop("Trasparent")
 			S:HandleScrollBar(LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScrollScrollBar)
 		end)
+
+	--guild frame move
+
+	GuildFrame:EnableMouse(true)
+	GuildFrame:SetMovable(true)
+	GuildFrame:RegisterForDrag("LeftButton")
+	GuildFrame:SetScript("OnDragStart", function(self)
+		self:StartMoving()
+		end)
+	GuildFrame:SetScript("OnDragStop", function(self)
+		self:StopMovingOrSizing()
+		local frame_x,frame_y = self:GetCenter()
+		frame_x = frame_x - GetScreenWidth() / 2
+		frame_y = frame_y - GetScreenHeight() / 2
+		self:ClearAllPoints()
+		self:SetPoint("CENTER", UIParent,"CENTER",frame_x,frame_y)
+	end)
+	LFRBrowseFrame:SetScript("OnShow", function(self)
+		self:ClearAllPoints()
+		self:SetPoint("TOPLEFT", 15, -114)
+	end)
+
+	-- Point 1: "TOPLEFT", 15, -114
 end
 
 S:AddCallback("Guild", LoadSkin)
