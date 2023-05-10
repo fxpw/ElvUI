@@ -97,7 +97,7 @@ function MM:CreateMark(mapid,IsSendedMark,x,y)
 	marker:EnableMouse(true);
 	marker:HookScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-		GameTooltip:SetText("SHIFT + ПКМ убрать метку", 1, 1, 1)
+		GameTooltip:SetText("SHIFT + СКМ убрать метку", 1, 1, 1)
 		GameTooltip:Show()
 	end)
 	marker:SetScript("OnLeave", function()
