@@ -187,7 +187,7 @@ local function OnEnter(self, skipRequest)
 		end
 
 		local lockoutColor, info
-
+		table.sort(lockedInstances.raids,function(a,b) return a[1]> b[1] end)
 		if next(lockedInstances.raids) then
 			DT.tooltip:AddLine(" ")
 			DT.tooltip:AddLine(L["Saved Raid(s)"])
@@ -205,7 +205,7 @@ local function OnEnter(self, skipRequest)
 				)
 			end
 		end
-
+		table.sort(lockedInstances.dungeons,function(a,b) return a[1] > b[1] end)
 		if next(lockedInstances.dungeons) then
 			DT.tooltip:AddLine(" ")
 			DT.tooltip:AddLine(L["Saved Dungeon(s)"])
