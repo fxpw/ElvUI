@@ -55,15 +55,17 @@ local function LoadSkin()
 		end
 	end)
 	local nt
-	for i = 1, 8 do
+	for i = 1, 10 do
 		local button = _G["SpellBookSkillLineTab"..i]
-		button:GetRegions():SetAlpha(0)
-		button:SetTemplate()
-		button:StyleButton(nil, true)
-		nt = button:GetNormalTexture()
-		if nt then
-			nt:SetInside()
-			nt:SetTexCoord(unpack(E.TexCoords))
+		if button then
+			button:GetRegions():SetAlpha(0)
+			button:SetTemplate()
+			button:StyleButton(nil, true)
+			nt = button:GetNormalTexture()
+			if nt then
+				nt:SetInside()
+				nt:SetTexCoord(unpack(E.TexCoords))
+			end
 		end
 		-- button:GetNormalTexture():SetInside()
 		-- button:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))

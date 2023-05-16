@@ -30,7 +30,7 @@ local pname = UnitName("player");
 
 function MM:ReseiveMark(text, distribution, target)
 	dprint(text, distribution);
-	local success,mapid, x, y, who = MM:Deserialize(text);
+	local success, mapid, x, y, who = MM:Deserialize(text);
 	mapid = tonumber(mapid)
 	if success and mapid and x and y and who ~= pname and not IgnoreList[who] then
 		MM:PrintMarkInfo(mapid, x, y, who);
