@@ -347,10 +347,10 @@ local function LoadSkin()
 		self:ClearAllPoints()
 		self:SetPoint("CENTER", UIParent,"CENTER",frame_x,frame_y)
 	end)
-	LFRBrowseFrame:SetScript("OnShow", function(self)
-		self:ClearAllPoints()
-		self:SetPoint("TOPLEFT", 15, -114)
-	end)
+	-- LFRBrowseFrame:SetScript("OnShow", function(self)
+	-- 	self:ClearAllPoints()
+	-- 	self:SetPoint("TOPLEFT", 15, -114)
+	-- end)
 
 	-- Point 1: "TOPLEFT", 15, -114
 end

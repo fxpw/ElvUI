@@ -14,25 +14,24 @@ local function LoadSkin()
 		self.bg:SetVertexColor(r * 0.25, g * 0.25, b * 0.25)
 	end
 
-	hooksecurefunc("TimerTracker_OnEvent", function(self, event)
-		if event == "START_TIMER" then
-			for _, b in pairs(self.timerList) do
-				if b.bar and not b.bar.isSkinned then
-					b.bar:StripTextures()
-					b.bar.timeText:FontTemplate(nil, 12, "OUTLINE")
+	hooksecurefunc("StartTimer_SetGoTexture", function(self)
+		for _, b in pairs(TimerTracker.timerList) do
+			if b.bar and not b.bar.isSkinned then
+				print('da')
+				b.bar:StripTextures()
+				b.bar.timeText:FontTemplate(nil, 12, "OUTLINE")
 
-					b.bar:SetStatusBarTexture(E.media.glossTex)
-					E:RegisterStatusBar(b.bar)
-					b.bar:CreateBackdrop()
+				b.bar:SetStatusBarTexture(E.media.glossTex)
+				E:RegisterStatusBar(b.bar)
+				b.bar:CreateBackdrop()
 
-					b.bar.bg = b.bar:CreateTexture("$parentBackgrund", "BORDER")
-					b.bar.bg:SetAllPoints()
-					b.bar.bg:SetTexture(E.media.blankTex)
+				b.bar.bg = b.bar:CreateTexture("$parentBackgrund", "BORDER")
+				b.bar.bg:SetAllPoints()
+				b.bar.bg:SetTexture(E.media.blankTex)
 
-					b.bar:HookScript("OnValueChanged", Bar_OnValueChanged)
+				b.bar:HookScript("OnValueChanged", Bar_OnValueChanged)
 
-					b.bar.isSkinned = true
-				end
+				b.bar.isSkinned = true
 			end
 		end
 	end)
