@@ -125,9 +125,6 @@ local menuFrame = CreateFrame("Frame", "MinimapRightClickMenu", E.UIParent, "UID
 
 -- Interface\Buttons\UI-MicroButton-Achievement-Up
 local function CreateTextureString(path, size1, size2)
-	-- size1 = size1 or 32
-	-- size2 = size2 or 25
-	-- local textString = "|T"..path..":"..size1..":"..size2.."|t"
 	return ""
 end
 local menuList = {

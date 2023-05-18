@@ -42271,7 +42271,7 @@ globals = {
 	"HelpFrameTicketCancel",
 	"HelpFrameTicketScrollFrameScrollBar",
 	--sirus raid
-
+	"TimerTracker",
 	"CompactRaidFrameManagerDisplayFrameProfileSelector",
 	"CompactRaidFrameManagerDisplayFrameLeaderOptionsCountdown",
 	"CompactRaidFrameManagerDisplayFrameLeaderOptionsInitiateReadyCheck",
