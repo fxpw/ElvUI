@@ -1,60 +1,60 @@
-local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
-local DT = E:GetModule("DataTexts")
+-- local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+-- local DT = E:GetModule("DataTexts")
 
---Lua functions
-local join = string.join
---WoW API / Variables
+-- --Lua functions
+-- local join = string.join
+-- --WoW API / Variables
 
-local displayString = ""
-local lastPanel
-
-
-local Premium
-local curLvL
-local lvlXP
-local maxXP
-local Cap
-
-local function OnEnter(self)
+-- local displayString = ""
+-- local lastPanel
 
 
-	DT:SetupTooltip(self)
+-- local Premium
+-- local curLvL
+-- local lvlXP
+-- local maxXP
+-- local Cap
 
-	DT.tooltip:AddDoubleLine(L["Left Click:"], "Открыть боевой пропуск", 1, 1, 1)
+-- local function OnEnter(self)
 
 
-	DT.tooltip:Show()
+-- 	DT:SetupTooltip(self)
 
-end
+-- 	DT.tooltip:AddDoubleLine(L["Left Click:"], "Открыть боевой пропуск", 1, 1, 1)
 
 
-local function OnClick(_,button)
-	if button == "LeftButton" then
-		BattlePassFrame:Show()
-	end
-end
-local function OnEvent(self, event)
-	lastPanel = self
+-- 	DT.tooltip:Show()
 
-	Premium = BattlePassFrameMixin:IsBuyPremium()
+-- end
 
-	Cap = BattlePassFrameMixin:GetCapXP()
-	curLvL, maxXP, lvlXP = BattlePassFrameMixin:GetLevelInfoByXP(BattlePassFrameMixin:GetTotalXP())
 
-	self.text:SetFormattedText(displayString, curLvL,lvlXP,maxXP,Cap)
-end
+-- local function OnClick(_,button)
+-- 	if button == "LeftButton" then
+-- 		BattlePassFrame:Show()
+-- 	end
+-- end
+-- local function OnEvent(self, event)
+-- 	lastPanel = self
 
-local function ValueColorUpdate(hex)
-	if Premium == true then
-		displayString = join("", "|cfff5cf00БП(%s)|r: ", hex, "%.0f/%.0f (%.0f)|r")
-	else
-		displayString = join("", "БП(%s): ", hex, "%.0f/%.0f (%.0f)|r")
-	end
+-- 	Premium = BattlePassFrameMixin:IsBuyPremium()
 
-	if lastPanel ~= nil then
-		OnEvent(lastPanel)
-	end
-end
-E.valueColorUpdateFuncs[ValueColorUpdate] = true
+-- 	Cap = BattlePassFrameMixin:GetCapXP()
+-- 	curLvL, maxXP, lvlXP = BattlePassFrameMixin:GetLevelInfoByXP(BattlePassFrameMixin:GetTotalXP())
 
-DT:RegisterDatatext("Hit", {"SPELL_UPDATE_USABLE", "ACTIVE_TALENT_GROUP_CHANGED", "PLAYER_TALENT_UPDATE", "COMBAT_RATING_UPDATE"}, OnEvent, nil, OnClick, OnEnter, nil, "Боевой пропуск")
+-- 	self.text:SetFormattedText(displayString, curLvL,lvlXP,maxXP,Cap)
+-- end
+
+-- local function ValueColorUpdate(hex)
+-- 	if Premium == true then
+-- 		displayString = join("", "|cfff5cf00БП(%s)|r: ", hex, "%.0f/%.0f (%.0f)|r")
+-- 	else
+-- 		displayString = join("", "БП(%s): ", hex, "%.0f/%.0f (%.0f)|r")
+-- 	end
+
+-- 	if lastPanel ~= nil then
+-- 		OnEvent(lastPanel)
+-- 	end
+-- end
+-- E.valueColorUpdateFuncs[ValueColorUpdate] = true
+
+-- DT:RegisterDatatext("Hit", {"SPELL_UPDATE_USABLE", "ACTIVE_TALENT_GROUP_CHANGED", "PLAYER_TALENT_UPDATE", "COMBAT_RATING_UPDATE"}, OnEvent, nil, OnClick, OnEnter, nil, "Боевой пропуск")
