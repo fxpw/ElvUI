@@ -176,6 +176,14 @@ local menuList = {
 		end
 	},
 	{
+		icon = [[Interface\Icons\INV_Misc_Note_05]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]).."Боевой пропуск",
+		notCheckable = 1,
+		func = function()
+			ToggleFrame(BattlePassFrame)
+		end
+	},
+	{
 		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
 		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..PLAYER_V_PLAYER,
 		notCheckable = 1,
