@@ -185,12 +185,6 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..PLAYER_V_PLAYER,
-		notCheckable = 1,
-		func = TogglePVPUIFrame
-	},
-	{
-		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
 		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..LFG_TITLE,
 		notCheckable = 1,
 		func = function()
@@ -199,11 +193,17 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..PLAYER_V_PLAYER,
+		notCheckable = 1,
+		func = TogglePVPUIFrame
+	},
+	{
+		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
 
 		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..LOOKING_FOR_RAID,
 		notCheckable = 1,
 		func = function()
-			ToggleFrame(LFRParentFrame)
+			SlashCmdList["RAIDBROWSER"]()
 		end
 	},
 	{
