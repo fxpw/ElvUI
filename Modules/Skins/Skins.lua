@@ -62,6 +62,12 @@ function S:HandleFrame(frame, strip, useCreateBackdrop, noSetTemplate)
 	frame.isSkinned = true
 end
 
+function S:CreateBackdrop(frame, template, glossTex, ignoreUpdates, forcePixelMode, isUnitFrameElement)
+	frame:CreateBackdrop(template, glossTex, ignoreUpdates, forcePixelMode, isUnitFrameElement)
+end
+
+
+
 function S:HandleButton(button, strip, isDeclineButton, useCreateBackdrop, noSetTemplate)
 	if button.isSkinned then return end
 
@@ -242,6 +248,69 @@ function S:HandleTab(tab, noBackdrop)
 	end
 end
 
+function S:Kill(Object)
+	if Object.UnregisterAllEvents then
+		Object:UnregisterAllEvents()
+		Object:SetParent(E.HiddenFrame)
+	else
+		Object.Show = Object.Hide
+	end
+
+	Object:Hide()
+end
+
+
+function S:CleanTexture(Object, Kill, Alpha)
+	if Kill then
+		S:Kill(Object)
+	elseif Alpha then
+		Object:SetAlpha(0)
+	else
+		Object:SetTexture('')
+	end
+end
+function S:StripTextures(Object, Kill, Alpha)
+	if Object:IsObjectType("Texture") then
+		if kill then
+			Object:Kill()
+		elseif alpha then
+			Object:SetAlpha(0)
+		else
+			Object:SetTexture()
+		end
+	else
+		if Object.GetNumRegions then
+			for i = 1, Object:GetNumRegions() do
+				local region = select(i, Object:GetRegions())
+				if region and region.IsObjectType and region:IsObjectType("Texture") then
+					if Kill then
+						region:Kill()
+					elseif Alpha then
+						region:SetAlpha(0)
+					else
+						region:SetTexture()
+					end
+				end
+			end
+		end
+	end
+end
+
+
+function S:StripTexture(Object, Texture, Kill, Alpha)
+	if Object:IsObjectType('Texture') and type(Object:GetTexture()) == 'string' and strlower(Object:GetTexture()) == strlower(Texture) then
+		S:CleanTexture(Object, Kill, Alpha)
+	else
+		if Object.GetNumRegions then
+			for i = 1, Object:GetNumRegions() do
+				local Region = select(i, Object:GetRegions())
+				if Region and Region:IsObjectType('Texture') and type(Region:GetTexture()) == 'string' and strlower(Region:GetTexture()) == strlower(Texture) then
+					S:CleanTexture(Region, Kill, Alpha)
+				end
+			end
+		end
+	end
+end
 -- function S:HandleRotateButton(btn)
 -- 	if btn.isSkinned then return end
 
@@ -425,6 +494,11 @@ function S:HandleCheckBox(frame, noBackdrop, noReplaceTextures, forceSaturation)
 	frame.isSkinned = true
 end
 
+
+
+function S:SetTemplate(frame, template, glossTex, ignoreUpdates, forcePixelMode, isUnitFrameElement)
+	frame:SetTemplate(template, glossTex, ignoreUpdates, forcePixelMode, isUnitFrameElement)
+end
 function S:HandleColorSwatch(frame, size)
 	if frame.isSkinned then return end
 
@@ -441,6 +515,24 @@ function S:HandleColorSwatch(frame, size)
 	normalTexture:SetInside(frame.backdrop)
 
 	frame.isSkinned = true
+end
+
+function S:SetInside(obj, anchor, xOffset, yOffset, anchor2)
+	xOffset, yOffset, anchor = xOffset or 1, yOffset or 1, anchor or obj:GetParent()
+
+	if obj:GetPoint() then obj:ClearAllPoints() end
+
+	obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', xOffset, -yOffset)
+	obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', -xOffset, yOffset)
+end
+
+function S:SetOutside(obj, anchor, xOffset, yOffset, anchor2)
+	xOffset, yOffset, anchor = xOffset or 1, yOffset or 1, anchor or obj:GetParent()
+
+	if obj:GetPoint() then obj:ClearAllPoints() end
+
+	obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', -xOffset, yOffset)
+	obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', xOffset, -yOffset)
 end
 
 function S:HandleIcon(icon, parent)
@@ -550,6 +642,36 @@ function S:HandleSliderFrame(frame)
 		end
 	end
 	frame.isSkinned  = true
+end
+
+local sbcR, sbcG, sbcB = 4/255, 179/255, 30/255
+
+function S:SkinStatusBar(bar)
+	if not bar then return end
+	if bar.isSkinned then return end
+	bar:StripTextures()
+	bar:SetStatusBarTexture(E.media.normTex)
+	bar:SetStatusBarColor(sbcR, sbcG, sbcB)
+	bar:CreateBackdrop("Default")
+	E:RegisterStatusBar(bar)
+
+	local barName = bar:GetName()
+	local title = _G[barName.."Title"]
+	local label = _G[barName.."Label"]
+	local text = _G[barName.."Text"]
+
+	if title then
+		title:Point("LEFT", 4, 0)
+	end
+
+	if label then
+		label:Point("LEFT", 4, 0)
+	end
+
+	if text then
+		text:Point("RIGHT", -4, 0)
+	end
+	bar.isSkinned = true
 end
 
 function S:HandleIconSelectionFrame(frame, numIcons, buttonNameTemplate, frameNameOverride)
