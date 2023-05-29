@@ -271,9 +271,9 @@ function S:CleanTexture(Object, Kill, Alpha)
 end
 function S:StripTextures(Object, Kill, Alpha)
 	if Object:IsObjectType("Texture") then
-		if kill then
+		if Kill then
 			Object:Kill()
-		elseif alpha then
+		elseif Alpha then
 			Object:SetAlpha(0)
 		else
 			Object:SetTexture()
