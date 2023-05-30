@@ -1287,6 +1287,7 @@ P.unitframe = {
 	smartRaidFilter = true,
 	targetOnMouseDown = false,
 	auraBlacklistModifier = "SHIFT",
+	clearAuraClickMiddleBitton = false,
 	thinBorders = false,
 	cooldown = {
 		override = true,

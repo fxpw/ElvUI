@@ -46,8 +46,14 @@ function UF:Construct_Debuffs(frame)
 	return debuffs
 end
 
-local function OnClick(btn)
+local function OnClick(btn,click)
 	local mod = E.db.unitframe.auraBlacklistModifier
+	if E.db.unitframe.clearAuraClickMiddleBitton and click == "MiddleButton" then
+		if btn.name then
+			CancelUnitBuff("player", btn.name)
+		end
+		return
+	end
 	if mod == "NONE" or not ((mod == "SHIFT" and IsShiftKeyDown()) or (mod == "ALT" and IsAltKeyDown()) or (mod == "CTRL" and IsControlKeyDown())) then return end
 	local auraName = btn.name
 
@@ -79,6 +85,7 @@ function UF:Construct_AuraIcon(button)
 	button.stealable:SetTexture()
 
 	button:RegisterForClicks("RightButtonUp")
+	button:RegisterForClicks("MiddleButtonUp")
 	button:SetScript("OnClick", OnClick)
 
 	button.cd.CooldownOverride = "unitframe"
