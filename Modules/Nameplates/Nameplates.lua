@@ -1372,6 +1372,7 @@ function NP:Initialize()
 	castbar.Hide = castbar.Show
 	castbar:Show()
 	castbar.Name:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
+	castbar.Time:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
 	castbar.Name:SetText("Casting")
 	castbar.Time:SetText("3.1")
 	castbar.Icon.texture:SetTexture([[Interface\Icons\Spell_Holy_Penance]])
