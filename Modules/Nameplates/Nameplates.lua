@@ -1371,6 +1371,7 @@ function NP:Initialize()
 	castbar:SetParent(ElvNP_Test.UnitFrame.Health)
 	castbar.Hide = castbar.Show
 	castbar:Show()
+	castbar.Name:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
 	castbar.Name:SetText("Casting")
 	castbar.Time:SetText("3.1")
 	castbar.Icon.texture:SetTexture([[Interface\Icons\Spell_Holy_Penance]])

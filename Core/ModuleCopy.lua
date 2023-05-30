@@ -231,6 +231,8 @@ function MC:ExportToProfile(section, pluginSection)
 	local module = pluginSection and E.global.profileCopy[pluginSection][section] or E.global.profileCopy[section]
 	if not module then error(format("Provided section name \"%s\" does not have a template for profile copy.", section)) end
 	--Making sure tables actually exist
+	if not ElvDB.profiles then ElvDB.profiles = {} end
+	if not ElvDB.profiles[E.global.profileCopy.selected] then ElvDB.profiles[E.global.profileCopy.selected] = {} end
 	if not ElvDB.profiles[E.global.profileCopy.selected][section] then ElvDB.profiles[E.global.profileCopy.selected][section] = {} end
 	if not E.db[section] then E.db[section] = {} end
 	--Starting digging through the settings
