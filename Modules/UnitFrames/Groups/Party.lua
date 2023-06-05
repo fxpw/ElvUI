@@ -132,7 +132,6 @@ function UF:PartySmartVisibility(event)
 				if ElvUF_Party.numGroups ~= E:Round(maxPlayers/5) and event then
 					UF:CreateAndUpdateHeaderGroup("party")
 				end
-				-- print("da")
 			else
 				self.blockVisibilityChanges = true
 				self:Hide()

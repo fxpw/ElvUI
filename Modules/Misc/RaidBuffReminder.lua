@@ -382,7 +382,7 @@ end
 
 function RB:UpdateButtonStatus()
 	-- if not E.db.general.reminder.pot then
-	-- 	print("DSA")
+
 	-- end
 	local lastid = 1
 	local allParametres = {
@@ -465,7 +465,6 @@ function RB:Initialize()
 	-- -- f:RegisterEvent("UNIT_INVENTORY_CHANGED")
 
 	-- f:SetScript("OnEvent",function()
-	-- 	print("da")
 	-- 	RB:CheckItemForBuffOil()
 	-- end)
 end
