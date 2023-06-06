@@ -9,6 +9,7 @@ To load the AddOn engine add this to the top of your file:
 --Lua functions
 local _G, min, pairs, strsplit, unpack, wipe, type, tcopy = _G, min, pairs, strsplit, unpack, wipe, type, table.copy
 --WoW API / Variables
+
 local hooksecurefunc = hooksecurefunc
 local CreateFrame = CreateFrame
 local GetAddOnInfo = GetAddOnInfo

@@ -17,7 +17,6 @@ local function LoadSkin()
 	hooksecurefunc("StartTimer_SetGoTexture", function(self)
 		for _, b in pairs(TimerTracker.timerList) do
 			if b.bar and not b.bar.isSkinned then
-				print('da')
 				b.bar:StripTextures()
 				b.bar.timeText:FontTemplate(nil, 12, "OUTLINE")
 
