@@ -49,7 +49,15 @@ end
 local function OnClick(btn,click)
 	local mod = E.db.unitframe.auraBlacklistModifier
 	if E.db.unitframe.clearAuraClickMiddleBitton and click == "MiddleButton" then
-		if btn.name then
+		if btn.name and btn.filter then
+			if IsShiftKeyDown() then
+				local msg = ""
+				msg = msg.. btn.name
+				msg = msg.."("..btn.spellID..")"
+				msg = msg.. (btn.expiration > 0 and " заканчивается через "..(string.format("%.0f",btn.expiration-GetTime())) or " без таймера")
+				E:Print(msg)
+				return
+			end
 			CancelUnitBuff("player", btn.name)
 		end
 		return

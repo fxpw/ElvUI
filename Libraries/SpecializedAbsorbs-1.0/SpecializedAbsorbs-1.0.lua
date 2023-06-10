@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 8
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 9
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2652,6 +2652,7 @@ Core.Effects = {
 	[65686] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Light Essence
 	[65684] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Dark Essence
 
+	[55277] =  {1.0, 0, function() return 1084*4, 1.0 end, generic_Hit}, --shaman totem pvp
 	--t4 priest dcp
 	[305082] = priest_PWS_EntryT4, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
