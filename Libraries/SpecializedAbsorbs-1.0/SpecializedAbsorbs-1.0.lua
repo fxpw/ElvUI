@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 9
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 10
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -368,6 +368,7 @@ function Core.Error(...)
 end
 
 function Core.Enable()
+
 	playerclass = select(2, UnitClass("player"))
 	playerid = UnitGUID("player")
 
@@ -464,6 +465,7 @@ end
 -- have accumulated. It will be called in case this library version gets
 -- replaced by a new one
 function Core.Disable()
+
 	for guid, _ in pairs(activeEffectsBySpell) do
 		callbacks:Fire("UnitCleared", guid)
 	end
@@ -515,6 +517,7 @@ local t5TanksSpellId = {
 }
 
 function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
+
 	local destEffects = activeEffectsBySpell[dstGUID]
 	local effectInfo = Effects[spellid]
 	local effectEntry
@@ -581,6 +584,7 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 end
 
 function Core.ApplyAreaEffect(timestamp, triggerGUID, triggerName, dstGUID, dstName, spellid, spellschool)
+
 	if not activeAreaEffects[triggerGUID] then
 		return ApplySingularEffect(timestamp, triggerGUID, triggerName, dstGUID, dstName, 0, spellschool)
 	end
@@ -1052,7 +1056,9 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 	elseif etype == "SPELL_AURA_APPLIED" or etype == "SPELL_AURA_REFRESH" then
 
 		local spellid, _, spellschool = ...
+
 		if Effects[spellid] then
+
 			if Effects[spellid][1] > 0 then
 				ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
 			else
@@ -1086,8 +1092,12 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 		end
 	elseif etype == "SPELL_SUMMON" then
 		local spellid, _, spellschool = ...
-		if AreaTriggers[spellid] then
-			CreateAreaTrigger(timestamp, srcGUID, srcName, dstGUID, dstName, AreaTriggers[spellid], spellschool)
+		if spellid == 58582 then -- special logic for pvp shaman totem
+			ApplySingularEffect(timestamp,  dstGUID, dstName, srcGUID, srcName, 55277, spellschool)
+
+		elseif AreaTriggers[spellid] then
+			-- print(timestamp, srcGUID, srcName, dstGUID, dstName, AreaTriggers[spellid], spellschool)
+			CreateAreaTrigger(timestamp, srcGUID, srcName, srcGUID, srcName, AreaTriggers[spellid], spellschool)
 		end
 	end
 end
@@ -2652,7 +2662,7 @@ Core.Effects = {
 	[65686] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Light Essence
 	[65684] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Dark Essence
 
-	[55277] =  {1.0, 0, function() return 1084*4, 1.0 end, generic_Hit}, --shaman totem pvp
+	[55277] =  {1.0, 15, function(...) return 4336, 1.0 end, generic_Hit}, --shaman totem pvp
 	--t4 priest dcp
 	[305082] = priest_PWS_EntryT4, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
@@ -2698,6 +2708,7 @@ Core.Effects = {
 }
 
 Core.AreaTriggers = {
+	-- [58582] = 55277, -- shaman totem pvp
 	[51052] = 50461, -- Anti-Magic Zone
 	[62618] = 81781 -- Power Word: Barrier
 }
