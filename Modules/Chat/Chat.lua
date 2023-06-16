@@ -168,6 +168,7 @@ local Toss = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Toss]], ":
 local KolbaskaSir = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\KolbaskaSir]], ":24:24")
 local Gadgetino = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Gadgetino]], ":24:24")
 local Sova = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Sova]], ":24:24")
+local Meat = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Meat]], ":20:40")
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
 }
@@ -203,6 +204,14 @@ local specialChatIconsSirus = {
 	["Gadgetino-Scourge x2 - 3.3.5a+"] = Gadgetino,
 	["Микросовушка-Scourge x2 - 3.3.5a+"] = Sova,
 	["Микросовушка-ProxyEU Scourge x2 - 3.3.5a+"] = Sova,
+
+	["Miasii-Scourge x2 - 3.3.5a+"] = Meat,
+	["Miasii-ProxyEU Scourge x2 - 3.3.5a+"] = Meat,
+	["Miasii-Sirus x5 - 3.3.5a+"] = Meat,
+	["Destroyeded-Scourge x2 - 3.3.5a+"] = Meat,
+	["Destroyeded-ProxyEU Scourge x2 - 3.3.5a+"] = Meat,
+	["Naenche-Scourge x2 - 3.3.5a+"] = Meat,
+	["Naenche-ProxyEU Scourge x2 - 3.3.5a+"] = Meat,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
