@@ -735,7 +735,7 @@ local function FriendsFrameTooltip_Show(self)
 			local str = string.format(FRIENDS_LEVEL_TEMPLATE, level, class)
 			local catID = GetGuildCharacterCategory(name)
 			if catID then
-				str = GetSpellInfo(catID).."\n\n"..str
+				str = (GetSpellInfo(catID) or "").."\n\n"..(str or "")
 			end
 			FriendsFrameTooltip_SetLine(FriendsTooltipToon1Name, nil, str)
 			anchor = FriendsFrameTooltip_SetLine(FriendsTooltipToon1Info, nil, area)
