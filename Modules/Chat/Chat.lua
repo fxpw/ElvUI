@@ -170,6 +170,7 @@ local Gadgetino = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Gadge
 local Sova = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Sova]], ":24:24")
 local Meat = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Meat]], ":20:40")
 local Unicorn = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Unicorn]], ":36:36")
+local Pika = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\pika]], ":40:40")
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
 }
@@ -217,12 +218,15 @@ local specialChatIconsSirus = {
 	["Pampeya-Scourge x2 - 3.3.5a+"] = Unicorn,
 	["Stabiya-Scourge x2 - 3.3.5a+"] = Unicorn,
 	["Inochan-Scourge x2 - 3.3.5a+"] = Unicorn,
+	["Pika-Scourge x2 - 3.3.5a+"] = Pika,
+	["Дженгу-Scourge x2 - 3.3.5a+"] = Pika,
+	-- ["Шутка-Scourge x2 - 3.3.5a+"] = Pika,
 }
 local randomChatIcons = {
-	["Шутка-Scourge x2 - 3.3.5a+"] = true,
-	["Шутка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
-	["Пьяная-Scourge x2 - 3.3.5a+"] = true,
-	["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	-- ["Шутка-Scourge x2 - 3.3.5a+"] = true,
+	-- ["Шутка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	-- ["Пьяная-Scourge x2 - 3.3.5a+"] = true,
+	-- ["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 
 	-- ["Лужица-"..GetRealmName()] = true,
 	-- ["Лягушечка-"..GetRealmName()] = true,
