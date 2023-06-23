@@ -223,10 +223,10 @@ local specialChatIconsSirus = {
 	-- ["Шутка-Scourge x2 - 3.3.5a+"] = Pika,
 }
 local randomChatIcons = {
-	-- ["Шутка-Scourge x2 - 3.3.5a+"] = true,
-	-- ["Шутка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
-	-- ["Пьяная-Scourge x2 - 3.3.5a+"] = true,
-	-- ["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Шутка-Scourge x2 - 3.3.5a+"] = true,
+	["Шутка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Пьяная-Scourge x2 - 3.3.5a+"] = true,
+	["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 
 	-- ["Лужица-"..GetRealmName()] = true,
 	-- ["Лягушечка-"..GetRealmName()] = true,
