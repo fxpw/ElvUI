@@ -43,6 +43,7 @@ function UF:Construct_Raid10Frames()
 	self.GroupRoleIndicator = UF:Construct_RoleIcon(self)
 	self.RaidTargetIndicator = UF:Construct_RaidIcon(self)
 	self.ReadyCheckIndicator = UF:Construct_ReadyCheckIcon(self)
+	self.SummonIndicator = UF:Construct_SummonIcon(self)
 	self.HealCommBar = UF:Construct_HealComm(self)
 	self.GPS = UF:Construct_GPS(self)
 	self.Fader = UF:Construct_Fader()
@@ -237,6 +238,8 @@ function UF:Update_Raid10Frames(frame, db)
 
 	--ReadyCheck
 	UF:Configure_ReadyCheckIcon(frame)
+
+	UF:Configure_SummonIcon(frame)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)

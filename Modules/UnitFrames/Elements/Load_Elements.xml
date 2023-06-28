@@ -32,5 +32,6 @@
 	<Script file="Threat.lua"/>
 	<Script file="Trinket.lua"/>
 	<Script file="HeadHuntingWanted_Sirus.lua"/>
+	<Script file="SummonIcon.lua"/>
 
 </Ui>

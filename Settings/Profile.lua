@@ -3217,6 +3217,14 @@ P.unitframe = {
 				enable = true,
 				position = "TOPLEFT"
 			},
+			summonIcon = {
+				enable = true,
+				size = 32,
+				attachTo = "CENTER",
+				attachToObject = "Frame",
+				xOffset = 0,
+				yOffset = 0
+			},
 			petsGroup = {
 				enable = false,
 				width = 100,
@@ -3460,6 +3468,14 @@ P.unitframe = {
 				xOffset = 0,
 				yOffset = 8
 			},
+			summonIcon = {
+				enable = true,
+				size = 32,
+				attachTo = "CENTER",
+				attachToObject = "Frame",
+				xOffset = 0,
+				yOffset = 0
+			},
 			GPSArrow = {
 				enable = true,
 				size = 40,
@@ -3659,6 +3675,14 @@ P.unitframe = {
 				xOffset = 0,
 				yOffset = 8
 			},
+			summonIcon = {
+				enable = true,
+				size = 32,
+				attachTo = "CENTER",
+				attachToObject = "Frame",
+				xOffset = 0,
+				yOffset = 0
+			},
 			GPSArrow = {
 				enable = true,
 				size = 40,
@@ -3856,6 +3880,14 @@ P.unitframe = {
 				attachToObject = "Frame",
 				xOffset = 0,
 				yOffset = 8
+			},
+			summonIcon = {
+				enable = true,
+				size = 32,
+				attachTo = "CENTER",
+				attachToObject = "Frame",
+				xOffset = 0,
+				yOffset = 0
 			},
 			GPSArrow = {
 				enable = true,

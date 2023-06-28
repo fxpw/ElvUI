@@ -1,11 +1,11 @@
 ## Interface: 30300
 ## Author: Elv, Bunny, fxpw
-## Version: 7.594
+## Version: 7.595
 ## Title: |cff1784d1E|r|cffe5e3e3lvUI|r for sirus
 ## Notes: User Interface replacement AddOn for World of Warcraft.
 ## SavedVariables: ElvDB, ElvPrivateDB, ElvSirusDB
 ## SavedVariablesPerCharacter: ElvCharacterDB
-## OptionalDeps: Blizzard_DebugTools, SharedMedia, Tukui, ButtonFacade
+## OptionalDeps: Blizzard_DebugTools, SharedMedia, Tukui, ButtonFacade, Masque
 ## X-oUF: ElvUF
 
 Developer\Load_Developer.xml

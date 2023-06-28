@@ -31,7 +31,7 @@
 	<Script file="elements\combopoints.lua"/>
 	<Script file="elements\raidroleindicator.lua"/>
 	<Script file="elements\happinessindicator.lua"/>
-
+	<Script file="elements\summonindicator.lua"/>
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate, SecureHandlerEnterLeaveTemplate">
 		<Attributes>

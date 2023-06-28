@@ -62,6 +62,7 @@ function UF:Construct_PartyFrames()
 		self.ThreatIndicator = UF:Construct_Threat(self)
 		self.RaidTargetIndicator = UF:Construct_RaidIcon(self)
 		self.ReadyCheckIndicator = UF:Construct_ReadyCheckIcon(self)
+		self.SummonIndicator = UF:Construct_SummonIcon(self)
 		self.HealCommBar = UF:Construct_HealComm(self)
 		self.GPS = UF:Construct_GPS(self)
 		self.customTexts = {}
@@ -310,6 +311,8 @@ function UF:Update_PartyFrames(frame, db)
 		UF:UpdateAuraWatch(frame)
 
 		UF:Configure_ReadyCheckIcon(frame)
+
+		UF:Configure_SummonIcon(frame)
 
 		UF:Configure_CustomTexts(frame)
 	end
