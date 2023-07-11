@@ -1092,9 +1092,9 @@ function E:UpdateAll(ignoreInstall)
 		Chat:UpdateAnchors()
 	end
 
-	DataBars:ExperienceBar_Toggle()
-	DataBars:ReputationBar_Toggle()
-	DataBars:UpdateDataBarDimensions()
+	-- DataBars:ExperienceBar_Toggle()
+	-- DataBars:ReputationBar_Toggle()
+	DataBars:UpdateAll()
 
 	DataTexts:LoadDataTexts()
 
