@@ -48,7 +48,6 @@ do
 	AddOn.LibsMinor = {}
 	function AddOn:AddLib(name, major, minor)
 		if not name then return end
-
 		-- in this case: `major` is the lib table and `minor` is the minor version
 		if type(major) == "table" and type(minor) == "number" then
 			self.Libs[name], self.LibsMinor[name] = major, minor

@@ -171,6 +171,7 @@ local Sova = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Sova]], ":
 local Meat = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Meat]], ":20:40")
 local Unicorn = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Unicorn]], ":36:36")
 local Pika = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\pika]], ":40:40")
+local Butterfly = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\butterfly]], ":30:30")
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
 }
@@ -220,7 +221,10 @@ local specialChatIconsSirus = {
 	["Inochan-Scourge x2 - 3.3.5a+"] = Unicorn,
 	["Pika-Scourge x2 - 3.3.5a+"] = Pika,
 	["Дженгу-Scourge x2 - 3.3.5a+"] = Pika,
-	-- ["Шутка-Scourge x2 - 3.3.5a+"] = Pika,
+	["Ковёр-Scourge x2 - 3.3.5a+"] = Butterfly,
+	["Lastmemory-Scourge x2 - 3.3.5a+"] = Butterfly,
+	["Ковёр-ProxyEU Scourge x2 - 3.3.5a+"] = Butterfly,
+	["Lastmemory-ProxyEU Scourge x2 - 3.3.5a+"] = Butterfly,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
