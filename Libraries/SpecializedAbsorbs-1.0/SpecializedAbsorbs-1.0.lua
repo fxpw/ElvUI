@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 10
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 11
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2692,7 +2692,8 @@ Core.Effects = {
 	[320173] = {1.0, 5, function() return 1940, 1.0 end, generic_Hit}, -- tg priest
 	[320284] = {1.0, 5, function() return 1213, 1.0 end, generic_Hit}, -- tg priest
 	[320439] = {1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit}, -- race pandaren absorb
-
+	[75480] = {1.0, 10,  function() return 66420, 1.0 end, generic_Hit}, -- hm halion absorb
+	[75477] = {1.0, 10,  function() return 49027, 1.0 end, generic_Hit}, -- ob halion absorb
 	--[[todos
 	[319797] = 10,
 	[320061] = 10,
