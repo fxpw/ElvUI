@@ -155,6 +155,7 @@ local function buttonOnLeave()
 end
 
 local function buttonOnClick(self)
+	if not self.parent.rollID or not self.rollType then return end
 	RollOnLoot(self.parent.rollID, self.rollType)
 end
 
