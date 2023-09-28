@@ -1724,8 +1724,8 @@ local function Tanks_CLEU(self,...)
 		-- UnitStatsTable[playerid][9] = GetBlockChance()
 
 		-- local blockValue = UnitStatsIndex(whoguid4,8)>0 and UnitStatsIndex(whoguid4,8) or 3800
-		local blockChance = UnitStatsIndex(whoguid4, 9)>0 and UnitStatsIndex(whoguid4, 9) or 35
-		local parryChance = UnitStatsIndex(whoguid4, 10)> 0 and UnitStatsIndex(whoguid4, 10) or 15
+		local blockChance = UnitStatsIndex(whoguid4, 9) > 0 and UnitStatsIndex(whoguid4, 9) or 35
+		local parryChance = UnitStatsIndex(whoguid4, 10) > 0 and UnitStatsIndex(whoguid4, 10) or 15
 		if (whoguid4 == PlayerGUID) then
 			-- blockValue = GetShieldBlock()
 			blockChance = GetBlockChance()
@@ -1736,26 +1736,7 @@ local function Tanks_CLEU(self,...)
 		if absorb > 32500 then
 			absorb = 32500
 		end
-		if time2 and lastPalAbsorbTable[whoguid4] and lastPalAbsorbTable[whoguid4][1] and (time2 - lastPalAbsorbTable[whoguid4][1] <= 2) then
-			-- local absorb = ((spelldmg13*2)*((150+dodge*3+parry*3)/100))
-			if absorb > 32500 then
-				absorb = 32500
-			end
-            lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + absorb
-            if lastPalAbsorbTable[whoguid4][2] > 32500 then
-                lastPalAbsorbTable[whoguid4][2] = 32500
-            end
-        else
-			lastPalAbsorbTable[whoguid4][1] = time2
-            lastPalAbsorbTable[whoguid4][2] = 0
-			if absorb > 32500 then
-				absorb = 32500
-			end
-            lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + absorb
-            if lastPalAbsorbTable[whoguid4][2] > 32500 then
-                lastPalAbsorbTable[whoguid4][2] = 32500
-            end
-        end
+		lastPalAbsorbTable[whoguid4][2] = absorb
 	elseif csarm[subevent3] and spellid10 == 308125 then
 		lastDkAbsorbTable[whoguid4] = 0
 	elseif sh[subevent3] then
