@@ -368,7 +368,6 @@ function Core.Error(...)
 end
 
 function Core.Enable()
-
 	playerclass = select(2, UnitClass("player"))
 	playerid = UnitGUID("player")
 
@@ -389,7 +388,7 @@ function Core.Enable()
 	CombatTriggersOnAuraApplied = Core.CombatTriggers.OnAuraApplied
 	CombatTriggersOnAuraRemoved = Core.CombatTriggers.OnAuraRemoved
 
-	Core.UnitStatsTable = {[playerid] = {playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0}}
+	Core.UnitStatsTable = {[playerid] = {playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0,0,0}}
 	UnitStatsTable = Core.UnitStatsTable
 
 	Core.Scaling = {[-1] = {}, [playerid] = {}}
@@ -465,7 +464,6 @@ end
 -- have accumulated. It will be called in case this library version gets
 -- replaced by a new one
 function Core.Disable()
-
 	for guid, _ in pairs(activeEffectsBySpell) do
 		callbacks:Fire("UnitCleared", guid)
 	end
@@ -517,7 +515,6 @@ local t5TanksSpellId = {
 }
 
 function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
-
 	local destEffects = activeEffectsBySpell[dstGUID]
 	local effectInfo = Effects[spellid]
 	local effectEntry
@@ -584,7 +581,6 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 end
 
 function Core.ApplyAreaEffect(timestamp, triggerGUID, triggerName, dstGUID, dstName, spellid, spellschool)
-
 	if not activeAreaEffects[triggerGUID] then
 		return ApplySingularEffect(timestamp, triggerGUID, triggerName, dstGUID, dstName, 0, spellschool)
 	end
@@ -902,9 +898,12 @@ function Core.SendUnitStats()
 		local parry = UnitStatsTable[playerid][6]
 		local armor = UnitStatsTable[playerid][7]
 		local block = UnitStatsTable[playerid][8]
+		local blockChance = UnitStatsTable[playerid][9]
+		local parryChance = UnitStatsTable[playerid][10]
+
 		if (curAP ~= lastAP) or (curSP ~= lastSP) then
-			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block), curChatChannel)
-			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block, blockChance,parryChance), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block, blockChance,parryChance), curChatChannel)
 
 			lastAP, lastSP = curAP, curSP
 			CommStatsCooldown = true
@@ -1056,9 +1055,7 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 	elseif etype == "SPELL_AURA_APPLIED" or etype == "SPELL_AURA_REFRESH" then
 
 		local spellid, _, spellschool = ...
-
 		if Effects[spellid] then
-
 			if Effects[spellid][1] > 0 then
 				ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName, spellid, spellschool)
 			else
@@ -1092,12 +1089,8 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 		end
 	elseif etype == "SPELL_SUMMON" then
 		local spellid, _, spellschool = ...
-		if spellid == 58582 then -- special logic for pvp shaman totem
-			ApplySingularEffect(timestamp,  dstGUID, dstName, srcGUID, srcName, 55277, spellschool)
-
-		elseif AreaTriggers[spellid] then
-			-- print(timestamp, srcGUID, srcName, dstGUID, dstName, AreaTriggers[spellid], spellschool)
-			CreateAreaTrigger(timestamp, srcGUID, srcName, srcGUID, srcName, AreaTriggers[spellid], spellschool)
+		if AreaTriggers[spellid] then
+			CreateAreaTrigger(timestamp, srcGUID, srcName, dstGUID, dstName, AreaTriggers[spellid], spellschool)
 		end
 	end
 end
@@ -1144,14 +1137,19 @@ function Events.STATS_CHANGED()
 	UnitStatsTable[playerid][2] = baseAP + plusAP - minusAP
 	-- TODO: What about spell power ~= healing spell power?
 	UnitStatsTable[playerid][3] = GetSpellBonusHealing()
-	--4 dodge for t5 tanks
+	--5 dodge for t5 tanks
 	UnitStatsTable[playerid][5] = GetCombatRating(3)
-	--5 parry for t5 tanks
+	--6 parry for t5 tanks
 	UnitStatsTable[playerid][6] = GetCombatRating(4)
-	--6 armor for t6 fdk
+	--7 armor for t6 fdk
 	UnitStatsTable[playerid][7] = select(2,UnitArmor("player"))
-	--7 block for t6 ppal
+	--8 Shield Block Value for t6 ppal
 	UnitStatsTable[playerid][8] = GetShieldBlock()
+	--9 shield block chance for t5 ppal
+	UnitStatsTable[playerid][9] = tonumber(string.format("%0.2f",GetBlockChance()))
+	--10 shield parry chance for t5 ppal
+	UnitStatsTable[playerid][10] = tonumber(string.format("%0.2f",GetParryChance()))
+
 	if curChatChannel then
 		Core:ScheduleUniqueTimer("comm_stats", Core.SendUnitStats, CommStatsCooldown and 15 or 5)
 		Core:ScheduleUniqueTimer("comm_scaling", Core.SendScaling, CommScalingCooldown and 30 or 5)
@@ -1161,12 +1159,12 @@ end
 function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 
 	if not text then return end
-	local success, guid, class, ap, sp, dodge, parry, armor, block = Core:Deserialize(text)
+	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance, parryChance = Core:Deserialize(text)
 	if not (success and guid and class and ap and sp) then return end
 	if guid == playerid then return end
 
 	if not UnitStatsTable[guid] then
-		UnitStatsTable[guid] = {class, ap, sp, 1.0, dodge, parry, armor, block}
+		UnitStatsTable[guid] = {class, ap, sp, 1.0, dodge, parry, armor, block, blockChance,parryChance}
 	else
 		UnitStatsTable[guid][2] = ap
 		UnitStatsTable[guid][3] = sp
@@ -1175,6 +1173,8 @@ function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 		UnitStatsTable[guid][6] = parry
 		UnitStatsTable[guid][7] = armor
 		UnitStatsTable[guid][8] = block
+		UnitStatsTable[guid][9] = blockChance
+		UnitStatsTable[guid][10] = parryChance
 	end
 end
 
@@ -1359,7 +1359,7 @@ end
 function lib.UnitStats(guid, missingQuality)
 	local guidStats = UnitStatsTable and UnitStatsTable[guid]
 	if guidStats then
-		return guidStats[2], guidStats[3], guidStats[4], guidStats[5], guidStats[6], guidStats[7], guidStats[8]
+		return guidStats[2], guidStats[3], guidStats[4], guidStats[5], guidStats[6], guidStats[7], guidStats[8],guidStats[9]
 	end
 	return 0, 0, missingQuality
 end
@@ -1369,6 +1369,7 @@ end
 -- parry = 6
 -- armor = 7
 -- block = 8
+-- blockValue = 9
 function lib.UnitStatsIndex(guid, index)
 	local guidStats = UnitStatsTable and UnitStatsTable[guid]
 	if guidStats then
@@ -1702,7 +1703,7 @@ local function Tanks_CLEU(self,...)
 		local parry = UnitStatsIndex(whoguid4,6)> 0 and UnitStatsIndex(whoguid4,6) or 800
 		parry = parry * 0.0237037037
 
-		if (whoguid4 == PlayerGUID and privateScaling["4dktRaid5"] >= 2) or true then
+		if (whoguid4 == PlayerGUID and privateScaling["4dktRaid5"] >= 2) then
 			dodge = GetCombatRating(3) * 0.0237735849
 			parry = GetCombatRating(4) * 0.0237037037
 		end
@@ -1719,23 +1720,39 @@ local function Tanks_CLEU(self,...)
 			lastPalAbsorbTable[whoguid4] = lastPalAbsorbTable[whoguid4] or {}
 			lastPalAbsorbTable[whoguid4][1] = 0
 		end
+		-- UnitStatsTable[playerid][8] = GetShieldBlock()
+		-- UnitStatsTable[playerid][9] = GetBlockChance()
+
+		local blockValue = UnitStatsIndex(whoguid4,8)>0 and UnitStatsIndex(whoguid4,8) or 3800
+		local blockChance = UnitStatsIndex(whoguid4,9)>0 and UnitStatsIndex(whoguid4,9) or 35
+		local parryChance = UnitStatsIndex(whoguid4,10)> 0 and UnitStatsIndex(whoguid4,10) or 30
+		if (whoguid4 == PlayerGUID) then
+			blockValue = GetShieldBlock()
+			blockChance = GetBlockChance()
+			parryChance = GetParryChance()
+		end
+		local absorb = (blockChance+parryChance*4) * blockValue
+		if absorb > 32500 then
+			absorb = 32500
+		end
 		if time2 and lastPalAbsorbTable[whoguid4] and lastPalAbsorbTable[whoguid4][1] and (time2 - lastPalAbsorbTable[whoguid4][1] <= 2) then
-			if spelldmg13 > 25000 then
-				spelldmg13 = 25000
+			-- local absorb = ((spelldmg13*2)*((150+dodge*3+parry*3)/100))
+			if absorb > 32500 then
+				absorb = 32500
 			end
-            lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + spelldmg13
-            if lastPalAbsorbTable[whoguid4][2] > 50000 then
-                lastPalAbsorbTable[whoguid4][2] = 50000
+            lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + absorb
+            if lastPalAbsorbTable[whoguid4][2] > 32500 then
+                lastPalAbsorbTable[whoguid4][2] = 32500
             end
         else
 			lastPalAbsorbTable[whoguid4][1] = time2
             lastPalAbsorbTable[whoguid4][2] = 0
-			if spelldmg13 > 25000 then
-				spelldmg13 = 25000
+			if absorb > 32500 then
+				absorb = 32500
 			end
-            lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + spelldmg13
-            if lastPalAbsorbTable[whoguid4][2] > 50000 then
-                lastPalAbsorbTable[whoguid4][2] = 50000
+            lastPalAbsorbTable[whoguid4][2] = lastPalAbsorbTable[whoguid4][2] + absorb
+            if lastPalAbsorbTable[whoguid4][2] > 32500 then
+                lastPalAbsorbTable[whoguid4][2] = 32500
             end
         end
 	elseif csarm[subevent3] and spellid10 == 308125 then
@@ -2662,7 +2679,7 @@ Core.Effects = {
 	[65686] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Light Essence
 	[65684] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Dark Essence
 
-	[55277] =  {1.0, 15, function(...) return 4336, 1.0 end, generic_Hit}, --shaman totem pvp
+	[55277] =  {1.0, 15, function() return 1084*4, 1.0 end, generic_Hit}, --shaman totem pvp
 	--t4 priest dcp
 	[305082] = priest_PWS_EntryT4, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
@@ -2692,8 +2709,7 @@ Core.Effects = {
 	[320173] = {1.0, 5, function() return 1940, 1.0 end, generic_Hit}, -- tg priest
 	[320284] = {1.0, 5, function() return 1213, 1.0 end, generic_Hit}, -- tg priest
 	[320439] = {1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit}, -- race pandaren absorb
-	[75480] = {1.0, 10,  function() return 66420, 1.0 end, generic_Hit}, -- hm halion absorb
-	[75477] = {1.0, 10,  function() return 49027, 1.0 end, generic_Hit}, -- ob halion absorb
+
 	--[[todos
 	[319797] = 10,
 	[320061] = 10,
@@ -2709,7 +2725,6 @@ Core.Effects = {
 }
 
 Core.AreaTriggers = {
-	-- [58582] = 55277, -- shaman totem pvp
 	[51052] = 50461, -- Anti-Magic Zone
 	[62618] = 81781 -- Power Word: Barrier
 }

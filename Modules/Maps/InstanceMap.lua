@@ -362,13 +362,13 @@ local InstanceMapDB = {
 
 	--[[ Classic Raids ]]--
 
-	 [995]={"Верхняя часть пика Черной горы", 2, 57, 1},
-	 [793]={"Зул'Гуруб", 2, 60, 1},
-	 [696]={"Огненные Недра", 2, 60, 1},
-	 [755]={"Логово Крыла Тьмы", 2, 60, 1},
-	 [881]={"Руины Ан'Киража", 2, 60, 1},
-	 [893]={"Храм Ан'Киража", 2, 60, 1},
-	 [537]={"Наксрамас", 2, 60, 1},
+	[995]={"Верхняя часть пика Черной горы", 2, 57, 1},
+	[793]={"Зул'Гуруб", 2, 60, 1},
+	[696]={"Огненные Недра", 2, 60, 1},
+	[755]={"Логово Крыла Тьмы", 2, 60, 1},
+	[881]={"Руины Ан'Киража", 2, 60, 1},
+	[893]={"Храм Ан'Киража", 2, 60, 1},
+	[537]={"Наксрамас", 2, 60, 1},
 
 	--[[ Burning Crusade Dungeons ]]--
 
@@ -447,9 +447,9 @@ end
 
 function IM:FindInstanceByName(name, isRaid)
 	if isRaid == nil then
-	   local id = self:FindInstanceByName(name, true)
-	   if not id then id = self:FindInstanceByName(name, false) end
-	   return id
+		local id = self:FindInstanceByName(name, true)
+		if not id then id = self:FindInstanceByName(name, false) end
+		return id
 	end
 
 	local i = 1
@@ -457,12 +457,12 @@ function IM:FindInstanceByName(name, isRaid)
 	name = name:lower()
 
 	while instanceId do
-	   if name == instanceName:lower() then return instanceId end
-	   i = i + 1
-	   instanceId, instanceName = EJ_GetInstanceByIndex(i, isRaid)
+		if name == instanceName:lower() then return instanceId end
+		i = i + 1
+		instanceId, instanceName = EJ_GetInstanceByIndex(i, isRaid)
 	end
 	return nil
- end
+end
 
 
 

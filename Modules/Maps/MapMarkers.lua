@@ -8,26 +8,21 @@ local debug = false
 local dprint = function(...)
 	if debug then print(...) end
 end
-
 local IgnoreList = {};
-
 -- LibStub("AceComm-3.0"):Embed(MM);
 -- LibStub("AceSerializer-3.0"):Embed(MM);
 local coords = {0.499, 0.751, 0.276, 0.484};
 -- local mapX,mapY = WorldMapButton:GetSize()
 local prefix = "ElvUI_Marker";
 local texturePath = "Interface\\AddOns\\ElvUI\\Media\\Textures\\RaidIcons";
-
-
-local SYNC_INFO      = "|Hplayer:%1$s|h[%1$s]|h ставит метку на карту " ..
+local SYNC_INFO = "|Hplayer:%1$s|h[%1$s]|h ставит метку на карту " ..
 	": \n|Helvm:show:%2$s:%3$s:%4$s:nil|h|cff3588ff[Показать место]|r|h  |Helvm:ignore:%1$s|h|cff3588ff[Игнорировать метки от %1$s]|r|h"
-
 
 function MM:SendMark(text, distribution)
 	MM:SendCommMessage(prefix, text, distribution or "RAID");
 end
-local pname = UnitName("player");
 
+local pname = UnitName("player");
 function MM:ReseiveMark(text, distribution, target)
 	dprint(text, distribution);
 	local success, mapid, x, y, who = MM:Deserialize(text);
@@ -36,9 +31,11 @@ function MM:ReseiveMark(text, distribution, target)
 		MM:PrintMarkInfo(mapid, x, y, who);
 	end
 end
+
 function MM:PrintMarkInfo(mapid, x, y, who)
 	DEFAULT_CHAT_FRAME:AddMessage(string.format(SYNC_INFO,who,mapid,x,y), 0.41, 0.8, 0.94);
 end
+
 function MM:HideAll()
 	for i = 1, #ElvUI_ShowedMarkers do
 		ElvUI_ShowedMarkers[i]:Hide();
@@ -46,7 +43,6 @@ function MM:HideAll()
 	table.wipe(ElvUI_ShowedMarkers);
 	dprint("All Hided");
 end
-
 function MM:ShowMark(i,mapid)
 	local marker = ElvUI_AllMarkers[mapid][i];
 
@@ -58,11 +54,8 @@ function MM:ShowMark(i,mapid)
 		marker:Hide()
 		dprint("update(h) Marker"..mapid..i);
 	end
-
 end
-
 function MM:CreateMark(mapid,IsSendedMark,x,y)
-
 	mapid = mapid or GetCurrentMapAreaID();
 	mapid = tonumber(mapid)
 	if not WorldMapFrame:IsShown() and IsSendedMark then
@@ -78,7 +71,6 @@ function MM:CreateMark(mapid,IsSendedMark,x,y)
 	x = IsSendedMark and x or adjustedX * 100;
 	y = IsSendedMark and y or adjustedY * 100;
 	ElvUI_AllMarkers[mapid] = ElvUI_AllMarkers[mapid] or {};
-
 	local lastIndex = #ElvUI_AllMarkers[mapid];
 	ElvUI_AllMarkers[mapid][lastIndex+1] = CreateFrame("Frame", "Marker"..mapid..lastIndex+1, WorldMapDetailFrame);
 	local marker = ElvUI_AllMarkers[mapid][lastIndex+1];
