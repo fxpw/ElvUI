@@ -1723,16 +1723,16 @@ local function Tanks_CLEU(self,...)
 		-- UnitStatsTable[playerid][8] = GetShieldBlock()
 		-- UnitStatsTable[playerid][9] = GetBlockChance()
 
-		-- local blockValue = UnitStatsIndex(whoguid4,8)>0 and UnitStatsIndex(whoguid4,8) or 3800
+		local blockValue = UnitStatsIndex(whoguid4,8)>0 and UnitStatsIndex(whoguid4,8) or 3800
 		local blockChance = UnitStatsIndex(whoguid4, 9) > 0 and UnitStatsIndex(whoguid4, 9) or 35
 		local parryChance = UnitStatsIndex(whoguid4, 10) > 0 and UnitStatsIndex(whoguid4, 10) or 15
 		if (whoguid4 == PlayerGUID) then
-			-- blockValue = GetShieldBlock()
+			blockValue = GetShieldBlock()
 			blockChance = GetBlockChance()
 			parryChance = GetParryChance()
 		end
 
-		local absorb = (( blockChance + parryChance) * 4) * blockChance
+		local absorb = (((blockChance-5)/100+(parryChance-12)/100)*4)* blockValue
 		if absorb > 32500 then
 			absorb = 32500
 		end
