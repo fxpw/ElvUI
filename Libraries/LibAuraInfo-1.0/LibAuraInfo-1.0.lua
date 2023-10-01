@@ -193,6 +193,7 @@ do
 	local _, name, texture, stackCount, dispelType, duration, expirationTime, unitCaster, spellID
 	local dstGUID, dstName, srcGUID
 	function CheckUnitAuras(unitID, filterType)
+		if not lib.trackAuras then return end
 		dstGUID, dstName = UnitGUID(unitID), UnitName(unitID)
 
 		if lib.GUIDData_name[dstGUID] ~= dstName then
@@ -262,12 +263,14 @@ lib.frame:SetScript("OnEvent", function(self, event, ...)
 end)
 
 function lib.frame:UPDATE_MOUSEOVER_UNIT()
+	if not lib.trackAuras then return end
 	ResetUnitAuras("mouseover")
 	CheckUnitAuras("mouseover", "HELPFUL")
 	CheckUnitAuras("mouseover", "HARMFUL")
 end
 
 function lib.frame:PLAYER_TARGET_CHANGED()
+	if not lib.trackAuras then return end
 	ResetUnitAuras("target")
 	CheckUnitAuras("target", "HELPFUL")
 	CheckUnitAuras("target", "HARMFUL")
@@ -276,6 +279,7 @@ end
 do
 	local targetID
 	function lib.frame:UNIT_TARGET(_, unitID)
+		if not lib.trackAuras then return end
 		if not UnitIsUnit(unitID, "player") then
 			targetID = unitID.."target"
 			ResetUnitAuras(targetID)
@@ -287,6 +291,7 @@ end
 
 function lib.frame:UNIT_AURA(_, unitID)
 	if not unitID then return end
+	if not lib.trackAuras then return end
 	ResetUnitAuras(unitID)
 	CheckUnitAuras(unitID, "HELPFUL")
 	CheckUnitAuras(unitID, "HARMFUL")
@@ -775,7 +780,7 @@ end
 
 function lib.frame:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, eventType, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if lib.GUIDBlackList[dstGUID] then return end
-
+	if not lib.trackAuras then return end
 	if srcGUID and not lib.GUIDData_flags[srcGUID] then
 		SaveGUIDInfo(srcGUID, srcName, srcFlags)
 	end

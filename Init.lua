@@ -232,6 +232,7 @@ LoadUI:RegisterEvent("PLAYER_LOGIN")
 LoadUI:SetScript("OnEvent", function()
 	AddOn.Masque = AddOn.Masque or LibStub("Masque", true)
 	AddOn:Initialize()
+	AddOn.NamePlates:UpdateLibAuraInfoInfo()
 end)
 
 function AddOn:PLAYER_REGEN_ENABLED()

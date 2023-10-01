@@ -1327,7 +1327,18 @@ function NP:UpdateLibAuraInfoInfo()
 
 	LAI.PlayerFriend.HARMFUL = E.db.nameplates.units.FRIENDLY_PLAYER.debuffs.enable -- Debuffs
 	LAI.PlayerFriend.HELPFUL = E.db.nameplates.units.FRIENDLY_PLAYER.buffs.enable -- Buffs
-
+	if not LAI.NPCEnemy.HARMFUL and
+	not LAI.NPCEnemy.HELPFUL and
+	not LAI.NPCFriend.HARMFUL and
+	not LAI.NPCFriend.HELPFUL and
+	not LAI.PlayerEnemy.HARMFUL and
+	not LAI.PlayerEnemy.HELPFUL and
+	not LAI.PlayerFriend.HARMFUL and
+	not LAI.PlayerFriend.HELPFUL then
+		LAI.trackAuras = false
+	else
+		LAI.trackAuras = true
+	end
 end
 
 function NP:Initialize()
