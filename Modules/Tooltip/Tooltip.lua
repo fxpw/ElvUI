@@ -232,7 +232,7 @@ end
 function TT:GetLevelLine(tt, offset)
 	for i = offset, tt:NumLines() do
 		local tipText = _G["GameTooltipTextLeft"..i]
-		if tipText:GetText() and find(tipText:GetText(), LEVEL) then
+		if tipText:GetText() and find(tipText:GetText(), "уровня") then
 			return tipText
 		end
 	end
@@ -301,7 +301,8 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 		if levelLine then
 			local diffColor = GetQuestDifficultyColor(level)
 			local race = UnitRace(unit)
-			levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s %s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", E:RGBToHex(color.r, color.g, color.b), localeClass)
+			local cons = ElvUF.Tags.Methods["cons"](unit)
+			levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s/%s %s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", cons or "", E:RGBToHex(color.r, color.g, color.b), localeClass)
 		end
 		if self.db.showElvUIUsers then
 			local addonUser = E.UserList[ShortName]
@@ -495,7 +496,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 			if not UnitIsEnemy("player", unit) then
 				ItemLevelMixIn:Request(unit)
 
-				tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
+				tt:AddDoubleLine(L["Item Level:2"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
 			end
 		end
 	end
