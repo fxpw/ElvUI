@@ -732,7 +732,7 @@ local function FriendsFrameTooltip_Show(self)
 		anchor = FriendsFrameTooltip_SetLine(FriendsTooltipHeader, nil, name)
 		if connected then
 			FriendsTooltipHeader:SetTextColor(FRIENDS_WOW_NAME_COLOR.r, FRIENDS_WOW_NAME_COLOR.g, FRIENDS_WOW_NAME_COLOR.b)
-			local str = string.format(FRIENDS_LEVEL_TEMPLATE, level, class)
+			local str = string.format(FRIENDS_LEVEL_TEMPLATE or "%s %s", level, class)
 			local catID = GetGuildCharacterCategory(name)
 			if catID then
 				str = (GetSpellInfo(catID) or "").."\n\n"..(str or "")
