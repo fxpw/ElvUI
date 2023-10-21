@@ -592,14 +592,14 @@ function UF.groupPrototype:Configure_Groups(frame)
 				group:SetAttribute("columnSpacing", db.horizontalSpacing)
 			end
 
-			--[[if not group.isForced then
+			if not group.isForced then
 				if not group.initialized then
 					group:SetAttribute("startingIndex", db.raidWideSorting and (-min(numGroups * (db.groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
 					group:Show()
 					group.initialized = true
 				end
 				group:SetAttribute("startingIndex", 1)
-			end]]
+			end
 
 			group:ClearAllPoints()
 			if db.raidWideSorting and db.invertGroupingOrder then
@@ -708,7 +708,7 @@ function UF.groupPrototype:Update(frame)
 end
 
 function UF.groupPrototype:AdjustVisibility(frame)
---	if not frame.isForced then
+	-- if not frame.isForced then
 		local numGroups = frame.numGroups
 		for i = 1, #frame.groups do
 			local group = frame.groups[i]
@@ -717,14 +717,14 @@ function UF.groupPrototype:AdjustVisibility(frame)
 			else
 				if group.forceShow then
 					group:Hide()
-					UF:UnshowChildUnits(group, group:GetChildren())
 					group:SetAttribute("startingIndex", 1)
+					UF:UnshowChildUnits(group, group:GetChildren())
 				else
 					group:Reset(frame.groupName)
 				end
 			end
 		end
---	end
+	-- end
 end
 
 function UF.headerPrototype:ClearChildPoints()
@@ -760,14 +760,13 @@ function UF.headerPrototype:Update()
 end
 
 function UF.headerPrototype:Reset(group)
-	self:Hide()
-
+	
 	self:SetAttribute("showPlayer", true)
-
+	
 	self:SetAttribute("showSolo", true)
 	self:SetAttribute("showParty", true)
 	self:SetAttribute("showRaid", group ~= "party" and true or false)
-
+	
 	self:SetAttribute("columnSpacing", nil)
 	self:SetAttribute("columnAnchorPoint", nil)
 	self:SetAttribute("groupBy", nil)
@@ -783,6 +782,7 @@ function UF.headerPrototype:Reset(group)
 	self:SetAttribute("unitsPerColumn", nil)
 	self:SetAttribute("xOffset", nil)
 	self:SetAttribute("yOffset", nil)
+	self:Hide()
 end
 
 function UF:CreateHeader(parent, groupFilter, overrideName, template, groupName, headerTemplate)

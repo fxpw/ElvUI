@@ -113,11 +113,11 @@ function UF:ForceShow(frame)
 		frame.oldOnUpdate = frame:GetScript("OnUpdate")
 	end
 
-	frame:SetScript("OnUpdate", nil)
 	frame.forceShowAuras = true
+	frame:SetScript("OnUpdate", nil)
+	frame:EnableMouse(false)
 	UnregisterUnitWatch(frame)
 	RegisterUnitWatch(frame, true)
-
 	frame:Show()
 	if frame:IsVisible() and frame.Update then
 		frame:Update()
@@ -136,6 +136,7 @@ function UF:UnforceShow(frame)
 	if InCombatLockdown() then return end
 	if not frame.isForced then return end
 
+	frame.unit = frame.oldUnit or frame.unit
 	frame.forceShowAuras = nil
 	frame.isForced = nil
 
@@ -148,7 +149,6 @@ function UF:UnforceShow(frame)
 		frame.oldOnUpdate = nil
 	end
 
-	frame.unit = frame.oldUnit or frame.unit
 	-- If we're visible force an update so everything is properly in a
 	-- non-config mode state
 	if frame:IsVisible() and frame.Update then
@@ -161,6 +161,9 @@ function UF:UnforceShow(frame)
 
 	if _G[frame:GetName().."Pet"] then
 		self:UnforceShow(_G[frame:GetName().."Pet"])
+	end
+	if frame:IsVisible() and frame.Update then
+		frame:Update()
 	end
 end
 
@@ -198,10 +201,38 @@ local function OnAttributeChanged(self)
 		UF:ShowChildUnits(self, self:GetChildren())
 	end
 end
+function UF:HeaderForceShow(header, group, configMode)
+	if group:IsShown() then
+		group.forceShow = header.forceShow
+		group.forceShowAuras = header.forceShowAuras
 
+		if not group.hasOnAttributeChanged then
+			group:HookScript('OnAttributeChanged', OnAttributeChanged)
+			group.hasOnAttributeChanged = true
+		end
+		if configMode then
+			for key in pairs(attributeBlacklist) do
+				group:SetAttribute(key, nil)
+			end
+
+			OnAttributeChanged(group)
+
+			group:Update()
+		else
+			for key in pairs(attributeBlacklist) do
+				group:SetAttribute(key, true)
+			end
+			UF:UnshowChildUnits(group, group:GetChildren())
+			group:SetAttribute("startingIndex", 1)
+
+			group:Update()
+		end
+
+	end
+
+end
 function UF:HeaderConfig(header, configMode)
 	if InCombatLockdown() then return end
-
 	createConfigEnv()
 	header.forceShow = configMode
 	header.forceShowAuras = configMode
@@ -216,50 +247,34 @@ function UF:HeaderConfig(header, configMode)
 				end
 			end
 		end
-
 		RegisterStateDriver(header, "visibility", "show")
 	else
 		for func, env in pairs(originalEnvs) do
 			setfenv(func, env)
 			originalEnvs[func] = nil
 		end
-
 		RegisterStateDriver(header, "visibility", header.db.visibility)
-
-		if header:GetScript("OnEvent") then
-			header:GetScript("OnEvent")(header, "PLAYER_ENTERING_WORLD")
+		local onEvent = header:GetScript('OnEvent')
+		if onEvent then
+			onEvent(header, "PLAYER_ENTERING_WORLD")
 		end
 	end
 
-	for i = 1, #header.groups do
-		local group = header.groups[i]
-
-		if group:IsShown() then
-			group.forceShow = header.forceShow
-			group.forceShowAuras = header.forceShowAuras
-			group:HookScript("OnAttributeChanged", OnAttributeChanged)
+	if header.groups then
+		for i = 1, #header.groups do
 			if configMode then
-				for key in pairs(attributeBlacklist) do
-					group:SetAttribute(key, nil)
-				end
-
-				OnAttributeChanged(group)
-
-				group:Update()
+				RegisterStateDriver(header.groups[i], "visibility", "show")
 			else
-				group:SetAttribute("showSolo", true)
-				group:SetAttribute("showParty", true)
-				group:SetAttribute("showRaid", group.groupName ~= "party" and true or false)
-
-				UF:UnshowChildUnits(group, group:GetChildren())
-				group:SetAttribute("startingIndex", 1)
-
-				group:Update()
+				RegisterStateDriver(header.groups[i], "visibility", header.db.visibility)
 			end
+			UF:HeaderForceShow(header, header.groups[i], configMode)
 		end
+
+		UF.headerFunctions[header.groupName]:AdjustVisibility(header)
+	else -- used to show tank/assist
+		UF:HeaderForceShow(header, header, configMode)
 	end
 
-	UF.headerFunctions[header.groupName]:AdjustVisibility(header)
 end
 
 function UF:PLAYER_REGEN_DISABLED()
