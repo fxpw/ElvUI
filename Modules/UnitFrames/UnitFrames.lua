@@ -760,13 +760,10 @@ function UF.headerPrototype:Update()
 end
 
 function UF.headerPrototype:Reset(group)
-	
 	self:SetAttribute("showPlayer", true)
-	
 	self:SetAttribute("showSolo", true)
 	self:SetAttribute("showParty", true)
 	self:SetAttribute("showRaid", group ~= "party" and true or false)
-	
 	self:SetAttribute("columnSpacing", nil)
 	self:SetAttribute("columnAnchorPoint", nil)
 	self:SetAttribute("groupBy", nil)
