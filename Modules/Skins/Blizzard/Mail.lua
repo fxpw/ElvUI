@@ -484,9 +484,10 @@ local function LoadSkin()
 				else
 					button:SetBackdropBorderColor(unpack(E.media.bordercolor))
 				end
-
-				texture:SetTexCoord(unpack(E.TexCoords))
-				texture:SetInside()
+				if texture then
+					texture:SetTexCoord(unpack(E.TexCoords))
+					texture:SetInside()
+				end
 			else
 				button:SetBackdropBorderColor(unpack(E.media.bordercolor))
 			end
