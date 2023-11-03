@@ -205,7 +205,8 @@ G.profileCopy = {
 		barPet = true,
 		stanceBar = true,
 		microbar = true,
-		cooldown = true
+		cooldown = true,
+		vehicleExitButton = true,
 	},
 	auras = {
 		general = true,

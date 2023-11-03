@@ -401,6 +401,61 @@ function AB:ReassignBindings(event)
 	end
 end
 
+function AB:UpdateFlyDismountButton()
+	local db = E.db.actionbar.vehicleExitButton
+	_G.MainMenuBarVehicleLeaveButton:Size(db.size)
+	_G.MainMenuBarVehicleLeaveButton:SetFrameStrata(db.strata)
+	_G.MainMenuBarVehicleLeaveButton:SetFrameLevel(db.level)
+	_G.VehicleLeaveButtonHolder:Size(db.size)
+end
+
+function AB:CreateFlyDismountButton()
+	local db = E.db.actionbar.vehicleExitButton
+	if not db.enable then return end
+
+	local button = _G.MainMenuBarVehicleLeaveButton
+	local holder = CreateFrame('Frame', 'VehicleLeaveButtonHolder', E.UIParent)
+	holder:Point('BOTTOM', E.UIParent, 0, 300)
+	holder:Size(button:GetSize())
+	E:CreateMover(holder, 'VehicleLeaveButton', L["VehicleLeaveButton"], nil, nil, nil, 'ALL,ACTIONBARS', nil, 'actionbar,extraButtons,vehicleExitButton')
+
+	button:ClearAllPoints()
+	button:SetParent(_G.UIParent)
+	button:Point('CENTER', holder)
+
+	-- taints because of EditModeManager, in UpdateBottomActionBarPositions
+	button:SetScript('OnShow', nil)
+	button:SetScript('OnHide', nil)
+	-- button:KillEditMode()
+
+	-- if Masque and E.private.actionbar.masque.actionbars then
+	-- 	button:StyleButton(true, true, true)
+	-- 	VehicleMasqueGroup:AddButton(button)
+	-- else
+	button:CreateBackdrop(nil, true)
+	button:GetNormalTexture():SetTexCoord(0.140625 + .08, 0.859375 - .06, 0.140625 + .08, 0.859375 - .08)
+	button:GetPushedTexture():SetTexCoord(0.140625, 0.859375, 0.140625, 0.859375)
+	button:StyleButton(nil, true, true)
+
+	hooksecurefunc(button, 'SetHighlightTexture', function(btn, tex)
+		if tex ~= btn.hover then
+			button:SetHighlightTexture(btn.hover)
+		end
+	end)
+	-- end
+
+	hooksecurefunc(button, 'SetPoint', function(_, _, parent)
+		if parent ~= holder then
+			button:ClearAllPoints()
+			button:SetParent(_G.UIParent)
+			button:Point('CENTER', holder)
+		end
+	end)
+
+	self:UpdateFlyDismountButton()
+end
+
+
 function AB:RemoveBindings()
 	if InCombatLockdown() then return end
 
@@ -993,6 +1048,7 @@ function AB:Initialize()
 	self:CreateBarPet()
 	self:CreateBarShapeShift()
 	self:CreateVehicleLeave()
+	self:CreateFlyDismountButton()
 
 	if E.myclass == "SHAMAN" and self.db.barTotem.enabled then
 		self:CreateTotemBar()

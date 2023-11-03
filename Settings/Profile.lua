@@ -4645,6 +4645,12 @@ P.actionbar = {
 		flyoutSpacing = 2,
 		alpha = 1,
 		visibility = "[vehicleui] hide;show"
+	},
+	vehicleExitButton = {
+		enable = true,
+		size = 32,
+		level = 1,
+		strata = 'MEDIUM',
 	}
 }
 
