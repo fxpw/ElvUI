@@ -417,7 +417,7 @@ function AB:CreateFlyDismountButton()
 	local holder = CreateFrame('Frame', 'VehicleLeaveButtonHolder', E.UIParent)
 	holder:Point('BOTTOM', E.UIParent, 0, 300)
 	holder:Size(button:GetSize())
-	E:CreateMover(holder, 'VehicleLeaveButton', L["VehicleLeaveButton"], nil, nil, nil, 'ALL,ACTIONBARS', nil, 'actionbar,extraButtons,vehicleExitButton')
+	E:CreateMover(holder, 'VehicleLeaveButton', L["VehicleLeaveButton"], nil, nil, nil, 'ALL,ACTIONBARS', nil, 'actionbar,vehicleExitButton')
 
 	button:ClearAllPoints()
 	button:SetParent(_G.UIParent)

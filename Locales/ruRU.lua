@@ -506,6 +506,8 @@ L["Target"] = "Цель"
 L["You are using Overflow with Max Overflow at zero."] = "Вы используете режим \"Переполнение\" со значением макс. переполнения равным нулю."
 L["Wrapped"] = "Обернутый"
 L["Ghost Frame"] = "Фрейм призрака"
+L["VehicleLeaveButton"] = "Высадить"
+L["Fly Vehicle Exit"] = "Высадить"
 
 --~afkwords
 L["RandomWords"] = { ---- не может быть только одной записи рандомные цитаты
