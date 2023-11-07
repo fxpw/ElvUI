@@ -430,7 +430,10 @@ function UF:AuraFilter(unit, button, name, _, _, _, debuffType, duration, expira
 	else
 		filterCheck = allowDuration and true -- Allow all auras to be shown when the filter list is empty, while obeying duration sliders
 	end
-
+	-- if unit == "player" then
+	-- 	print(unit, button, name, _, _, _, debuffType, duration, expiration, caster, isStealable, _, spellID)
+	-- 	print(filterCheck)
+	-- end
 	return filterCheck
 end
 

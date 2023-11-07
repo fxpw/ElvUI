@@ -173,6 +173,8 @@ local Unicorn = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Unicorn
 local Pika = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\pika]], ":40:40")
 local Butterfly = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\butterfly]], ":30:30")
 local Imp = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Pokemon3]], ":30:30")
+local darling = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\darling]], ":32:32")
+local zuman = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\zuman1]], ":32:32")
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
 }
@@ -232,6 +234,22 @@ local specialChatIconsSirus = {
 	["Qualler-Scourge x2 - 3.3.5a+"] = Imp,
 	["Betlgeuse-Scourge x2 - 3.3.5a+"] = Imp,
 	["Pudge-Scourge x2 - 3.3.5a+"] = Imp,
+	["Ankroa-Scourge x2 - 3.3.5a+"] = darling,
+	["Анкроа-Scourge x2 - 3.3.5a+"] = darling,
+	["Anae-Scourge x2 - 3.3.5a+"] = darling,
+	["Анаэ-Scourge x2 - 3.3.5a+"] = darling,
+	["Кицуняшка-Scourge x2 - 3.3.5a+"] = darling,
+	["Ankroa-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
+	["Анкроа-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
+	["Anae-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
+	["Анаэ-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
+	["Кицуняшка-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
+	["Zuman-Scourge x2 - 3.3.5a+"] = zuman,
+	["Зумаэль-Scourge x2 - 3.3.5a+"] = zuman,
+	["Зуман-Scourge x2 - 3.3.5a+"] = zuman,
+	["Zuman-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
+	["Зумаэль-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
+	["Зуман-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
