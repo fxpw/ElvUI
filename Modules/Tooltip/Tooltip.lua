@@ -74,7 +74,7 @@ local classification = {
 function TT:GetItemLvL(unit, giud)
 	local ilvl = ItemLevelMixIn:GetItemLevel(giud or UnitGUID(unit))
 	if ilvl and ilvl ~= -1 then
-		local color = ItemLevelMixIn:GetColor(ilvl)
+		local color = GetItemLevelColor(ilvl)
 		if color then
 			return format("%s%s|r", E:RGBToHex(color.r, color.g, color.b), ilvl)
 		end
