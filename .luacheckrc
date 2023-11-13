@@ -45,8 +45,8 @@ ignore = {
 
 globals = {
 
+	"GetItemLevelColor",
 	--fonts
-
 	"GameFontNormal9",
     "GameFontNormal11",
     "GameFontNormal12",
