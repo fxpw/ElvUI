@@ -69,6 +69,7 @@ end
 
 
 function S:HandleButton(button, strip, isDeclineButton, useCreateBackdrop, noSetTemplate)
+	if not button then return end
 	if button.isSkinned then return end
 
 	local buttonName = button.GetName and button:GetName()
@@ -396,6 +397,7 @@ function S:HandleStatusBar(frame, color)
 end
 
 function S:HandleCheckBox(frame, noBackdrop, noReplaceTextures, forceSaturation)
+	if not frame then return end
 	if frame.isSkinned then return end
 
 	frame:StripTextures()
@@ -612,6 +614,7 @@ local sliderOnDisable = function(self) self:GetThumbTexture():SetVertexColor(0.6
 local sliderOnEnable = function(self) self:GetThumbTexture():SetVertexColor(1, 0.82, 0, 0.8) end
 
 function S:HandleSliderFrame(frame)
+	if not frame then return end
 	if frame.isSkinned then return end
 	local orientation = frame:GetOrientation()
 
