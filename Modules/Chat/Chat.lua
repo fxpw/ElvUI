@@ -251,7 +251,6 @@ local specialChatIconsSirus = {
 	["Zuman-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
 	["Зумаэль-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
 	["Зуман-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
-	["Шутка-Scourge x2 - 3.3.5a+"] = kaiden,
 	["Kaiden-Scourge x2 - 3.3.5a+"] = kaiden,
 	["Kaiden-Proxy Scourge x2 - 3.3.5a+"] = kaiden,
 }
