@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 12
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 13
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2680,6 +2680,8 @@ Core.Effects = {
 
 	[317293] = {1.0, 10, function() return 1700, 1.0 end, generic_Hit}, -- статуэтка бронзового дракона
 	[315529] = {1.0, 10, function() return 3660, 1.0 end, generic_Hit}, -- расколотое солнце
+	[75477] = {1.0, 10, function() return 49207, 1.0 end, generic_Hit}, -- чешка об
+	[75480] = {1.0, 10, function() return 66420, 1.0 end, generic_Hit}, -- чешка хм
 
 	[317911] = {1.0, 10, function() return 722, 1.0 end, generic_Hit}, -- духовный барьер
 	[319738] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 4
