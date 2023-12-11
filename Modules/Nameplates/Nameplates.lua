@@ -951,8 +951,6 @@ function NP:SearchForFrame(guid, raidIcon, name)
 			end
 		end
 	end
-
-
 end
 
 function NP:UpdateCVars()
