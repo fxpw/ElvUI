@@ -9,6 +9,7 @@ if not lib then return end
 local Core
 
 local error = error
+local unpack = unpack
 local pairs, select = pairs, select
 local min, max, floor = math.min, math.max, math.floor
 local setmetatable, getmetatable = setmetatable, getmetatable
@@ -117,6 +118,19 @@ local CombatTriggersOnAuraRemoved
 -- Shortcut to Core.UnitStats
 local UnitStatsTable
 
+local UNIT_STAT_VALUE = {
+	CLASS = 1,
+	AP = 2,
+	SP = 3,
+	QUALITY = 4,
+	DODGE = 5,
+	PARRY = 6,
+	ARMOR = 7,
+	BLOCK = 8,
+	BLOCK_CHANCE = 9,
+	PARRY_CHANGE = 10,
+}
+
 -- Table of all scaling factors to absorb effects like talents, items, set boni, buffs
 -- If there is no mechanism in Cataclysm to obtain the correct absorb amount by any effect
 -- this entries are meant to be distributed among a group, raid, etc
@@ -145,7 +159,7 @@ local ApplyAreaEffect
 local CreateAreaTrigger
 local HitUnit
 local RemoveActiveEffect
--- local cleu
+
 -- Constants
 local LOW_VALUE_TOLERANCE = 50
 local ZONE_MODIFIER = 1
@@ -388,7 +402,7 @@ function Core.Enable()
 	CombatTriggersOnAuraApplied = Core.CombatTriggers.OnAuraApplied
 	CombatTriggersOnAuraRemoved = Core.CombatTriggers.OnAuraRemoved
 
-	Core.UnitStatsTable = {[playerid] = {playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0,0,0}}
+	Core.UnitStatsTable = {[playerid] = {playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0, 0, 0}}
 	UnitStatsTable = Core.UnitStatsTable
 
 	Core.Scaling = {[-1] = {}, [playerid] = {}}
@@ -892,18 +906,12 @@ end
 local lastAP, lastSP = 0, 0
 function Core.SendUnitStats()
 	if curChatChannel then
-		local curAP = UnitStatsTable[playerid][2]
-		local curSP = UnitStatsTable[playerid][3]
-		local dodge = UnitStatsTable[playerid][5]
-		local parry = UnitStatsTable[playerid][6]
-		local armor = UnitStatsTable[playerid][7]
-		local block = UnitStatsTable[playerid][8]
-		local blockChance = UnitStatsTable[playerid][9]
-		local parryChance = UnitStatsTable[playerid][10]
+		local curAP = UnitStatsTable[playerid][UNIT_STAT_VALUE.AP]
+		local curSP = UnitStatsTable[playerid][UNIT_STAT_VALUE.SP]
 
 		if (curAP ~= lastAP) or (curSP ~= lastSP) then
-			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block, blockChance,parryChance), curChatChannel)
-			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, dodge, parry, armor, block, blockChance,parryChance), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, unpack(UnitStatsTable[playerid], 5)), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, unpack(UnitStatsTable[playerid], 5)), curChatChannel)
 
 			lastAP, lastSP = curAP, curSP
 			CommStatsCooldown = true
@@ -1134,21 +1142,21 @@ end
 function Events.STATS_CHANGED()
 	local baseAP, plusAP, minusAP = UnitAttackPower("player")
 
-	UnitStatsTable[playerid][2] = baseAP + plusAP - minusAP
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.AP] = baseAP + plusAP - minusAP
 	-- TODO: What about spell power ~= healing spell power?
-	UnitStatsTable[playerid][3] = GetSpellBonusHealing()
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.SP] = GetSpellBonusHealing()
 	--5 dodge for t5 tanks
-	UnitStatsTable[playerid][5] = GetCombatRating(3)
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.DODGE] = GetCombatRating(3)
 	--6 parry for t5 tanks
-	UnitStatsTable[playerid][6] = GetCombatRating(4)
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.PARRY] = GetCombatRating(4)
 	--7 armor for t6 fdk
-	UnitStatsTable[playerid][7] = select(2,UnitArmor("player"))
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.ARMOR] = select(2, UnitArmor("player"))
 	--8 Shield Block Value for t6 ppal
-	UnitStatsTable[playerid][8] = GetShieldBlock()
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.BLOCK] = GetShieldBlock()
 	--9 shield block chance for t5 ppal
-	UnitStatsTable[playerid][9] = tonumber(string.format("%0.2f",GetBlockChance()))
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.BLOCK_CHANCE] = RoundToSignificantDigits(GetBlockChance(), 2)
 	--10 shield parry chance for t5 ppal
-	UnitStatsTable[playerid][10] = tonumber(string.format("%0.2f",GetParryChance()))
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.PARRY_CHANGE] = RoundToSignificantDigits(GetParryChance(), 2)
 
 	if curChatChannel then
 		Core:ScheduleUniqueTimer("comm_stats", Core.SendUnitStats, CommStatsCooldown and 15 or 5)
@@ -1157,24 +1165,23 @@ function Events.STATS_CHANGED()
 end
 
 function Events.OnUnitStatsReceived(prefix, text, distribution, target)
-
 	if not text then return end
-	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance, parryChance = Core:Deserialize(text)
+
+	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance,parryChance = Core:Deserialize(text)
 	if not (success and guid and class and ap and sp) then return end
 	if guid == playerid then return end
 
 	if not UnitStatsTable[guid] then
 		UnitStatsTable[guid] = {class, ap, sp, 1.0, dodge, parry, armor, block, blockChance,parryChance}
 	else
-		UnitStatsTable[guid][2] = ap
-		UnitStatsTable[guid][3] = sp
-		UnitStatsTable[guid][4] = 1.0
-		UnitStatsTable[guid][5] = dodge
-		UnitStatsTable[guid][6] = parry
-		UnitStatsTable[guid][7] = armor
-		UnitStatsTable[guid][8] = block
-		UnitStatsTable[guid][9] = blockChance
-		UnitStatsTable[guid][10] = parryChance
+		UnitStatsTable[guid][UNIT_STAT_VALUE.AP] = ap
+		UnitStatsTable[guid][UNIT_STAT_VALUE.SP] = sp
+		UnitStatsTable[guid][UNIT_STAT_VALUE.DODGE] = dodge
+		UnitStatsTable[guid][UNIT_STAT_VALUE.PARRY] = parry
+		UnitStatsTable[guid][UNIT_STAT_VALUE.ARMOR] = armor
+		UnitStatsTable[guid][UNIT_STAT_VALUE.BLOCK] = block
+		UnitStatsTable[guid][UNIT_STAT_VALUE.BLOCK_CHANCE] = blockChance
+		UnitStatsTable[guid][UNIT_STAT_VALUE.PARRY_CHANGE] = parryChance
 	end
 end
 
@@ -1296,7 +1303,7 @@ function lib.RegisterAreaCallbacks(self, funcCreated, funcUpdated, funcCleared)
 end
 
 function lib.GetLowValueTolerance()
-	return nil
+	return LOW_VALUE_TOLERANCE
 end
 
 function lib.SetLowValueTolerance(value)
@@ -1322,7 +1329,7 @@ function lib.PrintProfiling()
 		["ApplySingularEffect"] = ApplySingularEffect,
 		["HitUnit"] = HitUnit,
 		["RemoveActiveEffect"] = RemoveActiveEffect,
-		-- ["OnCombatLogEvent"] = COMBAT_LOG_EVENT_UNFILTERED,
+	--	["OnCombatLogEvent"] = COMBAT_LOG_EVENT_UNFILTERED,
 		["SortEffects"] = SortEffects
 	}
 
@@ -1359,23 +1366,24 @@ end
 function lib.UnitStats(guid, missingQuality)
 	local guidStats = UnitStatsTable and UnitStatsTable[guid]
 	if guidStats then
-		return guidStats[2], guidStats[3], guidStats[4], guidStats[5], guidStats[6], guidStats[7], guidStats[8],guidStats[9]
+		return guidStats[2] or 0,
+			guidStats[3] or 0,
+			guidStats[4] or missingQuality or 1,
+			guidStats[5] or 0,
+			guidStats[6] or 0,
+			guidStats[7] or 0,
+			guidStats[8] or 0,
+			guidStats[9] or 0
 	end
-	return 0, 0, missingQuality
+	return 0, 0, missingQuality or 1, 0, 0, 0, 0, 0
 end
--- curAP = 2
--- curSP = 3
--- dodge = 5
--- parry = 6
--- armor = 7
--- block = 8
--- blockValue = 9
-function lib.UnitStatsIndex(guid, index)
+
+function lib.UnitStatsIndex(guid, index, fallbackValue)
 	local guidStats = UnitStatsTable and UnitStatsTable[guid]
 	if guidStats then
-		return guidStats[tonumber(index)] and guidStats[tonumber(index)] or 0
+		return guidStats[tonumber(index)] and guidStats[tonumber(index)] or fallbackValue or 0
 	end
-	return 0
+	return fallbackValue or 0
 end
 
 function lib.UnitScaling(guid, defaultScaling, defaultQuality)
@@ -1383,7 +1391,7 @@ function lib.UnitScaling(guid, defaultScaling, defaultQuality)
 	if guidScaling then
 		return guidScaling, 1.0
 	end
-	return defaultScaling, defaultQuality
+	return defaultScaling, defaultQuality or 1
 end
 
 -- Optimized method to save one function call on creation, since a lot of spells
@@ -1393,14 +1401,14 @@ function lib.UnitStatsAndScaling(guid, missingQuality, defaultScaling, defaultQu
 	local guidScaling = Scaling and Scaling[guid]
 	if guidStats then
 		if guidScaling then
-			return guidStats[2], guidStats[3], guidStats[4], guidScaling, 1.0
+			return guidStats[2] or 0, guidStats[3] or 0, guidStats[4] or missingQuality or 1, guidScaling, 1.0
 		end
-		return guidStats[2], guidStats[3], guidStats[4], defaultScaling, defaultQuality
+		return guidStats[2] or 0, guidStats[3] or 0, guidStats[4] or missingQuality or 1, defaultScaling, defaultQuality
 	else
 		if guidScaling then
-			return 0, 0, missingQuality, guidScaling, 1.0
+			return 0, 0, missingQuality or 1, guidScaling, 1.0
 		end
-		return 0, 0, missingQuality, defaultScaling, defaultQuality
+		return 0, 0, missingQuality or 1, defaultScaling, defaultQuality
 	end
 end
 
@@ -1440,7 +1448,6 @@ local UnitStats = lib.UnitStats
 local UnitStatsIndex = lib.UnitStatsIndex
 local UnitScaling = lib.UnitScaling
 local UnitStatsAndScaling = lib.UnitStatsAndScaling
-
 
 --- Generic Create function (only for documentary purposes)
 -- @param	srcGUID			guid of the originating unit
@@ -1691,18 +1698,16 @@ local lastPalAbsorbTable = {}
 local palPokrovBuff = {}
 local palT4GodsHandBuff = {}
 
-local function ALL_CLEU(self,...)
+local function CLEU(self,...)
 	-- local whoGUID = ...
 	-- time event whoguid whoname whoflag targetguid targetname targetflag spellid spellname
 	local _, time2, subevent3, whoguid4, _, _, _, _, _,spellid10, spellname11, _, spelldmg13 = ...
 
 	if csd[subevent3] and spellname11 == "Ледяной удар" then
 		------ 400 average for 270 ilvl
-		local dodge = UnitStatsIndex(whoguid4,5)>0 and UnitStatsIndex(whoguid4,5) or 400
-		dodge = dodge * 0.0237735849
+		local dodge = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.DODGE, 400) * 0.0237735849
 		------ 800 average for 270 ilvl
-		local parry = UnitStatsIndex(whoguid4,6)> 0 and UnitStatsIndex(whoguid4,6) or 800
-		parry = parry * 0.0237037037
+		local parry = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.PARRY, 800) * 0.0237037037
 
 		if (whoguid4 == PlayerGUID and privateScaling["4dktRaid5"] >= 2) then
 			dodge = GetCombatRating(3) * 0.0237735849
@@ -1721,16 +1726,17 @@ local function ALL_CLEU(self,...)
 			lastPalAbsorbTable[whoguid4] = lastPalAbsorbTable[whoguid4] or {}
 			lastPalAbsorbTable[whoguid4][1] = 0
 		end
-		-- UnitStatsTable[playerid][8] = GetShieldBlock()
-		-- UnitStatsTable[playerid][9] = GetBlockChance()
 
-		local blockValue = UnitStatsIndex(whoguid4,8)>0 and UnitStatsIndex(whoguid4,8) or 3800
-		local blockChance = UnitStatsIndex(whoguid4, 9) > 0 and UnitStatsIndex(whoguid4, 9) or 35
-		local parryChance = UnitStatsIndex(whoguid4, 10) > 0 and UnitStatsIndex(whoguid4, 10) or 15
+		local blockValue, blockChance, parryChance
+
 		if (whoguid4 == PlayerGUID) then
 			blockValue = GetShieldBlock()
 			blockChance = GetBlockChance()
 			parryChance = GetParryChance()
+		else
+			blockValue = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.BLOCK, 3800)
+			blockChance = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.BLOCK_CHANCE, 35)
+			parryChance = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.PARRY_CHANGE, 15)
 		end
 
 		local absorb = (((blockChance-5)/100+(parryChance-12)/100)*4)* blockValue
@@ -1753,7 +1759,7 @@ local function ALL_CLEU(self,...)
 	end
 end
 
-TankCLEUFrame:SetScript("OnEvent",ALL_CLEU)
+TankCLEUFrame:SetScript("OnEvent", CLEU)
 
 
 local function deathknight_T52BloodTankOnCreate(...)
@@ -1770,7 +1776,7 @@ local function deathknight_T62FrostTankOnCreate(...)
 	if whog == PlayerGUID then
 		armor = select(2,UnitArmor("player"))
 	else
-		armor = UnitStatsIndex(whog,7) or 0
+		armor = UnitStatsIndex(whog, UNIT_STAT_VALUE.ARMOR)
 	end
 	return armor,1.0
 end
@@ -1877,8 +1883,6 @@ function OnEnableClass.DRUID()
 	druid_OnEquipmentChanged()
 end
 
-
-
 -------------------
 -- Effects: Mage --
 -------------------
@@ -1980,15 +1984,13 @@ local function paladin_T5TankOnCreate(srcGUID, srcName, dstGUID, dstName, spelli
 	return absorb, 1.0
 end
 
-
-
 local t6PalValue = 0
 -- The base value is always 500
 local function paladin_SacredShield_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, paladin_defaultScaling, 0.2)
 	t6PalValue = 0
 	if t6PalTable[dstGUID] and srcGUID == dstGUID then
-		t6PalValue = UnitStatsIndex(srcGUID,8)
+		t6PalValue = UnitStatsIndex(srcGUID, UNIT_STAT_VALUE.BLOCK)
 	end
 	return floor((500 + t6PalValue + (sp * 0.75)) * (sourceScaling[1] or paladin_defaultScaling[1]) * ZONE_MODIFIER), min(quality1, quality2)
 end
@@ -2024,25 +2026,12 @@ local function paladin_T4GodsHand(srcGUID, srcName, dstGUID, dstName, spellid, d
 end
 
 local function paladin_2T4proto(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
-	for i = 1,40 do
-		local unitID = "raid"..i
-		if UnitGUID(unitID) == srcGUID then
-			return UnitHealthMax(unitID) * 0.12, 1.0
-		end
+	local unitToken = UnitTokenFromGUID(srcGUID)
+	if unitToken then
+		return UnitHealthMax(unitToken) * 0.12, 1
+	else
+		return 0, 1
 	end
-	for i=1,5 do
-		local unitID = "party"..i
-		if UnitGUID(unitID) == srcGUID then
-			return UnitHealthMax(unitID) * 0.12, 1.0
-		end
-	end
-	if UnitGUID("target") == srcGUID then
-		return UnitHealthMax("target") * 0.12, 1.0
-	end
-	if UnitGUID("player") == srcGUID then
-		return UnitHealthMax("player") * 0.12, 1.0
-	end
-	-- return palT4GodsHandBuff[srcGUID], 1.0
 end
 
 function OnEnableClass.PALADIN()
@@ -2509,14 +2498,12 @@ local function items_Stoicism_Create(srcGUID, srcName, dstGUID, dstName, spellid
 	return floor(maxHealth * 0.2), 1.0
 end
 
-
-------------------
--- effects race --
-------------------
+--------------------
+-- Effects: Races --
+--------------------
 local function race_Panda_AbsorbOnCreate(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
-	return UnitStatsIndex(srcGUID,3),1.0
+	return UnitStatsIndex(srcGUID, UNIT_STAT_VALUE.SP), 1.0
 end
-
 
 -----------------
 -- Data Tables --
@@ -2681,6 +2668,7 @@ Core.Effects = {
 	[65684] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Dark Essence
 
 	[55277] =  {1.0, 15, function() return 1084*4, 1.0 end, generic_Hit}, --shaman totem pvp
+
 	--t4 abilities
 	[319166] = {1.0, 30, paladin_T4GodsHand, generic_Hit}, -- Paladin 2T4 God's Hand
 	[321447] = {1.0, 10, paladin_2T4proto, generic_Hit}, -- Paladin 2T4 God's Hand
@@ -2714,19 +2702,6 @@ Core.Effects = {
 	[320173] = {1.0, 5, function() return 1940, 1.0 end, generic_Hit}, -- tg priest
 	[320284] = {1.0, 5, function() return 1213, 1.0 end, generic_Hit}, -- tg priest
 	[320439] = {1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit}, -- race pandaren absorb
-
-	--[[todos
-	[319797] = 10,
-	[320061] = 10,
-	[320175] = 10,
-	[320286] = 10,
-
-	[315521] = 10,
-	[315523] = 10,
-	[315525] = 10,
-	[315527] = 10,
-
-	]]--
 }
 
 Core.AreaTriggers = {
