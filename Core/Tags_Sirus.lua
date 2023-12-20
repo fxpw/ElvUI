@@ -103,6 +103,7 @@ addon.VIP = VIP
 
 local Premium = {
 	[90037] = {name = "Premium", icon = "INTERFACE\\ICONS\\VIP", name2 = "(P)"},
+	[371930] = {name = "Премиум", icon = "INTERFACE\\ICONS\\VIP", name2 = "(P)"},
 }
 addon.Premium = Premium
 
@@ -411,7 +412,7 @@ E:AddTag(format('ilvl'), 'UNIT_FACTION UNIT_TARGET UNIT_CONNECTION PLAYER_FLAGS_
 	color = GetItemLevelColor( ilvl )
 	if not color then return ilvl end
 	hex = color:GenerateHexColor()
-	return "|c"..hex..ilvl
+	return "|c"..hex..ilvl"|r"
 end)
 
 -----------------------------------
