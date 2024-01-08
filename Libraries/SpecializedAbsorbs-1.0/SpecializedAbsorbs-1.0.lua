@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 16
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 17
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -1990,7 +1990,7 @@ local function paladin_SacredShield_Create(srcGUID, srcName, dstGUID, dstName, s
 	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, paladin_defaultScaling, 0.2)
 	t6PalValue = 0
 	if t6PalTable[dstGUID] and srcGUID == dstGUID then
-		t6PalValue = UnitStatsIndex(srcGUID, UNIT_STAT_VALUE.BLOCK)
+		t6PalValue = UnitStatsIndex(srcGUID, UNIT_STAT_VALUE.BLOCK) * 3.5
 	end
 	return floor((500 + t6PalValue + (sp * 0.75)) * (sourceScaling[1] or paladin_defaultScaling[1]) * ZONE_MODIFIER), min(quality1, quality2)
 end
