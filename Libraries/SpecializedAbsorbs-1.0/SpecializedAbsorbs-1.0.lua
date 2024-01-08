@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 15
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 16
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -1739,7 +1739,7 @@ local function CLEU(self,...)
 			parryChance = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.PARRY_CHANGE, 15)
 		end
 
-		local absorb = (((blockChance-5)/100+(parryChance-12)/100)*4)* blockValue
+		local absorb = (((parryChance+blockChance)/100)*4) * blockValue
 		if absorb > 32500 then
 			absorb = 32500
 		end
