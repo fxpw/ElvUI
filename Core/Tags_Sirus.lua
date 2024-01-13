@@ -412,7 +412,7 @@ E:AddTag(format('ilvl'), 'UNIT_FACTION UNIT_TARGET UNIT_CONNECTION PLAYER_FLAGS_
 	color = GetItemLevelColor( ilvl )
 	if not color then return ilvl end
 	hex = color:GenerateHexColor()
-	return "|c"..hex..ilvl"|r"
+	return "|c"..hex..ilvl.."|r"
 end)
 
 -----------------------------------
