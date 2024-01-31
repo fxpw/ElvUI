@@ -102,6 +102,19 @@ ElvUF.Tags.Methods["afk"] = function(unit)
 	end
 end
 
+do
+	local faction = {
+		Horde = E:TextureString(E.Media.Textures.HordeLogo, ":16:16"),
+		Alliance = E:TextureString(E.Media.Textures.AllianceLogo, ":16:16"),
+		Renegade = E:TextureString(E.Media.Textures.RenegadeLogo, ":16:16")
+	}
+
+	ElvUF.Tags.Events["faction:icon"] = "UNIT_FACTION"
+	ElvUF.Tags.Methods["faction:icon"] = function(unit)
+		return faction[UnitFactionGroup(unit)]
+	end
+end
+
 ElvUF.Tags.Events["healthcolor"] = "UNIT_HEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED"
 ElvUF.Tags.Methods["healthcolor"] = function(unit)
 	if UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
@@ -825,7 +838,8 @@ E.TagInfo = {
 	["specialization"] = {category = L["Miscellaneous"], description = L["Displays your current specialization as text"]},
 	["class"] = {category = L["Miscellaneous"], description = L["Displays the class of the unit, if that unit is a player"]},
 	["difficulty"] = {category = L["Miscellaneous"], description = L["Changes color of the next tag based on how difficult the unit is compared to the players level"]},
-	["faction"] = {category = L["Miscellaneous"], description = L["Displays 'Aliance' or 'Horde'"]},
+	["faction"] = {category = L["Miscellaneous"], description = L["Displays 'Alliance' or 'Horde' or 'Renegade'"]},
+	["faction:icon"] = {category = L["Miscellaneous"], description = L["Displays faction icon"]},
 	["plus"] = {category = L["Miscellaneous"], description = L["Displays the character '+' if the unit is an elite or rare-elite"]},
 	["arena:number"] = {category = L["Miscellaneous"], description = L["Displays the arena number 1-5"]},
 }
