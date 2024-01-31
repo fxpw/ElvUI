@@ -176,6 +176,8 @@ local Imp = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Pokemon3]],
 local darling = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\darling]], ":32:32")
 local zuman = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\zuman1]], ":32:32")
 local kaiden = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kaiden]], ":32:32")
+local kirin = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kirin]], ":32:32")
+
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
 }
@@ -253,6 +255,9 @@ local specialChatIconsSirus = {
 	["Зуман-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
 	["Kaiden-Scourge x2 - 3.3.5a+"] = kaiden,
 	["Kaiden-Proxy Scourge x2 - 3.3.5a+"] = kaiden,
+
+	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
+    ["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,

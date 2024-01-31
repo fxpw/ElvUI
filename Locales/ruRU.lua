@@ -448,7 +448,8 @@ L["Displays the player's class or creature's type"] = "Отображает кл
 L["Displays your current specialization as text"] = "Отображает вашу текущую специализацию в виде текста"
 L["Displays the class of the unit, if that unit is a player"] = "Отображает класс юнита, если этот юнит - это игрок"
 L["Changes color of the next tag based on how difficult the unit is compared to the players level"] = "Изменяет цвет следующего тега на основе того, насколько сложно юнит сравнивается с уровнем игрока"
-L["Displays 'Aliance' or 'Horde'"] = "Отображает «Альянс» или «Орда»"
+L["Displays 'Alliance' or 'Horde'"] = "Отображает «Альянс» или «Орда» или «Ренегат»"
+L["Displays faction icon"] = "Отображает иконку фракции"
 L["Displays the character '+' if the unit is an elite or rare-elite"] = "Отображает символ «+», если юнит является элитой или редкой элитой"
 L["Displays the arena number 1-5"] = "Отображает номер на арене 1-5"
 
