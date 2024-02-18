@@ -7,7 +7,7 @@
 ## SavedVariablesPerCharacter: ElvCharacterDB
 ## OptionalDeps: Blizzard_DebugTools, SharedMedia, Tukui, ButtonFacade, Masque
 ## X-oUF: ElvUF
-## X-Sirus-Update: https://github.com/fxpw/ElvUI
+## X-Sirus-Update: https://github.com/fxpw/ElvUI/tree/main
 
 Developer\Load_Developer.xml
 Libraries\Load_Libraries.xml
