@@ -177,6 +177,7 @@ local darling = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\darling
 local zuman = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\zuman1]], ":32:32")
 local kaiden = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kaiden]], ":32:32")
 local kirin = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kirin]], ":32:32")
+local nwd = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nwd]], ":20:40")
 
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
@@ -255,6 +256,10 @@ local specialChatIconsSirus = {
 	["Зуман-ProxyEU Scourge x2 - 3.3.5a+"] = zuman,
 	["Kaiden-Scourge x2 - 3.3.5a+"] = kaiden,
 	["Kaiden-Proxy Scourge x2 - 3.3.5a+"] = kaiden,
+
+	["Alliri-Scourge x2 - 3.3.5a+"] = nwd,
+	["Enecence-Scourge x2 - 3.3.5a+"] = nwd,
+	["Шутка-Scourge x2 - 3.3.5a+"] = nwd,
 
 	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
     ["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
