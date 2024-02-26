@@ -259,7 +259,6 @@ local specialChatIconsSirus = {
 
 	["Alliri-Scourge x2 - 3.3.5a+"] = nwd,
 	["Enecence-Scourge x2 - 3.3.5a+"] = nwd,
-	["Шутка-Scourge x2 - 3.3.5a+"] = nwd,
 
 	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
     ["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
