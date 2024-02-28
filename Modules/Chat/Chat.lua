@@ -260,7 +260,7 @@ local specialChatIconsSirus = {
 
 	["Alliri-Scourge x2 - 3.3.5a+"] = nwd,
 	["Enecence-Scourge x2 - 3.3.5a+"] = nwd,
-	
+
 	["Legion-Scourge x2 - 3.3.5a+"] = legion,
 	["Sumoner-Scourge x2 - 3.3.5a+"] = legion,
 	["Qez-Scourge x2 - 3.3.5a+"] = legion,
@@ -273,7 +273,7 @@ local specialChatIconsSirus = {
 	["Kaizen-Scourge x2 - 3.3.5a+"] = legion,
 
 	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
-    ["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
+	["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
