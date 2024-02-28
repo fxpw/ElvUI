@@ -178,6 +178,7 @@ local zuman = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\zuman1]],
 local kaiden = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kaiden]], ":32:32")
 local kirin = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kirin]], ":32:32")
 local nwd = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nwd]], ":20:40")
+local legion = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
 
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
@@ -259,6 +260,17 @@ local specialChatIconsSirus = {
 
 	["Alliri-Scourge x2 - 3.3.5a+"] = nwd,
 	["Enecence-Scourge x2 - 3.3.5a+"] = nwd,
+	
+	["Legion-Scourge x2 - 3.3.5a+"] = legion,
+	["Sumoner-Scourge x2 - 3.3.5a+"] = legion,
+	["Qez-Scourge x2 - 3.3.5a+"] = legion,
+	["Yo-Scourge x2 - 3.3.5a+"] = legion,
+	["Death-Scourge x2 - 3.3.5a+"] = legion,
+	["Pyrokines-Scourge x2 - 3.3.5a+"] = legion,
+	["Xekc-Scourge x2 - 3.3.5a+"] = legion,
+	["Neit-Scourge x2 - 3.3.5a+"] = legion,
+	["Amoralka-Scourge x2 - 3.3.5a+"] = legion,
+	["Kaizen-Scourge x2 - 3.3.5a+"] = legion,
 
 	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
     ["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
