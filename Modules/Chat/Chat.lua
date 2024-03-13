@@ -179,6 +179,9 @@ local kaiden = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kaiden]]
 local kirin = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kirin]], ":32:32")
 local nwd = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nwd]], ":20:40")
 local legion = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
+local nerfed  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nerfed]], ":32:32")
+
+
 
 local RaindomElvUIIcon = {
 	[[Blue]],[[Green]],[[Melon]],[[Orange]],[[Pink]],[[Purple]],[[Rainbow]],[[Red]],[[Yellow]]
@@ -273,7 +276,8 @@ local specialChatIconsSirus = {
 	["Kaizen-Scourge x2 - 3.3.5a+"] = legion,
 
 	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
-	["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
+    ["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
+	["Nerfed-Scourge x2 - 3.3.5a+"] = nerfed,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
