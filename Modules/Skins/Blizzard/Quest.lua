@@ -424,7 +424,7 @@ S:AddCallback("Skin_Quest", function()
 		for i = 1, MAX_NUM_ITEMS do
 			item = _G["QuestRequiredItem"..i]
 
-			if item and item ~= self then
+			if item then
 				name = _G["QuestRequiredItem"..i.."Name"]
 				link = item.hyperlink
 				local count = _G["QuestRequiredItem"..i.."Count"]
@@ -452,7 +452,7 @@ S:AddCallback("Skin_Quest", function()
 		for i = 1, MAX_NUM_ITEMS do
 			item = _G["QuestRequiredItem"..i]
 
-			if item and item ~= self then
+			if item then
 				name = _G["QuestRequiredItem"..i.."Name"]
 				link = item.hyperlink
 				local count = _G["QuestRequiredItem"..i.."Count"]
