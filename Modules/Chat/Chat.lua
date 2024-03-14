@@ -181,6 +181,8 @@ local nwd = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nwd]], ":20
 local legion = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
 local nerfed  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nerfed]], ":32:32")
 local bagdemagus  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagdemagus]], ":24:24")
+local gb  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
+local angrybird  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\angrybird]], ":32:32")
 
 
 
@@ -284,6 +286,12 @@ local specialChatIconsSirus = {
 	["Чешшуйчатый-Scourge x2 - 3.3.5a+"] = bagdemagus,
 	["Bagdemagus-Scourge x2 - 3.3.5a+"] = bagdemagus,
 	["Сайона-Scourge x2 - 3.3.5a+"] = bagdemagus,
+
+	["Колючка-Sirus x5 - 3.3.5a+"] = gb,
+	["Колючая-Sirus x5 - 3.3.5a+"] = gb,
+
+	["Pain-Sirus x5 - 3.3.5a+"] = angrybird,
+	["Масстаунт-Sirus x5 - 3.3.5a+"] = angrybird,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,

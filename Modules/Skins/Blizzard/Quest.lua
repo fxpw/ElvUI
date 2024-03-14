@@ -238,7 +238,8 @@ S:AddCallback("Skin_Quest", function()
 
 	local items = {
 		["QuestInfoItem"] = MAX_NUM_ITEMS,
-		["QuestProgressItem"] = MAX_REQUIRED_ITEMS
+		["QuestProgressItem"] = MAX_REQUIRED_ITEMS,
+		["QuestRequiredItem"] = MAX_REQUIRED_ITEMS,
 	}
 	for frame, numItems in pairs(items) do
 		for i = 1, numItems do
@@ -259,6 +260,12 @@ S:AddCallback("Skin_Quest", function()
 
 			count:SetParent(item.backdrop)
 			count:SetDrawLayer("OVERLAY")
+			if frame == "QuestRequiredItem" and count then
+				local text = count:GetText()
+				if text then
+					count:SetText(text:gsub(" / ", "\n"))
+				end
+			end
 		end
 	end
 
@@ -269,12 +276,16 @@ S:AddCallback("Skin_Quest", function()
 			local r, g, b = GetItemQualityColor(quality)
 
 			frame:SetBackdropBorderColor(r, g, b)
-			frame.backdrop:SetBackdropBorderColor(r, g, b)
+			if frame.backdrop then
+				frame.backdrop:SetBackdropBorderColor(r, g, b)
+			end
 
 			text:SetTextColor(r, g, b)
 		else
 			frame:SetBackdropBorderColor(unpack(E.media.bordercolor))
-			frame.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
+			if frame.backdrop then
+				frame.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
+			end
 
 			text:SetTextColor(1, 1, 1)
 		end
@@ -321,6 +332,23 @@ S:AddCallback("Skin_Quest", function()
 					name = _G["QuestInfoItem"..i.."Name"]
 					link = item.type and (QuestInfoFrame.questLog and GetQuestLogItemLink or GetQuestItemLink)(item.type, item:GetID())
 
+					questQualityColors(item, name, link)
+
+				end
+			end
+			for i = 1, MAX_NUM_ITEMS do
+				item = _G["QuestRequiredItem"..i]
+
+				if item ~= self then
+					name = _G["QuestRequiredItem"..i.."Name"]
+					link = item.hyperlink
+					local count = _G["QuestRequiredItem"..i.."Count"]
+					if count then
+						local text = count:GetText()
+						if text then
+							count:SetText(text:gsub(" / ", "\n"))
+						end
+					end
 					questQualityColors(item, name, link)
 				end
 			end
@@ -393,6 +421,22 @@ S:AddCallback("Skin_Quest", function()
 
 			questQualityColors(item, name, link)
 		end
+		for i = 1, MAX_NUM_ITEMS do
+			item = _G["QuestRequiredItem"..i]
+
+			if item and item ~= self then
+				name = _G["QuestRequiredItem"..i.."Name"]
+				link = item.hyperlink
+				local count = _G["QuestRequiredItem"..i.."Count"]
+				if count then
+					local text = count:GetText()
+					if text then
+						count:SetText(text:gsub(" / ", "\n"))
+					end
+				end
+				questQualityColors(item, name, link)
+			end
+		end
 	end)
 
 	hooksecurefunc("QuestInfo_ShowRewards", function()
@@ -404,6 +448,22 @@ S:AddCallback("Skin_Quest", function()
 			link = item.type and (QuestInfoFrame.questLog and GetQuestLogItemLink or GetQuestItemLink)(item.type, item:GetID())
 
 			questQualityColors(item, name, link)
+		end
+		for i = 1, MAX_NUM_ITEMS do
+			item = _G["QuestRequiredItem"..i]
+
+			if item and item ~= self then
+				name = _G["QuestRequiredItem"..i.."Name"]
+				link = item.hyperlink
+				local count = _G["QuestRequiredItem"..i.."Count"]
+				if count then
+					local text = count:GetText()
+					if text then
+						count:SetText(text:gsub(" / ", "\n"))
+					end
+				end
+				questQualityColors(item, name, link)
+			end
 		end
 	end)
 

@@ -62,7 +62,8 @@ function B:Initialize()
 
 	local items = {
 		["QuestInfoItem"] = MAX_NUM_ITEMS,
-		["QuestProgressItem"] = MAX_REQUIRED_ITEMS
+		["QuestProgressItem"] = MAX_REQUIRED_ITEMS,
+		["QuestRequiredItem"] = MAX_REQUIRED_ITEMS,
 	}
 
 	QuestLogFrame:HookScript("OnShow", function()
