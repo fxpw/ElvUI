@@ -184,6 +184,8 @@ local bagdemagus  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bag
 local gb  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
 local angrybird  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\angrybird]], ":32:32")
 
+local lunt  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
+
 
 
 local RaindomElvUIIcon = {
@@ -292,6 +294,7 @@ local specialChatIconsSirus = {
 
 	["Pain-Sirus x5 - 3.3.5a+"] = angrybird,
 	["Масстаунт-Sirus x5 - 3.3.5a+"] = angrybird,
+	["Lyntuk-Sirus x5 - 3.3.5a+"] = lunt,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
