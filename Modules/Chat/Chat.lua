@@ -296,7 +296,7 @@ local specialChatIconsSirus = {
 	["Pain-Sirus x5 - 3.3.5a+"] = angrybird,
 	["Масстаунт-Sirus x5 - 3.3.5a+"] = angrybird,
 	["Lyntuk-Sirus x5 - 3.3.5a+"] = lunt,
-	["Акация -Sirus x5 - 3.3.5a+"] = eye2,
+	["Акация-Sirus x5 - 3.3.5a+"] = eye2,
 	["Шиккай-Scourge x2 - 3.3.5a+"] = eye2,
 }
 local randomChatIcons = {
