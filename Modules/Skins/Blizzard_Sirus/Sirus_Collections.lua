@@ -7,133 +7,134 @@ local ipairs = ipairs
 
 local function LoadSkin()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.collections then return end
-		--tab for mount pet and transmog
-		for i = 1,3 do
-			S:HandleTab(_G["CollectionsJournalTab"..i])
+	--tab for mount pet and transmog
+	for i = 1, 5 do
+		local tab = _G["CollectionsJournalTab" .. i]
+		if tab then
+			S:HandleTab(tab)
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
 		end
-		S:HandlePortraitFrame(CollectionsJournal)
+	end
+	S:HandlePortraitFrame(CollectionsJournal)
 
-		MountJournal.navBar:StripTextures()
-		MountJournal.navBar.overlay:StripTextures()
+	MountJournal.navBar:StripTextures()
+	MountJournal.navBar.overlay:StripTextures()
 
-		S:HandleButton(MountJournal.navBar.home, true)
-		MountJournal.navBar.home.xoffset = 1
+	S:HandleButton(MountJournal.navBar.home, true)
+	MountJournal.navBar.home.xoffset = 1
 
-		MountJournal.navBar:ClearAllPoints()
-		MountJournal.navBar:SetPoint("TOPLEFT", 6, -22)
+	MountJournal.navBar:ClearAllPoints()
+	MountJournal.navBar:SetPoint("TOPLEFT", 6, -22)
 
-		S:HandleEditBox(MountJournal.searchBox)
+	S:HandleEditBox(MountJournal.searchBox)
 
-		MountJournal.FilterButton:StripTextures(true)
-		S:HandleButton(MountJournal.FilterButton)
+	MountJournal.FilterButton:StripTextures(true)
+	S:HandleButton(MountJournal.FilterButton)
 
-		MountJournal.ListScrollFrame:StripTextures()
-		S:HandleScrollBar(MountJournal.ListScrollFrame.scrollBar)
+	MountJournal.ListScrollFrame:StripTextures()
+	S:HandleScrollBar(MountJournal.ListScrollFrame.scrollBar)
 
-		for _, button in ipairs(MountJournal.ListScrollFrame.buttons) do
-			button.icon:Size(40)
-			button.icon:SetDrawLayer("BORDER")
-			S:HandleIcon(button.icon)
+	for _, button in ipairs(MountJournal.ListScrollFrame.buttons) do
+		button.icon:Size(40)
+		button.icon:SetDrawLayer("BORDER")
+		S:HandleIcon(button.icon)
+
+		local highlight = button:GetHighlightTexture()
+		button:SetHighlightTexture(E.Media.Textures.Highlight)
+		highlight:SetTexCoord(0, 1, 0, 1)
+		highlight:SetVertexColor(1, 1, 1, .35)
+		highlight:SetAllPoints()
+
+		button.iconBorder:SetTexture()
+		button.background:SetTexture()
+
+		button.selectedTexture:SetTexture(E.Media.Textures.Highlight)
+		button.selectedTexture:SetTexCoord(0, 1, 0, 1)
+		button.selectedTexture:SetVertexColor(1, .8, .1, .35)
+		button.selectedTexture:SetAllPoints()
+
+		button.favorite:SetParent(button.backdrop)
+	end
+
+	for _, button in ipairs(MountJournal.CategoryScrollFrame.buttons) do
+		button:SetHighlightTexture(E.Media.Textures.Highlight)
+		button:GetHighlightTexture():SetVertexColor(1, 1, 1)
+		button:GetHighlightTexture().SetAlpha = E.noop
+
+		button.Background:SetTexture()
+
+		button.Icon:SetDrawLayer("BORDER")
+		S:HandleIcon(button.Icon)
+	end
+
+	hooksecurefunc("MountJournal_CategoryDisplayButton", function(button, element)
+		if element then
+			button.backdrop:SetShown(element.isCategory)
 
 			local highlight = button:GetHighlightTexture()
-			button:SetHighlightTexture(E.Media.Textures.Highlight)
 			highlight:SetTexCoord(0, 1, 0, 1)
-			highlight:SetVertexColor(1, 1, 1, .35)
 			highlight:SetAllPoints()
-
-			button.iconBorder:SetTexture()
-			button.background:SetTexture()
-
-			button.selectedTexture:SetTexture(E.Media.Textures.Highlight)
-			button.selectedTexture:SetTexCoord(0, 1, 0, 1)
-			button.selectedTexture:SetVertexColor(1, .8, .1, .35)
-			button.selectedTexture:SetAllPoints()
-
-			button.favorite:SetParent(button.backdrop)
 		end
+	end)
 
-		for _, button in ipairs(MountJournal.CategoryScrollFrame.buttons) do
-			button:SetHighlightTexture(E.Media.Textures.Highlight)
-			button:GetHighlightTexture():SetVertexColor(1, 1, 1)
-			button:GetHighlightTexture().SetAlpha = E.noop
+	MountJournal.CategoryScrollFrame:StripTextures()
+	S:HandleScrollBar(MountJournal.CategoryScrollFrame.scrollBar)
 
-			button.Background:SetTexture()
+	MountJournal.LeftInset:StripTextures()
 
-			button.Icon:SetDrawLayer("BORDER")
-			S:HandleIcon(button.Icon)
-		end
+	MountJournal.RightTopInset:StripTextures()
 
-		hooksecurefunc("MountJournal_CategoryDisplayButton", function(button, element)
-			if element then
-				button.backdrop:SetShown(element.isCategory)
+	MountJournal.RightBottomInset:StripTextures()
 
-				local highlight = button:GetHighlightTexture()
-				highlight:SetTexCoord(0, 1, 0, 1)
-				highlight:SetAllPoints()
-			end
-		end)
+	MountJournal.MountCount:StripTextures()
 
-		MountJournal.CategoryScrollFrame:StripTextures()
-		S:HandleScrollBar(MountJournal.CategoryScrollFrame.scrollBar)
+	MountJournal.MountDisplay:StripTextures()
 
-		MountJournal.LeftInset:StripTextures()
+	MountJournal.MountDisplay.ShadowOverlay:Hide()
 
-		MountJournal.RightTopInset:StripTextures()
+	S:HandleRotateButton(MountDisplayModelSceneRotateLeftButton)
+	S:HandleRotateButton(MountDisplayModelSceneRotateRightButton)
 
-		MountJournal.RightBottomInset:StripTextures()
+	-- Не нашел отдельного метода под ActionButton.
+	S:HandleItemButton(MountJournal.SummonRandomFavoriteButton)
 
-		MountJournal.MountCount:StripTextures()
+	S:HandleIcon(MountJournal.MountDisplay.ModelScene.InfoButton.Icon)
+	S:HandleButton(MountJournal.MountDisplay.ModelScene.buyFrame.buyButton)
 
-		MountJournal.MountDisplay:StripTextures()
+	S:HandleButton(MountJournal.MountButton, true)
 
-		MountJournal.MountDisplay.ShadowOverlay:Hide()
+	-- путеводитель
+	S:HandleButton(MountDisplayModelSceneEJFrameOpenEJButton)
+	S:HandleButton(PetJournalPetDisplayModelSceneEJFrameOpenEJButton)
+	-- pet tab
+	S:HandleRotateButton(PetJournalPetDisplayModelSceneRotateLeftButton)
+	S:HandleRotateButton(PetJournalPetDisplayModelSceneRotateRightButton)
+	S:HandleButton(PetJournalSummonButton, true)
 
-		S:HandleRotateButton(MountDisplayModelSceneRotateLeftButton)
-		S:HandleRotateButton(MountDisplayModelSceneRotateRightButton)
+	S:HandleScrollBar(PetJournalListScrollFrameScrollBar)
 
-		-- Не нашел отдельного метода под ActionButton.
-		S:HandleItemButton(MountJournal.SummonRandomFavoriteButton)
+	PetJournalFilterButton:StripTextures(true)
+	S:HandleButton(PetJournalFilterButton)
 
-		S:HandleIcon(MountJournal.MountDisplay.ModelScene.InfoButton.Icon)
-		S:HandleButton(MountJournal.MountDisplay.ModelScene.buyFrame.buyButton)
+	S:HandleEditBox(PetJournalSearchBox)
 
-		S:HandleButton(MountJournal.MountButton, true)
+	--pet tab ListScrollFrame
+	for _, button in ipairs(PetJournal.ListScrollFrame.buttons) do
+		local highlight = button:GetHighlightTexture()
+		button:SetHighlightTexture(E.Media.Textures.Highlight)
+		highlight:SetTexCoord(0, 1, 0, 1)
+		highlight:SetVertexColor(1, 1, 1, .35)
+		highlight:SetAllPoints()
+		-- print(highlight)
+		button.Background:SetTexture()
 
-		-- путеводитель
-		S:HandleButton(MountDisplayModelSceneEJFrameOpenEJButton)
-		S:HandleButton(PetJournalPetDisplayModelSceneEJFrameOpenEJButton)
-		-- pet tab
-		S:HandleRotateButton(PetJournalPetDisplayModelSceneRotateLeftButton)
-		S:HandleRotateButton(PetJournalPetDisplayModelSceneRotateRightButton)
-		S:HandleButton(PetJournalSummonButton, true)
+		button.Icon:SetDrawLayer("BORDER")
+		S:HandleIcon(button.Icon)
 
-		S:HandleScrollBar(PetJournalListScrollFrameScrollBar)
-
-		PetJournalFilterButton:StripTextures(true)
-		S:HandleButton(PetJournalFilterButton)
-
-		S:HandleEditBox(PetJournalSearchBox)
-
-		--pet tab ListScrollFrame
-		for _, button in ipairs(PetJournal.ListScrollFrame.buttons) do
-
-
-
-			local highlight = button:GetHighlightTexture()
-			button:SetHighlightTexture(E.Media.Textures.Highlight)
-			highlight:SetTexCoord(0, 1, 0, 1)
-			highlight:SetVertexColor(1, 1, 1, .35)
-			highlight:SetAllPoints()
-			-- print(highlight)
-			button.Background:SetTexture()
-
-			button.Icon:SetDrawLayer("BORDER")
-			S:HandleIcon(button.Icon)
-
-			button.DragButton.Favorite:SetParent(button.backdrop)
-
-
-		end
+		button.DragButton.Favorite:SetParent(button.backdrop)
+	end
 
 	-- right frame
 	PetJournal.LeftInset:StripTextures()
@@ -145,9 +146,6 @@ local function LoadSkin()
 	-- pet icon
 	S:HandleIcon(PetJournal.PetDisplay.InfoButton.Icon)
 	S:HandleItemButton(_G.PetJournal.SummonRandomFavoritePetButton, true)
-
-
-
 end
 
 S:AddCallback("Skin_Collections", LoadSkin)

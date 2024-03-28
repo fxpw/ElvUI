@@ -77,10 +77,10 @@ local function LoadSkin()
 	EncounterJournal.encounter.instance.mapButton:StripTextures()
 	S:HandleButton(EncounterJournal.encounter.instance.mapButton)
 
-	EncounterJournal.encounter.instance.mapButton.Text:ClearAllPoints()
-	EncounterJournal.encounter.instance.mapButton.Text:Point("CENTER")
-	EncounterJournal.encounter.instance.mapButton.Text:SetText(SHOW_MAP)
-	EncounterJournal.encounter.instance.mapButton:Size(EncounterJournal.encounter.instance.mapButton.Text:GetStringWidth() * 1.5, 25)
+	-- EncounterJournal.encounter.instance.mapButton.Text:ClearAllPoints()
+	-- EncounterJournal.encounter.instance.mapButton.Text:Point("CENTER")
+	-- EncounterJournal.encounter.instance.mapButton.Text:SetText(SHOW_MAP)
+	-- EncounterJournal.encounter.instance.mapButton:Size(EncounterJournal.encounter.instance.mapButton.Text:GetStringWidth() * 1.5, 25)
 
 	S:HandleScrollBar(EncounterJournal.encounter.instance.loreScroll.ScrollBar)
 	EncounterJournal.encounter.instance.loreScroll.child.lore:SetTextColor(1, 1, 1)
@@ -145,35 +145,41 @@ local function LoadSkin()
 		hooksecurefunc(item.IconBorder, "Hide", function() item.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor)) end)
 	end
 
-	EncounterJournal.LootJournal:StripTextures()
-	S:HandleButton(EncounterJournal.LootJournal.ItemSetsScrollFrame.ClassButton, true)
-	S:HandleScrollBar(EncounterJournalLootJournalScrollFrameScrollBar)
+	-- EncounterJournal.LootJournal:StripTextures()
+	-- S:HandleButton(EncounterJournal.LootJournal.ItemSetsScrollFrame.ClassButton, true)
+	-- S:HandleScrollBar(EncounterJournalLootJournalScrollFrameScrollBar)
 
-	for i = 1, #EncounterJournal.LootJournal.ItemSetsScrollFrame.buttons do
-		local set = EncounterJournal.LootJournal.ItemSetsScrollFrame.buttons[i]
-		set.Background:Hide()
-		set.ItemLevel:SetTextColor(1, 1, 1)
+	-- for i = 1, #EncounterJournal.LootJournal.ItemSetsScrollFrame.buttons do
+	-- 	local set = EncounterJournal.LootJournal.ItemSetsScrollFrame.buttons[i]
+	-- 	set.Background:Hide()
+	-- 	set.ItemLevel:SetTextColor(1, 1, 1)
 
-		for j = 1, 8 do
-			local button = set["ItemButton"..j]
-			button:SetTemplate()
-			button.Icon:SetDrawLayer("BORDER")
-			button.Icon:SetInside()
-			button.Icon:SetTexCoord(unpack(E.TexCoords))
+	-- 	for j = 1, 8 do
+	-- 		local button = set["ItemButton"..j]
+	-- 		button:SetTemplate()
+	-- 		button.Icon:SetDrawLayer("BORDER")
+	-- 		button.Icon:SetInside()
+	-- 		button.Icon:SetTexCoord(unpack(E.TexCoords))
 
-			button.Border:SetAlpha(0)
+	-- 		button.Border:SetAlpha(0)
+	-- 	end
+
+	-- 	hooksecurefunc(set.SetName, "SetTextColor", function(_, r, g, b)
+	-- 		for j = 1, 8 do
+	-- 			local button = set["ItemButton"..j]
+	-- 			button:SetBackdropBorderColor(r, g, b)
+	-- 		end
+	-- 	end)
+	-- end
+
+	for i = 1, 3 do
+		if _G["EncounterJournalTab"..i] then
+			local tab = _G["EncounterJournalTab"..i]
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
 		end
-
-		hooksecurefunc(set.SetName, "SetTextColor", function(_, r, g, b)
-			for j = 1, 8 do
-				local button = set["ItemButton"..j]
-				button:SetBackdropBorderColor(r, g, b)
-			end
-		end)
-	end
-
-	for i = 1, 2 do
-		S:HandleTab(_G["EncounterJournalTab"..i])
 	end
 
 	hooksecurefunc("EncounterJournal_ListInstances", function()
@@ -201,12 +207,12 @@ local function LoadSkin()
 	end)
 
 	hooksecurefunc("EncounterJournal_DisplayInstance", function(instanceID)
-		local self = EncounterJournal.encounter
-		if EncounterJournal_SearchForOverview(instanceID) then
-			self.info.modelTab:SetPoint("TOP", self.info.bossTab, "BOTTOM", 0, -1)
-		else
-			self.info.modelTab:SetPoint("TOP", self.info.lootTab, "BOTTOM", 0, -1)
-		end
+		-- local self = EncounterJournal.encounter
+		-- if EncounterJournal_SearchForOverview(instanceID) then
+		-- 	self.info.modelTab:SetPoint("TOP", self.info.bossTab, "BOTTOM", 0, -1)
+		-- else
+		-- 	self.info.modelTab:SetPoint("TOP", self.info.lootTab, "BOTTOM", 0, -1)
+		-- end
 
 		local bossIndex = 1
 		local bossButton = _G["EncounterJournalBossButton"..bossIndex]
@@ -261,7 +267,7 @@ local function LoadSkin()
 
 	hooksecurefunc("EncounterJournal_SetBullets", function(object)
 		local parent = object:GetParent()
-		if parent.Bullets then
+		if parent and parent.Bullets then
 			for _, bullet in pairs(parent.Bullets) do
 				if not bullet.isSkinned then
 					bullet.Text:SetTextColor(1, 1, 1)

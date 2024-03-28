@@ -888,8 +888,13 @@ local function LoadSkin()
 	S:HandlePortraitFrame(CharacterFrame)
 
 	for i = 1, #CHARACTERFRAME_SUBFRAMES do
-		local tab = _G["CharacterFrameTab"..i]
-		S:HandleTab(tab)
+		local tab = _G["CharacterFrameTab" .. i]
+		if tab then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	GearManagerDialog:StripTextures()

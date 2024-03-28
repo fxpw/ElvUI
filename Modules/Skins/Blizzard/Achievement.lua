@@ -334,10 +334,12 @@ S:AddCallbackForAddon("Blizzard_AchievementUI", "Skin_Blizzard_AchievementUI", f
 	end
 
 	for i = 1, 2 do
-		local tab = _G["AchievementFrameTab"..i]
-		S:HandleTab(tab)
-		tab.text:SetPoint("CENTER", 0, 2)
+		local tab = _G["AchievementFrameTab" .. i]
+		if tab then
+			S:HandleTab(tab)
+			tab.text:SetPoint("CENTER", 0, 2)
 		tab.text.SetPoint = E.noop
+		end
 	end
 
 	AchievementFrameTab1:Point("BOTTOMLEFT", AchievementFrame, "BOTTOMLEFT", 0, -30)

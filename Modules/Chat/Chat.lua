@@ -178,11 +178,13 @@ local zuman = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\zuman1]],
 local kaiden = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kaiden]], ":32:32")
 local kirin = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kirin]], ":32:32")
 local nwd = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nwd]], ":20:40")
+
 local legion = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
 local nerfed  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nerfed]], ":32:32")
 local bagdemagus  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagdemagus]], ":24:24")
 local gb  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
 local angrybird  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\angrybird]], ":32:32")
+local slayer = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\slayer]], ":20:40")
 
 local lunt  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
 local eye2  = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":25:25")
@@ -298,6 +300,7 @@ local specialChatIconsSirus = {
 	["Lyntuk-Sirus x5 - 3.3.5a+"] = lunt,
 	["Акация-Sirus x5 - 3.3.5a+"] = eye2,
 	["Шиккай-Scourge x2 - 3.3.5a+"] = eye2,
+	["Devilqx-Scourge x2 - 3.3.5a+"] = slayer,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,

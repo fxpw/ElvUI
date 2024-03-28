@@ -317,8 +317,15 @@ local function LoadSkin()
 		end
 	end
 
+
 	for i = 1, 4 do
-		S:HandleTab(_G["LFDParentFrameTab"..i])
+		local tab = _G["LFDParentFrameTab" .. i]
+		if tab then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 	local tabstorem ={
 		"LFDParentFrameTab",

@@ -789,7 +789,13 @@ local function LoadSkin()
 	FriendsFrameBroadcastInput:Point("TOPLEFT", FriendsFrameStatusDropDown, "TOPRIGHT", 13, -3)
 
 	for i = 1, 5 do
-		S:HandleTab(_G["FriendsFrameTab"..i])
+		local tab = _G["FriendsFrameTab" .. i]
+		if tab then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	-- Friends List Frame

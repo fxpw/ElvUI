@@ -102,7 +102,11 @@ S:AddCallbackForAddon("Blizzard_AuctionUI", "Skin_Blizzard_AuctionUI", function(
 
 	for i = 1, AuctionFrame.numTabs do
 		local tab = _G["AuctionFrameTab"..i]
-
+		if tab then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+		end
 		S:HandleTab(tab)
 
 		if i == 1 then

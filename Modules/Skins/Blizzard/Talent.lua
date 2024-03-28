@@ -30,10 +30,10 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 		end
 
 		hooksecurefunc("PlayerTalentFrame_UpdateSpecs", function(activeTalentGroup, numTalentGroups)
-			if offset and numTalentGroups  <= 1 then
+			if offset and numTalentGroups <= 1 then
 				S:SetUIPanelWindowInfo(PlayerTalentFrame, "width")
 				offset = nil
-			elseif not offset and numTalentGroups  > 1 then
+			elseif not offset and numTalentGroups > 1 then
 				S:SetUIPanelWindowInfo(PlayerTalentFrame, "width", nil, 31)
 				offset = true
 			end
@@ -66,9 +66,9 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 	-- S:HandleScrollBar(PlayerTalentFrameScrollFrameScrollBar)
 
 	for i = 1, MAX_NUM_TALENTS do
-		local talent = _G["PlayerTalentFrameTalent"..i]
-		local icon = _G["PlayerTalentFrameTalent"..i.."IconTexture"]
-		local rank = _G["PlayerTalentFrameTalent"..i.."Rank"]
+		local talent = _G["PlayerTalentFrameTalent" .. i]
+		local icon = _G["PlayerTalentFrameTalent" .. i .. "IconTexture"]
+		local rank = _G["PlayerTalentFrameTalent" .. i .. "Rank"]
 
 		if talent then
 			talent:StripTextures()
@@ -84,11 +84,17 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 	end
 
 	for i = 1, 4 do
-		S:HandleTab(_G["PlayerTalentFrameTab"..i])
+		local tab = _G["PlayerTalentFrameTab" .. i]
+		if tab then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	for i = 1, C_Talent.GetNumTalentGroups() do
-		local tab = _G["PlayerSpecTab"..i]
+		local tab = _G["PlayerSpecTab" .. i]
 		if tab then
 			tab:GetRegions():Hide()
 
@@ -125,9 +131,8 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 	-- PlayerTalentFrameImportFrameButton:SetParent(PlayerTalentLinkButton)
 	-- PlayerTalentFrameImportFrameButton:ClearAllPoints()
 	-- PlayerTalentFrameImportFrameButton:SetPoint("LEFT", PlayerTalentLinkButton, "LEFT",-30,0)
-	importTexture:Size(28,28)
-	importTexture:SetPoint("CENTER",0,0)
+	importTexture:Size(28, 28)
+	importTexture:SetPoint("CENTER", 0, 0)
 	-- importtexture:SetAllPoints(PlayerTalentFrameImportButton)
 	importTexture:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\copy]])
-
 end)
