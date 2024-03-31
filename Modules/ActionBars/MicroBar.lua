@@ -30,6 +30,7 @@ end
 local set_atlas;
 do
 	local uimicromenu2x = [[Interface\AddOns\ElvUI\Media\Textures\uimicromenu2x]];
+	local _
 	local atlasinfo = {
 		['ui-hud-micromenu-achievement-disabled-2x'] = { uimicromenu2x, _, _, 201/256, 239/256, 109/512, 161/512 },
 		['ui-hud-micromenu-achievement-down-2x'] = { uimicromenu2x, _, _, 161/256, 199/256, 55/512, 107/512 },
