@@ -11,22 +11,6 @@ local InCombatLockdown = InCombatLockdown
 local RegisterStateDriver = RegisterStateDriver
 
 local MICRO_BUTTONS = SHARED_MICROMENU_BUTTONS
-local texture_strip = function(self, object)
-	for i = 1, self:GetNumRegions() do
-		local region = select(i, self:GetRegions())
-		if region and region:GetObjectType() == 'Texture' then
-			if object and type(object) == 'boolean' then
-				region:noop()
-			elseif region:GetDrawLayer() == object then
-				region:SetTexture(nil)
-			elseif object and type(object) == 'string' and region:GetTexture() ~= object then
-				region:SetTexture(nil)
-			else
-				region:SetTexture(nil)
-			end
-		end
-	end
-end
 local set_atlas;
 do
 	local uimicromenu2x = [[Interface\AddOns\ElvUI\Media\Textures\uimicromenu2x]];
@@ -155,7 +139,7 @@ function AB:HandleMicroButton(button)
 	if self.db.microbar.dfskin then
 		local buttonName = button:GetName():gsub('MicroButton', '')
 		local name = strlower(buttonName);
-		texture_strip(button)
+		button:StripTextures()
 		set_atlas(highlight, 'ui-hud-micromenu-' .. name .. '-mouseover-2x')
 		highlight:SetBlendMode('ADD')
 		set_atlas(normal, 'ui-hud-micromenu-' .. name .. '-up-2x')
