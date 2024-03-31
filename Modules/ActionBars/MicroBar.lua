@@ -309,11 +309,13 @@ end)
 
 local microEventFrame = CreateFrame("Frame", nil)
 microEventFrame:SetScript("OnEvent", function(self, event)
-	AB:HandleMicroButton(CollectionsMicroButton)
-	if event == "PLAYER_GUILD_UPDATE" or event == "GUILD_ROSTER_UPDATE" then
-		AB:HandleMicroButton(GuildMicroButton)
-	elseif event == "UNIT_PORTRAIT_UPDATE" then
-		AB:HandleMicroButton(CharacterMicroButton)
+	if CollectionsMicroButton then
+		AB:HandleMicroButton(CollectionsMicroButton)
+		if event == "PLAYER_GUILD_UPDATE" or event == "GUILD_ROSTER_UPDATE" then
+			AB:HandleMicroButton(GuildMicroButton)
+		elseif event == "UNIT_PORTRAIT_UPDATE" then
+			AB:HandleMicroButton(CharacterMicroButton)
+		end
 	end
 end)
 
