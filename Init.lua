@@ -2,7 +2,6 @@
 ~AddOn Engine~
 
 To load the AddOn engine add this to the top of your file:
-
 	local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 ]]
 --

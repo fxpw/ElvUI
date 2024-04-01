@@ -42307,6 +42307,7 @@ globals = {
 	"LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScrollScrollBar",
 	"GuildMicroButtonTabard",
 	"GuildMicroButton",
+	"CollectionsMicroButton",
 	"GetGuildCharacterCategory",
 	"WhoFrameColumnHeader5",
 	"GuildXPBarArt",
