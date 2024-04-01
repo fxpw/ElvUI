@@ -11,7 +11,92 @@ local InCombatLockdown = InCombatLockdown
 local RegisterStateDriver = RegisterStateDriver
 
 local MICRO_BUTTONS = SHARED_MICROMENU_BUTTONS
+local set_atlas;
+do
+	local uimicromenu2x = [[Interface\AddOns\ElvUI\Media\Textures\uimicromenu2x]];
+	local atlasinfo = {
+		['ui-hud-micromenu-achievement-disabled-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 109 / 512, 161 / 512 },
+		['ui-hud-micromenu-achievement-down-2x'] = { uimicromenu2x, nil, nil, 161 / 256, 199 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-achievement-mouseover-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-achievement-up-2x'] = { uimicromenu2x, nil, nil, 161 / 256, 199 / 256, 109 / 512, 161 / 512 },
+		['ui-hud-micromenu-pvp-disabled-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 163 / 512, 215 / 512 },
+		['ui-hud-micromenu-pvp-down-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 163 / 512, 215 / 512 },
+		['ui-hud-micromenu-pvp-mouseover-2x'] = { uimicromenu2x, nil, nil, 161 / 256, 199 / 256, 163 / 512, 215 / 512 },
+		['ui-hud-micromenu-pvp-up-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 271 / 512, 323 / 512 },
+		['ui-hud-micromenu-character-disabled-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 217 / 512, 269 / 512 },
+		['ui-hud-micromenu-character-down-2x'] = { uimicromenu2x, nil, nil, 121 / 256, 159 / 256, 163 / 512, 215 / 512 },
+		['ui-hud-micromenu-character-mouseover-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 217 / 512, 269 / 512 },
+		['ui-hud-micromenu-character-up-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 325 / 512, 377 / 512 },
+		['ui-hud-micromenu-collections-disabled-2x'] = { uimicromenu2x, nil, nil, 121 / 256, 159 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-collections-down-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 379 / 512, 431 / 512 },
+		['ui-hud-micromenu-collections-mouseover-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 433 / 512, 485 / 512 },
+		['ui-hud-micromenu-collections-up-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 163 / 512, 215 / 512 },
+		-- ['ui-hud-micromenu-communities-icon-notification-2x'] = { uimicromenu2x, nil, nil, 1/256, 21/256, 487/512, 509/512 },
+		['ui-hud-micromenu-mainmenu-disabled-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 217 / 512, 269 / 512 },
+		['ui-hud-micromenu-mainmenu-down-2x'] = { uimicromenu2x, nil, nil, 121 / 256, 159 / 256, 217 / 512, 269 / 512 },
+		['ui-hud-micromenu-mainmenu-mouseover-2x'] = { uimicromenu2x, nil, nil, 161 / 256, 199 / 256, 217 / 512, 269 / 512 },
+		['ui-hud-micromenu-mainmenu-up-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 217 / 512, 269 / 512 },
+		['ui-hud-micromenu-lfd-disabled-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 271 / 512, 323 / 512 },
+		['ui-hud-micromenu-lfd-down-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 109 / 512, 161 / 512 },
+		['ui-hud-micromenu-lfd-mouseover-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 109 / 512, 161 / 512 },
+		['ui-hud-micromenu-lfd-up-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 163 / 512, 215 / 512 },
+		['ui-hud-micromenu-socials-disabled-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-socials-down-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-socials-mouseover-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-socials-up-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-guild-disabled-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-guild-down-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-guild-mouseover-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-guild-up-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-encounterjournal-disabled-2x'] = { uimicromenu2x, nil, nil, 39 / 256, 1 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-encounterjournal-down-2x'] = { uimicromenu2x, nil, nil, 119 / 256, 81 / 256, 433 / 512, 485 / 512 },
+		['ui-hud-micromenu-encounterjournal-mouseover-2x'] = { uimicromenu2x, nil, nil, 227 / 256, 189 / 256, 433 / 512, 485 / 512 },
+		['ui-hud-micromenu-encounterjournal-up-2x'] = { uimicromenu2x, nil, nil, 159 / 256, 121 / 256, 55 / 512, 107 / 512 },
+		-- ['ui-hud-micromenu-highlightalert-2x'] = { uimicromenu2x, nil, nil, 121/256, 187/256, 379/512, 459/512 },
+		['ui-hud-micromenu-questlog-disabled-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 379 / 512, 431 / 512 },
+		['ui-hud-micromenu-questlog-down-2x'] = { uimicromenu2x, nil, nil, 121 / 256, 159 / 256, 271 / 512, 323 / 512 },
+		['ui-hud-micromenu-questlog-mouseover-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 433 / 512, 485 / 512 },
+		['ui-hud-micromenu-questlog-up-2x'] = { uimicromenu2x, nil, nil, 201 / 256, 239 / 256, 271 / 512, 323 / 512 },
+		['ui-hud-micromenu-store-disabled-2x'] = { uimicromenu2x, nil, nil, 41 / 256, 79 / 256, 325 / 512, 377 / 512 },
+		['ui-hud-micromenu-store-mouseover-2x'] = { uimicromenu2x, nil, nil, 121 / 256, 159 / 256, 325 / 512, 377 / 512 },
+		['ui-hud-micromenu-store-down-2x'] = { uimicromenu2x, nil, nil, 161 / 256, 199 / 256, 271 / 512, 323 / 512 },
+		['ui-hud-micromenu-store-up-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 109 / 512, 161 / 512 },
+		['ui-hud-micromenu-talent-disabled-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-talent-down-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 271 / 512, 323 / 512 },
+		['ui-hud-micromenu-talent-mouseover-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-talent-up-2x'] = { uimicromenu2x, nil, nil, 161 / 256, 199 / 256, 1 / 512, 53 / 512 },
+		['ui-hud-micromenu-spellbook-disabled-2x'] = { uimicromenu2x, nil, nil, 1 / 256, 39 / 256, 55 / 512, 107 / 512 },
+		['ui-hud-micromenu-spellbook-down-2x'] = { uimicromenu2x, nil, nil, 81 / 256, 119 / 256, 433 / 512, 485 / 512 },
+		['ui-hud-micromenu-spellbook-mouseover-2x'] = { uimicromenu2x, nil, nil, 189 / 256, 227 / 256, 433 / 512, 485 / 512 },
+		['ui-hud-micromenu-spellbook-up-2x'] = { uimicromenu2x, nil, nil, 121 / 256, 159 / 256, 55 / 512, 107 / 512 }
+	}
+	local function atlas_unpack(atlas)
+		assert(atlasinfo[atlas], 'Atlas [' .. atlas .. ']: failed to unpack')
+		return unpack(atlasinfo[atlas])
+	end
+	function set_atlas(self, atlas, size)
+		if not atlas then
+			self:SetTexture(nil)
+			return
+		end
 
+		local origWidth, origHeight = self:GetSize()
+		local tex, width, height, left, right, top, bottom, horizTile, vertTile = atlas_unpack(atlas)
+
+		self:SetTexture(tex)
+		self:SetTexCoord(left, right, top, bottom)
+		self:SetHorizTile(horizTile or false)
+		self:SetVertTile(vertTile or false)
+
+		if size then
+			self:SetWidth(width)
+			self:SetHeight(height)
+		else
+			self:SetWidth(origWidth)
+			self:SetHeight(origHeight)
+		end
+	end
+end
 -- if E.private.actionbar.enable then
 -- 	for _, frame in pairs({"ShapeshiftBarFrame", "PossessBarFrame", "PETACTIONBAR_YPOS", "MULTICASTACTIONBAR_YPOS", "MultiBarBottomLeft", "MultiCastActionBarFrame"}) do
 -- 		if UIPARENT_MANAGED_FRAME_POSITIONS[frame] then
@@ -44,28 +129,39 @@ function AB:HandleMicroButton(button)
 	local pushed = button:GetPushedTexture()
 	local normal = button:GetNormalTexture()
 	local disabled = button:GetDisabledTexture()
-
-	local f = CreateFrame("Frame", nil, button)
-	f:SetFrameLevel(button:GetFrameLevel() - 1)
-	f:SetTemplate("Default", true)
-	f:SetOutside(button)
-	button.backdrop = f
+	local highlight = button:GetHighlightTexture()
 
 	button:SetParent(ElvUI_MicroBar)
-	button:GetHighlightTexture():Kill()
 	button:HookScript("OnEnter", onEnter)
 	button:HookScript("OnLeave", onLeave)
 	button:SetHitRectInsets(0, 0, 0, 0)
 
-	pushed:SetTexCoord(0.17, 0.87, 0.5, 0.908)
-	pushed:SetInside(f)
-
-	normal:SetTexCoord(0.17, 0.87, 0.5, 0.908)
-	normal:SetInside(f)
-
-	if disabled then
-		disabled:SetTexCoord(0.17, 0.87, 0.5, 0.908)
-		disabled:SetInside(f)
+	if self.db.microbar.dfskin then
+		local buttonName = button:GetName():gsub('MicroButton', '')
+		local name = strlower(buttonName);
+		button:StripTextures()
+		set_atlas(highlight, 'ui-hud-micromenu-' .. name .. '-mouseover-2x')
+		highlight:SetBlendMode('ADD')
+		set_atlas(normal, 'ui-hud-micromenu-' .. name .. '-up-2x')
+		set_atlas(pushed, 'ui-hud-micromenu-' .. name .. '-down-2x')
+		if disabled then
+			set_atlas(disabled, 'ui-hud-micromenu-' .. name .. '-disabled-2x')
+		end
+	else
+		local f = CreateFrame("Frame", nil, button)
+		f:SetFrameLevel(button:GetFrameLevel() - 1)
+		f:SetTemplate("Default", true)
+		f:SetOutside(button)
+		button.backdrop = f
+		highlight:Kill()
+		pushed:SetTexCoord(0.17, 0.87, 0.5, 0.908)
+		pushed:SetInside(f)
+		normal:SetTexCoord(0.17, 0.87, 0.5, 0.908)
+		normal:SetInside(f)
+		if disabled then
+			disabled:SetTexCoord(0.17, 0.87, 0.5, 0.908)
+			disabled:SetInside(f)
+		end
 	end
 end
 
@@ -143,17 +239,34 @@ end
 
 function AB:UpdateMicroButtons()
 	self:UpdateMicroPositionDimensions()
+	if self.db.microbar.dfskin then
+		GuildMicroButton.Spinner:SetAlpha(0)
+		GuildMicroButtonTabard.emblem:SetAlpha(0)
+		GuildMicroButtonTabard.background:SetAlpha(0)
+	else
+		GuildMicroButton.Spinner:SetAlpha(1)
+		GuildMicroButtonTabard.emblem:SetAlpha(1)
+		GuildMicroButtonTabard.background:SetAlpha(1)
+		GuildMicroButtonTabard.emblem:ClearAllPoints()
+		GuildMicroButtonTabard.emblem:SetAllPoints(GuildMicroButton)
+		GuildMicroButtonTabard.background:ClearAllPoints()
+		GuildMicroButtonTabard.background:SetAllPoints(GuildMicroButtonTabard.emblem)
+	end
 	-- GuildMicroButtonTabard:SetPoint("TOPLEFT", -5, 24)
 	-- for k,v in pairs(GuildMicroButtonTabard) do
-		-- print(k,v)
+	-- 	print(k, v)
 	-- end
-
-	GuildMicroButtonTabard.emblem:ClearAllPoints()
-	GuildMicroButtonTabard.emblem:SetAllPoints(GuildMicroButton)
-	GuildMicroButtonTabard.background:ClearAllPoints()
 	-- local a,d = GuildMicroButton:GetSize()
 	-- GuildMicroButtonTabard.background:Size(a,d)
-	GuildMicroButtonTabard.background:SetAllPoints(GuildMicroButtonTabard.emblem)
+end
+
+function AB:DFEvent(event)
+	self:HandleMicroButton(CollectionsMicroButton)
+	if event == "PLAYER_GUILD_UPDATE" or event == "GUILD_ROSTER_UPDATE" then
+		self:HandleMicroButton(GuildMicroButton)
+	elseif event == "UNIT_PORTRAIT_UPDATE" then
+		self:HandleMicroButton(CharacterMicroButton)
+	end
 end
 
 function AB:SetupMicroBar()
@@ -171,7 +284,25 @@ function AB:SetupMicroBar()
 		self:HandleMicroButton(_G[MICRO_BUTTONS[i]])
 	end
 
-	MicroButtonPortrait:SetInside(CharacterMicroButton.backdrop)
+	if self.db.microbar.dfskin then
+		hooksecurefunc('CharacterMicroButton_SetPushed', function()
+			MicroButtonPortrait:SetTexCoord(0, 0, 0, 0);
+			MicroButtonPortrait:SetAlpha(0);
+		end)
+
+		hooksecurefunc('CharacterMicroButton_SetNormal', function()
+			MicroButtonPortrait:SetTexCoord(0, 0, 0, 0);
+			MicroButtonPortrait:SetAlpha(0);
+		end)
+		self:RegisterEvent("PLAYER_GUILD_UPDATE", "DFEvent")
+		self:RegisterEvent("GUILD_ROSTER_UPDATE", "DFEvent")
+		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", "DFEvent")
+		self:RegisterEvent("UPDATE_BINDINGS", "DFEvent")
+		self:RegisterEvent("PLAYER_ENTERING_WORLD", "DFEvent")
+	else
+		MicroButtonPortrait:SetInside(CharacterMicroButton.backdrop)
+	end
+
 
 	self:SecureHook("VehicleMenuBar_MoveMicroButtons", "UpdateMicroButtonsParent")
 	self:SecureHook("UpdateMicroButtons")
