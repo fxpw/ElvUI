@@ -125,11 +125,23 @@ local function onLeave(button)
 	end
 end
 
+local function UpdateDFTextures(button)
+	local buttonName = button:GetName():gsub('MicroButton', '')
+	local name = strlower(buttonName);
+	button:StripTextures()
+	set_atlas(button:GetHighlightTexture(), 'ui-hud-micromenu-' .. name .. '-mouseover-2x')
+	button:GetHighlightTexture():SetBlendMode('ADD')
+	set_atlas(button:GetNormalTexture(), 'ui-hud-micromenu-' .. name .. '-up-2x')
+	set_atlas(button:GetPushedTexture(), 'ui-hud-micromenu-' .. name .. '-down-2x')
+	if button:GetDisabledTexture() then
+		set_atlas(button:GetDisabledTexture(), 'ui-hud-micromenu-' .. name .. '-disabled-2x')
+	end
+end
+
 function AB:HandleMicroButton(button)
 	local pushed = button:GetPushedTexture()
 	local normal = button:GetNormalTexture()
 	local disabled = button:GetDisabledTexture()
-	local highlight = button:GetHighlightTexture()
 
 	button:SetParent(ElvUI_MicroBar)
 	button:HookScript("OnEnter", onEnter)
@@ -137,23 +149,14 @@ function AB:HandleMicroButton(button)
 	button:SetHitRectInsets(0, 0, 0, 0)
 
 	if self.db.microbar.dfskin then
-		local buttonName = button:GetName():gsub('MicroButton', '')
-		local name = strlower(buttonName);
-		button:StripTextures()
-		set_atlas(highlight, 'ui-hud-micromenu-' .. name .. '-mouseover-2x')
-		highlight:SetBlendMode('ADD')
-		set_atlas(normal, 'ui-hud-micromenu-' .. name .. '-up-2x')
-		set_atlas(pushed, 'ui-hud-micromenu-' .. name .. '-down-2x')
-		if disabled then
-			set_atlas(disabled, 'ui-hud-micromenu-' .. name .. '-disabled-2x')
-		end
+		UpdateDFTextures(button)
 	else
 		local f = CreateFrame("Frame", nil, button)
 		f:SetFrameLevel(button:GetFrameLevel() - 1)
 		f:SetTemplate("Default", true)
 		f:SetOutside(button)
 		button.backdrop = f
-		highlight:Kill()
+		button:GetHighlightTexture():Kill()
 		pushed:SetTexCoord(0.17, 0.87, 0.5, 0.908)
 		pushed:SetInside(f)
 		normal:SetTexCoord(0.17, 0.87, 0.5, 0.908)
@@ -261,11 +264,9 @@ function AB:UpdateMicroButtons()
 end
 
 function AB:DFEvent(event)
-	self:HandleMicroButton(CollectionsMicroButton)
+	UpdateDFTextures(CollectionsMicroButton)
 	if event == "PLAYER_GUILD_UPDATE" or event == "GUILD_ROSTER_UPDATE" then
-		self:HandleMicroButton(GuildMicroButton)
-	elseif event == "UNIT_PORTRAIT_UPDATE" then
-		self:HandleMicroButton(CharacterMicroButton)
+		UpdateDFTextures(GuildMicroButton)
 	end
 end
 
@@ -296,9 +297,6 @@ function AB:SetupMicroBar()
 		end)
 		self:RegisterEvent("PLAYER_GUILD_UPDATE", "DFEvent")
 		self:RegisterEvent("GUILD_ROSTER_UPDATE", "DFEvent")
-		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", "DFEvent")
-		self:RegisterEvent("UPDATE_BINDINGS", "DFEvent")
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", "DFEvent")
 	else
 		MicroButtonPortrait:SetInside(CharacterMicroButton.backdrop)
 	end
