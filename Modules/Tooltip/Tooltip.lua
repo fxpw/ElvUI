@@ -79,7 +79,7 @@ function TT:GetItemLvL(unit, giud)
 			return format("%s%s|r", E:RGBToHex(color.r, color.g, color.b), ilvl)
 		end
 	else
-		return TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL
+		return LOADING_LABEL
 	end
 end
 -- local inventorySlots = {
@@ -831,8 +831,8 @@ function TT:Initialize()
 					local line = _G["GameTooltipTextRight"..lineID]
 					local lineText = line:GetText()
 
-					if lineText and find(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL) then
-						line:SetText(gsub(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL, itemLevel))
+					if lineText and find(lineText, LOADING_LABEL) then
+						line:SetText(gsub(lineText, LOADING_LABEL, itemLevel))
 						break
 					end
 				end
@@ -904,8 +904,8 @@ end
 -- 					local line = _G["GameTooltipTextRight"..lineID]
 -- 					local lineText = line:GetText()
 
--- 					if lineText and find(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL) then
--- 						line:SetText(gsub(lineText, TOOLTIP_UNIT_LEVEL_ILEVEL_LOADING_LABEL, itemLevel))
+-- 					if lineText and find(lineText, LOADING_LABEL) then
+-- 						line:SetText(gsub(lineText, LOADING_LABEL, itemLevel))
 -- 						break
 -- 					end
 -- 				end
