@@ -315,7 +315,9 @@ function AB:PLAYER_REGEN_ENABLED()
 		AB.NeedsAdjustMaxStanceButtons = nil
 	end
 	if AB.NeedsPositionAndSizeBarTotem then
-		self:PositionAndSizeBarTotem()
+		if self.PositionAndSizeBarTotem then
+			self:PositionAndSizeBarTotem()
+		end
 		AB.NeedsPositionAndSizeBarTotem = nil
 	end
 	if AB.NeedRecallButtonUpdate then
