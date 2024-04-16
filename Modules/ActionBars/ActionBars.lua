@@ -780,8 +780,9 @@ function AB:DisableBlizzard()
 			_G["MultiCastActionButton"..i]:SetAttribute("statehidden", true)
 		end
 	end
-
-	MultiCastActionBarFrame.ignoreFramePositionManager = true
+	if not InCombatLockdown() then
+		MultiCastActionBarFrame.ignoreFramePositionManager = true
+	end
 
 	MainMenuBar:Hide()
 	MainMenuBar:SetParent(UIHider)
@@ -821,9 +822,13 @@ function AB:DisableBlizzard()
 	VehicleMenuBar:SetParent(UIHider)
 
 	if E.myclass ~= "SHAMAN" then
-		MultiCastActionBarFrame:UnregisterAllEvents()
-		MultiCastActionBarFrame:Hide()
-		MultiCastActionBarFrame:SetParent(UIHider)
+		if not InCombatLockdown() then
+			AB.NeedsPositionAndSizeBarTotem = true
+			self:RegisterEvent("PLAYER_REGEN_ENABLED")
+			MultiCastActionBarFrame:UnregisterAllEvents()
+			MultiCastActionBarFrame:Hide()
+			MultiCastActionBarFrame:SetParent(UIHider)
+		end
 	end
 
 	InterfaceOptionsActionBarsPanelAlwaysShowActionBars:EnableMouse(false)
