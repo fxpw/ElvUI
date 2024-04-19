@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _,ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 17
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 18
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -1739,9 +1739,9 @@ local function CLEU(self,...)
 			parryChance = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.PARRY_CHANGE, 15)
 		end
 
-		local absorb = (((parryChance+blockChance)/100)*4) * blockValue
-		if absorb > 32500 then
-			absorb = 32500
+		local absorb = (((parryChance+blockChance)/100)*5) * blockValue
+		if absorb > 50000 then
+			absorb = 50000
 		end
 		lastPalAbsorbTable[whoguid4][2] = absorb
 	elseif csarm[subevent3] and spellid10 == 308125 then
