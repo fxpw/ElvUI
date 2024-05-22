@@ -201,6 +201,7 @@ local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	["Vakh-Scourge x2 - 3.3.5a+"] = Vakh,
 	["Наглость-Scourge x2 - 3.3.5a+"] = Vakh,
+	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = Vakh,
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
