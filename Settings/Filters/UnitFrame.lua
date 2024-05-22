@@ -534,6 +534,7 @@ G.unitframe.buffwatch = {
 		[10278] = ClassBuff(10278, "BOTTOMRIGHT", {0.2, 0.2, 1}, true),		-- Hand of Protection
 		[53563] = ClassBuff(53563, "TOPLEFT", {0.7, 0.3, 0.7}),				-- Beacon of Light
 		[53601] = ClassBuff(53601, "TOPRIGHT", {0.4, 0.7, 0.2}),			-- Sacred Shield
+		[319540] = ClassBuff(319540,"BOTTOMLEFT", {0.9, 0.9, 0.9}),			-- T6 Hpal
 	},
 	SHAMAN = {
 		[16237] = ClassBuff(16237, "BOTTOMLEFT", {0.4, 0.7, 0.2}),			-- Ancestral Fortitude
