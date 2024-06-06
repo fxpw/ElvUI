@@ -342,6 +342,7 @@ local function LoadSkin()
 		"Store",
 		"PromoCodes",
 		"AudioOptions",
+		"WhatsNew"
 	}
 
 	for i = 1, #BlizzardMenuButtons do
