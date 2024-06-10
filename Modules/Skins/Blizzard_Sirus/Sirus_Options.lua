@@ -11,21 +11,27 @@ local function LoadSkin()
 
 	--checkbox
 	local checkboxes = {
-	"InterfaceOptionsControlsPanelBlockGuildInvites",
-	"InterfaceOptionsCombatPanelLossOfControll",
-	"InterfaceOptionsSocialPanelAutoJoinToLFG",
-	"InterfaceOptionsHelpPanelShowAchievementTooltip",
-	"InterfaceOptionsNotificationPanelShowSocialToast",
-	"InterfaceOptionsNotificationPanelBattlePassToast",
-	"InterfaceOptionsNotificationPanelToggleMove",
-	"InterfaceOptionsNotificationPanelAuctionHouseToast",
-	"InterfaceOptionsNotificationPanelToastSound",
-	"InterfaceOptionsNotificationPanelSocialToastSound",
-	"InterfaceOptionsNotificationPanelHeadHuntingToastSound",
-	"InterfaceOptionsNotificationPanelBattlePassToastSound",
-	"InterfaceOptionsNotificationPanelQueueToastSound",
-	"InterfaceOptionsNotificationPanelAuctionHouseToastSound",
-
+		"InterfaceOptionsControlsPanelBlockGuildInvites",
+		"InterfaceOptionsCombatPanelLossOfControll",
+		"InterfaceOptionsSocialPanelAutoJoinToLFG",
+		"InterfaceOptionsHelpPanelShowAchievementTooltip",
+		"InterfaceOptionsNotificationPanelShowSocialToast",
+		"InterfaceOptionsNotificationPanelBattlePassToast",
+		"InterfaceOptionsNotificationPanelToggleMove",
+		"InterfaceOptionsNotificationPanelAuctionHouseToast",
+		"InterfaceOptionsNotificationPanelToastSound",
+		"InterfaceOptionsNotificationPanelSocialToastSound",
+		"InterfaceOptionsNotificationPanelHeadHuntingToastSound",
+		"InterfaceOptionsNotificationPanelBattlePassToastSound",
+		"InterfaceOptionsNotificationPanelQueueToastSound",
+		"InterfaceOptionsNotificationPanelAuctionHouseToastSound",
+		"InterfaceOptionsNotificationPanelFlashClientIcon",
+		"InterfaceOptionsNotificationPanelShowToasts",
+		"InterfaceOptionsNotificationPanelCallOfAdventureToast",
+		"InterfaceOptionsNotificationPanelCallOfAdventureToastSound",
+		"InterfaceOptionsNotificationPanelMiscToast",
+		"InterfaceOptionsNotificationPanelMiscToastSound",
+		"InterfaceOptionsHardcorePanelNotificationSound",
 	}
 	for _, checkbox in ipairs(checkboxes) do
 		checkbox = _G[checkbox]
@@ -33,39 +39,21 @@ local function LoadSkin()
 			S:HandleCheckBox(checkbox)
 		end
 	end
-	--optframes
---		local optionFrames = {
---
---		}
---		for _, frame in ipairs(optionFrames) do
---			frame = _G[frame]
---			if frame then
---				frame:StripTextures()
---				frame:CreateBackdrop("Transparent")
---
---				if frame == VideoOptionsFramePanelContainer or frame == InterfaceOptionsFramePanelContainer then
---					frame.backdrop:Point("TOPLEFT", 0, 0)
---					frame.backdrop:Point("BOTTOMRIGHT", 0, 0)
---				else
---					frame.backdrop:Point("TOPLEFT", -1, 0)
---					frame.backdrop:Point("BOTTOMRIGHT", 0, 1)
---				end
---			end
---		end
-	--sliders
+
 	local sliders = {
 		"SpellOverlay_SpellHighlightAlphaSlider",
 		"SpellOverlay_OverlayArtAlphaSlider",
 		"InterfaceOptionsNotificationPanelNumDisplayToastsSlider",
-		"InterfaceOptionsCombatPanelLossOfControlScale"
-		}
+		"InterfaceOptionsCombatPanelLossOfControlScale",
+		"InterfaceOptionsHardcorePanelNotificationScaleSlider",
+	}
 	for _, slider in ipairs(sliders) do
 		S:HandleSliderFrame(_G[slider])
 	end
 	--buttons
 	local buttons = {
 		"InterfaceOptionsNotificationPanelResetPosition",
-		}
+	}
 	for _, button in ipairs(buttons) do
 		S:HandleButton(_G[button])
 	end
@@ -73,8 +61,9 @@ local function LoadSkin()
 	local dropdowns = {
 		"InterfaceOptionsSocialPanelWhisperMode",
 		"InterfaceOptionsStatusTextPanelDisplayDropDown",
-
-		}
+		"InterfaceOptionsHardcorePanelNotificationTypeDropDown",
+		"InterfaceOptionsHardcorePanelNotificationLevelDropDown",
+	}
 	for _, dropdown in ipairs(dropdowns) do
 		dropdown = _G[dropdown]
 		if dropdown then
