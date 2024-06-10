@@ -8272,6 +8272,7 @@ globals = {
 	"GuildInfoGuildEventButton",
 	"GuildInfoSaveButton",
 	"GuildInfoTextBackground",
+	"GuildItemSearchBox",
 	"GuildListScrollFrame",
 	"GuildListScrollFrameScrollBar",
 	"GuildListScrollFrameScrollBarScrollDownButton",
