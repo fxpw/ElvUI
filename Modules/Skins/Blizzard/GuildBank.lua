@@ -1,10 +1,13 @@
 local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local S = E:GetModule("Skins")
 
--- Lua functions
+--Lua functions
 local _G = _G
 local unpack = unpack
--- WoW API / Variables
+--WoW API / Variables
+local GetCurrentGuildBankTab = GetCurrentGuildBankTab
+local GetGuildBankItemLink = GetGuildBankItemLink
+local GetItemQualityColor = GetItemQualityColor
 
 S:AddCallbackForAddon("Blizzard_GuildBankUI", "Skin_Blizzard_GuildBankUI", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.gbank then return end
@@ -49,9 +52,9 @@ S:AddCallbackForAddon("Blizzard_GuildBankUI", "Skin_Blizzard_GuildBankUI", funct
 	S:HandleTab(GuildBankFrameTab4)
 
 	for i = 1, 6 do
-		local tab = _G["GuildBankTab" .. i]
-		local button = _G["GuildBankTab" .. i .. "Button"]
-		local texture = _G["GuildBankTab" .. i .. "ButtonIconTexture"]
+		local tab = _G["GuildBankTab"..i]
+		local button = _G["GuildBankTab"..i.."Button"]
+		local texture = _G["GuildBankTab"..i.."ButtonIconTexture"]
 
 		tab:StripTextures(true)
 
@@ -70,13 +73,13 @@ S:AddCallbackForAddon("Blizzard_GuildBankUI", "Skin_Blizzard_GuildBankUI", funct
 	local buttonMap = {}
 
 	for column = 1, NUM_GUILDBANK_COLUMNS do
-		_G["GuildBankColumn" .. column]:StripTextures()
+		_G["GuildBankColumn"..column]:StripTextures()
 
 		for index = 1, NUM_SLOTS_PER_GUILDBANK_GROUP do
-			local button = _G["GuildBankColumn" .. column .. "Button" .. index]
-			local icon = _G["GuildBankColumn" .. column .. "Button" .. index .. "IconTexture"]
-			local texture = _G["GuildBankColumn" .. column .. "Button" .. index .. "NormalTexture"]
-			local count = _G["GuildBankColumn" .. column .. "Button" .. index .. "Count"]
+			local button = _G["GuildBankColumn"..column.."Button"..index]
+			local icon = _G["GuildBankColumn"..column.."Button"..index.."IconTexture"]
+			local texture = _G["GuildBankColumn"..column.."Button"..index.."NormalTexture"]
+			local count = _G["GuildBankColumn"..column.."Button"..index.."Count"]
 
 			if texture then
 				texture:SetTexture(nil)
@@ -211,6 +214,6 @@ S:AddCallbackForAddon("Blizzard_GuildBankUI", "Skin_Blizzard_GuildBankUI", funct
 
 	-- Search box skin
 	S:HandleEditBox(GuildItemSearchBox)
-	GuildItemSearchBox:Point("TOPLEFT", GuildBankFrame, "TOPLEFT", 450, -35)
+	GuildItemSearchBox:Point("TOPLEFT", GuildBankFrame, "TOPLEFT", 450, -34)
 	GuildItemSearchBox:Size(150, 20)
 end)
