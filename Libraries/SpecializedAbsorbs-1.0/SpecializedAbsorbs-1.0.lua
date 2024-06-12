@@ -1812,6 +1812,7 @@ local function druid_SavageDefense_Create(srcGUID, srcName, dstGUID, dstName, sp
 	end
 end
 
+
 local function druid_SavageDefense_Hit(effectEntry, absorbedRemaining, overkill, spellschool)
 	-- TODO: what happens to mixed school attacks?
 	druidAbsorb = 0
@@ -1821,18 +1822,16 @@ local function druid_SavageDefense_Hit(effectEntry, absorbedRemaining, overkill,
 	end
 	return 0, true
 end
+
 local function druid_t6_SpellAbsorb_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local ap, _, quality = UnitStats(srcGUID, 0.0);
-	-- if privateScaling["4dtRaid5"] == 1 then
-		druidSpellAbsorb = druidSpellAbsorb + floor(ap * 0.25)
-		if druidSpellAbsorb > 50000 then
-			druidSpellAbsorb = 50000
-		end
-		return druidSpellAbsorb, quality;
-	-- else
-		-- return floor(ap * 0.25), quality;
-	-- end
+	druidSpellAbsorb = floor(ap * 0.25)
+	if druidSpellAbsorb > 50000 then
+		druidSpellAbsorb = 50000
+	end
+	return druidSpellAbsorb, quality;
 end
+
 local function druid_t6_SpellHit(effectEntry, absorbedRemaining, overkill, spellschool)
 		druidSpellAbsorb = 0
 	if spellschool ~= SCHOOL_MASK_PHYSICAL then
@@ -1859,12 +1858,7 @@ local function druid_ScanEquipment()
 	if IsEquippedItem(30229) or IsEquippedItem(103484) or IsEquippedItem(151678) then
 		n = n + 1
 	end
-	if n >= 4 then
-		privateScaling["4dtRaid5"] = 1
-	else
-		privateScaling["4dtRaid5"] = 0
-	end
-
+	privateScaling["4dtRaid5"] = n >= 4 and 1 or 0
 end
 
 local function druid_OnEquipmentChangedDelayed()
