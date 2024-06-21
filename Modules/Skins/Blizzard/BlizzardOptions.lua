@@ -103,6 +103,7 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"InterfaceOptionsControlsPanelStickyTargeting",
 		"InterfaceOptionsControlsPanelAutoDismount",
 		"InterfaceOptionsControlsPanelAutoClearAFK",
+		"InterfaceOptionsControlsPanelAutoDismountFlying",
 		"InterfaceOptionsControlsPanelBlockTrades",
 		"InterfaceOptionsControlsPanelLootAtMouse",
 		"InterfaceOptionsControlsPanelAutoLootCorpse",
@@ -202,6 +203,7 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"InterfaceOptionsMousePanelClickToMove",
 		"InterfaceOptionsMousePanelWoWMouse",
 		"InterfaceOptionsHelpPanelShowTutorials",
+		"InterfaceOptionsHelpPanelShowCustomTutorials",
 		"InterfaceOptionsHelpPanelLoadingScreenTips",
 		"InterfaceOptionsHelpPanelEnhancedTooltips",
 		"InterfaceOptionsHelpPanelBeginnerTooltips",
@@ -222,6 +224,7 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"InterfaceOptionsUnitFramePanelFullSizeFocusFrame",
 		"InterfaceOptionsFeaturesPanelPreviewTalentChanges",
 		"InterfaceOptionsFeaturesPanelEquipmentManager",
+		"InterfaceOptionsFeaturesPanelItemUpgradeLeftItemList",
 
 		"AudioOptionsSoundPanelEnableSound",
 		"AudioOptionsSoundPanelSoundEffects",
@@ -311,11 +314,14 @@ S:AddCallback("Skin_BlizzardOptions", function()
 
 	local dropdowns = {
 		"InterfaceOptionsControlsPanelAutoLootKeyDropDown",
+		"InterfaceOptionsControlsPanelBlockGroupInvites",
+		"InterfaceOptionsControlsPanelAutoAcceptGroupInvites",
 		"InterfaceOptionsCombatPanelTOTDropDown",
 		"InterfaceOptionsCombatPanelFocusCastKeyDropDown",
 		"InterfaceOptionsCombatPanelSelfCastKeyDropDown",
 		"InterfaceOptionsDisplayPanelAggroWarningDisplay",
 		"InterfaceOptionsDisplayPanelWorldPVPObjectiveDisplay",
+		"InterfaceOptionsDisplayPanelLootAlertThreshold",
 		"InterfaceOptionsSocialPanelChatStyle",
 		"InterfaceOptionsSocialPanelTimestamps",
 		"InterfaceOptionsCombatTextPanelFCTDropDown",

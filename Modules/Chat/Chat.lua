@@ -159,7 +159,7 @@ do --this can save some main file locals
 end
 
 local ElvBlue      = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
-local Vakh         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Vakh]], ":24:24")
+local accidev         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\accidev]], ":24:24")
 local Dodzo        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
 local Apolexis     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
 -- local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
@@ -181,11 +181,12 @@ local nwd          = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nw
 
 local legion       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
 local Euphy        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Euphy]], ":32:32")
+local Litereal     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Litereal]], ":32:32")
 local nerfed       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nerfed]], ":32:32")
 local bagdemagus   = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagdemagus]], ":24:24")
 local gb           = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
 local angrybird    = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\angrybird]], ":32:32")
-local slayer       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\slayer]], ":20:40")
+-- local slayer       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\slayer]], ":20:40")
 
 local lunt         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
 local eye2         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":25:25")
@@ -201,9 +202,9 @@ local function CreateRandomIcon()
 end
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
-	["Vakh-Scourge x2 - 3.3.5a+"] = Vakh,
-	["Наглость-Scourge x2 - 3.3.5a+"] = Vakh,
-	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = Vakh,
+	["Cureit-Scourge x2 - 3.3.5a+"] = accidev,
+	["Наглость-Scourge x2 - 3.3.5a+"] = accidev,
+	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = accidev,
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
@@ -308,7 +309,9 @@ local specialChatIconsSirus = {
 	["Юфимея-Scourge x2 - 3.3.5a+"] = Euphy,
 	["Euphy-Scourge x2 - 3.3.5a+"] = Euphy,
 	["Юфичка-Scourge x2 - 3.3.5a+"] = Euphy,
-	["Юфич-Scourge x2 - 3.3.5a+"] = Euphy,
+
+	["Лайтрил-Scourge x2 - 3.3.5a+"] = Litereal,
+	["Litereal-Scourge x2 - 3.3.5a+"] = Litereal,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
