@@ -181,7 +181,7 @@ local nwd          = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nw
 
 local legion       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
 local Euphy        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Euphy]], ":32:32")
-local Litereal     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Litereal]], ":32:32")
+local Litereal     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Litereal]], ":24:24")
 local nerfed       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nerfed]], ":32:32")
 local bagdemagus   = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagdemagus]], ":24:24")
 local gb           = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
