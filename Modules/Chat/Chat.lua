@@ -203,8 +203,11 @@ end
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	["Cureit-Scourge x2 - 3.3.5a+"] = accidev,
+	["Cureit-ProxyEU Scourge x2 - 3.3.5a+"] = accidev,
 	["Наглость-Scourge x2 - 3.3.5a+"] = accidev,
+	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = accidev,
 	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = accidev,
+	["Выстрелбелка-ProxyEU Scourge x2 - 3.3.5a+"] = accidev,
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
 	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
@@ -306,11 +309,17 @@ local specialChatIconsSirus = {
 	["Шиккай-Scourge x2 - 3.3.5a+"] = eye2,
 
 	["Юфи-Scourge x2 - 3.3.5a+"] = Euphy,
+	["Юфи-ProxyEU Scourge x2 - 3.3.5a+"] = Euphy,
 	["Юфимея-Scourge x2 - 3.3.5a+"] = Euphy,
+	["Юфимея-ProxyEU Scourge x2 - 3.3.5a+"] = Euphy,
 	["Euphy-Scourge x2 - 3.3.5a+"] = Euphy,
+	["Euphy-ProxyEU Scourge x2 - 3.3.5a+"] = Euphy,
 	["Юфичка-Scourge x2 - 3.3.5a+"] = Euphy,
+	["Юфичка-ProxyEU Scourge x2 - 3.3.5a+"] = Euphy,
 
+	["Лайтрил-ProxyEU Scourge x2 - 3.3.5a+"] = Litereal,
 	["Лайтрил-Scourge x2 - 3.3.5a+"] = Litereal,
+	["Litereal-ProxyEU Scourge x2 - 3.3.5a+"] = Litereal,
 	["Litereal-Scourge x2 - 3.3.5a+"] = Litereal,
 }
 local randomChatIcons = {
