@@ -159,7 +159,7 @@ do --this can save some main file locals
 end
 
 local ElvBlue      = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
-local accidev         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\accidev]], ":24:24")
+local accidev      = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\accidev]], ":24:24")
 local Dodzo        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
 local Apolexis     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
 -- local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
@@ -177,12 +177,13 @@ local darling      = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da
 local zuman        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\zuman1]], ":32:32")
 local kaiden       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kaiden]], ":32:32")
 local kirin        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kirin]], ":32:32")
+local thorncrown   = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\thorncrown]], ":28:28")
 local nwd          = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nwd]], ":20:40")
 
 local legion       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\legion]], ":30:30")
 local Euphy        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Euphy]], ":32:32")
 local Litereal     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Litereal]], ":24:24")
-local Tokyo     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\tokyo]], ":24:24")
+local Tokyo        = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\tokyo]], ":24:24")
 local nerfed       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\nerfed]], ":32:32")
 local bagdemagus   = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagdemagus]], ":24:24")
 local gb           = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
@@ -207,7 +208,7 @@ local specialChatIconsSirus = {
 	["Cureit-ProxyEU Scourge x2 - 3.3.5a+"] = accidev,
 	["Наглость-Scourge x2 - 3.3.5a+"] = accidev,
 	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = accidev,
-	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = accidev,
+	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = thorncrown,
 	["Выстрелбелка-ProxyEU Scourge x2 - 3.3.5a+"] = accidev,
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
 	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
@@ -333,6 +334,14 @@ local specialChatIconsSirus = {
 	["Планета-Scourge x2 - 3.3.5a+"] = Tokyo,
 	["Темныи-ProxyEU Scourge x2 - 3.3.5a+"] = Tokyo,
 	["Темныи-Scourge x2 - 3.3.5a+"] = Tokyo,
+
+	["Kwxsq-Sirus x5 - 3.3.5a+"] = thorncrown,
+	["Lomael-Sirus x5 - 3.3.5a+"] = thorncrown,
+	["Kwx-ProxyEU Scourge x2 - 3.3.5a+"] = thorncrown,
+	["Kwx-Scourge x2 - 3.3.5a+"] = thorncrown,
+	["Mirias-Sirus x5 - 3.3.5a+"] = thorncrown,
+	["Thornmuse-ProxyEU Scourge x2 - 3.3.5a+"] = thorncrown,
+	["Thornmuse-Scourge x2 - 3.3.5a+"] = thorncrown,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
