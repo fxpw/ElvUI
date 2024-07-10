@@ -74,7 +74,9 @@ local OnClick = function(self)
 		ss = self:GetID()
 		sq = self.quality
 		sn = self.name:GetText()
-		LootSlot(ss)
+		if not InCombatLockdown() then
+			LootSlot(ss)
+		end
 	end
 end
 

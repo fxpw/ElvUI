@@ -944,7 +944,7 @@ local function LoadSkin()
 
 	S:HandlePortraitFrame(PVPLadderInfoFrame)
 	PVPLadderInfoFrame.CentralContainer:StripTextures()
-	PVPLadderInfoFrame.CentralContainer.BackgroundOverlay:SetAlpha(0)
+	-- PVPLadderInfoFrame.CentralContainer.BackgroundOverlay:SetAlpha(0)
 	S:HandleScrollBar(PVPLadderInfoFrame.CentralContainer.ScrollFrame.ScrollBar)
 	PVPLadderInfoFrame.CentralContainer.ScrollFrame.ShadowOverlay:StripTextures()
 	PVPLadderInfoFrame.TopContainer.ShadowOverlay:StripTextures()

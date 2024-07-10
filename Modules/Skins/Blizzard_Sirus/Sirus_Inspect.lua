@@ -111,7 +111,7 @@ local function LoadSkin()
 	end)
 
 	InspectPVPFrame.Ladder.CentralContainer:StripTextures()
-	InspectPVPFrame.Ladder.CentralContainer.BackgroundOverlay:SetAlpha(0)
+	-- InspectPVPFrame.Ladder.CentralContainer.BackgroundOverlay:SetAlpha(0)
 
 	S:HandleScrollBar(InspectPVPFrameLadderCentralContainerScrollFrameScrollBar)
 
