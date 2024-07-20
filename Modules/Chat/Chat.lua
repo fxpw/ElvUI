@@ -344,7 +344,7 @@ local specialChatIconsSirus = {
 	["Thornmuse-ProxyEU Scourge x2 - 3.3.5a+"] = thorncrown,
 	["Thornmuse-Scourge x2 - 3.3.5a+"] = thorncrown,
 	["Luana-Scourge x2 - 3.3.5a+"] = lun,
-	["Luana-ProxyEU Scourge x2 - 3.3.5a+"] = thorncrown,
+	["Luana-ProxyEU Scourge x2 - 3.3.5a+"] = lun,
 
 
 }
