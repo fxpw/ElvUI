@@ -192,6 +192,7 @@ local angrybird    = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\an
 
 local lunt         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
 local eye2         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":25:25")
+local lun         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lun]], ":32:32")
 
 
 
@@ -342,6 +343,10 @@ local specialChatIconsSirus = {
 	["Mirias-Sirus x5 - 3.3.5a+"] = thorncrown,
 	["Thornmuse-ProxyEU Scourge x2 - 3.3.5a+"] = thorncrown,
 	["Thornmuse-Scourge x2 - 3.3.5a+"] = thorncrown,
+	["Luana-Scourge x2 - 3.3.5a+"] = lun,
+	["Luana-ProxyEU Scourge x2 - 3.3.5a+"] = thorncrown,
+
+
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
