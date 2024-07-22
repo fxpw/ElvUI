@@ -244,6 +244,8 @@ local specialChatIconsSirus = {
 	["Destroyeded-ProxyEU Scourge x2 - 3.3.5a+"] = Meat,
 	["Naenche-Scourge x2 - 3.3.5a+"] = Meat,
 	["Naenche-ProxyEU Scourge x2 - 3.3.5a+"] = Meat,
+	["Farhik-Scourge x2 - 3.3.5a+"] = Meat,
+	["Farhik-ProxyEU Scourge x2 - 3.3.5a+"] = Meat,
 
 	["Pampeya-Scourge x2 - 3.3.5a+"] = Unicorn,
 	["Stabiya-Scourge x2 - 3.3.5a+"] = Unicorn,
