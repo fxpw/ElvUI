@@ -193,6 +193,7 @@ local angrybird    = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\an
 local lunt         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
 local eye2         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":25:25")
 local lun         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lun]], ":32:32")
+local raccon         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]], ":32:32")
 
 
 
@@ -348,6 +349,16 @@ local specialChatIconsSirus = {
 	["Luana-Scourge x2 - 3.3.5a+"] = lun,
 	["Luana-ProxyEU Scourge x2 - 3.3.5a+"] = lun,
 
+	["Главныйвагон-Scourge x2 - 3.3.5a+"] = raccon,
+	["Главныйвагон-ProxyEU Scourge x2 - 3.3.5a+"] = raccon,
+	["Праска-Scourge x2 - 3.3.5a+"] = raccon,
+	["Праска-ProxyEU Scourge x2 - 3.3.5a+"] = raccon,
+	["Шваблик-Scourge x2 - 3.3.5a+"] = raccon,
+	["Шваблик-ProxyEU Scourge x2 - 3.3.5a+"] = raccon,
+	["Цепнойпес-Scourge x2 - 3.3.5a+"] = raccon,
+	["Цепнойпес-ProxyEU Scourge x2 - 3.3.5a+"] = raccon,
+	["Кривойлучник-Scourge x2 - 3.3.5a+"] = raccon,
+	["Кривойлучник-ProxyEU Scourge x2 - 3.3.5a+"] = raccon,
 
 }
 local randomChatIcons = {
