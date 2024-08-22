@@ -800,18 +800,20 @@ function TT:Initialize()
 		TT:SecureHook(SocialToastFrame, "SetPoint", "RepositionSocialToast")
 	elseif SocialToastAnchorFrame then
 		hooksecurefunc(SocialToastAnchorFrame, "ShowToast", function(self)
-			for _, toastFrame in ipairs(self.toastFrames) do
-				if not toastFrame.isSkinned then
-					toastFrame:SetTemplate("Transparent")
-					S:HandleIcon(toastFrame.Icon)
-					toastFrame.backdrop:SetFrameLevel(toastFrame:GetFrameLevel() + 2)
-					toastFrame.Icon:SetParent(toastFrame.backdrop)
-					S:HandleCloseButton(toastFrame.CloseButton)
+			if self.toastFrames then
+				for _, toastFrame in ipairs(self.toastFrames) do
+					if not toastFrame.isSkinned then
+						toastFrame:SetTemplate("Transparent")
+						S:HandleIcon(toastFrame.Icon)
+						toastFrame.backdrop:SetFrameLevel(toastFrame:GetFrameLevel() + 2)
+						toastFrame.Icon:SetParent(toastFrame.backdrop)
+						S:HandleCloseButton(toastFrame.CloseButton)
 
-					toastFrame.isSkinned = true
+						toastFrame.isSkinned = true
+					end
+
+					toastFrame.Icon:SetTexCoord(unpack(E.TexCoords))
 				end
-
-				toastFrame.Icon:SetTexCoord(unpack(E.TexCoords))
 			end
 		end)
 	end
