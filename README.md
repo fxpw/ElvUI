@@ -1,6 +1,6 @@
 [![Game Version](https://img.shields.io/badge/wow-3.3.5-blue.svg)](https://github.com/ElvUI-WotLK)
-[![Discord](https://discordapp.com/api/guilds/259362419372064778/widget.png?style=shield)](https://discord.gg/UXSc7nt)
-[![GitHub Actions](https://github.com/ElvUI-WotLK/ElvUI/workflows/lint/badge.svg?branch=master&event=push)](https://github.com/ElvUI-WotLK/ElvUI/actions?query=workflow%3Alint+branch%3Amaster)
+[![Discord](https://discordapp.com/api/guilds/914079030125420565/widget.png?style=shield)](https://discord.gg/addony-dlia-sirus-su-914079030125420565)
+
 
 # ElvUI - Core (3.3.5a) for sirus.su
 Тут только код без настроек, настройки в https://github.com/fxpw/ElvUI_OptionsUI
