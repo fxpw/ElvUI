@@ -1,5 +1,5 @@
 [![Game Version](https://img.shields.io/badge/wow-3.3.5-blue.svg)](https://github.com/ElvUI-WotLK](https://github.com/fxpw/ElvUI)
-[![Discord](https://discordapp.com/api/guilds/914079030125420565/widget.png?style=shield)](https://dcbadge.limes.pink/api/server/https://discord.gg/addony-dlia-sirus-su-914079030125420565](https://discord.gg/addony-dlia-sirus-su-914079030125420565)
+[![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/addony-dlia-sirus-su-914079030125420565)](https://discord.gg/addony-dlia-sirus-su-914079030125420565)
 
 
 # ElvUI - Core (3.3.5a) for sirus.su
