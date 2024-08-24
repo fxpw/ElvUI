@@ -802,7 +802,7 @@ function TT:Initialize()
 		hooksecurefunc(SocialToastAnchorFrame, "ShowToast", function(self)
 			if type(self) == "table" then
 				if self.activeToasts and type(self.activeToasts) == "table" then
-					for key, toastFrame in pairs(self.activeToasts) do
+					for _, toastFrame in pairs(self.activeToasts) do
 						if type(toastFrame) == "table" then
 							if not toastFrame.isSkinned then
 								toastFrame:SetTemplate("Transparent")
