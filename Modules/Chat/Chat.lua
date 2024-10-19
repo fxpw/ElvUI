@@ -188,13 +188,13 @@ local nerfed       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ne
 local bagdemagus   = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagdemagus]], ":24:24")
 local gb           = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
 local angrybird    = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\angrybird]], ":32:32")
--- local slayer       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\slayer]], ":20:40")
+local marazmat     = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\marazmat]], ":24:24")
 
 local lunt         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
 local eye2         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":25:25")
-local lun         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lun]], ":32:32")
-local raccon         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]], ":32:32")
-local ori         = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
+local lun          = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lun]], ":32:32")
+local raccon       = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]], ":32:32")
+local ori          = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
 
 
 
@@ -362,6 +362,15 @@ local specialChatIconsSirus = {
 	["Кривойлучник-ProxyEU Scourge x2 - 3.3.5a+"] = raccon,
 
 	["Пристика-Sirus x5 - 3.3.5a+"] = ori,
+
+	["Нехоли-Scourge x2 - 3.3.5a+"] = marazmat,
+	["Нехоли-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat,
+	["Totemoffnet-Scourge x2 - 3.3.5a+"] = marazmat,
+	["Totemoffnet-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat,
+	["Витаминки-Scourge x2 - 3.3.5a+"] = marazmat,
+	["Витаминки-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat,
+	["Marazmat-Scourge x2 - 3.3.5a+"] = marazmat,
+	["Marazmat-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
