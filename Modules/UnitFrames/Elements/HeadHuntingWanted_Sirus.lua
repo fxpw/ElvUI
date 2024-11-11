@@ -37,18 +37,18 @@ local event = CreateFrame("Frame")
 event:RegisterEvent("CHAT_MSG_ADDON")
 event:SetScript("OnEvent",function(a1, prefix, eventIn, msg, sender)
 
-	if eventIn ~= "ASMSG_HEADHUNTING_IS_PLAYER_WANTED" then return end
+	-- if eventIn ~= "ASMSG_HEADHUNTING_IS_PLAYER_WANTED" then return end
 
-	local wantedStorage 	= C_CacheInstance:Get("ASMSG_HEADHUNTING_IS_PLAYER_WANTED", {})
-	local messageStorage 	= C_Split(msg, ",")
-	local GUID 				= tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.GUID])
-	local isWanted 			= messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.ISWANTED] and tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.ISWANTED])
+	-- local wantedStorage 	= C_CacheInstance:Get("ASMSG_HEADHUNTING_IS_PLAYER_WANTED", {})
+	-- local messageStorage 	= C_Split(msg, ",")
+	-- local GUID 				= tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.GUID])
+	-- local isWanted 			= messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.ISWANTED] and tonumber(messageStorage[E_HEADHUNTING_PLAYER_IS_WANTED.ISWANTED])
 
-	if not isWanted then
-		return
-	end
-	if not GUID then return end
-	wantedStorage[GUID] = isWanted == 1
+	-- if not isWanted then
+	-- 	return
+	-- end
+	-- if not GUID then return end
+	-- wantedStorage[GUID] = isWanted == 1
 
 	for _, frame in ipairs(frames) do
 		UF:Update_HeadHuntingWanted(frame, true)
@@ -77,8 +77,9 @@ function UF:Update_HeadHuntingWanted(frame, dontSendRequest)
 	if frame.unit and UnitExists(frame.unit) and UnitIsPlayer(frame.unit) then
 		local guid = UnitGUID(frame.unit)
 		if guid then
-			local wantedStorage = C_CacheInstance:Get("ASMSG_HEADHUNTING_IS_PLAYER_WANTED", {})
-			isWanted = wantedStorage[tonumber(guid)]
+			-- local wantedStorage = C_CacheInstance:Get("ASMSG_HEADHUNTING_IS_PLAYER_WANTED", {})
+			isWanted = C_Unit.IsHeadHuntingWanted(frame.unit)
+
 
 			if not dontSendRequest then
 				SendServerMessage("ACMSG_HEADHUNTING_IS_PLAYER_WANTED", guid)
