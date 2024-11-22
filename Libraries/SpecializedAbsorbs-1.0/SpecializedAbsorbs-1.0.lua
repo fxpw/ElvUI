@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------
 -- SpecializedAbsorbs -fixes fxpw for sirus
 ------------------------------------------------------------------------
-local _,ns = ...
+local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 19
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 20
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -32,7 +32,7 @@ if oldminor then
 		Core.Disable()
 	end
 else
-	lib.Core = {callbacks = LibStub:GetLibrary("CallbackHandler-1.0"):New(lib), Events = {}}
+	lib.Core = { callbacks = LibStub:GetLibrary("CallbackHandler-1.0"):New(lib), Events = {} }
 	Core = lib.Core
 
 	local frame = CreateFrame("Frame", "SpecializedAbsorbs_Events")
@@ -129,8 +129,38 @@ local UNIT_STAT_VALUE = {
 	BLOCK = 8,
 	BLOCK_CHANCE = 9,
 	PARRY_CHANGE = 10,
+	VIP_MULTIPLY_VALUE = 11,
 }
 
+VIP_MULTIPLY = {
+	[308221] = 1.01, --  Elite VIP Bronze
+	[308224] = 1.04, --  Elite VIP Bronze
+	[308225] = 1.05, --  Elite VIP Silver
+	[308226] = 1.06, --  Elite VIP Gold
+	[308227] = 1.07, --  PRIME VIP Bronze
+	[308222] = 1.02, --  VIP Silver
+	[308223] = 1.03, --  VIP Gold
+	[313090] = 1.08, --  PRIME VIP Silver
+	[313093] = 1.09, --  PRIME VIP Gold
+}
+
+local self_cached_value = nil
+local function GetSelfMultipleValue()
+	if self_cached_value ~= nil then
+		return self_cached_value
+	end
+	self_cached_value = 1
+
+	for i = 1, 50 do
+		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId =
+		UnitDebuff("player", i)
+		if not spellId then break end
+		if VIP_MULTIPLY[spellId] then
+			self_cached_value = VIP_MULTIPLY[spellId]
+			break
+		end
+	end
+end
 -- Table of all scaling factors to absorb effects like talents, items, set boni, buffs
 -- If there is no mechanism in Cataclysm to obtain the correct absorb amount by any effect
 -- this entries are meant to be distributed among a group, raid, etc
@@ -151,7 +181,7 @@ local GUIDtoAbsorbHealSpells
 
 -- Class-specific callbacks
 local OnEnableClass = {}
-local OnScalingDecode = setmetatable({}, {__index = function(table, class) return table.DEFAULT end})
+local OnScalingDecode = setmetatable({}, { __index = function(table, class) return table.DEFAULT end })
 
 -- Shortcut to the most important core functions
 local ApplySingularEffect
@@ -209,11 +239,11 @@ local function NoOp() end
 
 local SortEffects
 do
-	local mage_fire_ward = {543, 8457, 8458, 10223, 10225, 27128, 43010}
-	local mage_frost_ward = {6143, 8461, 8462, 10177, 28609, 32796, 43012}
-	local mage_ice_barrier = {11426, 13031, 13032, 13033, 27134, 33405, 43038, 43039}
-	local warlock_shadow_ward = {6229, 11739, 11740, 28610, 47890, 47891}
-	local warlock_sacrifice = {7812, 19438, 19440, 19441, 19442, 19443, 27273, 47985, 47986}
+	local mage_fire_ward = { 543, 8457, 8458, 10223, 10225, 27128, 43010 }
+	local mage_frost_ward = { 6143, 8461, 8462, 10177, 28609, 32796, 43012 }
+	local mage_ice_barrier = { 11426, 13031, 13032, 13033, 27134, 33405, 43038, 43039 }
+	local warlock_shadow_ward = { 6229, 11739, 11740, 28610, 47890, 47891 }
+	local warlock_sacrifice = { 7812, 19438, 19440, 19441, 19442, 19443, 27273, 47985, 47986 }
 
 	function SortEffects(a, b)
 		-- use timestamp in case of the same id
@@ -385,7 +415,7 @@ function Core.Enable()
 	playerclass = select(2, UnitClass("player"))
 	playerid = UnitGUID("player")
 
-	Core.activeEffects = {bySpell = {}, byPriority = {}, Area = {}}
+	Core.activeEffects = { bySpell = {}, byPriority = {}, Area = {} }
 
 	activeEffectsBySpell = Core.activeEffects.bySpell
 	activeEffectsByPriority = Core.activeEffects.byPriority
@@ -402,10 +432,10 @@ function Core.Enable()
 	CombatTriggersOnAuraApplied = Core.CombatTriggers.OnAuraApplied
 	CombatTriggersOnAuraRemoved = Core.CombatTriggers.OnAuraRemoved
 
-	Core.UnitStatsTable = {[playerid] = {playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0, 0, 0}}
+	Core.UnitStatsTable = { [playerid] = { playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0, 0, GetSelfMultipleValue() } }
 	UnitStatsTable = Core.UnitStatsTable
 
-	Core.Scaling = {[-1] = {}, [playerid] = {}}
+	Core.Scaling = { [-1] = {}, [playerid] = {} }
 	Scaling = Core.Scaling
 
 	playerScaling = Scaling[playerid]
@@ -537,6 +567,7 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 
 	local value, quality = effectInfo[3](srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	if value == nil then return end
+	value = value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1)
 	if t5TanksSpellId[spellid] and value > 50000 then
 		value = 50000
 	end
@@ -544,18 +575,20 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 	-- No entry yet for this unit
 	if not destEffects then
 		-- Not this specific effect yet
-		effectEntry = {spellid, effectInfo[1], value, value, quality, 0, timestamp}
-		destEffects = {[-1] = 0, [-2] = 1.0, [spellid] = effectEntry}
+		effectEntry = { spellid, effectInfo[1], value, value, quality, 0, timestamp }
+		destEffects = { [-1] = 0, [-2] = 1.0, [spellid] = effectEntry }
 		activeEffectsBySpell[dstGUID] = destEffects
-		activeEffectsByPriority[dstGUID] = {effectEntry}
-		callbacks:Fire("EffectApplied", srcGUID, srcName, dstGUID, dstName, spellid, spellschool, value, quality, effectInfo[2])
+		activeEffectsByPriority[dstGUID] = { effectEntry }
+		callbacks:Fire("EffectApplied", srcGUID, srcName, dstGUID, dstName, spellid, spellschool, value, quality,
+			effectInfo[2])
 	elseif not destEffects[spellid] then
 		-- Effect exists already
-		effectEntry = {spellid, effectInfo[1], value, value, quality, 0, timestamp}
+		effectEntry = { spellid, effectInfo[1], value, value, quality, 0, timestamp }
 		destEffects[spellid] = effectEntry
 		tinsert(activeEffectsByPriority[dstGUID], effectEntry)
 		tsort(activeEffectsByPriority[dstGUID], SortEffects)
-		callbacks:Fire("EffectApplied", srcGUID, srcName, dstGUID, dstName, spellid, spellschool, value, quality, effectInfo[2])
+		callbacks:Fire("EffectApplied", srcGUID, srcName, dstGUID, dstName, spellid, spellschool, value, quality,
+			effectInfo[2])
 	else
 		effectEntry = destEffects[spellid]
 		local prevAmount = effectEntry[3]
@@ -588,9 +621,9 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 		-- We add a 5s grace period for latency and all kind of stuff
 		-- This duration timeout should only be needed if the unit moved out of combat log
 		-- reporting range anyway
-		effectEntry[6] = Core:ScheduleTimer(Events.OnSingularTimeout, effectInfo[2] + 5, {dstGUID, spellid})
+		effectEntry[6] = Core:ScheduleTimer(Events.OnSingularTimeout, effectInfo[2] + 5, { dstGUID, spellid })
 	else
-		effectEntry[6] = Core:ScheduleRepeatingTimer(Events.OnSingularActivityCheck, 8, {dstGUID, spellid})
+		effectEntry[6] = Core:ScheduleRepeatingTimer(Events.OnSingularActivityCheck, 8, { dstGUID, spellid })
 	end
 end
 
@@ -607,7 +640,7 @@ function Core.ApplyAreaEffect(timestamp, triggerGUID, triggerName, dstGUID, dstN
 		-- Since it is created by a summoned unit radiating it, it either
 		-- gets removed/reapplied or removed/applied by a different unit.
 		-- Quality of 1.1 to enforce message
-		destEffects = {[-1] = 0, [-2] = 1.1}
+		destEffects = { [-1] = 0, [-2] = 1.1 }
 
 		activeEffectsBySpell[dstGUID] = destEffects
 		activeEffectsByPriority[dstGUID] = {}
@@ -628,7 +661,8 @@ function Core.ApplyAreaEffect(timestamp, triggerGUID, triggerName, dstGUID, dstN
 
 		-- Note that we CANNOT use nil as an amount, since external addons can rely on this value being non-nil
 		-- for sorting. We're using -1 here that usually represents infinite values
-		callbacks:Fire("EffectApplied", triggerGUID, triggerName, dstGUID, dstName, spellid, spellschool, -1, effectEntry[5], nil)
+		callbacks:Fire("EffectApplied", triggerGUID, triggerName, dstGUID, dstName, spellid, spellschool, -1,
+			effectEntry[5], nil)
 
 		-- Update quality if needed
 		if effectEntry[5] < destEffects[-2] then
@@ -640,7 +674,8 @@ end
 
 function Core.CreateAreaTrigger(timestamp, srcGUID, srcName, triggerGUID, triggerName, spellid, spellschool)
 	if activeAreaEffects[triggerGUID] then
-		Core.Error("Trying to create new area trigger on existing one, triggerGUID: " .. triggerGUID .. ", existing spellid: " .. activeAreaEffects[triggerGUID][1])
+		Core.Error("Trying to create new area trigger on existing one, triggerGUID: " ..
+		triggerGUID .. ", existing spellid: " .. activeAreaEffects[triggerGUID][1])
 		return
 	end
 
@@ -648,7 +683,7 @@ function Core.CreateAreaTrigger(timestamp, srcGUID, srcName, triggerGUID, trigge
 	local value, quality = effectInfo[3](srcGUID, srcName, triggerGUID, triggerName, spellid, nil)
 	if value == nil then return end
 
-	local effectEntry = {spellid, -1 * effectInfo[1], value, value, quality, 0, timestamp, triggerGUID, 0}
+	local effectEntry = { spellid, -1 * effectInfo[1], value, value, quality, 0, timestamp, triggerGUID, 0 }
 	effectEntry[6] = Core:ScheduleTimer(Events.OnAreaTimeout, effectInfo[2] + 5, effectEntry)
 	activeAreaEffects[triggerGUID] = effectEntry
 	callbacks:Fire("AreaCreated", srcGUID, srcName, triggerGUID, spellid, spellschool, value, quality)
@@ -799,9 +834,9 @@ function Core.PushCharge(guid, spellid, amount, lifetime)
 	local guidCharges = activeCharges[guid]
 
 	if not guidCharges then
-		activeCharges[guid] = {[spellid] = {lastCombatLogEvent + lifetime, amount}}
+		activeCharges[guid] = { [spellid] = { lastCombatLogEvent + lifetime, amount } }
 	elseif not guidCharges[spellid] then
-		guidCharges[spellid] = {lastCombatLogEvent + lifetime, amount}
+		guidCharges[spellid] = { lastCombatLogEvent + lifetime, amount }
 	else
 		tinsert(guidCharges[spellid], lastCombatLogEvent + lifetime)
 		tinsert(guidCharges[spellid], amount)
@@ -860,7 +895,7 @@ function Core.AddCombatTrigger(target, event, func)
 				return
 			end
 
-			funcList = {oldTrigger, func};
+			funcList = { oldTrigger, func };
 			eventTriggers[listIndex] = funcList;
 
 			local handler = function(...)
@@ -910,8 +945,10 @@ function Core.SendUnitStats()
 		local curSP = UnitStatsTable[playerid][UNIT_STAT_VALUE.SP]
 
 		if (curAP ~= lastAP) or (curSP ~= lastSP) then
-			Core:SendCommMessage(COMM_UNITSTATS, Core:Serialize(playerid, playerclass, curAP, curSP, unpack(UnitStatsTable[playerid], 5)), curChatChannel)
-			Core:SendCommMessage(COMM_UNITSTATS_ALT, Core:Serialize(playerid, playerclass, curAP, curSP, unpack(UnitStatsTable[playerid], 5)), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS,
+				Core:Serialize(playerid, playerclass, curAP, curSP, unpack(UnitStatsTable[playerid], 7)), curChatChannel)
+			Core:SendCommMessage(COMM_UNITSTATS_ALT,
+				Core:Serialize(playerid, playerclass, curAP, curSP, unpack(UnitStatsTable[playerid], 7)), curChatChannel)
 
 			lastAP, lastSP = curAP, curSP
 			CommStatsCooldown = true
@@ -922,8 +959,10 @@ end
 
 function Core.SendScaling()
 	if curChatChannel then
-		Core:SendCommMessage(COMM_SCALING, Core:Serialize(playerid, playerclass, Events.OnScalingEncode()), curChatChannel)
-		Core:SendCommMessage(COMM_SCALING_ALT, Core:Serialize(playerid, playerclass, Events.OnScalingEncode()), curChatChannel)
+		Core:SendCommMessage(COMM_SCALING, Core:Serialize(playerid, playerclass, Events.OnScalingEncode()),
+			curChatChannel)
+		Core:SendCommMessage(COMM_SCALING_ALT, Core:Serialize(playerid, playerclass, Events.OnScalingEncode()),
+			curChatChannel)
 
 		CommScalingCooldown = true
 		Core:ScheduleTimer(ClearCommStatsCooldown, 30)
@@ -994,7 +1033,8 @@ function Events.PLAYER_ALIVE()
 	Core.UnregisterEvent("PLAYER_ALIVE")
 end
 
-local BITMASK_GROUP = COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
+local BITMASK_GROUP = COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY +
+COMBATLOG_OBJECT_AFFILIATION_RAID
 local function CheckFlags(srcFlags, dstFlags)
 	return (srcFlags and bit.band(srcFlags, BITMASK_GROUP) ~= 0) or (dstFlags and bit.band(dstFlags, BITMASK_GROUP) ~= 0)
 end
@@ -1004,16 +1044,16 @@ end
 ------------------
 
 local absorbHealSpells = {
-	[66237] = 30000,	-- Incinerate Flesh (10 Normal)
-	[67049] = 60000,	-- Incinerate Flesh (25 Normal)
-	[67050] = 40000,	-- Incinerate Flesh (10 Heroic)
-	[67051] = 85000,	-- Incinerate Flesh (25 Heroic)
-	[66236] = 30000,	-- Incinerate Flesh
-	[70659] = 9000,		-- Necrotic Strike (10 Normal)
-	[71951] = 15000,	-- Necrotic Strike
-	[72490] = 14000,	-- Necrotic Strike (25 Normal)
-	[72491] = 14000,	-- Necrotic Strike (10 Heroic)
-	[72492] = 20000,	-- Necrotic Strike (25 Heroic)
+	[66237] = 30000, -- Incinerate Flesh (10 Normal)
+	[67049] = 60000, -- Incinerate Flesh (25 Normal)
+	[67050] = 40000, -- Incinerate Flesh (10 Heroic)
+	[67051] = 85000, -- Incinerate Flesh (25 Heroic)
+	[66236] = 30000, -- Incinerate Flesh
+	[70659] = 9000, -- Necrotic Strike (10 Normal)
+	[71951] = 15000, -- Necrotic Strike
+	[72490] = 14000, -- Necrotic Strike (25 Normal)
+	[72491] = 14000, -- Necrotic Strike (10 Heroic)
+	[72492] = 20000, -- Necrotic Strike (25 Heroic)
 }
 
 local environmentSchools = {
@@ -1024,7 +1064,7 @@ local environmentSchools = {
 	LAVA = SCHOOL_MASK_FIRE,
 	SLIME = SCHOOL_MASK_NATURE
 }
-local t6PalTable ={}
+local t6PalTable = {}
 function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	if lib.CheckFlags and not CheckFlags(srcFlags, dstFlags) then return end
 
@@ -1061,7 +1101,6 @@ function Events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, etype, srcGUID, srcName, 
 			CombatTriggersOnHealCrit[srcGUID](srcGUID, srcName, dstGUID, dstName, spellid, amount, overheal)
 		end
 	elseif etype == "SPELL_AURA_APPLIED" or etype == "SPELL_AURA_REFRESH" then
-
 		local spellid, _, spellschool = ...
 		if Effects[spellid] then
 			if Effects[spellid][1] > 0 then
@@ -1139,6 +1178,8 @@ function Events.ZONE_CHANGED_NEW_AREA()
 	Core:ScheduleTimer(Events.STATS_CHANGED, 5)
 end
 
+
+
 function Events.STATS_CHANGED()
 	local baseAP, plusAP, minusAP = UnitAttackPower("player")
 
@@ -1157,6 +1198,8 @@ function Events.STATS_CHANGED()
 	UnitStatsTable[playerid][UNIT_STAT_VALUE.BLOCK_CHANCE] = RoundToSignificantDigits(GetBlockChance(), 2)
 	--10 shield parry chance for t5 ppal
 	UnitStatsTable[playerid][UNIT_STAT_VALUE.PARRY_CHANGE] = RoundToSignificantDigits(GetParryChance(), 2)
+	--11 vip multiple
+	UnitStatsTable[playerid][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE] = GetSelfMultipleValue()
 
 	if curChatChannel then
 		Core:ScheduleUniqueTimer("comm_stats", Core.SendUnitStats, CommStatsCooldown and 15 or 5)
@@ -1167,12 +1210,12 @@ end
 function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 	if not text then return end
 
-	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance,parryChance = Core:Deserialize(text)
+	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance, parryChance,vip_multiply = Core:Deserialize(text)
 	if not (success and guid and class and ap and sp) then return end
 	if guid == playerid then return end
 
 	if not UnitStatsTable[guid] then
-		UnitStatsTable[guid] = {class, ap, sp, 1.0, dodge, parry, armor, block, blockChance,parryChance}
+		UnitStatsTable[guid] = { class, ap, sp, 1.0, dodge, parry, armor, block, blockChance, parryChance,vip_multiply }
 	else
 		UnitStatsTable[guid][UNIT_STAT_VALUE.AP] = ap
 		UnitStatsTable[guid][UNIT_STAT_VALUE.SP] = sp
@@ -1182,6 +1225,7 @@ function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 		UnitStatsTable[guid][UNIT_STAT_VALUE.BLOCK] = block
 		UnitStatsTable[guid][UNIT_STAT_VALUE.BLOCK_CHANCE] = blockChance
 		UnitStatsTable[guid][UNIT_STAT_VALUE.PARRY_CHANGE] = parryChance
+		UnitStatsTable[guid][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE] = vip_multiply
 	end
 end
 
@@ -1272,7 +1316,8 @@ function Events.OnAreaTimeout(areaEntry)
 	end
 
 	-- We're only here if we didn't reduce the refcount to zero
-	Core.Error("Positive refcount " .. areaEntry[9] .. " remained for area effect " .. areaEntry[1] .. " by trigger " .. areaEntry[8])
+	Core.Error("Positive refcount " ..
+	areaEntry[9] .. " remained for area effect " .. areaEntry[1] .. " by trigger " .. areaEntry[8])
 end
 
 -- Map client events to our callbacks
@@ -1329,7 +1374,7 @@ function lib.PrintProfiling()
 		["ApplySingularEffect"] = ApplySingularEffect,
 		["HitUnit"] = HitUnit,
 		["RemoveActiveEffect"] = RemoveActiveEffect,
-	--	["OnCombatLogEvent"] = COMBAT_LOG_EVENT_UNFILTERED,
+		--	["OnCombatLogEvent"] = COMBAT_LOG_EVENT_UNFILTERED,
 		["SortEffects"] = SortEffects
 	}
 
@@ -1342,7 +1387,8 @@ function lib.PrintProfiling()
 		if v_type == "function" then
 			time_self, count = GetFunctionCPUUsage(v, false)
 			time_combined = GetFunctionCPUUsage(v, true)
-			Core.Print(k .. " (#" .. count .. "): " .. format("%.4f", time_self) .. " / " .. format("%.4f", time_combined))
+			Core.Print(k ..
+			" (#" .. count .. "): " .. format("%.4f", time_self) .. " / " .. format("%.4f", time_combined))
 		end
 	end
 end
@@ -1373,9 +1419,11 @@ function lib.UnitStats(guid, missingQuality)
 			guidStats[6] or 0,
 			guidStats[7] or 0,
 			guidStats[8] or 0,
-			guidStats[9] or 0
+			guidStats[9] or 0,
+			guidStats[10] or 0,
+			guidStats[11] or 0
 	end
-	return 0, 0, missingQuality or 1, 0, 0, 0, 0, 0
+	return 0, 0, missingQuality or 1, 0, 0, 0, 0, 0,0,0,0
 end
 
 function lib.UnitStatsIndex(guid, index, fallbackValue)
@@ -1556,10 +1604,10 @@ end
 -- Effects: Death Knight --
 ---------------------------
 
-local deathknight_MS_Ranks = {[0] = 0, [1] = 0.08, [2] = 0.16, [3] = 0.25}
+local deathknight_MS_Ranks = { [0] = 0, [1] = 0.08, [2] = 0.16, [3] = 0.25 }
 
 -- Public Scaling: { [MagicSuppression] }
-local deathknight_defaultScaling = {0}
+local deathknight_defaultScaling = { 0 }
 
 local function deathknight_AntiMagicShell_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local maxHealth = UnitDispatch(UnitHealthMax, dstGUID, dstName)
@@ -1698,10 +1746,10 @@ local lastPalAbsorbTable = {}
 local palPokrovBuff = {}
 local palT4GodsHandBuff = {}
 
-local function CLEU(self,...)
+local function CLEU(self, ...)
 	-- local whoGUID = ...
 	-- time event whoguid whoname whoflag targetguid targetname targetflag spellid spellname
-	local _, time2, subevent3, whoguid4, _, _, _, _, _,spellid10, spellname11, _, spelldmg13 = ...
+	local _, time2, subevent3, whoguid4, _, _, _, _, _, spellid10, spellname11, _, spelldmg13 = ...
 
 	if csd[subevent3] and spellname11 == "Ледяной удар" then
 		------ 400 average for 270 ilvl
@@ -1713,7 +1761,7 @@ local function CLEU(self,...)
 			dodge = GetCombatRating(3) * 0.0237735849
 			parry = GetCombatRating(4) * 0.0237037037
 		end
-		local absorb = ((spelldmg13*2)*((150+dodge*3+parry*3)/100))
+		local absorb = ((spelldmg13 * 2) * ((150 + dodge * 3 + parry * 3) / 100))
 		if absorb > 50000 then
 			absorb = 50000
 		end
@@ -1739,7 +1787,7 @@ local function CLEU(self,...)
 			parryChance = UnitStatsIndex(whoguid4, UNIT_STAT_VALUE.PARRY_CHANGE, 15)
 		end
 
-		local absorb = (((parryChance+blockChance)/100)*5) * blockValue
+		local absorb = (((parryChance + blockChance) / 100) * 5) * blockValue
 		if absorb > 50000 then
 			absorb = 50000
 		end
@@ -1763,22 +1811,22 @@ TankCLEUFrame:SetScript("OnEvent", CLEU)
 
 
 local function deathknight_T52BloodTankOnCreate(...)
-	local unit = GetUnitId(select(1,...))
+	local unit = GetUnitId(select(1, ...))
 	if unit then
-		local absorb = (UnitHealthMax(unit)*0.14) + (UnitHealthMax(unit)-UnitHealth(unit))
+		local absorb = (UnitHealthMax(unit) * 0.14) + (UnitHealthMax(unit) - UnitHealth(unit))
 		return absorb, 1
 	end
 	return 0, 1
 end
 local function deathknight_T62FrostTankOnCreate(...)
-	local whog = select(3,...)
+	local whog = select(3, ...)
 	local armor = 0
 	if whog == PlayerGUID then
-		armor = select(2,UnitArmor("player"))
+		armor = select(2, UnitArmor("player"))
 	else
 		armor = UnitStatsIndex(whog, UNIT_STAT_VALUE.ARMOR)
 	end
-	return armor,1.0
+	return armor, 1.0
 end
 
 local function deathknight_T52FrostTankOnCreate(...)
@@ -1833,7 +1881,7 @@ local function druid_t6_SpellAbsorb_Create(srcGUID, srcName, dstGUID, dstName, s
 end
 
 local function druid_t6_SpellHit(effectEntry, absorbedRemaining, overkill, spellschool)
-		druidSpellAbsorb = 0
+	druidSpellAbsorb = 0
 	if spellschool ~= SCHOOL_MASK_PHYSICAL then
 		return min(effectEntry[3], absorbedRemaining), false
 	end
@@ -1923,7 +1971,7 @@ local mage_Absorb_Spells = {
 }
 
 -- Public Scaling: { [GlyphOfIceBarrier] }
-local mage_defaultScaling = {1.0}
+local mage_defaultScaling = { 1.0 }
 
 -- No Downranking support here
 local function mage_IceBarrier_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
@@ -1971,7 +2019,7 @@ end
 ----------------------
 
 -- Public Scaling: { [DivineGuardian] }
-local paladin_defaultScaling = {1.0}
+local paladin_defaultScaling = { 1.0 }
 local function paladin_T5TankOnCreate(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	-- local whoguid = ...
 	local absorb = srcGUID and lastPalAbsorbTable[srcGUID] and lastPalAbsorbTable[srcGUID][2] or 0
@@ -1986,7 +2034,8 @@ local function paladin_SacredShield_Create(srcGUID, srcName, dstGUID, dstName, s
 	if t6PalTable[dstGUID] and srcGUID == dstGUID then
 		t6PalValue = UnitStatsIndex(srcGUID, UNIT_STAT_VALUE.BLOCK) * 3.5
 	end
-	return floor((500 + t6PalValue + (sp * 0.75)) * (sourceScaling[1] or paladin_defaultScaling[1]) * ZONE_MODIFIER), min(quality1, quality2)
+	return floor((500 + t6PalValue + (sp * 0.75)) * (sourceScaling[1] or paladin_defaultScaling[1]) * ZONE_MODIFIER),
+		min(quality1, quality2)
 end
 
 local function paladin_OnTalentUpdate()
@@ -2001,9 +2050,8 @@ end
 
 local absorbPalPokrov = 0
 local function paladin_TTG_Absorb(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
-
 	absorbPalPokrov = 0
-	if spellid == 319738 then --4
+	if spellid == 319738 then  --4
 		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1940 and 1940) or palPokrovBuff[srcGUID]
 	elseif spellid == 319996 then --3
 		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1140 and 1140) or palPokrovBuff[srcGUID]
@@ -2012,7 +2060,7 @@ local function paladin_TTG_Absorb(srcGUID, srcName, dstGUID, dstName, spellid, d
 	elseif spellid == 320221 then --1
 		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 480 and 480) or palPokrovBuff[srcGUID]
 	end
-	return absorbPalPokrov,1.0
+	return absorbPalPokrov, 1.0
 end
 
 local function paladin_T4GodsHand(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
@@ -2041,31 +2089,31 @@ PRIEST_DIVINEAEGIS_SPELLID = 47753
 
 -- [rank] = {spellid, level, baseValue, incValue}
 local priest_PWS_Ranks = {
-	[1] = {17, 6, 44, 4},
-	[2] = {592, 12, 88, 6},
-	[3] = {600, 18, 158, 8},
-	[4] = {3747, 24, 234, 10},
-	[5] = {6065, 30, 301, 11},
-	[6] = {6066, 36, 381, 13},
-	[7] = {10898, 42, 484, 15},
-	[8] = {10899, 48, 605, 17},
-	[9] = {10900, 54, 763, 19},
-	[10] = {10901, 60, 942, 21},
-	[11] = {25217, 65, 1125, 18},
-	[12] = {25218, 70, 1265, 20},
-	[13] = {48065, 75, 1920, 30},
-	[14] = {48066, 80, 2230, 0},
-	[15] = {308143, 80, 2230, 0},
-	[16] = {305082, 80, 1250, 0},
+	[1] = { 17, 6, 44, 4 },
+	[2] = { 592, 12, 88, 6 },
+	[3] = { 600, 18, 158, 8 },
+	[4] = { 3747, 24, 234, 10 },
+	[5] = { 6065, 30, 301, 11 },
+	[6] = { 6066, 36, 381, 13 },
+	[7] = { 10898, 42, 484, 15 },
+	[8] = { 10899, 48, 605, 17 },
+	[9] = { 10900, 54, 763, 19 },
+	[10] = { 10901, 60, 942, 21 },
+	[11] = { 25217, 65, 1125, 18 },
+	[12] = { 25218, 70, 1265, 20 },
+	[13] = { 48065, 75, 1920, 30 },
+	[14] = { 48066, 80, 2230, 0 },
+	[15] = { 308143, 80, 2230, 0 },
+	[16] = { 305082, 80, 1250, 0 },
 }
 
 -- Public Scaling:
 --   Power Word: Shield: [spellid] = {base, spFactor}
 --   Divine Aegis: [47753] = healFactor
-local priest_defaultScaling = {[PRIEST_DIVINEAEGIS_SPELLID] = 0}
+local priest_defaultScaling = { [PRIEST_DIVINEAEGIS_SPELLID] = 0 }
 do
 	for _, v in pairs(priest_PWS_Ranks) do
-		priest_defaultScaling[v[1]] = {v[3], 0.809}
+		priest_defaultScaling[v[1]] = { v[3], 0.809 }
 	end
 end
 
@@ -2078,7 +2126,8 @@ local function priest_PowerWordShield_Create(srcGUID, srcName, dstGUID, dstName,
 	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, priest_defaultScaling, 0.1)
 	sourceScaling[spellid] = sourceScaling[spellid] or priest_defaultScaling[spellid]
 	if sourceScaling[spellid] then
-		return floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER), min(quality1, quality2)
+		return floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER),
+			min(quality1, quality2)
 	end
 end
 
@@ -2172,7 +2221,7 @@ local function priest_ApplyScaling(guid, level, baseFactor, spFactor, daFactor)
 				rankSP = spFactor
 			end
 
-			guidScaling[v[1]] = {rankValue * baseFactor, rankSP}
+			guidScaling[v[1]] = { rankValue * baseFactor, rankSP }
 		end
 	end
 end
@@ -2182,7 +2231,9 @@ local function priest_UpdatePlayerScaling()
 
 	local spFactor = 0.807
 	spFactor = spFactor + (privateScaling["BorrowedTime"] * 0.08)
-	spFactor = spFactor * (1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) * (1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))
+	spFactor = spFactor *
+	(1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) *
+	(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))
 	privateScaling.sp = spFactor
 	privateScaling.DA = (privateScaling["DivineAegis"] * 0.1) * (1 + (privateScaling["4pcRaid9"] * 0.03))
 	priest_ApplyScaling(playerid, UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA)
@@ -2332,7 +2383,7 @@ local function priest_OnEquipmentChanged()
 end
 
 local function priest_OnScalingEncode()
-	return {UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA}
+	return { UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA }
 end
 
 function OnScalingDecode.PRIEST(guid, in_guidScaling)
@@ -2357,7 +2408,7 @@ end
 
 -- Public Scaling: { [AstralShift] }
 -- We default to 0.3, because quite frankly nobody will use less points except while leveling
-local shaman_defaultScaling = {0.3}
+local shaman_defaultScaling = { 0.3 }
 
 local function shaman_AstralShift_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local sourceScaling, quality = UnitScaling(srcGUID, shaman_defaultScaling, 0.7)
@@ -2409,7 +2460,7 @@ local warlock_ShadowWard_Spells = {
 }
 
 -- Public Scaling: { [DemonicBrutality] }
-local warlock_defaultScaling = {1.0}
+local warlock_defaultScaling = { 1.0 }
 
 -- No downranking support here
 local function warlock_Sacrifice_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
@@ -2503,199 +2554,200 @@ end
 -- Data Tables --
 -----------------
 
-local mage_FireWard_Entry = {2.0, 30, generic_SpellScalingByTable_Create, mage_FireWard_Hit, mage_Absorb_Spells, 0.8053}
-local mage_FrostWard_Entry = {2.0, 30, generic_SpellScalingByTable_Create, mage_FrostWard_Hit, mage_Absorb_Spells, 0.8053}
-local mage_IceBarrier_Entry = {1.0, 60, mage_IceBarrier_Create, generic_Hit}
-local mage_ManaShield_Entry = {1.0, 60, generic_SpellScalingByTable_Create, generic_Hit, mage_Absorb_Spells, 0.8053}
-local priest_PWS_Entry = {1.0, 30, priest_PowerWordShield_Create, generic_Hit}
-local priest_PWS_EntryT4 = {1.0, 30, priest_PowerWordShieldT4_Create, generic_Hit}
-local warlock_Sacrifice_Entry = {1.0, 30, generic_ConstantByTable_Create, generic_Hit, warlock_Sacrifice_Spells}
-local warlock_ShadowWard_Entry = {2.0, 30, generic_SpellScalingByTable_Create, warlock_ShadowWard_Hit, warlock_ShadowWard_Spells, 0.8053}
+local mage_FireWard_Entry = { 2.0, 30, generic_SpellScalingByTable_Create, mage_FireWard_Hit, mage_Absorb_Spells, 0.8053 }
+local mage_FrostWard_Entry = { 2.0, 30, generic_SpellScalingByTable_Create, mage_FrostWard_Hit, mage_Absorb_Spells, 0.8053 }
+local mage_IceBarrier_Entry = { 1.0, 60, mage_IceBarrier_Create, generic_Hit }
+local mage_ManaShield_Entry = { 1.0, 60, generic_SpellScalingByTable_Create, generic_Hit, mage_Absorb_Spells, 0.8053 }
+local priest_PWS_Entry = { 1.0, 30, priest_PowerWordShield_Create, generic_Hit }
+local priest_PWS_EntryT4 = { 1.0, 30, priest_PowerWordShieldT4_Create, generic_Hit }
+local warlock_Sacrifice_Entry = { 1.0, 30, generic_ConstantByTable_Create, generic_Hit, warlock_Sacrifice_Spells }
+local warlock_ShadowWard_Entry = { 2.0, 30, generic_SpellScalingByTable_Create, warlock_ShadowWard_Hit,
+	warlock_ShadowWard_Spells, 0.8053 }
 
 -- INCOMPLETE
 Core.Effects = {
 	-- Unknown Effect
 	-- This is used when a known effect is applied, but it is impossible to properly account for it,
 	-- for example if an AREA effect is applied with an unknown trigger
-	[0] = {1.0, 0, function() return 0, 0.0 end, nil},
-	[48707] = {3.0, 5, deathknight_AntiMagicShell_Create, deathknight_AntiMagicShell_Hit}, -- Anti-Magic Shell
-	[50461] = {-3.0, 10, deathknight_AntiMagicZone_Create, deathknight_AntiMagicZone_Hit}, -- Anti-Magic Zone
+	[0] = { 1.0, 0, function() return 0, 0.0 end, nil },
+	[48707] = { 3.0, 5, deathknight_AntiMagicShell_Create, deathknight_AntiMagicShell_Hit }, -- Anti-Magic Shell
+	[50461] = { -3.0, 10, deathknight_AntiMagicZone_Create, deathknight_AntiMagicZone_Hit }, -- Anti-Magic Zone
 
-	[52284] = {1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit1}, -- Will of the Necropolis (Rank 1)
-	[52285] = {1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit2}, -- Will of the Necropolis (Rank 2)
-	[52286] = {1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit3}, -- Will of the Necropolis (Rank 3)
+	[52284] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit1 },         -- Will of the Necropolis (Rank 1)
+	[52285] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit2 },         -- Will of the Necropolis (Rank 2)
+	[52286] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit3 },         -- Will of the Necropolis (Rank 3)
 
-	[62606] = {1.1, 10, druid_SavageDefense_Create, druid_SavageDefense_Hit}, -- Savage Defense
+	[62606] = { 1.1, 10, druid_SavageDefense_Create, druid_SavageDefense_Hit },         -- Savage Defense
 
-	[543] = mage_FireWard_Entry, -- Fire Ward (rank 1)
-	[8457] = mage_FireWard_Entry, -- Fire Ward (rank 2)
-	[8458] = mage_FireWard_Entry, -- Fire Ward (rank 3)
-	[10223] = mage_FireWard_Entry, -- Fire Ward (rank 4)
-	[10225] = mage_FireWard_Entry, -- Fire Ward (rank 5)
-	[27218] = mage_FireWard_Entry, -- Fire Ward (rank 6)
-	[43010] = mage_FireWard_Entry, -- Fire Ward (rank 7)
-	[6143] = mage_FrostWard_Entry, -- Frost Ward (rank 1)
-	[8461] = mage_FrostWard_Entry, -- Frost Ward (rank 2)
-	[8462] = mage_FrostWard_Entry, -- Frost Ward (rank 3)
-	[10177] = mage_FrostWard_Entry, -- Frost Ward (rank 4)
-	[28609] = mage_FrostWard_Entry, -- Frost Ward (rank 5)
-	[32796] = mage_FrostWard_Entry, -- Frost Ward (rank 6)
-	[43012] = mage_FrostWard_Entry, -- Frost Ward (rank 7)
-	[11426] = mage_IceBarrier_Entry, -- Ice Barrier (rank 1)
-	[13031] = mage_IceBarrier_Entry, -- Ice Barrier (rank 2)
-	[13032] = mage_IceBarrier_Entry, -- Ice Barrier (rank 3)
-	[13033] = mage_IceBarrier_Entry, -- Ice Barrier (rank 4)
-	[27134] = mage_IceBarrier_Entry, -- Ice Barrier (rank 5)
-	[33405] = mage_IceBarrier_Entry, -- Ice Barrier (rank 6)
-	[43038] = mage_IceBarrier_Entry, -- Ice Barrier (rank 7)
-	[43039] = mage_IceBarrier_Entry, -- Ice Barrier (rank 8)
-	[1463] = mage_ManaShield_Entry, --  Mana shield (rank 1)
-	[8494] = mage_ManaShield_Entry, --  Mana shield (rank 2)
-	[8495] = mage_ManaShield_Entry, --  Mana shield (rank 3)
-	[10191] = mage_ManaShield_Entry, --  Mana shield (rank 4)
-	[10192] = mage_ManaShield_Entry, --  Mana shield (rank 5)
-	[10193] = mage_ManaShield_Entry, --  Mana shield (rank 6)
-	[27131] = mage_ManaShield_Entry, --  Mana shield (rank 7)
-	[43019] = mage_ManaShield_Entry, --  Mana shield (rank 8)
-	[43020] = mage_ManaShield_Entry, --  Mana shield (rank 9)
-	[58597] = {1.0, 6, paladin_SacredShield_Create, generic_Hit}, -- Sacred Shield
+	[543] = mage_FireWard_Entry,                                                        -- Fire Ward (rank 1)
+	[8457] = mage_FireWard_Entry,                                                       -- Fire Ward (rank 2)
+	[8458] = mage_FireWard_Entry,                                                       -- Fire Ward (rank 3)
+	[10223] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 4)
+	[10225] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 5)
+	[27218] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 6)
+	[43010] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 7)
+	[6143] = mage_FrostWard_Entry,                                                      -- Frost Ward (rank 1)
+	[8461] = mage_FrostWard_Entry,                                                      -- Frost Ward (rank 2)
+	[8462] = mage_FrostWard_Entry,                                                      -- Frost Ward (rank 3)
+	[10177] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 4)
+	[28609] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 5)
+	[32796] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 6)
+	[43012] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 7)
+	[11426] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 1)
+	[13031] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 2)
+	[13032] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 3)
+	[13033] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 4)
+	[27134] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 5)
+	[33405] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 6)
+	[43038] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 7)
+	[43039] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 8)
+	[1463] = mage_ManaShield_Entry,                                                     --  Mana shield (rank 1)
+	[8494] = mage_ManaShield_Entry,                                                     --  Mana shield (rank 2)
+	[8495] = mage_ManaShield_Entry,                                                     --  Mana shield (rank 3)
+	[10191] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 4)
+	[10192] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 5)
+	[10193] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 6)
+	[27131] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 7)
+	[43019] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 8)
+	[43020] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 9)
+	[58597] = { 1.0, 6, paladin_SacredShield_Create, generic_Hit },                     -- Sacred Shield
 
-	[17] = priest_PWS_Entry, -- Power Word: Shield (rank 1)
-	[592] = priest_PWS_Entry, -- Power Word: Shield (rank 2)
-	[600] = priest_PWS_Entry, -- Power Word: Shield (rank 3)
-	[3747] = priest_PWS_Entry, -- Power Word: Shield (rank 4)
-	[6065] = priest_PWS_Entry, -- Power Word: Shield (rank 5)
-	[6066] = priest_PWS_Entry, -- Power Word: Shield (rank 6)
-	[10898] = priest_PWS_Entry, -- Power Word: Shield (rank 7)
-	[10899] = priest_PWS_Entry, -- Power Word: Shield (rank 8)
-	[10900] = priest_PWS_Entry, -- Power Word: Shield (rank 9)
-	[10901] = priest_PWS_Entry, -- Power Word: Shield (rank 10)
-	[25217] = priest_PWS_Entry, -- Power Word: Shield (rank 11)
-	[25218] = priest_PWS_Entry, -- Power Word: Shield (rank 12)
-	[48065] = priest_PWS_Entry, -- Power Word: Shield (rank 13)
-	[48066] = priest_PWS_Entry, -- Power Word: Shield (rank 14)
+	[17] = priest_PWS_Entry,                                                            -- Power Word: Shield (rank 1)
+	[592] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 2)
+	[600] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 3)
+	[3747] = priest_PWS_Entry,                                                          -- Power Word: Shield (rank 4)
+	[6065] = priest_PWS_Entry,                                                          -- Power Word: Shield (rank 5)
+	[6066] = priest_PWS_Entry,                                                          -- Power Word: Shield (rank 6)
+	[10898] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 7)
+	[10899] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 8)
+	[10900] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 9)
+	[10901] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 10)
+	[25217] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 11)
+	[25218] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 12)
+	[48065] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 13)
+	[48066] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 14)
 
-	[47753] = {1.0, 12, priest_DivineAegis_Create, generic_Hit}, -- Divine Aegis
-	[52179] = {2.5, nil, shaman_AstralShift_Create, shaman_AstralShift_Hit}, -- Astral Shift
-	[7812] = warlock_Sacrifice_Entry, -- Sacrifice (rank 1)
-	[19438] = warlock_Sacrifice_Entry, -- Sacrifice (rank 2)
-	[19440] = warlock_Sacrifice_Entry, -- Sacrifice (rank 3)
-	[19441] = warlock_Sacrifice_Entry, -- Sacrifice (rank 4)
-	[19442] = warlock_Sacrifice_Entry, -- Sacrifice (rank 5)
-	[19443] = warlock_Sacrifice_Entry, -- Sacrifice (rank 6)
-	[27273] = warlock_Sacrifice_Entry, -- Sacrifice (rank 7)
-	[47985] = warlock_Sacrifice_Entry, -- Sacrifice (rank 8)
-	[47986] = warlock_Sacrifice_Entry, -- Sacrifice (rank 9)
-	[6229] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 1)
-	[11739] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 1)
-	[11740] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 2)
-	[28610] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 3)
-	[47890] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 4)
-	[47891] = warlock_ShadowWard_Entry, -- Shadow Ward (rank 5)
-	[64413] = {1.0, 8, items_Valanyr_Create, generic_Hit}, -- Val'anyr (spellid of the created absorb effect)
-	[60218] = {5.0, 10, function() return 4000, 1.0 end, items_EssenceOfGossamer_Hit}, -- Essence of Gossamer
-	[310738] = {1.0, 10, function() return 17400, 1.0 end, generic_Hit}, -- Argussian Compass (226 burning crusade sirus)
-	[71586] = {1.0, 10, function() return 24600, 1.0 end, generic_Hit}, -- Corroded Skeleton Key
-	[36481] = {1.0, 4, function() return 100000, 1.0 end, generic_Hit}, -- Phaseshift Bulwark
-	[57350] = {1.0, 6, function() return 1500, 1.0 end, generic_Hit}, -- Darkmoon Card: Illusion
-	[17252] = {1.0, 1800, function() return 500, 1.0 end, generic_Hit}, -- Mark of the Dragon Lord
-	[29506] = {1.0, 20, function() return 900, 1.0 end, generic_Hit}, -- The Burrower's Shell
-	[31771] = {1.0, 20, function() return 440, 1.0 end, generic_Hit}, -- Runed Fungalcap
-	[9800] = {1.0, 60, function() return 175, 1.0 end, generic_Hit}, -- Truesilver Champion
-	[13234] = {1.0, 600, function() return 500, 1.0 end, generic_Hit}, -- Gnomish Harm Prevention Belt
-	[30458] = {1.0, 8, function() return 4000, 1.0 end, generic_Hit}, -- Nigh Invulnerability Belt
-	[27779] = {1.0, 30, function() return 350, 1.0 end, generic_Hit}, -- Divine Protection (Priest Dungeon Set 1/2 4pc bonus)
-	[28810] = {1.0, 30, function() return 500, 1.0 end, generic_Hit}, -- Armor of Faith (Priest Raid Set 3 4pc bonus)
-	[29674] = {1.0, nil, function() return 1000, 1.0 end, generic_Hit}, -- Lesser Ward of Shielding
-	[29719] = {1.0, nil, function() return 4000, 1.0 end, generic_Hit}, -- Greater Ward of Shielding
-	[29701] = {1.0, nil, function() return 4000, 1.0 end, generic_Hit}, -- Greater Ward of Shielding
-	[28538] = {1.0, 120, function() return 3400, 1.0 end, Holy_Hit}, -- Major Holy Protection Potion
-	[28537] = {1.0, 120, function() return 3400, 1.0 end, Shadow_Hit}, -- Major Shadow Protection Potion
-	[28536] = {1.0, 120, function() return 3400, 1.0 end, Arcane_Hit}, -- Major Arcane Protection Potion
-	[28513] = {1.0, 120, function() return 3400, 1.0 end, Nature_Hit}, -- Major Nature Protection Potion
-	[28512] = {1.0, 120, function() return 3400, 1.0 end, Frost_Hit}, -- Major Frost Protection Potion
-	[28511] = {1.0, 120, function() return 3400, 1.0 end, Fire_Hit}, -- Major Fire Protection Potion
-	[7233] = {1.0, 120, function() return 1300, 1.0 end, Fire_Hit}, -- Fire Protection Potion
-	[7239] = {1.0, 120, function() return 1300, 1.0 end, Frost_Hit}, -- Frost Protection Potion
-	[7242] = {1.0, 120, function() return 1300, 1.0 end, Shadow_Hit}, -- Shadow Protection Potion
-	[7245] = {1.0, 120, function() return 1300, 1.0 end, Holy_Hit}, -- Holy Protection Potion
-	[7254] = {1.0, 120, function() return 1300, 1.0 end, Nature_Hit}, -- Nature Protection Potion
-	[53915] = {1.0, 120, function() return 3100, 1.0 end, Shadow_Hit}, -- Mighty Shadow Protection Potion
-	[53914] = {1.0, 120, function() return 3100, 1.0 end, Nature_Hit}, -- Mighty Nature Protection Potion
-	[53913] = {1.0, 120, function() return 3100, 1.0 end, Frost_Hit}, -- Mighty Frost Protection Potion
-	[53911] = {1.0, 120, function() return 3100, 1.0 end, Fire_Hit}, -- Mighty Fire Protection Potion
-	[53910] = {1.0, 120, function() return 3100, 1.0 end, Arcane_Hit}, -- Mighty Arcane Protection Potion
-	[17548] = {1.0, 120, function() return 2600, 1.0 end, Shadow_Hit}, --  Greater Shadow Protection Potion
-	[17546] = {1.0, 120, function() return 2600, 1.0 end, Shadow_Hit}, -- Greater Nature Protection Potion
-	[17545] = {1.0, 120, function() return 2600, 1.0 end, Shadow_Hit}, -- Greater Holy Protection Potion
-	[17544] = {1.0, 120, function() return 2600, 1.0 end, Shadow_Hit}, -- Greater Frost Protection Potion
-	[17543] = {1.0, 120, function() return 2600, 1.0 end, Shadow_Hit}, -- Greater Fire Protection Potion
-	[17549] = {1.0, 120, function() return 2600, 1.0 end, Shadow_Hit}, -- Greater Arcane Protection Potion
-	[28527] = {1.0, 15, function() return 1000, 1.0 end, generic_Hit}, -- Fel Blossom
-	[29432] = {1.0, 3600, function() return 2000, 1.0 end, Fire_Hit}, -- Frozen Rune
-	[25750] = {1.0, 15, function() return 151, 1.0 end, Physical_Hit}, -- Defiler's Talisman/Talisman of Arathor
-	[25747] = {1.0, 15, function() return 344, 1.0 end, Physical_Hit}, -- Defiler's Talisman/Talisman of Arathor
-	[25746] = {1.0, 15, function() return 394, 1.0 end, Physical_Hit}, -- Defiler's Talisman/Talisman of Arathor
-	[23991] = {1.0, 15, function() return 550, 1.0 end, Physical_Hit}, -- Defiler's Talisman/Talisman of Arathor
-	[30997] = {1.0, 300, function() return 1800, 1.0 end, Fire_Hit}, -- Pendant of Frozen Flame Usage
-	[31002] = {1.0, 300, function() return 1800, 1.0 end, Arcane_Hit}, -- Pendant of the Null Rune
-	[30999] = {1.0, 300, function() return 1800, 1.0 end, Nature_Hit}, -- Pendant of Withering
-	[30994] = {1.0, 300, function() return 1800, 1.0 end, Frost_Hit}, -- Pendant of Thawing
-	[31000] = {1.0, 300, function() return 1800, 1.0 end, Shadow_Hit}, -- Pendant of Shadow's End
-	[23506] = {1.0, 20, function() return 1000, 1.0 end, generic_Hit}, -- Arena Grand Master
-	[12561] = {1.0, 60, function() return 400, 1.0 end, Fire_Hit}, -- Goblin Construction Helmet
-	[21956] = {1.0, 15, function() return 250, 1.0 end, Physical_Hit}, -- Mark of Resolution
-	[4057] = {1.0, 60, function() return 250, 1.0 end, Fire_Hit}, -- Flame Deflector
-	[4077] = {1.0, 60, function() return 300, 1.0 end, generic_Hit}, -- Ice Deflector
-	[39228] = {1.0, 20, function() return 609, 1.0 end, generic_Hit}, -- Argussian Compass (may not be an actual absorb)
-	[11657] = {1.0, 20, function() return 70, 1.0 end, generic_Hit}, -- Jang'thraze (Zul Farrak)
-	[10368] = {1.0, 15, function() return 1000, 1.0 end, generic_Hit}, -- Uther's Strength
-	[37515] = {1.0, 15, function() return 1000, 1.0 end, generic_Hit}, -- Warbringer Armor Proc
-	[42137] = {1.0, 86400, function() return 1000, 1.0 end, generic_Hit}, -- Greater Rune of Warding Proc
-	[26467] = {1.0, 30, function() return 1000, 1.0 end, generic_Hit}, -- Scarab Brooch
-	[26470] = {1.0, 8, function() return 1000, 1.0 end, generic_Hit}, -- Scarab Brooch
-	[27539] = {1.0, 6, function() return 1000, 1.0 end, generic_Hit}, -- Thick Obsidian Breatplate
-	[54808] = {1.0, 12, function() return 1000, 1.0 end, generic_Hit}, -- Noise Machine Sonic Shield
-	[55019] = {1.0, 12, function() return 1000, 1.0 end, generic_Hit}, -- Sonic Shield
-	[70845] = {1.0, 10, items_Stoicism_Create, generic_Hit}, -- Stoicism (Warrior Raid Set 10 4pc bonus)
-	[65686] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Light Essence
-	[65684] = {1.0, 0, function() return 0, 0.0 end, nil}, -- Twin Val'kyr: Dark Essence
+	[47753] = { 1.0, 12, priest_DivineAegis_Create, generic_Hit },                      -- Divine Aegis
+	[52179] = { 2.5, nil, shaman_AstralShift_Create, shaman_AstralShift_Hit },          -- Astral Shift
+	[7812] = warlock_Sacrifice_Entry,                                                   -- Sacrifice (rank 1)
+	[19438] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 2)
+	[19440] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 3)
+	[19441] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 4)
+	[19442] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 5)
+	[19443] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 6)
+	[27273] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 7)
+	[47985] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 8)
+	[47986] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 9)
+	[6229] = warlock_ShadowWard_Entry,                                                  -- Shadow Ward (rank 1)
+	[11739] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 1)
+	[11740] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 2)
+	[28610] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 3)
+	[47890] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 4)
+	[47891] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 5)
+	[64413] = { 1.0, 8, items_Valanyr_Create, generic_Hit },                            -- Val'anyr (spellid of the created absorb effect)
+	[60218] = { 5.0, 10, function() return 4000, 1.0 end, items_EssenceOfGossamer_Hit }, -- Essence of Gossamer
+	[310738] = { 1.0, 10, function() return 17400, 1.0 end, generic_Hit },              -- Argussian Compass (226 burning crusade sirus)
+	[71586] = { 1.0, 10, function() return 24600, 1.0 end, generic_Hit },               -- Corroded Skeleton Key
+	[36481] = { 1.0, 4, function() return 100000, 1.0 end, generic_Hit },               -- Phaseshift Bulwark
+	[57350] = { 1.0, 6, function() return 1500, 1.0 end, generic_Hit },                 -- Darkmoon Card: Illusion
+	[17252] = { 1.0, 1800, function() return 500, 1.0 end, generic_Hit },               -- Mark of the Dragon Lord
+	[29506] = { 1.0, 20, function() return 900, 1.0 end, generic_Hit },                 -- The Burrower's Shell
+	[31771] = { 1.0, 20, function() return 440, 1.0 end, generic_Hit },                 -- Runed Fungalcap
+	[9800] = { 1.0, 60, function() return 175, 1.0 end, generic_Hit },                  -- Truesilver Champion
+	[13234] = { 1.0, 600, function() return 500, 1.0 end, generic_Hit },                -- Gnomish Harm Prevention Belt
+	[30458] = { 1.0, 8, function() return 4000, 1.0 end, generic_Hit },                 -- Nigh Invulnerability Belt
+	[27779] = { 1.0, 30, function() return 350, 1.0 end, generic_Hit },                 -- Divine Protection (Priest Dungeon Set 1/2 4pc bonus)
+	[28810] = { 1.0, 30, function() return 500, 1.0 end, generic_Hit },                 -- Armor of Faith (Priest Raid Set 3 4pc bonus)
+	[29674] = { 1.0, nil, function() return 1000, 1.0 end, generic_Hit },               -- Lesser Ward of Shielding
+	[29719] = { 1.0, nil, function() return 4000, 1.0 end, generic_Hit },               -- Greater Ward of Shielding
+	[29701] = { 1.0, nil, function() return 4000, 1.0 end, generic_Hit },               -- Greater Ward of Shielding
+	[28538] = { 1.0, 120, function() return 3400, 1.0 end, Holy_Hit },                  -- Major Holy Protection Potion
+	[28537] = { 1.0, 120, function() return 3400, 1.0 end, Shadow_Hit },                -- Major Shadow Protection Potion
+	[28536] = { 1.0, 120, function() return 3400, 1.0 end, Arcane_Hit },                -- Major Arcane Protection Potion
+	[28513] = { 1.0, 120, function() return 3400, 1.0 end, Nature_Hit },                -- Major Nature Protection Potion
+	[28512] = { 1.0, 120, function() return 3400, 1.0 end, Frost_Hit },                 -- Major Frost Protection Potion
+	[28511] = { 1.0, 120, function() return 3400, 1.0 end, Fire_Hit },                  -- Major Fire Protection Potion
+	[7233] = { 1.0, 120, function() return 1300, 1.0 end, Fire_Hit },                   -- Fire Protection Potion
+	[7239] = { 1.0, 120, function() return 1300, 1.0 end, Frost_Hit },                  -- Frost Protection Potion
+	[7242] = { 1.0, 120, function() return 1300, 1.0 end, Shadow_Hit },                 -- Shadow Protection Potion
+	[7245] = { 1.0, 120, function() return 1300, 1.0 end, Holy_Hit },                   -- Holy Protection Potion
+	[7254] = { 1.0, 120, function() return 1300, 1.0 end, Nature_Hit },                 -- Nature Protection Potion
+	[53915] = { 1.0, 120, function() return 3100, 1.0 end, Shadow_Hit },                -- Mighty Shadow Protection Potion
+	[53914] = { 1.0, 120, function() return 3100, 1.0 end, Nature_Hit },                -- Mighty Nature Protection Potion
+	[53913] = { 1.0, 120, function() return 3100, 1.0 end, Frost_Hit },                 -- Mighty Frost Protection Potion
+	[53911] = { 1.0, 120, function() return 3100, 1.0 end, Fire_Hit },                  -- Mighty Fire Protection Potion
+	[53910] = { 1.0, 120, function() return 3100, 1.0 end, Arcane_Hit },                -- Mighty Arcane Protection Potion
+	[17548] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                --  Greater Shadow Protection Potion
+	[17546] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Nature Protection Potion
+	[17545] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Holy Protection Potion
+	[17544] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Frost Protection Potion
+	[17543] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Fire Protection Potion
+	[17549] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Arcane Protection Potion
+	[28527] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                -- Fel Blossom
+	[29432] = { 1.0, 3600, function() return 2000, 1.0 end, Fire_Hit },                 -- Frozen Rune
+	[25750] = { 1.0, 15, function() return 151, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
+	[25747] = { 1.0, 15, function() return 344, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
+	[25746] = { 1.0, 15, function() return 394, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
+	[23991] = { 1.0, 15, function() return 550, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
+	[30997] = { 1.0, 300, function() return 1800, 1.0 end, Fire_Hit },                  -- Pendant of Frozen Flame Usage
+	[31002] = { 1.0, 300, function() return 1800, 1.0 end, Arcane_Hit },                -- Pendant of the Null Rune
+	[30999] = { 1.0, 300, function() return 1800, 1.0 end, Nature_Hit },                -- Pendant of Withering
+	[30994] = { 1.0, 300, function() return 1800, 1.0 end, Frost_Hit },                 -- Pendant of Thawing
+	[31000] = { 1.0, 300, function() return 1800, 1.0 end, Shadow_Hit },                -- Pendant of Shadow's End
+	[23506] = { 1.0, 20, function() return 1000, 1.0 end, generic_Hit },                -- Arena Grand Master
+	[12561] = { 1.0, 60, function() return 400, 1.0 end, Fire_Hit },                    -- Goblin Construction Helmet
+	[21956] = { 1.0, 15, function() return 250, 1.0 end, Physical_Hit },                -- Mark of Resolution
+	[4057] = { 1.0, 60, function() return 250, 1.0 end, Fire_Hit },                     -- Flame Deflector
+	[4077] = { 1.0, 60, function() return 300, 1.0 end, generic_Hit },                  -- Ice Deflector
+	[39228] = { 1.0, 20, function() return 609, 1.0 end, generic_Hit },                 -- Argussian Compass (may not be an actual absorb)
+	[11657] = { 1.0, 20, function() return 70, 1.0 end, generic_Hit },                  -- Jang'thraze (Zul Farrak)
+	[10368] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                -- Uther's Strength
+	[37515] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                -- Warbringer Armor Proc
+	[42137] = { 1.0, 86400, function() return 1000, 1.0 end, generic_Hit },             -- Greater Rune of Warding Proc
+	[26467] = { 1.0, 30, function() return 1000, 1.0 end, generic_Hit },                -- Scarab Brooch
+	[26470] = { 1.0, 8, function() return 1000, 1.0 end, generic_Hit },                 -- Scarab Brooch
+	[27539] = { 1.0, 6, function() return 1000, 1.0 end, generic_Hit },                 -- Thick Obsidian Breatplate
+	[54808] = { 1.0, 12, function() return 1000, 1.0 end, generic_Hit },                -- Noise Machine Sonic Shield
+	[55019] = { 1.0, 12, function() return 1000, 1.0 end, generic_Hit },                -- Sonic Shield
+	[70845] = { 1.0, 10, items_Stoicism_Create, generic_Hit },                          -- Stoicism (Warrior Raid Set 10 4pc bonus)
+	[65686] = { 1.0, 0, function() return 0, 0.0 end, nil },                            -- Twin Val'kyr: Light Essence
+	[65684] = { 1.0, 0, function() return 0, 0.0 end, nil },                            -- Twin Val'kyr: Dark Essence
 
-	[55277] =  {1.0, 15, function() return 1084*4, 1.0 end, generic_Hit}, --shaman totem pvp
+	[55277] = { 1.0, 15, function() return 1084 * 4, 1.0 end, generic_Hit },            --shaman totem pvp
 
 	--t4 abilities
-	[319166] = {1.0, 30, paladin_T4GodsHand, generic_Hit}, -- Paladin 2T4 God's Hand
-	[321447] = {1.0, 10, paladin_2T4proto, generic_Hit}, -- Paladin 2T4 God's Hand
-	[305082] = priest_PWS_EntryT4, -- Power Word: Shield (rank 14) t4 increase
+	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },           -- Paladin 2T4 God's Hand
+	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },             -- Paladin 2T4 God's Hand
+	[305082] = priest_PWS_EntryT4,                                     -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
-	[308143] = priest_PWS_Entry, -- Power Word: Shield (rank 15)
-	[319521] = {1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit}, -- t6 absorb feral
-	[308125] = {1.0, 10, deathknight_T52FrostTankOnCreate, generic_Hit}, --t5 fdk tank
-	[319552] = {1.0, 2, deathknight_T62FrostTankOnCreate, generic_Hit}, --t6 fdk tank
+	[308143] = priest_PWS_Entry,                                       -- Power Word: Shield (rank 15)
+	[319521] = { 1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit }, -- t6 absorb feral
+	[308125] = { 1.0, 10, deathknight_T52FrostTankOnCreate, generic_Hit }, --t5 fdk tank
+	[319552] = { 1.0, 2, deathknight_T62FrostTankOnCreate, generic_Hit }, --t6 fdk tank
 
-	[308136] = {1.0, 20, deathknight_T52BloodTankOnCreate, generic_Hit}, --t5 bdk tank
+	[308136] = { 1.0, 20, deathknight_T52BloodTankOnCreate, generic_Hit }, --t5 bdk tank
 
-	[310210] = {1.0, 2, function() return 50000, 1.0 end, generic_Hit}, --t5 warrior
+	[310210] = { 1.0, 2, function() return 50000, 1.0 end, generic_Hit }, --t5 warrior
 
-	[307921]= {1.0, 10, paladin_T5TankOnCreate, generic_Hit}, -- t5 paladin
+	[307921] = { 1.0, 10, paladin_T5TankOnCreate, generic_Hit },       -- t5 paladin
 	--items
-	[319189] = {1.0, 4, function() return 18000, 1.0 end, generic_Hit}, --303 запястья
+	[319189] = { 1.0, 4, function() return 18000, 1.0 end, generic_Hit }, --303 запястья
 
-	[317293] = {1.0, 10, function() return 1700, 1.0 end, generic_Hit}, -- статуэтка бронзового дракона
-	[315529] = {1.0, 10, function() return 3660, 1.0 end, generic_Hit}, -- расколотое солнце
-	[75477] = {1.0, 10, function() return 49207, 1.0 end, generic_Hit}, -- чешка об
-	[75480] = {1.0, 10, function() return 66420, 1.0 end, generic_Hit}, -- чешка хм
+	[317293] = { 1.0, 10, function() return 1700, 1.0 end, generic_Hit }, -- статуэтка бронзового дракона
+	[315529] = { 1.0, 10, function() return 3660, 1.0 end, generic_Hit }, -- расколотое солнце
+	[75477] = { 1.0, 10, function() return 49207, 1.0 end, generic_Hit }, -- чешка об
+	[75480] = { 1.0, 10, function() return 66420, 1.0 end, generic_Hit }, -- чешка хм
 
-	[317911] = {1.0, 10, function() return 722, 1.0 end, generic_Hit}, -- духовный барьер
-	[319738] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 4
-	[319996] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 3
-	[320110] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 2
-	[320221] = {1.0, 6, paladin_TTG_Absorb, generic_Hit}, -- enchant ttg 1
-	[319795] = {1.0, 5, function() return 3235, 1.0 end, generic_Hit}, -- tg priest
-	[320059] = {1.0, 5, function() return 2587, 1.0 end, generic_Hit}, -- tg priest
-	[320173] = {1.0, 5, function() return 1940, 1.0 end, generic_Hit}, -- tg priest
-	[320284] = {1.0, 5, function() return 1213, 1.0 end, generic_Hit}, -- tg priest
-	[320439] = {1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit}, -- race pandaren absorb
+	[317911] = { 1.0, 10, function() return 722, 1.0 end, generic_Hit }, -- духовный барьер
+	[319738] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 4
+	[319996] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 3
+	[320110] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 2
+	[320221] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 1
+	[319795] = { 1.0, 5, function() return 3235, 1.0 end, generic_Hit }, -- tg priest
+	[320059] = { 1.0, 5, function() return 2587, 1.0 end, generic_Hit }, -- tg priest
+	[320173] = { 1.0, 5, function() return 1940, 1.0 end, generic_Hit }, -- tg priest
+	[320284] = { 1.0, 5, function() return 1213, 1.0 end, generic_Hit }, -- tg priest
+	[320439] = { 1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit },    -- race pandaren absorb
 }
 
 Core.AreaTriggers = {
