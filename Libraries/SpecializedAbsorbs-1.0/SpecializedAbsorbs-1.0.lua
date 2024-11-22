@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 20
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 21
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -158,6 +158,13 @@ local function GetSelfMultipleValue()
 		if VIP_MULTIPLY[spellId] then
 			self_cached_value = VIP_MULTIPLY[spellId]
 			break
+		end
+	end
+	for k,v in pairs(VIP_MULTIPLY)do
+		if(IsSpellKnown(k))then
+			if(v>=self_cached_value)then
+				self_cached_value=v
+			end
 		end
 	end
 end
