@@ -44,7 +44,7 @@ ignore = {
 }
 
 globals = {
-
+	"C_Unit",
 	"GetItemLevelColor",
 	--fonts
 	"GameFontNormal9",
