@@ -26,7 +26,7 @@ local function OnLeave()
 end
 
 function B:SkinBag(bag)
-	local icon = _G[bag:GetName().."IconTexture"]
+	local icon = _G[bag:GetName() .. "IconTexture"]
 	bag.oldTex = icon:GetTexture()
 
 	bag:StripTextures()
@@ -50,7 +50,7 @@ function B:SizeAndPositionBagBar()
 
 	local visibility = E.db.bags.bagBar.visibility
 	if visibility and string.match(visibility, "[\n\r]") then
-		visibility = string.gsub(visibility, "[\n\r]","")
+		visibility = string.gsub(visibility, "[\n\r]", "")
 	end
 
 	RegisterStateDriver(ElvUIBags, "visibility", visibility)
@@ -75,7 +75,7 @@ function B:SizeAndPositionBagBar()
 
 	for i = 1, #ElvUIBags.buttons do
 		local button = ElvUIBags.buttons[i]
-		local prevButton = ElvUIBags.buttons[i-1]
+		local prevButton = ElvUIBags.buttons[i - 1]
 		button:SetSize(bagBarSize, bagBarSize)
 		button:ClearAllPoints()
 
@@ -146,7 +146,7 @@ function B:LoadBagBar()
 	self:SkinBag(MainMenuBarBackpackButton)
 
 	for i = 0, NUM_BAG_FRAMES - 1 do
-		local b = _G["CharacterBag"..i.."Slot"]
+		local b = _G["CharacterBag" .. i .. "Slot"]
 		b:SetParent(ElvUIBags)
 		b.SetParent = E.noop
 		b:HookScript("OnEnter", OnEnter)
@@ -164,14 +164,36 @@ function B:LoadBagBar()
 	ElvUIKeyRing.SetParent = E.noop
 	ElvUIKeyRing:RegisterForClicks("anyUp")
 
-	_G[ElvUIKeyRing:GetName().."IconTexture"]:SetTexture("Interface\\ContainerFrame\\KeyRing-Bag-Icon")
-	_G[ElvUIKeyRing:GetName().."IconTexture"]:SetInside()
-	_G[ElvUIKeyRing:GetName().."IconTexture"]:SetTexCoord(unpack(E.TexCoords))
+	_G[ElvUIKeyRing:GetName() .. "IconTexture"]:SetTexture("Interface\\ContainerFrame\\KeyRing-Bag-Icon")
+	_G[ElvUIKeyRing:GetName() .. "IconTexture"]:SetInside()
+	_G[ElvUIKeyRing:GetName() .. "IconTexture"]:SetTexCoord(unpack(E.TexCoords))
 
-	ElvUIKeyRing:SetScript("OnClick", function() if CursorHasItem() then PutKeyInKeyRing() else ToggleKeyRing() end end)
+	ElvUIKeyRing:SetScript("OnClick",
+		function()
+			if CursorHasItem() then
+				PutKeyInKeyRing()
+			else
+				if ElvUI_ContainerFrameKeyFrame:IsShown() then
+					ElvUI_ContainerFrameKeyFrame:Hide()
+				else
+					if not ElvUI_ContainerFrame:IsShown() then
+						ToggleBag(1)
+					end
+					ElvUI_ContainerFrameKeyFrame:Show()
+				end
+			end
+		end)
 	ElvUIKeyRing:SetScript("OnReceiveDrag", function() if CursorHasItem() then PutKeyInKeyRing() end end)
-	ElvUIKeyRing:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_LEFT") GameTooltip:SetText(KEYRING, 1, 1, 1) OnEnter() end)
-	ElvUIKeyRing:SetScript("OnLeave",function() GameTooltip:Hide() OnLeave() end)
+	ElvUIKeyRing:SetScript("OnEnter",
+		function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+			GameTooltip:SetText(KEYRING, 1, 1, 1)
+			OnEnter()
+		end)
+	ElvUIKeyRing:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+		OnLeave()
+	end)
 
 	tinsert(ElvUIBags.buttons, ElvUIKeyRing)
 
