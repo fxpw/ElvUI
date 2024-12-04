@@ -377,6 +377,73 @@ ElvUF.Tags.Methods["race:abbrev"] = function(unit)
 	end
 end
 
+local cons_race = {
+	[371788] = {"Син'дорей", "BloodElf"},
+	[371789] = {"Дворф Чёрного Железа", "DarkIronDwarf"},
+	[371790] = {"Драктир", "Dracthyr"},
+	[371791] = {"Дреней", "Draenei"},
+	[371792] = {"Дворф", "Dwarf"},
+	[371793] = {"Эредар", "Eredar"},
+	[371794] = {"Гном", "Gnome"},
+	[371795] = {"Гоблин", "Goblin"},
+	[371796] = {"Человек", "Human"},
+	[371797] = {"Озаренный дреней", "Lightforged"},
+	[371798] = {"Нага", "Naga"},
+	[371799] = {"Ночнорожденный", "Nightborne"},
+	[371800] = {"Ночной эльф", "NightElf"},
+	[371801] = {"Орк", "Orc"},
+	[371802] = {"Пандарен", "Pandaren"},
+	[371803] = {"Высший эльф", "Queldo"},
+	[371804] = {"Нежить", "Scourge"},
+	[371805] = {"Таурен", "Tauren"},
+	[371806] = {"Тролль", "Troll"},
+	[371807] = {"Эльф Бездны", "VoidElf"},
+	[371808] = {"Вульпера", "Vulpera"},
+	[371809] = {"Ворген", "Worgen"},
+	[371810] = {"Зандалар", "ZandalariTroll"}
+}
+
+ElvUF.Tags.Events["cons"] = "UNIT_AURA"
+ElvUF.Tags.Methods["cons"] = function(unit)
+	for i = 1, 40 do
+		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
+		if not name then
+			break
+		end
+
+		if cons_race[spellID] then
+			return name:sub(20,-1) -- .. const_type[spellID]
+		end
+	end
+end
+
+ElvUF.Tags.Events["cons:race"] = "UNIT_AURA"
+ElvUF.Tags.Methods["cons:race"] = function(unit)
+	for i = 1, 40 do
+		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
+		if not name then
+			break
+		end
+		if cons_race[spellID] then
+			return cons_race[spellID][1]
+		end
+	end
+end
+
+ElvUF.Tags.Events["cons:race:abbrev"] = "UNIT_AURA"
+ElvUF.Tags.Methods["cons:race:abbrev"] = function(unit)
+	for i = 1, 40 do
+		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
+			if not name then
+				break
+			end
+		if cons_race[spellID] then
+			return race_type[cons_race[spellID][2]]
+		end
+	end
+end
+
+
 -----------------------------------
 -----------------------------------
 ---------------------tags for np
@@ -435,6 +502,9 @@ E:AddTagInfo("pvp:id", "Sirus", "Показывает на юните PvP ран
 E:AddTagInfo("pvp:icon", "Sirus", "Показывает на юните PvP ранк в виде иконки")
 
 E:AddTagInfo("race:abbrev", "Sirus", "Показывает расу юнита сокращенно")
+E:AddTagInfo("cons", "Sirus", "Показывает созвездие юнита")
+E:AddTagInfo("cons:race", "Sirus", "Показывает расу созвездия юнита")
+E:AddTagInfo("cons:race:abbrev", "Sirus", "Показывает расу созвездия юнита сокращенно")
 
 E:AddTagInfo("happiness", "Sirus", "Счастье питомца строка")
 E:AddTagInfo("happiness:icon", "Sirus", "Счастье питомца в иконке")
