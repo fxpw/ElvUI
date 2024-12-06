@@ -13,6 +13,7 @@ local function LoadSkin()
 	local checkboxes = {
 		"InterfaceOptionsControlsPanelBlockGuildInvites",
 		"InterfaceOptionsCombatPanelLossOfControll",
+		"InterfaceOptionsCombatPanelAssistModeCheckButton",
 		"InterfaceOptionsSocialPanelAutoJoinToLFG",
 		"InterfaceOptionsHelpPanelShowAchievementTooltip",
 		"InterfaceOptionsNotificationPanelShowSocialToast",
