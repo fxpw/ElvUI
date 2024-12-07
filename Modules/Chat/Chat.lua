@@ -192,6 +192,7 @@ local eye2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":
 local lun = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lun]], ":32:32")
 local raccon = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]], ":32:32")
 local ori = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
+local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay]], ":24:24")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
@@ -366,7 +367,18 @@ local specialChatIconsSirus = {
 	["Витаминки-Scourge x2 - 3.3.5a+"] = marazmat,
 	["Витаминки-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat,
 	["Marazmat-Scourge x2 - 3.3.5a+"] = marazmat,
-	["Marazmat-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat
+	["Marazmat-ProxyEU Scourge x2 - 3.3.5a+"] = marazmat,
+
+	["Dadbod-Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Dadbod-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Furryfetish-Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Furryfetish-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Hairybear-Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Hairybear-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Locktober-Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Locktober-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Gyiffay-Scourge x2 - 3.3.5a+"] = gyiffay,
+	["Gyiffay-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
@@ -378,7 +390,9 @@ local pepeChatIcons = {
 	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = true,
 	["Выстрелбелка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 	["Наглость-Scourge x2 - 3.3.5a+"] = true,
-	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = true
+	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Ядобро-Scourge x2 - 3.3.5a+"] = true,
+	["Ядобро-ProxyEU Scourge x2 - 3.3.5a+"] = true
 }
 
 local function ChatFrame_OnMouseScroll(frame, delta)
