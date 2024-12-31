@@ -391,8 +391,10 @@ local pepeChatIcons = {
 	["Выстрелбелка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 	["Наглость-Scourge x2 - 3.3.5a+"] = true,
 	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = true,
-	["Ядобро-Scourge x2 - 3.3.5a+"] = true,
-	["Ядобро-ProxyEU Scourge x2 - 3.3.5a+"] = true
+	["Root-Scourge x2 - 3.3.5a+"] = true,
+	["Root-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Cureit-Scourge x2 - 3.3.5a+"] = true,
+	["Cureit-ProxyEU Scourge x2 - 3.3.5a+"] = true
 }
 
 local function ChatFrame_OnMouseScroll(frame, delta)
