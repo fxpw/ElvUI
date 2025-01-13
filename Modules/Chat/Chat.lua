@@ -193,6 +193,7 @@ local lun = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lun]], ":32
 local raccon = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]], ":32:32")
 local ori = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
 local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay]], ":24:24")
+local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funnyterry]], ":24:24")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
@@ -379,6 +380,17 @@ local specialChatIconsSirus = {
 	["Locktober-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
 	["Gyiffay-Scourge x2 - 3.3.5a+"] = gyiffay,
 	["Gyiffay-ProxyEU Scourge x2 - 3.3.5a+"] = gyiffay,
+
+	["Кощей-Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Кощей-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Саргерас-Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Саргерас-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
+	["King-Scourge x2 - 3.3.5a+"] = funnyterry,
+	["King-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Warlock-Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Warlock-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Asmodeus-Scourge x2 - 3.3.5a+"] = funnyterry,
+	["Asmodeus-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
