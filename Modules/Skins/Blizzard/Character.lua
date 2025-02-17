@@ -992,6 +992,21 @@ local function LoadSkin()
 	PaperDollFrameStrengthenFrame.StrengthenTittle.Background:SetAlpha(0)
 
 	PaperDollSidebarTabs:StripTextures()
+
+	C_Timer:After(0,function()
+		if PaperDollFrameItemSetSwapButton then
+			PaperDollFrameItemSetSwapButton:StripTextures()
+			S:HandleButton(PaperDollFrameItemSetSwapButton)
+			PaperDollFrameItemSetSwapButton.Icon:SetTexCoord(unpack(E.TexCoords))
+			PaperDollFrameItemSetSwapButton:ClearAllPoints()
+			PaperDollFrameItemSetSwapButton:SetParent(ElvUI_PaperDollSidebarTabs and ElvUI_PaperDollSidebarTabs or PaperDollSidebarTabs)
+			PaperDollFrameItemSetSwapButton:Size(32)
+			local level = ElvUI_PaperDollSidebarTab1 and ElvUI_PaperDollSidebarTab1:GetFrameLevel() or PaperDollSidebarTab1:GetFrameLevel()
+			local point = ElvUI_PaperDollSidebarTab1 and ElvUI_PaperDollSidebarTab1 or PaperDollSidebarTab1
+			PaperDollFrameItemSetSwapButton:SetFrameLevel(level+1)
+			PaperDollFrameItemSetSwapButton:SetPoint("RIGHT",point,"LEFT",-4,0)
+		end
+	end)
 	PaperDollFrame.StatsInset:StripTextures()
 	PaperDollFrame.EquipInset:StripTextures()
 	CharacterModelFrame:CreateBackdrop()
@@ -1031,6 +1046,8 @@ local function LoadSkin()
 			tab.TabBg:Kill()
 		end
 	end
+
+
 
 	_G["GearManagerToggleButton"]:Size(26, 32)
 	_G["GearManagerToggleButton"]:CreateBackdrop("Default")
