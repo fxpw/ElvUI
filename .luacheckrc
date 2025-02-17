@@ -8035,6 +8035,7 @@ globals = {
 	"GREEN_FONT_COLOR",
 	"GUILDFRAME_POPUPS",
 	"GameMenuButtonContinue",
+	"GameMenuButtonPromoCode",
 	"GameMenuButtonKeybindings",
 	"GameMenuButtonLogout",
 	"GameMenuButtonMacOptions",
