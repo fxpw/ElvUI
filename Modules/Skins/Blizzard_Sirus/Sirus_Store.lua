@@ -15,7 +15,7 @@ local function HookSubButtons()
 end
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.store ~= true then return end
-
+	if true then return end
 	local goldBorderList = {
 		"TopLeft",
 		"TopRight",

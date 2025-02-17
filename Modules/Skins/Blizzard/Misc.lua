@@ -20,6 +20,7 @@ S:AddCallback("Skin_Misc", function()
 		GameMenuButtonOptions,
 		GameMenuButtonSoundOptions,
 		GameMenuButtonUIOptions,
+		GameMenuButtonPromoCode,
 	--	GameMenuButtonMacOptions,
 		GameMenuButtonKeybindings,
 		GameMenuButtonMacros,
