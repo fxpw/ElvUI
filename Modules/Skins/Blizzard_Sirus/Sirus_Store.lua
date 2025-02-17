@@ -3,16 +3,16 @@ local S = E:GetModule("Skins")
 
 --Lua functions
 --WoW API / Variables
-local function HookSubButtons()
+-- local function HookSubButtons()
 
-	if StoreRefreshTransmogListButton then
-		S:HandleButton(StoreRefreshTransmogListButton)
-	end
-	for _,v in pairs(StoreFrame.SubCategoryFrames or {}) do
-		S:HandleButton(v,true)
-		v.SelectedTexture:SetTexture(.9, .8, .1, .3)
-	end
-end
+-- 	if StoreRefreshTransmogListButton then
+-- 		S:HandleButton(StoreRefreshTransmogListButton)
+-- 	end
+-- 	for _,v in pairs(StoreFrame.SubCategoryFrames or {}) do
+-- 		S:HandleButton(v,true)
+-- 		v.SelectedTexture:SetTexture(.9, .8, .1, .3)
+-- 	end
+-- end
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.store ~= true then return end
 	if true then return end
