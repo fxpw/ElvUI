@@ -867,7 +867,7 @@ end
 --- KeyBound integration
 
 function Generic:GetBindingAction()
-	return self.config.keyBoundTarget or "CLICK "..self:GetName()..":LeftButton"
+	return self.config.keyBoundTarget or ("CLICK "..self:GetName()..":LeftButton")
 end
 
 function Generic:GetHotkey()

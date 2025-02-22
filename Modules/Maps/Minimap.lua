@@ -257,7 +257,13 @@ local menuList = {
 		icon = [[Interface\Buttons\UI-MicroButton-BStore-Up]],
 		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-BStore-Up]]).."|cffFFD700МаГаЗиН|r",
 		notCheckable = 1,
-		func = ToggleStoreFrame
+		func = function()
+			if StoreFrame:IsShown() then
+				StoreFrame:Hide()
+			else
+				StoreFrame:Hide()
+			end
+		end
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-MainMenu-Up]],
