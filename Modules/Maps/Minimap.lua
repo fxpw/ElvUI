@@ -261,7 +261,7 @@ local menuList = {
 			if StoreFrame:IsShown() then
 				StoreFrame:Hide()
 			else
-				StoreFrame:Hide()
+				StoreFrame:Show()
 			end
 		end
 	},
