@@ -266,7 +266,6 @@ local specialChatIconsSirus = {
 	["Анкроа-Scourge x2 - 3.3.5a+"] = darling,
 	["Anae-Scourge x2 - 3.3.5a+"] = darling,
 	["Анаэ-Scourge x2 - 3.3.5a+"] = darling,
-	["Кицуняшка-Scourge x2 - 3.3.5a+"] = darling,
 	["Ankroa-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
 	["Анкроа-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
 	["Anae-ProxyEU Scourge x2 - 3.3.5a+"] = darling,
