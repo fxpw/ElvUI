@@ -194,6 +194,7 @@ local raccon = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]]
 local ori = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
 local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay]], ":24:24")
 local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funnyterry]], ":24:24")
+local daimon = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\daimon]], ":32:32")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
