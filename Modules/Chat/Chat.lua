@@ -194,6 +194,7 @@ local raccon = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]]
 local ori = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
 local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay]], ":24:24")
 local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funnyterry]], ":24:24")
+local mottidowerro = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\mottidowerro]], ":32:32")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
@@ -389,7 +390,12 @@ local specialChatIconsSirus = {
 	["Warlock-Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Warlock-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Asmodeus-Scourge x2 - 3.3.5a+"] = funnyterry,
-	["Asmodeus-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry
+	["Asmodeus-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
+
+	["Mottidowerro-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
+	["Mottyoka-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
+	["Nuveline-Soulseeker x1 - 3.3.5a+"] = mottidowerro
+	
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
