@@ -195,6 +195,7 @@ local ori = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32
 local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay]], ":24:24")
 local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funnyterry]], ":24:24")
 local mottidowerro = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\mottidowerro]], ":32:32")
+local da1mon12 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da1mon12]], ":32:32")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
@@ -394,7 +395,10 @@ local specialChatIconsSirus = {
 
 	["Mottidowerro-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
 	["Mottyoka-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
-	["Nuveline-Soulseeker x1 - 3.3.5a+"] = mottidowerro
+	["Nuveline-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
+
+	["Даймон-Sirus x5 - 3.3.5a+"] = da1mon12,
+	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12
 	
 }
 local randomChatIcons = {
