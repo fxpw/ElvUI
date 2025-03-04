@@ -194,6 +194,7 @@ local raccon = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\raccon]]
 local ori = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\ori]], ":32:32")
 local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay]], ":24:24")
 local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funnyterry]], ":24:24")
+local da1mon12 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da1mon12]], ":32:32")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
@@ -390,6 +391,9 @@ local specialChatIconsSirus = {
 	["Warlock-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Asmodeus-Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Asmodeus-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry
+
+	["Даймон-Sirus x5 - 3.3.5a+"] = da1mon12,
+	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
