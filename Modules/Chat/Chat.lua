@@ -390,6 +390,9 @@ local specialChatIconsSirus = {
 	["Warlock-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Asmodeus-Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Asmodeus-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry
+
+	["Даймон-Sirus x5 - 3.3.5a+"] = daimon,
+	["Худший-Sirus x5 - 3.3.5a+"] = daimon
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
