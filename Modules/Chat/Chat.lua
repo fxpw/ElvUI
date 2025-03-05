@@ -399,7 +399,6 @@ local specialChatIconsSirus = {
 
 	["Даймон-Sirus x5 - 3.3.5a+"] = da1mon12,
 	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12
-	
 }
 local randomChatIcons = {
 	["Шутка-Scourge x2 - 3.3.5a+"] = true,
