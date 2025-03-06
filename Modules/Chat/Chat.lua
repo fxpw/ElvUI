@@ -395,7 +395,6 @@ local specialChatIconsSirus = {
 
 	["Mottidowerro-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
 	["Mottyoka-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
-	["Nuveline-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
 
 	["Даймон-Sirus x5 - 3.3.5a+"] = da1mon12,
 	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12
