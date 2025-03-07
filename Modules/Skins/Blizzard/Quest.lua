@@ -346,7 +346,7 @@ S:AddCallback("Skin_Quest", function()
 					if count then
 						local text = count:GetText()
 						if text then
-							count:SetText(text:gsub(" / ", "/"))
+							count:SetText(text:gsub(" / ", "\n"))
 						end
 					end
 					questQualityColors(item, name, link)
@@ -431,7 +431,7 @@ S:AddCallback("Skin_Quest", function()
 				if count then
 					local text = count:GetText()
 					if text then
-						count:SetText(text:gsub(" / ", "\n"))
+						count:SetText(text:gsub(" / ", "/"))
 					end
 				end
 				questQualityColors(item, name, link)
