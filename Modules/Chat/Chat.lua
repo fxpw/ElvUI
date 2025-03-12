@@ -408,12 +408,13 @@ local randomChatIcons = {
 local pepeChatIcons = {
 	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = true,
 	["Выстрелбелка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Выстрелбелка-Soulseeker x1 - 3.3.5a+"] = true,
 	["Наглость-Scourge x2 - 3.3.5a+"] = true,
 	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 	["Root-Scourge x2 - 3.3.5a+"] = true,
 	["Root-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 	["Cureit-Scourge x2 - 3.3.5a+"] = true,
-	["Cureit-ProxyEU Scourge x2 - 3.3.5a+"] = true
+	["Cureit-ProxyEU Scourge x2 - 3.3.5a+"] = true,
 }
 
 local function ChatFrame_OnMouseScroll(frame, delta)
