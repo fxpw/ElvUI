@@ -355,7 +355,11 @@ end
 
 function TT:INSPECT_TALENT_READY(event, unit)
 	if not unit then
-		if self.lastGUID ~= UnitGUID("mouseover") then return end
+		local currentGUID = UnitGUID("mouseover")
+		if not currentGUID or self.lastGUID ~= currentGUID then 
+			self:UnregisterEvent(event)
+			return 
+		end
 
 		self:UnregisterEvent(event)
 
@@ -364,11 +368,14 @@ function TT:INSPECT_TALENT_READY(event, unit)
 	end
 
 	-- local itemLevel = self:GetItemLvL(unit)
+	local unitGUID = UnitGUID(unit)
+	if not unitGUID or unitGUID ~= self.lastGUID then return end
+	
 	local _, specName = E:GetTalentSpecInfo(true)
-	inspectCache[self.lastGUID] = {time = GetTime()}
+	inspectCache[unitGUID] = {time = GetTime()}
 
 	if specName then
-		inspectCache[self.lastGUID].specName = specName
+		inspectCache[unitGUID].specName = specName
 	end
 
 	-- if itemLevel then
@@ -382,6 +389,8 @@ function TT:ShowInspectInfo(tt, unit, r, g, b)
 	if not canInspect then return end
 
 	local GUID = UnitGUID(unit)
+	if not GUID then return end
+	
 	if GUID == E.myguid then
 		local _, specName = E:GetTalentSpecInfo()
 
@@ -735,6 +744,29 @@ function TT:RepositionBNET(frame, _, anchor)
 	end
 end
 
+function TT:ClearInspectCache()
+	wipe(inspectCache)
+end
+
+function TT:PLAYER_TALENT_UPDATE()
+	self:ClearInspectCache()
+end
+
+function TT:ACTIVE_TALENT_GROUP_CHANGED()
+	self:ClearInspectCache()
+end
+
+function TT:CheckCacheExpiration()
+	local currentTime = GetTime()
+	for guid, info in pairs(inspectCache) do
+		if (currentTime - info.time) > 900 then -- 15 минут
+			inspectCache[guid] = nil
+		end
+	end
+	
+	self:ScheduleTimer("CheckCacheExpiration", 300)
+end
+
 function TT:Initialize()
 	self.db = E.db.tooltip
 
@@ -746,6 +778,11 @@ function TT:Initialize()
 
 	SetCVar("showItemLevel", 1)
 
+	self:RegisterEvent("PLAYER_TALENT_UPDATE")
+	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+	
+	self:ScheduleTimer("CheckCacheExpiration", 300)
+	
 	GameTooltip.StatusBar = GameTooltipStatusBar
 	GameTooltip.StatusBar:Height(self.db.healthBar.height)
 	GameTooltip.StatusBar:SetScript("OnValueChanged", nil)
@@ -859,62 +896,3 @@ function TT:RepositionSocialToast(frame, _, anchor)
 		frame:Point("TOPLEFT", SocialToastMover, "TOPLEFT")
 	end
 end
-
--- if E.private.tooltip.enable then
--- 	if QueueStatusFrame then
--- 		QueueStatusFrame:SetTemplate("Transparent")
--- 	end
-
--- 	if SocialToastFrame then
--- 		SocialToastFrame:SetTemplate("Transparent")
--- 		S:HandleIcon(SocialToastFrame.Icon)
--- 		TT:SecureHook(SocialToastFrame, "ShowToast", function(self) self.Icon:SetTexCoord(unpack(E.TexCoords)) end)
--- 		SocialToastFrame.backdrop:SetFrameLevel(SocialToastFrame:GetFrameLevel() + 2)
--- 		SocialToastFrame.Icon:SetParent(SocialToastFrame.backdrop)
--- 		S:HandleCloseButton(SocialToastFrame.CloseButton)
--- 		SocialToastFrame:ClearAllPoints()
--- 		SocialToastFrame:Point("BOTTOMLEFT", E.UIParent, "BOTTOMLEFT", 4, 195)
--- 		E:CreateMover(SocialToastFrame, "SocialToastMover", L["Social Toast Frame"])
--- 		TT:SecureHook(SocialToastFrame, "SetPoint", "RepositionSocialToast")
--- 	elseif SocialToastAnchorFrame then
--- 		hooksecurefunc(SocialToastAnchorFrame, "ShowToast", function(self)
--- 			for _, toastFrame in ipairs(self.toastFrames) do
--- 				if not toastFrame.isSkinned then
--- 					toastFrame:SetTemplate("Transparent")
--- 					S:HandleIcon(toastFrame.Icon)
--- 					toastFrame.backdrop:SetFrameLevel(toastFrame:GetFrameLevel() + 2)
--- 					toastFrame.Icon:SetParent(toastFrame.backdrop)
--- 					S:HandleCloseButton(toastFrame.CloseButton)
-
--- 					toastFrame.isSkinned = true
--- 				end
-
--- 				toastFrame.Icon:SetTexCoord(unpack(E.TexCoords))
--- 			end
--- 		end)
--- 	end
-
--- 	TOOLTIP_UNIT_LEVEL_RACE_CLASS_TYPE = gsub(TOOLTIP_UNIT_LEVEL_RACE_CLASS_TYPE, "\n.+", "")
-
--- 	hooksecurefunc(ItemLevelMixIn, "Update", function(self, unit)
--- 		unit = unit or self.unit
--- 		local giud = unit and UnitGUID(unit) or self.guid
-
--- 		if unit and giud then
--- 			local _, tooltipUNIT = GameTooltip:GetUnit()
--- 			if tooltipUNIT and giud == UnitGUID(tooltipUNIT) then
--- 				local itemLevel = TT:GetItemLvL(unit, giud)
-
--- 				for lineID = 3, GameTooltip:NumLines() do
--- 					local line = _G["GameTooltipTextRight"..lineID]
--- 					local lineText = line:GetText()
-
--- 					if lineText and find(lineText, LOADING_LABEL) then
--- 						line:SetText(gsub(lineText, LOADING_LABEL, itemLevel))
--- 						break
--- 					end
--- 				end
--- 			end
--- 		end
--- 	end)
--- end
