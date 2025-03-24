@@ -128,6 +128,11 @@ UF.rolePaths = {
 		HEALER = [[Interface\AddOns\ElvUI\Media\Textures\Role\releaf-healer]],
 		DAMAGER = [[Interface\AddOns\ElvUI\Media\Textures\Role\releaf-dps]]
 	},
+	["ToxiUI"] = {
+		TANK = [[Interface\AddOns\ElvUI\Media\Textures\Role\ToxiUI-Tank]],
+		HEALER = [[Interface\AddOns\ElvUI\Media\Textures\Role\ToxiUI-Heal]],
+		DAMAGER = [[Interface\AddOns\ElvUI\Media\Textures\Role\ToxiUI-DPS]]
+	},
 }
 
 local random = math.random
