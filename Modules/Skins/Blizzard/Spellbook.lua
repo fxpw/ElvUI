@@ -51,6 +51,7 @@ local function LoadSkin()
 		for i = 1, 12 do
 			_G["SpellButton"..i.."SpellName"]:SetTextColor(1, 0.80, 0.10)
 			_G["SpellButton"..i.."SubSpellName"]:SetTextColor(1, 1, 1)
+			_G["SpellButton"..i.."RequiredLevelString"]:SetTextColor(1, 1, 1)
 			_G["SpellButton"..i.."Highlight"]:SetTexture(1, 1, 1, 0.3)
 		end
 	end)
