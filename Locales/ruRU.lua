@@ -480,6 +480,7 @@ L["Displays all incoming heals"] = "Отображать любое входящ
 L["Displays only incoming heals from other units"] = "Отображать только входящее исцеление от других юнитов"
 L["Displays only personal incoming heals"] = "Отображать только личное входящее исцеление"
 L["Displays the amount of absorbs"] = "Отображать количество поглощения"
+L["Displays the amount of absorbs in ()"] = "Отображать количество поглощения в ()"
 
 L["Group Units"] = "Групповые юниты"
 -- L["Guild Master Icon"] = "Иконка Главы гильдии"
