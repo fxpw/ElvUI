@@ -297,7 +297,11 @@ local specialChatIconsSirus = {
 	["Kaizen-Scourge x2 - 3.3.5a+"] = legion,
 
 	["Рэйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
-	["Рeйнбоу-Sirus x5 - 3.3.5a+"] = kirin,
+	["Рейнбоу-Sirus x5 - 3.3.5a+"] = kirin,
+	["Рэинбоу-Sirus x5 - 3.3.5a+"] = kirin,
+	["Реинбоу-Sirus x5 - 3.3.5a+"] = kirin,
+	["Taumard-Sirus x5 - 3.3.5a+"] = kirin,
+
 	["Nerfed-Scourge x2 - 3.3.5a+"] = nerfed,
 
 	["Багдемагус-Scourge x2 - 3.3.5a+"] = bagdemagus,

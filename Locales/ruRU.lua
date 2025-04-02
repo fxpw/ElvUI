@@ -510,6 +510,7 @@ L["Wrapped"] = "Обернутый"
 L["Ghost Frame"] = "Фрейм призрака"
 L["VehicleLeaveButton"] = "Высадить"
 L["Fly Vehicle Exit"] = "Высадить"
+L["Zodiac:"] = "Зодиак:"
 
 --~afkwords
 L["RandomWords"] = { ---- не может быть только одной записи рандомные цитаты
