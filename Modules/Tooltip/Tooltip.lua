@@ -527,10 +527,12 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 
     if isPlayerUnit then
 
-		local _, zodiacName, _, _, _ = C_Unit.GetZodiacByDebuff(unit)
-        if zodiacName then
-			tt:AddDoubleLine(L["Zodiac:"], zodiacName, nil, nil, nil, 1, 1, 1)
-        end
+		if self.db.zodiacName then
+			local zodiacName = select(2, C_Unit.GetZodiacByDebuff(unit))
+			if zodiacName then
+				tt:AddDoubleLine(L["Zodiac:"], zodiacName, nil, nil, nil, 1, 1, 1)
+			end
+		end
 
         if color then
             self:ShowInspectInfo(tt, unit, color.r, color.g, color.b)

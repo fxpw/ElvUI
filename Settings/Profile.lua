@@ -1231,6 +1231,7 @@ P.tooltip = {
 	alwaysShowRealm = false,
 	targetInfo = true,
 	playerTitles = true,
+	zodiacName = true,
 	guildRanks = true,
 	itemCount = "BAGS_ONLY",
 	spellID = true,
