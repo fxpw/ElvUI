@@ -196,6 +196,7 @@ local gyiffay = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gyiffay
 local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funnyterry]], ":24:24")
 local mottidowerro = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\mottidowerro]], ":32:32")
 local da1mon12 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da1mon12]], ":32:32")
+local spokes = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\spokes]], ":24:24")
 
 local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 						  [[Yellow]]}
@@ -388,6 +389,11 @@ local specialChatIconsSirus = {
 
 	["Кощей-Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Кощей-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
+
+	["Andrewka-Sirus x5 - 3.3.5a+"] = spokes,
+	["Andrewkaa-Sirus x5 - 3.3.5a+"] = spokes,
+	["Spokes-Sirus x5 - 3.3.5a+"] = spokes,
+
 	["Саргерас-Scourge x2 - 3.3.5a+"] = funnyterry,
 	["Саргерас-ProxyEU Scourge x2 - 3.3.5a+"] = funnyterry,
 	["King-Scourge x2 - 3.3.5a+"] = funnyterry,
