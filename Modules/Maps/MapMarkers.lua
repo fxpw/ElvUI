@@ -138,6 +138,8 @@ local function AddToIgnore(self,link)
 	IgnoreList[name] = true;
 	print(name.." был добавлен в игнор лист меток");
 end
+MM.lastBagUpdate = 0
+MM.updateInterval = 2
 function MM:Initialize()
 	if not E.db.general.mapMarkers.enable then return end
 
@@ -164,6 +166,11 @@ function MM:Initialize()
 	end)
 
 	local function EventHandler(self, event, ...)
+		local currentTime = GetTime()
+		if currentTime - MM.lastBagUpdate < MM.updateInterval then
+			return
+		end
+		MM.lastBagUpdate = currentTime
 		MM:RefreshAll();
 	end
 	MM.imFrame = CreateFrame("Frame",nil,UIParent);
