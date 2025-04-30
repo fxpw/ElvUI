@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 21
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 22
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
