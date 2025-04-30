@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 22
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 23
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2058,14 +2058,16 @@ end
 local absorbPalPokrov = 0
 local function paladin_TTG_Absorb(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	absorbPalPokrov = 0
-	if spellid == 319738 then  --4
-		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1940 and 1940) or palPokrovBuff[srcGUID]
-	elseif spellid == 319996 then --3
-		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1140 and 1140) or palPokrovBuff[srcGUID]
-	elseif spellid == 320110 then --2
-		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 960 and 960) or palPokrovBuff[srcGUID]
-	elseif spellid == 320221 then --1
-		absorbPalPokrov = (palPokrovBuff[srcGUID] >= 480 and 480) or palPokrovBuff[srcGUID]
+	if palPokrovBuff[srcGUID] then
+		if spellid == 319738 then  --4
+			absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1940 and 1940) or palPokrovBuff[srcGUID]
+		elseif spellid == 319996 then --3
+			absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1140 and 1140) or palPokrovBuff[srcGUID]
+		elseif spellid == 320110 then --2
+			absorbPalPokrov = (palPokrovBuff[srcGUID] >= 960 and 960) or palPokrovBuff[srcGUID]
+		elseif spellid == 320221 then --1
+			absorbPalPokrov = (palPokrovBuff[srcGUID] >= 480 and 480) or palPokrovBuff[srcGUID]
+		end
 	end
 	return absorbPalPokrov, 1.0
 end
@@ -2514,7 +2516,7 @@ local function items_ArgussianCompass_Hit(effectEntry)
 end
 
 local function items_Valanyr_OnHeal(srcGUID, srcName, dstGUID, dstName, spellid, amount)
-	PushCharge(dstGUID, 64413, 1450, 8.0)
+	PushCharge(dstGUID, 64413, 1750, 8.0)
 end
 
 local function items_Valanyr_OnAuraApplied(srcGUID, srcName, dstGUID, dstName, spellid)
@@ -2531,6 +2533,9 @@ local function items_Valanyr_Create(srcGUID, srcName, dstGUID, dstName, spellid,
 	if destEffects and destEffects[spellid] then
 		existing = destEffects[spellid][3]
 	end
+	if existing>26250 then
+		existing=26250;
+	end
 
 	local charge = PopCharge(dstGUID, spellid)
 	if charge == 0 then
@@ -2538,8 +2543,8 @@ local function items_Valanyr_Create(srcGUID, srcName, dstGUID, dstName, spellid,
 	end
 
 	-- According to the blue post explaining the Val'anyr effect on introduction, all units are
-	-- contributing to the same bubble with a cap of 20.000
-	return min(20000, existing + charge), 1.0
+	-- contributing to the same bubble with a cap of 26250 sirus cap 30.04.25
+	return min(26250, existing + charge), 1.0
 end
 
 local function items_Stoicism_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
