@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 23
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 24
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2516,7 +2516,11 @@ local function items_ArgussianCompass_Hit(effectEntry)
 end
 
 local function items_Valanyr_OnHeal(srcGUID, srcName, dstGUID, dstName, spellid, amount)
-	PushCharge(dstGUID, 64413, 1750, 8.0)
+	local change = 1750;
+	if(IsInInstance()==1) then
+		change = 4500;
+	end
+	PushCharge(dstGUID, 64413, change, 8.0)
 end
 
 local function items_Valanyr_OnAuraApplied(srcGUID, srcName, dstGUID, dstName, spellid)
