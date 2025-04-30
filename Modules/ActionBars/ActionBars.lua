@@ -799,7 +799,7 @@ function AB:DisableBlizzard()
 
 	MainMenuBarArtFrame:UnregisterAllEvents()
 	MainMenuBarArtFrame:RegisterEvent("KNOWN_CURRENCY_TYPES_UPDATE")
-	-- MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+	MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 	MainMenuBarArtFrame:Hide()
 	MainMenuBarArtFrame:SetParent(UIHider)
 

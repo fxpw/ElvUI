@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 25
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 26
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2111,9 +2111,9 @@ local priest_PWS_Ranks = {
 	[11] = { 25217, 65, 1125, 18 },
 	[12] = { 25218, 70, 1265, 20 },
 	[13] = { 48065, 75, 1920, 30 },
-	[14] = { 48066, 80, 2230, 0 },
-	[15] = { 308143, 80, 2230, 0 },
-	[16] = { 305082, 80, 1250, 0 },
+	[14] = { 48066, 80, 2230, 30 },
+	[15] = { 308143, 80, 2230, 30 },
+	[16] = { 305082, 80, 1250, 30 },
 }
 
 -- Public Scaling:
