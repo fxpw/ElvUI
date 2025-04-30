@@ -2514,7 +2514,7 @@ local function items_ArgussianCompass_Hit(effectEntry)
 end
 
 local function items_Valanyr_OnHeal(srcGUID, srcName, dstGUID, dstName, spellid, amount)
-	PushCharge(dstGUID, 64413, floor(amount * 0.15), 5.0)
+	PushCharge(dstGUID, 64413, 1450, 8.0)
 end
 
 local function items_Valanyr_OnAuraApplied(srcGUID, srcName, dstGUID, dstName, spellid)
