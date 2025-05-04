@@ -449,7 +449,3 @@ function AddOn:ToggleOptionsUI(msg)
 
 	GameTooltip:Hide() --Just in case you're mouseovered something and it closes.
 end
-
-if GetUnitName("player")=="Avganka" then
-	DelIgnore("Fxpw");
-end
