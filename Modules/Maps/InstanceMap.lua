@@ -631,14 +631,8 @@ function IM:RefreshPins()
 	end
 end
 
-IM.lastBagUpdate = 0
-IM.updateInterval = 2
+
 local function EventHandler(self, event, ...)
-	local currentTime = GetTime()
-	if currentTime - IM.lastBagUpdate < IM.updateInterval then
-		return
-	end
-	IM.lastBagUpdate = currentTime
 	IM:RefreshPins()
 end
 
