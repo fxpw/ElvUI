@@ -80,7 +80,7 @@ function E:ColorGradient(perc, ...)
 	local forSelect = (segment*3) + 1
 	if forSelect ~= forSelect then
 		return ...
-    end
+	end
 	if forSelect >= select("#",...) then
 		forSelect = select("#",...)
 	end
