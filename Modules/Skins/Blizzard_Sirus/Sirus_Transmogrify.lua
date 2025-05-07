@@ -6,15 +6,15 @@ local _G = _G
 local unpack = unpack
 --WoW API / Variables
 local function AllStrip(self)
-    self.TopLeft:Hide();
-    self.TopRight:Hide();
-    self.BottomLeft:Hide();
-    self.BottomRight:Hide();
-    self.TopMiddle:Hide();
-    self.MiddleLeft:Hide();
-    self.MiddleRight:Hide();
-    self.BottomMiddle:Hide();
-    self.MiddleMiddle:Hide();
+	self.TopLeft:Hide();
+	self.TopRight:Hide();
+	self.BottomLeft:Hide();
+	self.BottomRight:Hide();
+	self.TopMiddle:Hide();
+	self.MiddleLeft:Hide();
+	self.MiddleRight:Hide();
+	self.BottomMiddle:Hide();
+	self.MiddleMiddle:Hide();
 end
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.transmogrify ~= true then return end
