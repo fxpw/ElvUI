@@ -43,20 +43,20 @@ local function LoadSkin()
 
 			card:SetTemplate("Transparent")
 
-            local mountData = LOTTERY_MOUNT_CHEST[pi]
-            if mountData then
-                local _, _, quality = GetItemInfo(mountData[E_LOTTERY_MOUNT_CHEST.ITEM_ID])
+			local mountData = LOTTERY_MOUNT_CHEST[pi]
+			if mountData then
+				local _, _, quality = GetItemInfo(mountData[E_LOTTERY_MOUNT_CHEST.ITEM_ID])
 				if quality then
 					card:SetBackdropBorderColor(GetItemQualityColor(quality))
 				else
 					card:SetBackdropBorderColor(unpack(E.media.bordercolor))
 				end
-            end
+			end
 		end
 	end)
 
 	hooksecurefunc(Custom_MountChestFrame, "SetAnimationStage", function(self, animationStage)
-        if animationStage == 4 then
+		if animationStage == 4 then
 			local winnerID = self:GetWinnerID()
 			if not winnerID then return end
 
