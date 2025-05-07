@@ -7,35 +7,35 @@ local S = E:GetModule("Skins")
 local function LoadSkin()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.blackMarket then return end
 
-    BlackMarketFrame:StripTextures()
-    BlackMarketFrameInset:StripTextures()
-    BlackMarketFrame.Artwork:StripTextures()
-    BlackMarketFrame.art:StripTextures()
-    BlackMarketScrollFrameButton8Selection:StripTextures()
-    BlackMarketFrameMoneyFrameBorder:StripTextures()
+	BlackMarketFrame:StripTextures()
+	BlackMarketFrameInset:StripTextures()
+	BlackMarketFrame.Artwork:StripTextures()
+	BlackMarketFrame.art:StripTextures()
+	BlackMarketScrollFrameButton8Selection:StripTextures()
+	BlackMarketFrameMoneyFrameBorder:StripTextures()
 
-    for _,button in pairs(BlackMarketScrollFrame.buttons) do
+	for _,button in pairs(BlackMarketScrollFrame.buttons) do
 
-        button:StripTextures()
-        S:HandleButton(button)
-        for k,v in pairs(button) do
-            if k == "Item" then
-                S:HandleItemButton(v)
-            end
-        end
-    end
+		button:StripTextures()
+		S:HandleButton(button)
+		for k,v in pairs(button) do
+			if k == "Item" then
+				S:HandleItemButton(v)
+			end
+		end
+	end
 
-    BlackMarketFrame:CreateBackdrop("Trasparent")
-    S:HandleScrollBar(BlackMarketScrollFrameScrollBar)
-    S:HandleCloseButton(BlackMarketFrame.CloseButton)
-    S:HandleButton(BlackMarketFrameColumnName)
-    S:HandleButton(BlackMarketFrameColumnLevel)
-    S:HandleButton(BlackMarketFrameColumnType)
-    S:HandleButton(BlackMarketFrameColumnDuration)
-    S:HandleButton(BlackMarketFrameColumnHighBidder)
-    S:HandleButton(BlackMarketFrameColumnCurrentBid)
-    S:HandleButton(BlackMarketFrameBidButton)
-    S:HandleEditBox(BlackMarketBidPriceGold)
+	BlackMarketFrame:CreateBackdrop("Trasparent")
+	S:HandleScrollBar(BlackMarketScrollFrameScrollBar)
+	S:HandleCloseButton(BlackMarketFrame.CloseButton)
+	S:HandleButton(BlackMarketFrameColumnName)
+	S:HandleButton(BlackMarketFrameColumnLevel)
+	S:HandleButton(BlackMarketFrameColumnType)
+	S:HandleButton(BlackMarketFrameColumnDuration)
+	S:HandleButton(BlackMarketFrameColumnHighBidder)
+	S:HandleButton(BlackMarketFrameColumnCurrentBid)
+	S:HandleButton(BlackMarketFrameBidButton)
+	S:HandleEditBox(BlackMarketBidPriceGold)
 
 end
 
