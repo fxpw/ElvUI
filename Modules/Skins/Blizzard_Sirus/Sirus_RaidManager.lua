@@ -5,15 +5,15 @@ local S = E:GetModule("Skins")
 --Lua functions
 --WoW API / Variables
 local function AllHideAndHandle(self,bool)
-    self.TopLeft:Hide();
-    self.TopRight:Hide();
-    self.BottomLeft:Hide();
-    self.BottomRight:Hide();
-    self.TopMiddle:Hide();
-    self.MiddleLeft:Hide();
-    self.MiddleRight:Hide();
-    self.BottomMiddle:Hide();
-    self.MiddleMiddle:Hide();
+	self.TopLeft:Hide();
+	self.TopRight:Hide();
+	self.BottomLeft:Hide();
+	self.BottomRight:Hide();
+	self.TopMiddle:Hide();
+	self.MiddleLeft:Hide();
+	self.MiddleRight:Hide();
+	self.BottomMiddle:Hide();
+	self.MiddleMiddle:Hide();
 	if bool then
 		S:HandleButton(self)
 	end
