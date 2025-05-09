@@ -407,7 +407,8 @@ local specialChatIconsSirus = {
 	["Mottyoka-Soulseeker x1 - 3.3.5a+"] = mottidowerro,
 
 	["Даймон-Sirus x5 - 3.3.5a+"] = da1mon12,
-	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12
+	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12,
+	["Zippio-Sirus x5 - 3.3.5a+"] = da1mon12
 }
 local randomChatIcons = {
 	["Fxpw-Soulseeker x1 - 3.3.5a+"] = true,
