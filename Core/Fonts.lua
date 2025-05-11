@@ -42,7 +42,6 @@ function E:UpdateBlizzardFonts()
 		SetCVar("PetMeleeDamage", 0)
 		SetCVar("CombatDamage", 0)
 		SetCVar("CombatHealing", 0)
-
 		-- set an invisible font for xp, honor kill, etc
 		COMBAT = E.Media.Fonts.Invisible
 	end

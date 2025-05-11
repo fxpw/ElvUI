@@ -48,6 +48,8 @@ globals = {
 	"GetItemLevelColor",
 	--fonts
 	"GameFontNormal9",
+	"Number18Font",
+	"Number18FontWhite",
     "GameFontNormal11",
     "GameFontNormal12",
     "GameFontNormal13",
