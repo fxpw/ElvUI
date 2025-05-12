@@ -34,16 +34,18 @@ function E:UpdateBlizzardFonts()
 		MONOCHROME = "MONOCHROME"
 	end
 	if self.private.general.pixelPerfect then
-		InterfaceOptionsCombatTextPanelTargetDamage:Hide()
-		InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
-		InterfaceOptionsCombatTextPanelPetDamage:Hide()
-		InterfaceOptionsCombatTextPanelHealing:Hide()
-		SetCVar("CombatLogPeriodicSpells", 0)
-		SetCVar("PetMeleeDamage", 0)
-		SetCVar("CombatDamage", 0)
-		SetCVar("CombatHealing", 0)
-		-- set an invisible font for xp, honor kill, etc
-		COMBAT = E.Media.Fonts.Invisible
+		if not self.private.general.stillOnCombatText then
+			InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+			InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+			InterfaceOptionsCombatTextPanelPetDamage:Hide()
+			InterfaceOptionsCombatTextPanelHealing:Hide()
+			SetCVar("CombatLogPeriodicSpells", 0)
+			SetCVar("PetMeleeDamage", 0)
+			SetCVar("CombatDamage", 0)
+			SetCVar("CombatHealing", 0)
+			-- set an invisible font for xp, honor kill, etc
+			COMBAT = E.Media.Fonts.Invisible
+		end
 	end
 
 	UNIT_NAME_FONT     = NAMEFONT
