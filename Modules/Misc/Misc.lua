@@ -323,11 +323,18 @@ end
 function M:HideTutorialFrames()
 	if not E.db.general.hideTutorialFrames then return end
 	-- print(325)
-	C_Timer:After(1,function() HelpTip:ForceHideAll() end)
+	C_Timer:After(1, function()
+		HelpTip:ForceHideAll()
+		if BattlePassSplashFrame:IsShown() then
+			BattlePassSplashFrame:Hide()
+		end
+	end)
 	-- HelpTip:ForceHideAll()
 	-- NPE_TutorialPointerFrame:HideAll()
 	function NPE_TutorialPointerFrame:Hide() end
+
 	function NPE_TutorialPointerFrame:Show() end
+
 	-- hooksecurefunc(NPE_TutorialPointerFrame, "Show", function() print(328) end)
 end
 
