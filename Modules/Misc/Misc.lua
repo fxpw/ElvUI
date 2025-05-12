@@ -63,7 +63,7 @@ do
 end
 
 do
-	local interruptMsg = INTERRUPTED.." %s's \124cff71d5ff\124Hspell:%d\124h[%s]\124h\124r!"
+	local interruptMsg = INTERRUPTED .. " %s's \124cff71d5ff\124Hspell:%d\124h[%s]\124h\124r!"
 
 	function M:ToggleInterruptAnnounce()
 		if E.db.general.interruptAnnounce == "NONE" then
@@ -86,17 +86,21 @@ do
 
 			if E.db.general.interruptAnnounce == "PARTY" then
 				if GetNumPartyMembers() > 0 then
-					SendChatMessage(format(interruptMsg, destName, spellID, spellName), battleground and "BATTLEGROUND" or "PARTY")
+					SendChatMessage(format(interruptMsg, destName, spellID, spellName),
+						battleground and "BATTLEGROUND" or "PARTY")
 				end
 			elseif E.db.general.interruptAnnounce == "RAID" then
 				if GetNumRaidMembers() > 0 then
-					SendChatMessage(format(interruptMsg, destName, spellID, spellName), battleground and "BATTLEGROUND" or "RAID")
+					SendChatMessage(format(interruptMsg, destName, spellID, spellName),
+						battleground and "BATTLEGROUND" or "RAID")
 				elseif GetNumPartyMembers() > 0 then
-					SendChatMessage(format(interruptMsg, destName, spellID, spellName), battleground and "BATTLEGROUND" or "PARTY")
+					SendChatMessage(format(interruptMsg, destName, spellID, spellName),
+						battleground and "BATTLEGROUND" or "PARTY")
 				end
 			elseif E.db.general.interruptAnnounce == "RAID_ONLY" then
 				if GetNumRaidMembers() > 0 then
-					SendChatMessage(format(interruptMsg, destName, spellID, spellName), battleground and "BATTLEGROUND" or "RAID")
+					SendChatMessage(format(interruptMsg, destName, spellID, spellName),
+						battleground and "BATTLEGROUND" or "RAID")
 				end
 			end
 		end
@@ -105,17 +109,17 @@ end
 
 do
 	local repairInventoryPriority = {
-		16,	-- MainHandSlot
-		17,	-- SecondaryHandSlot
-		18,	-- RangedSlot
-		1,	-- HeadSlot
-		5,	-- ChestSlot
-		7,	-- LegsSlot
-		3,	-- ShoulderSlot
-		10,	-- HandsSlot
-		6,	-- WaistSlot
-		8,	-- FeetSlot
-		9,	-- WristSlot
+		16, -- MainHandSlot
+		17, -- SecondaryHandSlot
+		18, -- RangedSlot
+		1, -- HeadSlot
+		5, -- ChestSlot
+		7, -- LegsSlot
+		3, -- ShoulderSlot
+		10, -- HandsSlot
+		6, -- WaistSlot
+		8, -- FeetSlot
+		9, -- WristSlot
 	}
 
 	local function RepairInventoryByPriority(playerMoney)
@@ -171,7 +175,8 @@ do
 		if repairMode == "GUILD" then
 			RepairAllItems(true)
 
-			E:Print(format("%s%s", L["Your items have been repaired using guild bank funds for: "], E:FormatMoney(repairAllCost, "SMART", true)))
+			E:Print(format("%s%s", L["Your items have been repaired using guild bank funds for: "],
+				E:FormatMoney(repairAllCost, "SMART", true)))
 		else
 			local playerMoney = GetMoney()
 
@@ -265,7 +270,7 @@ function M:DisbandRaidGroup()
 	else
 		for i = MAX_PARTY_MEMBERS, 1, -1 do
 			if GetPartyMember(i) then
-				UninviteUnit(UnitName("party"..i))
+				UninviteUnit(UnitName("party" .. i))
 			end
 		end
 	end
@@ -315,6 +320,17 @@ function M:AutoInvite(event, leaderName)
 	end
 end
 
+function M:HideTutorialFrames()
+	if not E.db.general.hideTutorialFrames then return end
+	-- print(325)
+	C_Timer:After(1,function() HelpTip:ForceHideAll() end)
+	-- HelpTip:ForceHideAll()
+	-- NPE_TutorialPointerFrame:HideAll()
+	function NPE_TutorialPointerFrame:Hide() end
+	function NPE_TutorialPointerFrame:Show() end
+	-- hooksecurefunc(NPE_TutorialPointerFrame, "Show", function() print(328) end)
+end
+
 function M:ForceCVars(event)
 	if not GetCVarBool("lockActionBars") then
 		SetCVar("lockActionBars", 1)
@@ -338,6 +354,7 @@ function M:Initialize()
 	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_ALLIANCE", "PVPMessageEnhancement")
 	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_NEUTRAL", "PVPMessageEnhancement")
 	self:RegisterEvent("PARTY_INVITE_REQUEST", "AutoInvite")
+	self:HideTutorialFrames()
 	self:RegisterEvent("MERCHANT_SHOW")
 
 	if E.private.actionbar.enable then
