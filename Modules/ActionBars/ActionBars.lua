@@ -100,6 +100,7 @@ function AB:PositionAndSizeBar(barName)
 	local widthMult = self.db[barName].widthMult
 	local heightMult = self.db[barName].heightMult
 	local visibility = self.db[barName].visibility
+	local cropiconsbar = self.db[barName].cropiconsbar
 	local bar = self.handledBars[barName]
 
 	bar.db = self.db[barName]
@@ -210,6 +211,12 @@ function AB:PositionAndSizeBar(barName)
 		end
 
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable and true or nil)
+		if bar.db.buttonsizeheight then
+			button:Size(size, size * 0.72)
+			button.icon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
+		else
+		
+		end
 	end
 
 	if bar.db.enabled or not bar.initialized then
