@@ -39,6 +39,7 @@ P.general = {
 	showWhenInCombat = false,
 	updateAlert = false,
 	autoAcceptInvite = false,
+	hideTutorialFrames = false,
 	bottomPanel = true,
 	hideLootAlerts = false,
 	hideErrorFrame = true,
