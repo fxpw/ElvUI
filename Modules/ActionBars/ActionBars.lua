@@ -211,7 +211,7 @@ function AB:PositionAndSizeBar(barName)
 		end
 
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable and true or nil)
-		if bar.db.buttonsizeheight then
+		if bar.db.cropiconsbar then
 			button:Size(size, size * 0.72)
 			button.icon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
 		else
