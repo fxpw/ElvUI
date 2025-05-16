@@ -100,7 +100,6 @@ function AB:PositionAndSizeBar(barName)
 	local widthMult = self.db[barName].widthMult
 	local heightMult = self.db[barName].heightMult
 	local visibility = self.db[barName].visibility
-	local cropiconsbar = self.db[barName].cropiconsbar
 	local bar = self.handledBars[barName]
 
 	bar.db = self.db[barName]
@@ -167,9 +166,14 @@ function AB:PositionAndSizeBar(barName)
 		lastColumnButton = bar.buttons[i-buttonsPerRow]
 		button:SetParent(bar)
 		button:ClearAllPoints()
-		button:Size(size)
 		button:SetAttribute("showgrid", 1)
 
+		if bar.db.cropiconsbar then
+			button:Size(size, size * 0.72)
+		else
+			button:Size(size)
+		end
+		
 		if i == 1 then
 			local x, y
 			if point == "BOTTOMLEFT" then
@@ -212,10 +216,9 @@ function AB:PositionAndSizeBar(barName)
 
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable and true or nil)
 		if bar.db.cropiconsbar then
-			button:Size(size, size * 0.72)
 			button.icon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
 		else
-		
+			button.icon:SetTexCoord(unpack(E.TexCoords))
 		end
 	end
 
