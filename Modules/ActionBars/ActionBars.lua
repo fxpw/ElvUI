@@ -173,7 +173,7 @@ function AB:PositionAndSizeBar(barName)
 		else
 			button:Size(size)
 		end
-		
+
 		if i == 1 then
 			local x, y
 			if point == "BOTTOMLEFT" then
