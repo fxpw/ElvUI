@@ -246,21 +246,23 @@ ElvUF.Tags.Methods["premium:icon"] = function(unit)
 end
 
 local await = {}
-hooksecurefunc(EventHandler.events, "ASMSG_CHARACTER_BG_INFO", function(_, msg)
-	local _, _, GUID = find(msg, "^(.-)|")
-	GUID = tonumber(GUID)
-	if await[GUID] then
-		for _, frame in ipairs(ElvUF.objects) do
-			if frame.unit == await[GUID] and frame.__tags then
-				for _, tag in ipairs(frame.__tags) do
-					tag:UpdateTag()
+if EventHandler and EventHandler.events and type(EventHandler.events.ASMSG_CHARACTER_BG_INFO) == "function" then
+	hooksecurefunc(EventHandler.events, "ASMSG_CHARACTER_BG_INFO", function(_, msg)
+		local _, _, GUID = find(msg, "^(.-)|")
+		GUID = tonumber(GUID)
+		if await[GUID] then
+			for _, frame in ipairs(ElvUF.objects) do
+				if frame.unit == await[GUID] and frame.__tags then
+					for _, tag in ipairs(frame.__tags) do
+						tag:UpdateTag()
+					end
+					break
 				end
-				break
 			end
+			await[GUID] = nil
 		end
-		await[GUID] = nil
-	end
-end)
+	end)
+end
 
 ElvUF.Tags.Events["pvp:name"] = "UNIT_FACTION UNIT_TARGET"
 ElvUF.Tags.Methods["pvp:name"] = function(unit)

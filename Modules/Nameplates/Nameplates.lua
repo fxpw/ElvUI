@@ -1306,7 +1306,9 @@ end
 function NP:SetNPText(frame, tag)
 	if tag == "" or tag == nil then return frame.UnitName end
 	local name = frame.UnitName
-	name = ElvUF.Tags.Methods[tag](name)
+	if ElvUF.Tags.Methods[tag] then
+		name = ElvUF.Tags.Methods[tag](name)
+	end
 	return name
 end
 ---------------------
