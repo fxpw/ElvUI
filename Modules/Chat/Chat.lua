@@ -1198,6 +1198,49 @@ function CH:ShortChannel()
 	return format("|Hchannel:%s|h[%s]|h", self, DEFAULT_STRINGS[strupper(self)] or gsub(self, "channel:", ""))
 end
 
+function CH:CleanPlayerName(name)
+	if not name then return "" end
+
+	-- Remove (ID) patterns like (123) from names
+	local cleanedName = gsub(name, "%s*%(%d+%)%s*", "")
+	return cleanedName
+end
+
+--[[
+  Cleans up hyperlinks in system messages:
+  - Removes (ID) from the displayed name
+  - Preserves correct whisper target name
+  - Appends ". Уровень предметов: N" after the first found ID
+--]]
+function CH:CleanPlayerNameInSystemMessage(message)
+	if not message or not string.find(message, "|Hplayer:") then
+		return message
+	end
+
+	local firstFoundItemLevel = nil
+
+	local cleanedMessage = gsub(message,
+		"(|Hplayer:)([^%(|]+)(%((%d+)%))([^|]*)(|h)([^|]+)(|h)",
+		function(linkStart, playerName, fullIdWithParens, itemLevelDigits, linkRest, h1, visibleText, h2)
+			if not firstFoundItemLevel and itemLevelDigits ~= "" then
+				firstFoundItemLevel = itemLevelDigits
+			end
+
+			local strippedVisibleText = gsub(visibleText, "%s*%(%d+%)%s*", "")
+			local fullLink = playerName .. linkRest
+
+			return linkStart .. fullLink .. h1 .. strippedVisibleText .. h2
+		end
+	)
+
+	if firstFoundItemLevel then
+		cleanedMessage = cleanedMessage .. ". Уровень предметов: " .. firstFoundItemLevel
+	end
+
+	return cleanedMessage
+end
+
+
 function CH:HandleShortChannels(msg)
 	msg = gsub(msg, "|Hchannel:(.-)|h%[(.-)%]|h", self.ShortChannel)
 	msg = gsub(msg, "CHANNEL:", "")
@@ -1352,6 +1395,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 
 		if chatType == "SYSTEM" or chatType == "SKILL" or chatType == "LOOT" or chatType == "MONEY" or chatType ==
 			"OPENING" or chatType == "TRADESKILLS" or chatType == "PET_INFO" or chatType == "TARGETICONS" then
+			arg1 = CH:CleanPlayerNameInSystemMessage(arg1)
 			frame:AddMessage(arg1, info.r, info.g, info.b, info.id, false, nil, nil, isHistory, historyTime)
 		elseif strsub(chatType, 1, 7) == "COMBAT_" then
 			frame:AddMessage(arg1, info.r, info.g, info.b, info.id, false, nil, nil, isHistory, historyTime)
@@ -1476,12 +1520,14 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 
 			local playerLink
 
+			local cleanedName = CH:CleanPlayerName(arg2) -- This line was already here
+
 			if chatType ~= "BN_WHISPER" and chatType ~= "BN_WHISPER_INFORM" and chatType ~= "BN_CONVERSATION" then
-				playerLink = "|Hplayer:" .. arg2 .. ":" .. arg11 .. ":" .. chatGroup ..
-								 (chatTarget and ":" .. chatTarget or "") .. "|h"
+				playerLink = "|Hplayer:" .. cleanedName .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
+					(chatTarget and ":" .. chatTarget or "") .. "|h"
 			else
-				playerLink = "|HBNplayer:" .. arg2 .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup ..
-								 (chatTarget and ":" .. chatTarget or "") .. "|h"
+				playerLink = "|HBNplayer:" .. cleanedName .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
+					(chatTarget and ":" .. chatTarget or "") .. "|h"
 			end
 
 			if arg3 ~= "" and arg3 ~= "Universal" and arg3 ~= frame.defaultLanguage then
