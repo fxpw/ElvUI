@@ -210,19 +210,21 @@ function AB:PositionAndSizeBarTotem()
 	RegisterStateDriver(bar, "visibility", visibility)
 
 	MultiCastSummonSpellButton:ClearAllPoints()
-	MultiCastSummonSpellButton:Size(size)
+	MultiCastSummonSpellButton:Size(size,size*cropiconsbar)
 	MultiCastSummonSpellButton:Point("BOTTOMLEFT", E.Border*2, E.Border*2)
 
 	for i = 1, numActiveSlots do
 		local button = _G["MultiCastSlotButton"..i]
+		local buttonIcon = _G["MultiCastActionButton"..i.."Icon"]
 		local lastButton = _G["MultiCastSlotButton"..i - 1]
-
 		button:ClearAllPoints()
 		button:Size(size,size*cropiconsbar)
-		if cropiconsbar ~= 1 then
-			button.icon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
-		else
-			button.icon:SetTexCoord(unpack(E.TexCoords))
+		if(buttonIcon)then
+			if cropiconsbar ~= 1 then
+				buttonIcon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
+			else
+				buttonIcon:SetTexCoord(unpack(E.TexCoords))
+			end
 		end
 		if i == 1 then
 			button:Point("LEFT", MultiCastSummonSpellButton, "RIGHT", buttonSpacing, 0)
@@ -231,7 +233,7 @@ function AB:PositionAndSizeBarTotem()
 		end
 	end
 
-	MultiCastRecallSpellButton:Size(size)
+	MultiCastRecallSpellButton:Size(size,size*cropiconsbar)
 	MultiCastRecallSpellButton_Update(MultiCastRecallSpellButton)
 
 	MultiCastFlyoutFrameCloseButton:Width(size)
