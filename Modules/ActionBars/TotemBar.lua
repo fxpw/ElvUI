@@ -186,8 +186,9 @@ function AB:PositionAndSizeBarTotem()
 
 	local buttonSpacing = E:Scale(self.db.barTotem.buttonspacing)
 	local size = E:Scale(self.db.barTotem.buttonsize)
-	local numActiveSlots = MultiCastActionBarFrame.numActiveSlots
+	local cropiconsbar = self.db.barTotem.cropiconsbar
 
+	local numActiveSlots = MultiCastActionBarFrame.numActiveSlots
 	bar:Width((size * (2 + numActiveSlots)) + (buttonSpacing * (2 + numActiveSlots - 1)))
 	MultiCastActionBarFrame:Width((size * (2 + numActiveSlots)) + (buttonSpacing * (2 + numActiveSlots - 1)))
 	bar:Height(size + 2)
@@ -217,8 +218,12 @@ function AB:PositionAndSizeBarTotem()
 		local lastButton = _G["MultiCastSlotButton"..i - 1]
 
 		button:ClearAllPoints()
-		button:Size(size)
-
+		button:Size(size,size*cropiconsbar)
+		if cropiconsbar ~= 1 then
+			button.icon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
+		else
+			button.icon:SetTexCoord(unpack(E.TexCoords))
+		end
 		if i == 1 then
 			button:Point("LEFT", MultiCastSummonSpellButton, "RIGHT", buttonSpacing, 0)
 		else
