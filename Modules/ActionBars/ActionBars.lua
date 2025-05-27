@@ -124,7 +124,7 @@ function AB:PositionAndSizeBar(barName)
 		widthMult = 1
 		heightMult = 1
 	end
-
+	local cropiconsbars = bar.db.cropiconsbar
 	local sideSpacing = (bar.db.backdrop == true and (E.Border + backdropSpacing) or E.Spacing)
 	--Size of all buttons + Spacing between all buttons + Spacing between additional rows of buttons + Spacing between backdrop and buttons + Spacing on end borders with non-thin borders
 	local barWidth = (size * (buttonsPerRow * widthMult)) + ((buttonSpacing * (buttonsPerRow - 1)) * widthMult) + (buttonSpacing * (widthMult - 1)) + (sideSpacing*2)
@@ -166,7 +166,7 @@ function AB:PositionAndSizeBar(barName)
 		lastColumnButton = bar.buttons[i-buttonsPerRow]
 		button:SetParent(bar)
 		button:ClearAllPoints()
-		button:Size(size)
+		button:Size(size,size*cropiconsbars)
 		button:SetAttribute("showgrid", 1)
 
 		if i == 1 then
@@ -210,6 +210,11 @@ function AB:PositionAndSizeBar(barName)
 		end
 
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable and true or nil)
+		if bar.db.cropiconsbar ~= 1 then
+			button.icon:SetTexCoord(0.07, 0.93, 0.2, 0.8)
+		else
+			button.icon:SetTexCoord(unpack(E.TexCoords))
+		end
 	end
 
 	if bar.db.enabled or not bar.initialized then
