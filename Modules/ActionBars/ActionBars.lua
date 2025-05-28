@@ -219,16 +219,14 @@ function AB:PositionAndSizeBar(barName)
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable and true or nil)
 		if bar.db.cropiconsbar ~= 1 then
 			local left, right, top, bottom = unpack(E.TexCoords)
-			local mult = 0.5
-
 			local width, height = button:GetSize()
 			local ratio = width / height
 			if ratio > 1 then
-				local trimAmount = (1 - (1 / ratio)) * mult
+				local trimAmount = (1 - (1 / ratio)) * 0.5
 				top = top + trimAmount
 				bottom = bottom - trimAmount
 			else
-				local trimAmount = (1 - ratio) * mult
+				local trimAmount = (1 - ratio) * 0.5
 				left = left + trimAmount
 				right = right - trimAmount
 			end
