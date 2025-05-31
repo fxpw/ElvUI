@@ -95,6 +95,7 @@ function AB:PositionAndSizeBar(barName)
 	local buttonsPerRow = self.db[barName].buttonsPerRow
 	local numButtons = self.db[barName].buttons
 	local size = E:Scale(self.db[barName].buttonsize)
+	local sizeh = E:Scale(self.db[barName].buttonHeight)
 	local point = self.db[barName].point
 	local numColumns = ceil(numButtons / buttonsPerRow)
 	local widthMult = self.db[barName].widthMult
@@ -125,12 +126,10 @@ function AB:PositionAndSizeBar(barName)
 		heightMult = 1
 	end
 
-	local cropiconsbars = bar.db.cropiconsbar and 0.72 or 1
 	local sideSpacing = (bar.db.backdrop == true and (E.Border + backdropSpacing) or E.Spacing)
 	--Size of all buttons + Spacing between all buttons + Spacing between additional rows of buttons + Spacing between backdrop and buttons + Spacing on end borders with non-thin borders
 	local barWidth = (size * (buttonsPerRow * widthMult)) + ((buttonSpacing * (buttonsPerRow - 1)) * widthMult) + (buttonSpacing * (widthMult - 1)) + (sideSpacing*2)
-	local barHeight = (size * cropiconsbars * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult - 1)) + (sideSpacing*2)
-
+	local barHeight = (sizeh * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult - 1)) + (sideSpacing*2)
 	bar:Width(barWidth)
 	bar:Height(barHeight)
 
@@ -168,13 +167,8 @@ function AB:PositionAndSizeBar(barName)
 		lastColumnButton = bar.buttons[i-buttonsPerRow]
 		button:SetParent(bar)
 		button:ClearAllPoints()
+		button:Size(size,sizeh)
 		button:SetAttribute("showgrid", 1)
-
-		if bar.db.cropiconsbar then
-			button:Size(size, size * 0.72)
-		else
-			button:Size(size)
-		end
 
 		if i == 1 then
 			local x, y
@@ -217,8 +211,9 @@ function AB:PositionAndSizeBar(barName)
 		end
 
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable and true or nil)
-		if bar.db.cropiconsbar ~= 1 then
+		function E:CropRatio(frame)
 			local left, right, top, bottom = unpack(E.TexCoords)
+
 			local width, height = button:GetSize()
 			local ratio = width / height
 			if ratio > 1 then
@@ -230,10 +225,10 @@ function AB:PositionAndSizeBar(barName)
 				left = left + trimAmount
 				right = right - trimAmount
 			end
-			button.icon:SetTexCoord(left, right, top, bottom)
-		else
-			button.icon:SetTexCoord(unpack(E.TexCoords))
+
+			return left, right, top, bottom
 		end
+		button.icon:SetTexCoord(E:CropRatio(E.TexCoords))
 	end
 
 	if bar.db.enabled or not bar.initialized then
