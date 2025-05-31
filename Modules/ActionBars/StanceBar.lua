@@ -50,7 +50,7 @@ function AB:StyleShapeShift()
 
 		function E:CropRatio(frame)
 			local left, right, top, bottom = unpack(E.TexCoords)
-			
+
 			local width, height = button:GetSize()
 			local ratio = width / height
 			if ratio > 1 then
@@ -130,7 +130,7 @@ function AB:PositionAndSizeBarShapeShift()
 	local point = self.db.stanceBar.point
 	local widthMult = self.db.stanceBar.widthMult
 	local heightMult = self.db.stanceBar.heightMult
-	
+
 	if bar.mover then
 		bar.mover.positionOverride = point
 		E:UpdatePositionOverride(bar.mover:GetName())
