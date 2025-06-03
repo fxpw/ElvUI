@@ -124,13 +124,13 @@ RB.MeleeSpell7Buffs = {
 
 function RB.CheckForTimeChest(...)
 	-- print(...)
-    for i = 1, select("#", ...) do
-        local region = select(i, ...)
-        if region and region:GetObjectType() == "FontString" then
-            --print(region)
-            local text = region:GetText()
-            -- print(text)
-            if text and (string.match(text, "(+52 к силе заклинаний)") or string.match(text, "(+90 к силе атаки)")) then
+	for i = 1, select("#", ...) do
+		local region = select(i, ...)
+		if region and region:GetObjectType() == "FontString" then
+			--print(region)
+			local text = region:GetText()
+			-- print(text)
+			if text and (string.match(text, "(+52 к силе заклинаний)") or string.match(text, "(+90 к силе атаки)")) then
 				local hour,mins,seconds = nil,nil,nil
 				local sh,_ = string.find(text, "%d+ час")
 				local sm,_  = string.find(text, "%d+ мин%.")
@@ -146,24 +146,24 @@ function RB.CheckForTimeChest(...)
 				if hour then
 					RB.remainingTime = (tonumber(hour) or 1) * 60 * 60
 					-- print( RB.remainingTime)
-                    return
-                elseif mins then
-                    RB.remainingTime = (tonumber(mins) or 1) * 60
+					return
+				elseif mins then
+					RB.remainingTime = (tonumber(mins) or 1) * 60
 					-- print( RB.remainingTime)
-                    return
-                elseif seconds then
-                    RB.remainingTime = (tonumber(seconds) or 1)
+					return
+				elseif seconds then
+					RB.remainingTime = (tonumber(seconds) or 1)
 					-- print( RB.remainingTime)
-                    return
+					return
 				else
 					RB.remainingTime = 0
-                end
+				end
 
-                return
-            end
-        end
-    end
-    RB.remainingTime = 0
+				return
+			end
+		end
+	end
+	RB.remainingTime = 0
 end
 
 
