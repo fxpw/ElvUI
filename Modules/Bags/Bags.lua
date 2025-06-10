@@ -658,6 +658,7 @@ function B:Layout(isBank)
 		if numSlots > 0 then
 			if not f.Bags[bagID] then
 				f.Bags[bagID] = CreateFrame("Frame", f:GetName().."Bag"..bagID, f.holderFrame)
+				-- f.Bags[bagID]:SetBagID(bagID)
 				f.Bags[bagID]:SetID(bagID)
 			end
 
@@ -718,8 +719,8 @@ function B:Layout(isBank)
 					f.Bags[bagID][slotID].cooldown = _G[f.Bags[bagID][slotID]:GetName().."Cooldown"]
 					f.Bags[bagID][slotID].cooldown.CooldownOverride = "bags"
 					E:RegisterCooldown(f.Bags[bagID][slotID].cooldown)
-					f.Bags[bagID][slotID].bagID = bagID
-					f.Bags[bagID][slotID].slotID = slotID
+					f.Bags[bagID][slotID]:SetBagID(bagID)
+					f.Bags[bagID][slotID]:SetID(slotID)
 
 					f.Bags[bagID][slotID].itemLevel = f.Bags[bagID][slotID]:CreateFontString(nil, "OVERLAY")
 					f.Bags[bagID][slotID].itemLevel:Point("BOTTOMRIGHT", -1, 3)
@@ -730,6 +731,7 @@ function B:Layout(isBank)
 					f.Bags[bagID][slotID].bindType:FontTemplate(E.Libs.LSM:Fetch("font", E.db.bags.itemLevelFont), E.db.bags.itemLevelFontSize, E.db.bags.itemLevelFontOutline)
 				end
 
+				f.Bags[bagID][slotID]:SetBagID(bagID)
 				f.Bags[bagID][slotID]:SetID(slotID)
 				f.Bags[bagID][slotID]:Size(buttonSize)
 
