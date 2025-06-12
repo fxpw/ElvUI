@@ -48,26 +48,6 @@ function AB:StyleShapeShift()
 		icon = _G[buttonName.."Icon"]
 		cooldown = _G[buttonName.."Cooldown"]
 
-		function E:CropRatio(frame)
-			local left, right, top, bottom = unpack(E.TexCoords)
-
-			local width, height = button:GetSize()
-			local ratio = width / height
-			if ratio > 1 then
-				local trimAmount = (1 - (1 / ratio)) * 0.5
-				top = top + trimAmount
-				bottom = bottom - trimAmount
-			else
-				local trimAmount = (1 - ratio) * 0.5
-				left = left + trimAmount
-				right = right - trimAmount
-			end
-
-			return left, right, top, bottom
-		end
-
-		icon:SetTexCoord(E:CropRatio(E.TexCoords))
-
 		if i <= numForms then
 			texture, name, isActive, isCastable = GetShapeshiftFormInfo(i)
 
@@ -126,11 +106,9 @@ function AB:PositionAndSizeBarShapeShift()
 	local buttonsPerRow = self.db.stanceBar.buttonsPerRow
 	local numButtons = self.db.stanceBar.buttons
 	local size = E:Scale(self.db.stanceBar.buttonsize)
-	local sizeh = E:Scale(self.db.stanceBar.buttonHeight)
 	local point = self.db.stanceBar.point
 	local widthMult = self.db.stanceBar.widthMult
 	local heightMult = self.db.stanceBar.heightMult
-
 	if bar.mover then
 		bar.mover.positionOverride = point
 		E:UpdatePositionOverride(bar.mover:GetName())
@@ -165,7 +143,7 @@ function AB:PositionAndSizeBarShapeShift()
 	end
 
 	local barWidth = (size * (buttonsPerRow * widthMult)) + ((buttonSpacing * (buttonsPerRow - 1)) * widthMult) + (buttonSpacing * (widthMult-1)) + ((self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)*2)
-	local barHeight = (sizeh * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult-1)) + ((self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)*2)
+	local barHeight = (size * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult-1)) + ((self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)*2)
 	bar:Width(barWidth)
 	bar:Height(barHeight)
 
@@ -202,14 +180,12 @@ function AB:PositionAndSizeBarShapeShift()
 	local firstButtonSpacing = (self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)
 	for i = 1, NUM_SHAPESHIFT_SLOTS do
 		button = _G["ElvUI_StanceBarButton"..i]
-		name = button:GetName()
-		icon = _G[name.."Icon"]
 		lastButton = _G["ElvUI_StanceBarButton"..i - 1]
 		lastColumnButton = _G["ElvUI_StanceBarButton"..i - buttonsPerRow]
 
 		button:SetParent(bar)
 		button:ClearAllPoints()
-		button:Size(size,sizeh)
+		button:Size(size)
 
 		if self.db.stanceBar.mouseover then
 			bar:SetAlpha(0)
@@ -262,7 +238,6 @@ function AB:PositionAndSizeBarShapeShift()
 		end
 
 		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable or nil)
-		icon:SetTexCoord(E:CropRatio(E.TexCoords))
 	end
 
 	if self.LBFGroup and E.private.actionbar.lbf.enable then
