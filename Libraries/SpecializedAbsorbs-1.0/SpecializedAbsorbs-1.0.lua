@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 26
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 27
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -1856,7 +1856,7 @@ local druidAbsorb = 0
 local druidSpellAbsorb = 0
 local function druid_SavageDefense_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local ap, _, quality = UnitStats(srcGUID, 0.0);
-	if privateScaling["4dtRaid5"] == 1 then
+	if privateScaling["4dtRaid5"] and privateScaling["4dtRaid5"][srcGUID] then
 		druidAbsorb = druidAbsorb + floor(ap * 1)
 		if druidAbsorb > 50000 then
 			druidAbsorb = 50000
@@ -1896,24 +1896,34 @@ local function druid_t6_SpellHit(effectEntry, absorbedRemaining, overkill, spell
 end
 
 local function druid_ScanEquipment()
-	local n = 0
-	--- t5
-	if IsEquippedItem(30228) or IsEquippedItem(103483) or IsEquippedItem(151677) then
-		n = n + 1
+	privateScaling["4dtRaid5"] = privateScaling["4dtRaid5"] or {};
+	table.wipe(privateScaling["4dtRaid5"]);
+	if UnitExists("raid1") then
+		for i = 1,40 do
+			local unit= "raid"..i
+			if(UnitExists(unit)) then
+				local name = UnitBuff(unit,374423)
+				if(name) then
+					privateScaling["4dtRaid5"][UnitGUID(unit)] = true
+				end
+			else
+				return
+			end
+		end
 	end
-	if IsEquippedItem(30230) or IsEquippedItem(103485) or IsEquippedItem(151679) then
-		n = n + 1
+	if UnitExists("party1") then
+		for i = 1,5 do
+			local unit = "party"..i
+			if(UnitExists(unit)) then
+				local name = UnitBuff(unit,374423)
+				if(name) then
+					privateScaling["4dtRaid5"][UnitGUID(unit)] = true
+				end
+			else
+				return
+			end
+		end
 	end
-	if IsEquippedItem(30222) or IsEquippedItem(103481) or IsEquippedItem(151675) then
-		n = n + 1
-	end
-	if IsEquippedItem(30223) or IsEquippedItem(103482) or IsEquippedItem(151676) then
-		n = n + 1
-	end
-	if IsEquippedItem(30229) or IsEquippedItem(103484) or IsEquippedItem(151678) then
-		n = n + 1
-	end
-	privateScaling["4dtRaid5"] = n >= 4 and 1 or 0
 end
 
 local function druid_OnEquipmentChangedDelayed()
