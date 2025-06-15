@@ -49,8 +49,9 @@ local function OnEnter(self)
 			-- DT.tooltip:AddLine(name)
 		end
 	end
-	DT.tooltip:AddLine("Лкм чтобы открыть")
-	DT.tooltip:AddLine("Колесико чтобы выбрать")
+	DT.tooltip:AddLine("")
+	DT.tooltip:AddDoubleLine("ЛКМ", "Открыть", 1, 1, 1, 1, 1, 0)
+	DT.tooltip:AddDoubleLine("Колесико", "Выбор", 1, 1, 1, 1, 1, 0)
 	DT.tooltip:Show()
 end
 
