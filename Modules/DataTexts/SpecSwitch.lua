@@ -90,15 +90,20 @@ local function OnClick(self, button)
 		if indexToChangeSpec ~= C_Talent.GetSelectedTalentGroup() then
 
 			if indexToChangeSpec > 2 then
-				-- local selectedCurrencyID = C_Talent.GetSelectedCurrency() or 1
-				-- SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":"..1)
-				SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":"..(IsResting() and 1 or 2))
+				C_Talent.SelectTalentGroup(indexToChangeSpec)
+				if IsResting() then
+					C_Talent.SelectedCurrency(1)
+				else
+					C_Talent.SelectedCurrency(2)
+				end
+				C_Talent.SetActiveTalentGroup(indexToChangeSpec)
 				if E.db.datatexts.SAOSS then
 					C_Timer:After(11,switchSet)
 					C_Timer:After(12,switchSet)
 				end
 			else
-				SendServerMessage("ACMSG_ACTIVATE_SPEC", indexToChangeSpec..":0")
+				C_Talent.SelectTalentGroup(indexToChangeSpec)
+				C_Talent.SetActiveTalentGroup(indexToChangeSpec)
 				if E.db.datatexts.SAOSS then
 					C_Timer:After(6,switchSet)
 					C_Timer:After(7,switchSet)
@@ -125,6 +130,7 @@ local function OnMouseWheel(self,delta)
 	elseif indexToChangeSpec <= 1 then
 		indexToChangeSpec = 1
 	end
+
 
 	DT.tooltip:Hide()
 	OnEnter(self)
