@@ -77,7 +77,7 @@ local function OnClick(_, button)
 			return
 		end
 		BattlePassFrame:Show()
-	elseif button == "RightClick" then
+	elseif button == "RightButton" then
 		SendServerMessage("ACMSG_BATTLEPASS_TAKE_ALL_REWARDS")
 	elseif button == "MiddleButton" then
 		CollectAllQuestReward()
