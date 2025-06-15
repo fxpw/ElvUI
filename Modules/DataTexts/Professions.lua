@@ -22,7 +22,7 @@ local function OnEvent(self, event)
 		for i = 1, 4 do
 			local button = _G["PrimaryProfession" .. i .. "LearnSpellButtonBottom"]
 			if (button and button.data) then
-				local name, skill, icon = GetSpellInfo(button.data)
+				local name, _, icon = GetSpellInfo(button.data)
 				if (name and icon) then
 					max_index = i
 				end
@@ -49,9 +49,8 @@ local function OnEnter(self)
 			-- DT.tooltip:AddLine(name)
 		end
 	end
-	DT.tooltip:AddLine(" ")
-
-
+	DT.tooltip:AddLine("Лкм чтобы открыть")
+	DT.tooltip:AddLine("Колесико чтобы выбрать")
 	DT.tooltip:Show()
 end
 
