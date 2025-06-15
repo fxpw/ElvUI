@@ -46,7 +46,7 @@ local function OnEvent(self, event)
 	local name ,texture = C_Talent.GetTalentGroupSettings(activeSpec)
 
 	if specName == "None" then
-		self.text:SetFormattedText(displayString, "Без специализации")
+		self.text:SetFormattedText(displayString, "Без специализации","")
 	else
 		self.text:SetFormattedText(displayString, AddTexture(texture and texture or talent), name and name or specName)
 	end

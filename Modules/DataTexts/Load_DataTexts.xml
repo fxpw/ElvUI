@@ -1,5 +1,5 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">	
-	<Script file="DataTexts.lua"/>	
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="DataTexts.lua"/>
 	<Script file="DataTexts_Sirus.lua"/>
 	<Script file="ArenaRating_Sirus.lua"/>
 	<Script file="System.lua"/>
@@ -33,5 +33,6 @@
 	<Script file="BattlePass.lua"/>
 	<Script file="SpecSwitch.lua"/>
 	<Script file="Sound.lua"/>
+	<Script file="Professions.lua"/>
 	<Script file="ConfigElvUI.lua"/>
 </Ui>
