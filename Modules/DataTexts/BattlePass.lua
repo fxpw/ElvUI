@@ -18,7 +18,7 @@ local unclaimed
 
 local function CollectAllQuestReward()
 	for i = 1, C_BattlePass.GetNumQuests(1) do
-		local name, description, rewardAmount, progressValue, progressMaxValue, isPercents = C_BattlePass.GetQuestInfo(1,
+		local _, _, _, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(1,
 			i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
@@ -35,7 +35,7 @@ local function OnEnter(self)
 		-- if i == 1 then
 		-- DT.tooltip:AddLine(" ")
 		-- end
-		local name, description, rewardAmount, progressValue, progressMaxValue, isPercents = C_BattlePass.GetQuestInfo(1,
+		local _, description, _, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(1,
 			i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
@@ -51,7 +51,7 @@ local function OnEnter(self)
 		-- if i == 1 then
 		-- DT.tooltip:AddLine(" ")
 		-- end
-		local name, description, rewardAmount, progressValue, progressMaxValue, isPercents = C_BattlePass.GetQuestInfo(2,
+		local _, description, _, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(2,
 			i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
@@ -88,7 +88,7 @@ local function OnEvent(self, event)
 	Premium              = C_BattlePass:IsPremiumActive()
 	curLvL, lvlXP, maxXP = C_BattlePass.GetLevelInfo()
 	unclaimed            = C_BattlePass.HasUnclaimedReward()
-	self.text:SetFormattedText(displayString, curLvL, lvlXP, maxXP," ")
+	self.text:SetFormattedText(displayString, curLvL, lvlXP, maxXP,unclaimed and "!" or "")
 end
 
 local function ValueColorUpdate(hex)

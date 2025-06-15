@@ -48,6 +48,7 @@ globals = {
 	"GetItemLevelColor",
 	"HelpTip",
 	"BattlePassSplashFrame",
+	"C_BattlePass",
 
 	--fonts
 	"GameFontNormal9",
