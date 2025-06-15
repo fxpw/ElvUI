@@ -87,5 +87,5 @@ end
 E.valueColorUpdateFuncs[ValueColorUpdate] = true
 
 
-DT:RegisterDatatext("Профессии", { "ADDON_LOADED" }, OnEvent, nil, OnClick, OnEnter, nil,
+DT:RegisterDatatext("Профессии", { "ADDON_LOADED", "TRAINER_UPDATE", "SKILL_LINES_CHANGED" }, OnEvent, nil, OnClick, OnEnter, nil,
 	"Профессии", OnMouseWheel)
