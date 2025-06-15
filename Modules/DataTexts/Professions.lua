@@ -37,7 +37,7 @@ local function OnEnter(self)
 	for i = 1, 4 do
 		local button = _G["PrimaryProfession" .. i .. "LearnSpellButtonBottom"]
 		if (button and button.data) then
-			local name, skill, icon = GetSpellInfo(button.data)
+			local name, _, icon = GetSpellInfo(button.data)
 			if (name and icon) then
 				if i == index then
 					DT.tooltip:AddLine(join(" ", AddTexture(icon and icon or nil), name and name or ""), .31, .99, .46)
@@ -61,8 +61,6 @@ local function OnClick(self, button)
 		if btn then
 			btn:Click()
 		end
-	elseif button == "RightButton" then
-
 	end
 end
 
