@@ -30,7 +30,7 @@ end
 
 local function OnEnter(self)
 	DT:SetupTooltip(self)
-	DT.tooltip:AddDoubleLine("Ежедневные квесты", C_BattlePass.GetNumQuests(1))
+	DT.tooltip:AddLine(string.format("|cFFFF8000Ежедневные квесты: %d|r", C_BattlePass.GetNumQuests(1)), 1, 1, 1)
 	for i = 1, C_BattlePass.GetNumQuests(1) do
 		-- if i == 1 then
 		-- DT.tooltip:AddLine(" ")
@@ -39,14 +39,14 @@ local function OnEnter(self)
 			i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
-			DT.tooltip:AddDoubleLine(description, "Выполнен", 1, 1, 1,.31, .99, .46)
+			DT.tooltip:AddLine(string.format("Выполнен - %s", description), .31, .99, .46)
 		else
-			DT.tooltip:AddDoubleLine(description, string.format("%d/%d", progressValue, progressMaxValue), 1, 1, 1)
+			DT.tooltip:AddLine(string.format("|cFFFFFF00%d|r/|cFF00FF00%d|r - %s", progressValue, progressMaxValue, description), 1, 1, 1)
 		end
 		-- DT.tooltip:AddLine(" ")
 	end
 	DT.tooltip:AddLine(" ")
-	DT.tooltip:AddDoubleLine("Еженедельные квесты", C_BattlePass.GetNumQuests(2))
+	DT.tooltip:AddLine(string.format("|cFFFF8000Еженедельные квесты: %d|r", C_BattlePass.GetNumQuests(2)), 1, 1, 1)
 	for i = 1, C_BattlePass.GetNumQuests(2) do
 		-- if i == 1 then
 		-- DT.tooltip:AddLine(" ")
@@ -55,9 +55,9 @@ local function OnEnter(self)
 			i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
-			DT.tooltip:AddDoubleLine(description, "Выполнен", 1, 1, 1,.31, .99, .46)
+			DT.tooltip:AddLine(string.format("Выполнен - %s", description), .31, .99, .46)
 		else
-			DT.tooltip:AddDoubleLine(description, string.format("%d/%d", progressValue, progressMaxValue), 1, 1, 1)
+			DT.tooltip:AddLine(string.format("|cFFFFFF00%d|r/|cFF00FF00%d|r - %s", progressValue, progressMaxValue, description), 1, 1, 1)
 		end
 		-- DT.tooltip:AddLine(" ")
 	end
