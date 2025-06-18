@@ -2,8 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...));
 local UF = E:GetModule('UnitFrames')
 
 local CreateFrame = CreateFrame
-f_testelement = nil
-f_testelement2 = nil
 
 function UF:Construct_PowerCostDisplay(frame)
 	local element = CreateFrame('StatusBar', nil, frame.Power)
