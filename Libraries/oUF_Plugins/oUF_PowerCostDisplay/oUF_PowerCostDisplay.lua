@@ -140,6 +140,7 @@ end
 local Enable = function(self, unit)
 	local element = self.Power and self.PowerCostDisplay
 	if element then
+		element:Show()
 		element.unit = self.unit or unit
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -158,7 +159,7 @@ end
 
 local Disable = function(self)
 	local element = self.Power and self.PowerCostDisplay
-
+	element:Hide()
 	if element then
 		element:SetScript('OnUpdate', nil)
 
