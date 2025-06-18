@@ -114,7 +114,7 @@ function UF:Update_BossFrames(frame, db)
 
 	--Cutaway
 	UF:Configure_Cutaway(frame)
-	UF:Configure_PowerCostDisplay(frame)
+	-- UF:Configure_PowerCostDisplay(frame)
 
 	frame:ClearAllPoints()
 	if frame.index == 1 then
