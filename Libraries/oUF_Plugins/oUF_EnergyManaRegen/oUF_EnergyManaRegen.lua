@@ -33,7 +33,8 @@ queueableSpells = classQueueableSpells[class]
 local queuedSpellFrame
 local function WatchForQueuedSpell()
 	if not queuedSpellFrame then
-		queuedSpellFrame = CreateFrame("Frame","ElvOF_WatchFrame")
+		queuedSpellFrame = _G["ElvoUF_WatchSpellFrame"] and _G["ElvoUF_WatchSpellFrame"] or
+		CreateFrame("Frame", "ElvoUF_WatchSpellFrame")
 		queuedSpellFrame:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
 
 		queuedSpellFrame:SetScript("OnEvent", function(self)
@@ -59,16 +60,16 @@ local function GetQueuedSpell()
 end
 
 local tableForPowerTrue = {
-	MANA=true,
-	RAGE=true,
-	ENERGY=true,
-	RUNIC_POWER=true,
+	MANA = true,
+	RAGE = true,
+	ENERGY = true,
+	RUNIC_POWER = true,
 }
 local tableForPower = {
-	MANA=0,
-	RAGE=1,
-	ENERGY=3,
-	RUNIC_POWER=6,
+	MANA = 0,
+	RAGE = 1,
+	ENERGY = 3,
+	RUNIC_POWER = 6,
 }
 
 
@@ -118,7 +119,7 @@ local Update = function(self, elapsed)
 	element.sinceLastUpdate = (element.sinceLastUpdate or 0) + (tonumber(elapsed) or 0)
 
 	if element.sinceLastUpdate > 0.01 then
-		local pnumber,powerType = UnitPowerType('player')
+		local pnumber, powerType = UnitPowerType('player')
 		if powerType ~= ENERGY and powerType ~= MANA then
 			element.Spark:Hide()
 			return
@@ -164,7 +165,7 @@ local Update = function(self, elapsed)
 end
 
 local OnUnitPowerUpdate = function()
-	local pnumber,powerType = UnitPowerType('player')
+	local pnumber, powerType = UnitPowerType('player')
 	if powerType ~= MANA and powerType ~= ENERGY then return end
 
 	-- We also register ticks from mp5 gear within the 5-second-rule to get a more accurate sync later.
@@ -178,12 +179,12 @@ local OnUnitPowerUpdate = function()
 end
 
 local OnUnitSpellcastSucceeded = function(_, _, _, _, spellID)
-	local _,powerType = UnitPowerType('player')
+	local _, powerType = UnitPowerType('player')
 	if powerType ~= MANA then return end
 
 	local spellCost = false
 	local cost = GetSpellPowerCost(tableForPower[powerType])
-	if cost and cost>0 then
+	if cost and cost > 0 then
 		spellCost = true
 	end
 

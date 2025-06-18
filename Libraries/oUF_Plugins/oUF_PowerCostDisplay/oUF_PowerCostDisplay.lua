@@ -33,7 +33,8 @@ queueableSpells = classQueueableSpells[class]
 local queuedSpellFrame
 local function WatchForQueuedSpell()
 	if not queuedSpellFrame then
-		queuedSpellFrame = CreateFrame("Frame", "ElvOF_WatchFrame")
+		queuedSpellFrame = _G["ElvoUF_WatchSpellFrame"] and _G["ElvoUF_WatchSpellFrame"] or
+		CreateFrame("Frame", "ElvoUF_WatchSpellFrame")
 		queuedSpellFrame:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
 
 		queuedSpellFrame:SetScript("OnEvent", function(self)
@@ -141,7 +142,7 @@ local Enable = function(self, unit)
 	if element then
 		element.unit = self.unit or unit
 		element.__owner = self
-		element.ForceUpdate=ForceUpdate
+		element.ForceUpdate = ForceUpdate
 
 		if element:IsObjectType('StatusBar') and not element:GetStatusBarTexture() then
 			element:SetStatusBarTexture([[Interface\Buttons\WHITE8X8]])
