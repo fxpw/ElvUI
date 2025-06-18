@@ -27,7 +27,7 @@ function UF:Construct_AssistFrames()
 	self.TargetGlow = UF:Construct_TargetGlow(self)
 	self.Fader = UF:Construct_Fader()
 	self.Cutaway = UF:Construct_Cutaway(self)
-	self.PowerCostDisplay = UF:Construct_PowerCostDisplay(self)
+	-- self.PowerCostDisplay = UF:Construct_PowerCostDisplay(self)
 
 	if not self.isChild then
 		self.Buffs = UF:Construct_Buffs(self)
