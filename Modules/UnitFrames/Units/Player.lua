@@ -56,6 +56,7 @@ function UF:Construct_PlayerFrame(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
 	frame.EnergyManaRegen = UF:Construct_EnergyManaRegen(frame)
+	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
 	-- frame.HeadHuntingWantedFrame = self:Construct_HeadHuntingWanted(frame)
 	frame.customTexts = {}
 
@@ -184,6 +185,8 @@ function UF:Update_PlayerFrame(frame, db)
 		UF:Configure_AuraBars(ElvUF_Target)
 	end
 	UF:Configure_EnergyManaRegen(frame)
+
+	UF:Configure_PowerCostDisplay(frame)
 
 	--PvP
 	UF:Configure_PVPIcon(frame)

@@ -8,6 +8,8 @@ local UnitClass = UnitClass
 local tonumber = tonumber
 local UnitPowerType = UnitPowerType
 local UnitPowerMax = UnitPowerMax
+local GetSpellInfo = GetSpellInfo
+local IsCurrentSpell = IsCurrentSpell
 
 local queueableSpells
 local classQueueableSpells = {
@@ -31,7 +33,7 @@ queueableSpells = classQueueableSpells[class]
 local queuedSpellFrame
 local function WatchForQueuedSpell()
 	if not queuedSpellFrame then
-		queuedSpellFrame = CreateFrame("Frame")
+		queuedSpellFrame = CreateFrame("Frame","ElvOF_WatchFrame")
 		queuedSpellFrame:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
 
 		queuedSpellFrame:SetScript("OnEvent", function(self)
@@ -60,13 +62,13 @@ local tableForPowerTrue = {
 	MANA=true,
 	RAGE=true,
 	ENERGY=true,
-	RunicPower=true,
+	RUNIC_POWER=true,
 }
 local tableForPower = {
 	MANA=0,
 	RAGE=1,
 	ENERGY=3,
-	RunicPower=6,
+	RUNIC_POWER=6,
 }
 
 

@@ -42,6 +42,7 @@ function UF:Construct_TargetFrame(frame)
 	frame.Cutaway = self:Construct_Cutaway(frame)
 	frame.HeadHuntingWantedFrame = self:Construct_HeadHuntingWanted(frame)
 	frame.GroupRoleIndicator = self:Construct_RoleIcon(frame)
+	frame.PowerCostDisplay = self:Construct_PowerCostDisplay(frame)
 	frame.customTexts = {}
 	frame:Point("BOTTOMRIGHT", E.UIParent, "BOTTOM", 413, 68)
 	E:CreateMover(frame, frame:GetName().."Mover", L["Target Frame"], nil, nil, nil, "ALL,SOLO", nil, "unitframe,target,generalGroup")
@@ -160,6 +161,8 @@ function UF:Update_TargetFrame(frame, db)
 
 	--Role icon
 	UF:Configure_RoleIcon(frame)
+
+	UF:Configure_PowerCostDisplay(frame)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")

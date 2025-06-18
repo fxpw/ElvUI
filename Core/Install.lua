@@ -324,6 +324,7 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.player.power.attachTextTo = "InfoPanel"
 		E.db.unitframe.units.player.power.height = 22
 		E.db.unitframe.units.player.power.EnergyManaRegen = false
+		E.db.unitframe.units.player.power.PowerCostDisplay = false
 			--Target
 		E.db.unitframe.units.target.aurabar.height = 26
 		E.db.unitframe.units.target.buffs.anchorPoint = "TOPLEFT"
@@ -345,6 +346,7 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.target.orientation = "LEFT"
 		E.db.unitframe.units.target.power.attachTextTo = "InfoPanel"
 		E.db.unitframe.units.target.power.height = 22
+		E.db.unitframe.units.target.power.PowerCostDisplay = false
 			--TargetTarget
 		E.db.unitframe.units.targettarget.debuffs.anchorPoint = "TOPRIGHT"
 		E.db.unitframe.units.targettarget.debuffs.enable = false
@@ -356,9 +358,12 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.targettarget.raidicon.yOffset = 0
 		E.db.unitframe.units.targettarget.threatStyle = "GLOW"
 		E.db.unitframe.units.targettarget.width = 270
+		E.db.unitframe.units.targettarget.power.PowerCostDisplay = false
 			--Focus
 		E.db.unitframe.units.focus.castbar.width = 270
 		E.db.unitframe.units.focus.width = 270
+		E.db.unitframe.units.focus.power.PowerCostDisplay = false
+
 			--Pet
 		E.db.unitframe.units.pet.castbar.iconSize = 32
 		E.db.unitframe.units.pet.castbar.width = 270
@@ -387,6 +392,8 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.party.power.height = 13
 		E.db.unitframe.units.party.rdebuffs.font = "PT Sans Narrow"
 		E.db.unitframe.units.party.width = 231
+		E.db.unitframe.units.party.power.PowerCostDisplay = false
+
 			--Raid 10
 
 		E.db.unitframe.units.raid10.growthDirection = "RIGHT_UP"
@@ -403,6 +410,8 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.raid10.resurrectIcon.attachTo = "BOTTOMRIGHT"
 		E.db.unitframe.units.raid10.visibility = "[@raid6,noexists] hide;show"
 		E.db.unitframe.units.raid10.width = 92
+		E.db.unitframe.units.raid10.power.PowerCostDisplay = false
+
 			--Raid 25
 		E.db.unitframe.units.raid25.growthDirection = "RIGHT_UP"
 		E.db.unitframe.units.raid25.health.frequentUpdates = true
@@ -418,10 +427,13 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.unitframe.units.raid25.resurrectIcon.attachTo = "BOTTOMRIGHT"
 		E.db.unitframe.units.raid25.visibility = "[@raid6,noexists] hide;show"
 		E.db.unitframe.units.raid25.width = 92
+		E.db.unitframe.units.raid25.power.PowerCostDisplay = false
+
 
 			--Raid40
 		E.db.unitframe.units.raid40.enable = false
 		E.db.unitframe.units.raid40.rdebuffs.font = "PT Sans Narrow"
+		E.db.unitframe.units.raid40.power.PowerCostDisplay = false
 
 		--[[
 		--	Layout Tweaks will be handled below.

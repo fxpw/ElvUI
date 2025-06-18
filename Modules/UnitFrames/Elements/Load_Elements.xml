@@ -9,6 +9,7 @@
 	<Script file="CustomText.lua"/>
 	<Script file="Cutaway.lua"/>
 	<Script file="EnergyManaRegen.lua"/>
+	<Script file="PowerCostDisplay.lua"/>
 	<Script file="DebuffHighlight.lua"/>
 	<Script file="FrameGlow.lua"/>
 	<Script file="GPS.lua"/>
