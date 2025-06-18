@@ -146,12 +146,12 @@ local Update = function(self, elapsed)
 		local cost = GetSpellPowerCost(tableForPower[powerType], element.unit)
 		cost = cost and cost or 0
 		if cost > 0 then
-			element.Spark:Show()
+			-- element:Show()
 			element:SetMinMaxValues(0, MaxPower)
-			element.Spark:SetVertexColor(1, 1, 1, 1)
+			-- element.Spark:SetVertexColor(1, 1, 1, 1)
 			element:SetValue(CurrentValue - cost)
 		else
-			element.Spark:Hide()
+			element:SetValue(0)
 		end
 
 		element.sinceLastUpdate = 0
@@ -202,17 +202,17 @@ local Enable = function(self, unit)
 
 		if element:IsObjectType('StatusBar') and not element:GetStatusBarTexture() then
 			element:SetStatusBarTexture([[Interface\Buttons\WHITE8X8]])
-			element:GetStatusBarTexture():SetAlpha(0)
+			element:GetStatusBarTexture():SetAlpha(0.3)
 			element:SetMinMaxValues(0, 2)
 		end
 
-		local spark = element.Spark
-		if spark and spark:IsObjectType('Texture') and not spark:GetTexture() then
-			spark:SetTexture([[Interface\CastingBar\UI-CastingBar-Spark]])
-			spark:SetSize(20, 20)
-			spark:SetBlendMode('ADD')
-			spark:SetPoint('CENTER', element:GetStatusBarTexture(), 'RIGHT')
-		end
+		-- local spark = element.Spark
+		-- if spark and spark:IsObjectType('Texture') and not spark:GetTexture() then
+		-- 	spark:SetTexture([[Interface\CastingBar\UI-CastingBar-Spark]])
+		-- 	spark:SetSize(20, 20)
+		-- 	spark:SetBlendMode('ADD')
+		-- 	spark:SetPoint('CENTER', element:GetStatusBarTexture(), 'RIGHT')
+		-- end
 
 		-- self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', OnUnitSpellcastSucceeded)
 		-- self:RegisterEvent('UNIT_POWER_UPDATE', OnUnitPowerUpdate)
@@ -230,7 +230,7 @@ local Disable = function(self)
 		-- self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', OnUnitSpellcastSucceeded)
 		-- self:UnregisterEvent('UNIT_POWER_UPDATE', OnUnitPowerUpdate)
 
-		element.Spark:Hide()
+		-- element.Spark:Hide()
 		element:SetScript('OnUpdate', nil)
 
 		return false
