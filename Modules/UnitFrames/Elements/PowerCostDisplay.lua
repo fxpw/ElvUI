@@ -9,6 +9,7 @@ function UF:Construct_PowerCostDisplay(frame)
 	element:SetFrameLevel(frame.Power:GetFrameLevel()+4)
 	element:SetMinMaxValues(0, 2)
 	element:SetAllPoints()
+	element:Hide()
 	local barTexture = element:GetStatusBarTexture()
 	barTexture:SetAlpha(0.3)
 
@@ -25,7 +26,9 @@ function UF:Configure_PowerCostDisplay(frame)
 		frame.PowerCostDisplay:SetFrameStrata(frame.Power:GetFrameStrata())
 		local level = frame.Power:GetFrameLevel()
 		frame.PowerCostDisplay:SetFrameLevel(level+4)
+		frame.PowerCostDisplay:Show()
 	elseif frame:IsElementEnabled('PowerCostDisplay') then
 		frame:DisableElement('PowerCostDisplay')
+		frame.PowerCostDisplay:Hide()
 	end
 end
