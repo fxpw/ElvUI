@@ -27,7 +27,7 @@ function UF:Construct_FocusTargetFrame(frame)
 	frame.InfoPanel = self:Construct_InfoPanel(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
-	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
+	frame.PowerCostDisplay = self:Construct_PowerCostDisplay(frame)
 
 	frame.customTexts = {}
 	frame:Point("BOTTOM", ElvUF_Focus, "TOP", 0, 7) --Set to default position
@@ -103,6 +103,8 @@ function UF:Update_FocusTargetFrame(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	UF:Configure_PowerCostDisplay(frame)
 
 	frame:UpdateAllElements("ForceUpdate")
 end

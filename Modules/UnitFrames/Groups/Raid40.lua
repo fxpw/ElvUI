@@ -246,6 +246,9 @@ function UF:Update_Raid40Frames(frame, db)
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
 
+	UF:Configure_PowerCostDisplay(frame)
+
+
 	frame:UpdateAllElements("ForceUpdate")
 end
 

@@ -23,7 +23,7 @@ function UF:Construct_PetTargetFrame(frame)
 	frame.TargetGlow = self:Construct_TargetGlow(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
-	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
+	frame.PowerCostDisplay = self:Construct_PowerCostDisplay(frame)
 	frame.customTexts = {}
 
 	frame:Point("BOTTOM", ElvUF_Pet, "TOP", 0, 7) --Set to default position
@@ -98,6 +98,8 @@ function UF:Update_PetTargetFrame(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	UF:Configure_PowerCostDisplay(frame)
 
 	frame:UpdateAllElements("ForceUpdate")
 end

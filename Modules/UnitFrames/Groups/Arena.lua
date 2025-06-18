@@ -34,7 +34,7 @@ function UF:Construct_ArenaFrames(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
 	frame.GroupRoleIndicator = self:Construct_RoleIcon(frame)
-	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
+	frame.PowerCostDisplay = self:Construct_PowerCostDisplay(frame)
 	frame:SetAttribute("type2", "focus")
 
 	frame.customTexts = {}

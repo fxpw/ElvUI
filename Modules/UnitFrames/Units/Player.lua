@@ -55,8 +55,8 @@ function UF:Construct_PlayerFrame(frame)
 	frame.PvPIndicator = self:Construct_PvPIcon(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
-	frame.EnergyManaRegen = UF:Construct_EnergyManaRegen(frame)
-	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
+	frame.EnergyManaRegen = self:Construct_EnergyManaRegen(frame)
+	frame.PowerCostDisplay = self:Construct_PowerCostDisplay(frame)
 	-- frame.HeadHuntingWantedFrame = self:Construct_HeadHuntingWanted(frame)
 	frame.customTexts = {}
 

@@ -168,6 +168,8 @@ function UF:Update_AssistFrames(frame, db)
 
 	UF:Configure_RaidIcon(frame)
 
+	-- UF:Configure_PowerCostDisplay(frame)
+
 	if not frame.isChild then
 		--Auras
 		UF:EnableDisable_Auras(frame)
