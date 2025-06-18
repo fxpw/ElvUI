@@ -11,4 +11,5 @@
 	<Script file="oUF_Cutaway\oUF_Cutaway.lua"/>
 	<Script file="oUF_RoleIndicator\oUF_RoleIndicator.lua"/>
 	<Script file="oUF_HealthPrediction\oUF_HealthPrediction.lua"/>
+	<Script file="oUF_EnergyManaRegen\oUF_EnergyManaRegen.lua"/>
 </Ui>

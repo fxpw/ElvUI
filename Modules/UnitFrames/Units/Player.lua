@@ -55,6 +55,7 @@ function UF:Construct_PlayerFrame(frame)
 	frame.PvPIndicator = self:Construct_PvPIcon(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
+	frame.EnergyManaRegen = UF:Construct_EnergyManaRegen(frame)
 	-- frame.HeadHuntingWantedFrame = self:Construct_HeadHuntingWanted(frame)
 	frame.customTexts = {}
 
@@ -182,6 +183,7 @@ function UF:Update_PlayerFrame(frame, db)
 	if E.db.unitframe.units.target.aurabar.attachTo == "PLAYER_AURABARS" and ElvUF_Target then
 		UF:Configure_AuraBars(ElvUF_Target)
 	end
+	UF:Configure_EnergyManaRegen(frame)
 
 	--PvP
 	UF:Configure_PVPIcon(frame)
