@@ -1491,6 +1491,7 @@ P.unitframe = {
 					useCustomLevel = false,
 					frameLevel = 1
 				},
+				PowerCostDisplay = false,
 				parent = "FRAME"
 			},
 			infoPanel = {
@@ -1732,6 +1733,7 @@ P.unitframe = {
 					useCustomLevel = false,
 					frameLevel = 1
 				},
+				PowerCostDisplay = false,
 				parent = "FRAME"
 			},
 			infoPanel = {
@@ -1928,6 +1930,7 @@ P.unitframe = {
 				offset = 0,
 				position = "LEFT",
 				hideonnpc = false,
+				PowerCostDisplay = false,
 				xOffset = 2,
 				yOffset = 0
 			},
@@ -2053,6 +2056,7 @@ P.unitframe = {
 				offset = 0,
 				position = "LEFT",
 				hideonnpc = false,
+				PowerCostDisplay = false,
 				xOffset = 2,
 				yOffset = 0
 			},
@@ -2183,6 +2187,7 @@ P.unitframe = {
 				hideonnpc = false,
 				xOffset = 2,
 				yOffset = 0,
+				PowerCostDisplay = false,
 				attachTextTo = "Health"
 			},
 			infoPanel = {
@@ -2355,6 +2360,7 @@ P.unitframe = {
 				offset = 0,
 				position = "LEFT",
 				hideonnpc = false,
+				PowerCostDisplay = false,
 				xOffset = 2,
 				yOffset = 0
 			},
@@ -2483,6 +2489,7 @@ P.unitframe = {
 				position = "LEFT",
 				hideonnpc = false,
 				yOffset = 0,
+				PowerCostDisplay = false,
 				xOffset = 2
 			},
 			infoPanel = {
@@ -2648,6 +2655,7 @@ P.unitframe = {
 				position = "LEFT",
 				hideonnpc = false,
 				yOffset = 0,
+				PowerCostDisplay = false,
 				xOffset = 2
 			},
 			infoPanel = {
@@ -2922,6 +2930,7 @@ P.unitframe = {
 				position = "RIGHT",
 				hideonnpc = false,
 				yOffset = 0,
+				PowerCostDisplay = false,
 				xOffset = -2
 			},
 			infoPanel = {
@@ -3091,6 +3100,7 @@ P.unitframe = {
 				position = "RIGHT",
 				hideonnpc = false,
 				yOffset = 0,
+				PowerCostDisplay = false,
 				xOffset = -2
 			},
 			infoPanel = {
@@ -3368,6 +3378,7 @@ P.unitframe = {
 				position = "BOTTOMRIGHT",
 				hideonnpc = false,
 				yOffset = 2,
+				PowerCostDisplay = false,
 				xOffset = -2
 			},
 			infoPanel = {
@@ -3575,6 +3586,7 @@ P.unitframe = {
 				position = "BOTTOMRIGHT",
 				hideonnpc = false,
 				yOffset = 2,
+				PowerCostDisplay = false,
 				xOffset = -2
 			},
 			infoPanel = {
@@ -3782,6 +3794,7 @@ P.unitframe = {
 				position = "BOTTOMRIGHT",
 				hideonnpc = false,
 				yOffset = 2,
+				PowerCostDisplay = false,
 				xOffset = -2
 			},
 			infoPanel = {
