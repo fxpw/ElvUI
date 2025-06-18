@@ -34,6 +34,7 @@ function UF:Construct_ArenaFrames(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
 	frame.GroupRoleIndicator = self:Construct_RoleIcon(frame)
+	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
 	frame:SetAttribute("type2", "focus")
 
 	frame.customTexts = {}
@@ -116,6 +117,9 @@ function UF:Update_ArenaFrames(frame, db)
 	UF:Configure_CustomTexts(frame)
 	--Role icon
 	UF:Configure_RoleIcon(frame)
+
+	UF:Configure_PowerCostDisplay(frame)
+
 	frame:ClearAllPoints()
 	if frame.index == 1 then
 		local ArenaHeaderMover = ArenaHeaderMover

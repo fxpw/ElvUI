@@ -33,6 +33,7 @@ function UF:Construct_PetFrame(frame)
 	frame.TargetGlow = self:Construct_TargetGlow(frame)
 	frame.Fader = self:Construct_Fader()
 	frame.Cutaway = self:Construct_Cutaway(frame)
+	frame.PowerCostDisplay = UF:Construct_PowerCostDisplay(frame)
 	frame.customTexts = {}
 
 	frame:Point("BOTTOM", E.UIParent, "BOTTOM", 0, 118)

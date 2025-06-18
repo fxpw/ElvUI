@@ -10,7 +10,6 @@ local UnitPowerType = UnitPowerType
 local UnitPowerMax = UnitPowerMax
 local GetSpellInfo = GetSpellInfo
 local IsCurrentSpell = IsCurrentSpell
-local GetMouseFocus = GetMouseFocus
 local queueableSpells
 
 local classQueueableSpells = {
@@ -77,19 +76,12 @@ for id = 300000, 350000 do
 end
 
 
-local tableForPowerTrue = {
-	MANA = true,
-	RAGE = true,
-	ENERGY = true,
-	RUNIC_POWER = true,
-}
 local tableForPower = {
 	MANA = 0,
 	RAGE = 1,
 	ENERGY = 3,
 	RUNIC_POWER = 6,
 }
-
 
 
 local GetSpellPowerCost = function(powerTypeToCheck, unit)
@@ -110,33 +102,11 @@ local GetSpellPowerCost = function(powerTypeToCheck, unit)
 	end
 end
 
--- local LastTickTime = GetTime()
--- local TickDelay = 2.025 -- Average tick time is slightly over 2 seconds
--- local myClass = select(2, UnitClass('player'))
--- local Mp5Delay = 5
--- local Mp5DelayWillEnd = nil
--- local Mp5IgnoredSpells = {
--- 	[18182] = true, -- Improved Life Tap 1
--- 	[18183] = true, -- Improved Life Tap 2
--- 	[1454] = true, -- Life Tap 1
--- 	[1455] = true, -- Life Tap 2
--- 	[1456] = true, -- Life Tap 3
--- 	[11687] = true, -- Life Tap 4
--- 	[11688] = true, -- Life Tap 5
--- 	[11689] = true, -- Life Tap 6
--- }
-
--- local LastValue = UnitPower('player')
--- local ENERGY = "ENERGY"
--- local MANA = "MANA"
-
--- -- Sets tick time to the last possible time based on the last tick
--- local UpdateTickTime = function(now)
--- 	LastTickTime = now - ((now - LastTickTime) % TickDelay)
--- end
-
 local Update = function(self, elapsed)
 	local element = self.PowerCostDisplay
+	if element.PreUpdate then
+		element:PreUpdate()
+	end
 	element.sinceLastUpdate = (element.sinceLastUpdate or 0) + (tonumber(elapsed) or 0)
 
 	if element.sinceLastUpdate > 0.01 then
@@ -146,9 +116,7 @@ local Update = function(self, elapsed)
 		local cost = GetSpellPowerCost(tableForPower[powerType], element.unit)
 		cost = cost and cost or 0
 		if cost > 0 then
-			-- element:Show()
 			element:SetMinMaxValues(0, MaxPower)
-			-- element.Spark:SetVertexColor(1, 1, 1, 1)
 			element:SetValue(CurrentValue - cost)
 		else
 			element:SetValue(0)
@@ -156,66 +124,30 @@ local Update = function(self, elapsed)
 
 		element.sinceLastUpdate = 0
 	end
+	if element.PostUpdate then
+		return element:PostUpdate()
+	end
 end
-
--- local OnUnitPowerUpdate = function()
--- 	local pnumber,powerType = UnitPowerType('player')
--- 	if powerType ~= MANA and powerType ~= ENERGY then return end
-
--- 	-- We also register ticks from mp5 gear within the 5-second-rule to get a more accurate sync later.
--- 	-- Unfortunately this registers a tick when a mana pot or life tab is used.
--- 	local CurrentValue = UnitPower('player', pnumber)
--- 	if CurrentValue > LastValue then
--- 		LastTickTime = GetTime()
--- 	end
-
--- 	LastValue = CurrentValue
--- end
-
--- local OnUnitSpellcastSucceeded = function(_, _, _, _, spellID)
--- 	local _,powerType = UnitPowerType('player')
--- 	if powerType ~= MANA then return end
-
--- 	local spellCost = false
--- 	local cost = GetSpellPowerCost(tableForPower[powerType])
--- 	if cost and cost>0 then
--- 		spellCost = true
--- 	end
-
--- 	if not spellCost or Mp5IgnoredSpells[spellID] then
--- 		return
--- 	end
-
--- 	Mp5DelayWillEnd = GetTime() + 5
--- end
-
 
 local Path = function(self, ...)
 	return (self.PowerCostDisplay.Override or Update)(self, ...)
+end
+local function ForceUpdate(element)
+	return Path(element.__owner, 'ForceUpdate')
 end
 
 local Enable = function(self, unit)
 	local element = self.Power and self.PowerCostDisplay
 	if element then
-		element.unit = unit
+		element.unit = self.unit or unit
 		element.__owner = self
+		element.ForceUpdate=ForceUpdate
 
 		if element:IsObjectType('StatusBar') and not element:GetStatusBarTexture() then
 			element:SetStatusBarTexture([[Interface\Buttons\WHITE8X8]])
 			element:GetStatusBarTexture():SetAlpha(0.3)
 			element:SetMinMaxValues(0, 2)
 		end
-
-		-- local spark = element.Spark
-		-- if spark and spark:IsObjectType('Texture') and not spark:GetTexture() then
-		-- 	spark:SetTexture([[Interface\CastingBar\UI-CastingBar-Spark]])
-		-- 	spark:SetSize(20, 20)
-		-- 	spark:SetBlendMode('ADD')
-		-- 	spark:SetPoint('CENTER', element:GetStatusBarTexture(), 'RIGHT')
-		-- end
-
-		-- self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', OnUnitSpellcastSucceeded)
-		-- self:RegisterEvent('UNIT_POWER_UPDATE', OnUnitPowerUpdate)
 
 		element:SetScript('OnUpdate', function(_, elapsed) Path(self, elapsed) end)
 
@@ -227,10 +159,6 @@ local Disable = function(self)
 	local element = self.Power and self.PowerCostDisplay
 
 	if element then
-		-- self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', OnUnitSpellcastSucceeded)
-		-- self:UnregisterEvent('UNIT_POWER_UPDATE', OnUnitPowerUpdate)
-
-		-- element.Spark:Hide()
 		element:SetScript('OnUpdate', nil)
 
 		return false

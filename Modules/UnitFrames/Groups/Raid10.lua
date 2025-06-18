@@ -48,6 +48,7 @@ function UF:Construct_Raid10Frames()
 	self.GPS = UF:Construct_GPS(self)
 	self.Fader = UF:Construct_Fader()
 	self.Cutaway = UF:Construct_Cutaway(self)
+	self.PowerCostDisplay = UF:Construct_PowerCostDisplay(self)
 
 	self.customTexts = {}
 	self.InfoPanel = UF:Construct_InfoPanel(self)
@@ -243,6 +244,8 @@ function UF:Update_Raid10Frames(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	UF:Configure_PowerCostDisplay(frame)
 
 	frame:UpdateAllElements("ForceUpdate")
 end

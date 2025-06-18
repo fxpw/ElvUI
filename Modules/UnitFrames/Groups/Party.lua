@@ -65,6 +65,7 @@ function UF:Construct_PartyFrames()
 		self.SummonIndicator = UF:Construct_SummonIcon(self)
 		self.HealCommBar = UF:Construct_HealComm(self)
 		self.GPS = UF:Construct_GPS(self)
+		self.PowerCostDisplay = UF:Construct_PowerCostDisplay(self)
 		self.customTexts = {}
 
 		self.Castbar = UF:Construct_Castbar(self)
@@ -315,6 +316,9 @@ function UF:Update_PartyFrames(frame, db)
 		UF:Configure_SummonIcon(frame)
 
 		UF:Configure_CustomTexts(frame)
+
+		UF:Configure_PowerCostDisplay(frame)
+
 	end
 
 	--Fader

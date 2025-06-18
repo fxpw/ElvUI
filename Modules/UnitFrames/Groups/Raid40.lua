@@ -48,6 +48,7 @@ function UF:Construct_Raid40Frames()
 	self.Fader = UF:Construct_Fader()
 	self.Cutaway = UF:Construct_Cutaway(self)
 	self.GroupRoleIndicator = UF:Construct_RoleIcon(self)
+	self.PowerCostDisplay = UF:Construct_PowerCostDisplay(self)
 	self.customTexts = {}
 
 	self.unitframeType = "raid40"
