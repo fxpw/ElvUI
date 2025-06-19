@@ -101,29 +101,29 @@ local hyperlinkTypes = {
 	["glyph"] = true
 }
 
-local tabTexs = {"", "Selected", "Highlight"}
+local tabTexs = { "", "Selected", "Highlight" }
 
 local historyTypes =
-	{ -- the events set on the chats are still in FindURL_Events, this is used to ignore some types only
-		CHAT_MSG_WHISPER = "WHISPER",
-		CHAT_MSG_WHISPER_INFORM = "WHISPER",
-		CHAT_MSG_BN_WHISPER = "WHISPER",
-		CHAT_MSG_BN_WHISPER_INFORM = "WHISPER",
-		CHAT_MSG_GUILD = "GUILD",
-		CHAT_MSG_GUILD_ACHIEVEMENT = "GUILD",
-		CHAT_MSG_OFFICER = "OFFICER",
-		CHAT_MSG_PARTY = "PARTY",
-		CHAT_MSG_PARTY_LEADER = "PARTY",
-		CHAT_MSG_RAID = "RAID",
-		CHAT_MSG_RAID_LEADER = "RAID",
-		CHAT_MSG_RAID_WARNING = "RAID",
-		CHAT_MSG_BATTLEGROUND = "BATTLEGROUND",
-		CHAT_MSG_BATTLEGROUND_LEADER = "BATTLEGROUND",
-		CHAT_MSG_CHANNEL = "CHANNEL",
-		CHAT_MSG_SAY = "SAY",
-		CHAT_MSG_YELL = "YELL",
-		CHAT_MSG_EMOTE = "EMOTE" -- this never worked, check it sometime.
-	}
+{ -- the events set on the chats are still in FindURL_Events, this is used to ignore some types only
+	CHAT_MSG_WHISPER = "WHISPER",
+	CHAT_MSG_WHISPER_INFORM = "WHISPER",
+	CHAT_MSG_BN_WHISPER = "WHISPER",
+	CHAT_MSG_BN_WHISPER_INFORM = "WHISPER",
+	CHAT_MSG_GUILD = "GUILD",
+	CHAT_MSG_GUILD_ACHIEVEMENT = "GUILD",
+	CHAT_MSG_OFFICER = "OFFICER",
+	CHAT_MSG_PARTY = "PARTY",
+	CHAT_MSG_PARTY_LEADER = "PARTY",
+	CHAT_MSG_RAID = "RAID",
+	CHAT_MSG_RAID_LEADER = "RAID",
+	CHAT_MSG_RAID_WARNING = "RAID",
+	CHAT_MSG_BATTLEGROUND = "BATTLEGROUND",
+	CHAT_MSG_BATTLEGROUND_LEADER = "BATTLEGROUND",
+	CHAT_MSG_CHANNEL = "CHANNEL",
+	CHAT_MSG_SAY = "SAY",
+	CHAT_MSG_YELL = "YELL",
+	CHAT_MSG_EMOTE = "EMOTE" -- this never worked, check it sometime.
+}
 
 function CH:RemoveSmiley(key)
 	if key and (type(key) == "string") then
@@ -198,18 +198,18 @@ local mottidowerro = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\mo
 local da1mon12 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da1mon12]], ":32:32")
 local spokes = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\spokes]], ":24:24")
 
-local RaindomElvUIIcon = {[[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
-						  [[Yellow]]}
+local RaindomElvUIIcon = { [[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
+	[[Yellow]] }
 local function CreateRandomIcon()
 	return E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Elv]] ..
-							   RaindomElvUIIcon[math.random(1, #RaindomElvUIIcon)], ":20:40")
+		RaindomElvUIIcon[math.random(1, #RaindomElvUIIcon)], ":20:40")
 end
 
-local RaindomPepeIcon = {[[Shy]], [[Love]], [[Love2]], [[WTF]], [[Haha]], [[Smile]], [[Smile2]], [[Kid]], [[Christ]]}
+local RaindomPepeIcon = { [[Shy]], [[Love]], [[Love2]], [[WTF]], [[Haha]], [[Smile]], [[Smile2]], [[Kid]], [[Christ]] }
 
 local function PepeRandomIcon()
 	return E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\pepe]] ..
-							   RaindomPepeIcon[math.random(1, #RaindomPepeIcon)], ":32:32")
+		RaindomPepeIcon[math.random(1, #RaindomPepeIcon)], ":32:32")
 end
 
 local specialChatIconsSirus = {
@@ -753,8 +753,8 @@ do
 	end
 	removeIconFromLine = function(text)
 		text = gsub(text, "|TInterface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) -- converts raid icons into {star} etc, if possible.
-		text = gsub(text, "(%s?)(|?)|T.-|t(%s?)", stripTextureFunc) -- strip any other texture out but keep a single space from the side(s).
-		text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) -- strip hyperlink data only keeping the actual text.
+		text = gsub(text, "(%s?)(|?)|T.-|t(%s?)", stripTextureFunc)                               -- strip any other texture out but keep a single space from the side(s).
+		text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc)                                    -- strip hyperlink data only keeping the actual text.
 		return text
 	end
 end
@@ -897,6 +897,8 @@ local function FindRightChatID()
 end
 
 function CH:UpdateChatTabs()
+	-- if true then return end
+	-- print("Modules\\Chat\\Chat.lua:900")
 	local fadeUndockedTabs = self.db.fadeUndockedTabs
 	local fadeTabsNoBackdrop = self.db.fadeTabsNoBackdrop
 
@@ -951,8 +953,8 @@ function CH:PositionChat(override)
 	local fadeUndockedTabs = self.db.fadeUndockedTabs
 	local fadeTabsNoBackdrop = self.db.fadeTabsNoBackdrop
 
+	local BASE_OFFSET = 57 + E.Spacing * 3
 	for id, frameName in ipairs(CHAT_FRAMES) do
-		local BASE_OFFSET = 57 + E.Spacing * 3
 
 		local chat = _G[frameName]
 		local tab = _G[format("%sTab", frameName)]
@@ -981,9 +983,9 @@ function CH:PositionChat(override)
 			if chat:GetLeft() then
 				FCF_SavePositionAndDimensions(chat, true)
 			end
-
-			tab:SetParent(RightChatPanel)
-			chat:SetParent(RightChatPanel)
+			-- FIXME
+			-- tab:SetParent(RightChatPanel)
+			-- chat:SetParent(RightChatPanel)
 
 			if chat:IsMovable() then
 				chat:SetUserPlaced(true)
@@ -994,8 +996,9 @@ function CH:PositionChat(override)
 				CH:SetupChatTabs(tab, false)
 			end
 		elseif not chat.isDocked and chat:IsShown() then
-			tab:SetParent(UIParent)
-			chat:SetParent(UIParent)
+			-- FIXME
+			-- tab:SetParent(UIParent)
+			-- chat:SetParent(UIParent)
 			CH:SetupChatTabs(tab, fadeUndockedTabs and true or false)
 		else
 			if id ~= 2 and (id <= NUM_CHAT_WINDOWS) then
@@ -1013,12 +1016,13 @@ function CH:PositionChat(override)
 					FCF_SavePositionAndDimensions(chat, true)
 				end
 			end
-			chat:SetParent(LeftChatPanel)
-			if id > 2 then
-				tab:SetParent(GeneralDockManagerScrollFrameChild)
-			else
-				tab:SetParent(GeneralDockManager)
-			end
+			-- FIXME
+			-- chat:SetParent(LeftChatPanel)
+			-- if id > 2 then
+			-- 	tab:SetParent(GeneralDockManagerScrollFrameChild)
+			-- else
+			-- 	tab:SetParent(GeneralDockManager)
+			-- end
 			if chat:IsMovable() then
 				chat:SetUserPlaced(true)
 			end
@@ -1242,7 +1246,6 @@ function CH:CleanPlayerNameInSystemMessage(message)
 	return cleanedMessage
 end
 
-
 function CH:HandleShortChannels(msg)
 	msg = gsub(msg, "|Hchannel:(.-)|h%[(.-)%]|h", self.ShortChannel)
 	msg = gsub(msg, "CHANNEL:", "")
@@ -1286,7 +1289,7 @@ function CH:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
 
 		if englishClass then
 			local classColorTable = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[englishClass] or
-										RAID_CLASS_COLORS[englishClass]
+				RAID_CLASS_COLORS[englishClass]
 			if not classColorTable then
 				return arg2
 			end
@@ -1299,7 +1302,8 @@ function CH:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
 end
 
 function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
-	arg11, arg12, arg13, isHistory, historyTime, historyName)
+										  arg11, arg12, arg13, isHistory, historyTime, historyName)
+	-- print("Modules\\Chat\\Chat.lua:1303")
 	if strsub(event, 1, 8) == "CHAT_MSG" then
 		local historySavedName -- we need to extend the arguments on CH.ChatFrame_MessageEventHandler so we can properly handle saved names without overriding
 		if isHistory == "ElvUI_ChatHistory" then
@@ -1313,7 +1317,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 		if chatFilters then
 			for _, filterFunc in next, chatFilters do
 				local filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10,
-					newarg11, newarg12 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
+				newarg11, newarg12 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
 					arg10, arg11, arg12)
 				if filter then
 					return true
@@ -1326,7 +1330,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 
 		local _, _, englishClass, _, _, _, name, realm = pcall(GetPlayerInfoByGUID, arg12)
 		local coloredName = historySavedName or
-								CH:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
+			CH:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
 				arg11, arg12)
 
 		local nameWithRealm = strmatch(realm ~= "" and realm or E.myrealm, "%s*(%S+)$")
@@ -1528,7 +1532,8 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 				playerLink = "|Hplayer:" .. cleanedName .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
 					(chatTarget and ":" .. chatTarget or "") .. "|h"
 			else
-				playerLink = "|HBNplayer:" .. cleanedName .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
+				playerLink = "|HBNplayer:" ..
+					cleanedName .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
 					(chatTarget and ":" .. chatTarget or "") .. "|h"
 			end
 
@@ -1574,7 +1579,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 			if not historySavedName and arg2 ~= E.myname and not CH.SoundTimer and
 				(not CH.db.noAlertInCombat or not InCombatLockdown()) then
 				local channels = chatGroup ~= "WHISPER" and chatGroup or
-									 (chatType == "WHISPER" or chatType == "BN_WHISPER") and "WHISPER"
+					(chatType == "WHISPER" or chatType == "BN_WHISPER") and "WHISPER"
 				local alertType = CH.db.channelAlerts[channels]
 
 				if alertType and alertType ~= "None" then
@@ -1604,14 +1609,17 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 end
 
 function CH:ChatFrame_ConfigEventHandler(...)
+	-- print("Modules\\Chat\\Chat.lua:1608")
 	return ChatFrame_ConfigEventHandler(...)
 end
 
 function CH:ChatFrame_SystemEventHandler(...)
+	-- print("Modules\\Chat\\Chat.lua:1613")
 	return ChatFrame_SystemEventHandler(...)
 end
 
 function CH:ChatFrame_OnEvent(...)
+	-- print("Modules\\Chat\\Chat.lua:1618")
 	if CH:ChatFrame_ConfigEventHandler(...) then
 		return
 	end
@@ -1624,11 +1632,13 @@ function CH:ChatFrame_OnEvent(...)
 end
 
 function CH:FloatingChatFrame_OnEvent(...)
+	-- print("Modules\\Chat\\Chat.lua:1631")
 	CH:ChatFrame_OnEvent(...)
 	FloatingChatFrame_OnEvent(...)
 end
 
 local function FloatingChatFrameOnEvent(...)
+	-- print("Modules\\Chat\\Chat.lua:1637")
 	CH:FloatingChatFrame_OnEvent(...)
 end
 
@@ -1646,6 +1656,7 @@ function CH:UpdateDockState()
 end
 
 function CH:SetupChat()
+	-- print("Modules\\Chat\\Chat.lua1649")
 	if not E.private.chat.enable then
 		return
 	end
@@ -1779,7 +1790,7 @@ end
 local protectLinks = {}
 function CH:CheckKeyword(message, author)
 	local canPlaySound = author ~= E.myname and not self.SoundTimer and self.db.keywordSound ~= "None" and
-							 (not self.db.noAlertInCombat or not InCombatLockdown())
+		(not self.db.noAlertInCombat or not InCombatLockdown())
 
 	for hyperLink in gmatch(message, "|%x+|H.-|h.-|h|r") do
 		local tempLink = gsub(hyperLink, "%s", "|s")
@@ -1828,7 +1839,7 @@ function CH:CheckKeyword(message, author)
 
 				if wordMatch and not E.global.chat.classColorMentionExcludedNames[wordMatch] then
 					local classColorTable = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[classMatch] or
-												RAID_CLASS_COLORS[classMatch]
+						RAID_CLASS_COLORS[classMatch]
 					word = gsub(word, gsub(tempWord, "%-", "%%-"),
 						format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r * 255, classColorTable.g * 255,
 							classColorTable.b * 255, tempWord))
@@ -1862,6 +1873,7 @@ function CH:AddLines(lines, ...)
 end
 
 function CH:ChatEdit_OnEnterPressed(editBox)
+	-- print("Modules\\Chat\\Chat.lua:1866")
 	local chatType = editBox:GetAttribute("chatType")
 	local chatFrame = chatType and editBox:GetParent()
 	if chatFrame and (not chatFrame.isTemporary) and (ChatTypeInfo[chatType].sticky == 1) then
@@ -1873,6 +1885,7 @@ function CH:ChatEdit_OnEnterPressed(editBox)
 end
 
 function CH:SetChatFont(dropDown, chatFrame, fontSize)
+	-- print("Modules\\Chat\\Chat.lua:1878")
 	if not chatFrame then
 		chatFrame = FCF_GetCurrentChatFrame()
 	end
@@ -1890,11 +1903,12 @@ function CH:SetChatFont(dropDown, chatFrame, fontSize)
 	chatFrame:SetShadowOffset(E.mult, -E.mult)
 end
 
-CH.SecureSlashCMD = {"^/assist", "^/camp", "^/cancelaura", "^/cancelform", "^/cast", "^/castsequence", "^/equip",
-					 "^/exit", "^/logout", "^/reload", "^/rl", "^/startattack", "^/stopattack", "^/tar", "^/target",
-					 "^/use"}
+CH.SecureSlashCMD = { "^/assist", "^/camp", "^/cancelaura", "^/cancelform", "^/cast", "^/castsequence", "^/equip",
+	"^/exit", "^/logout", "^/reload", "^/rl", "^/startattack", "^/stopattack", "^/tar", "^/target",
+	"^/use" }
 
 function CH:ChatEdit_AddHistory(_, text)
+	-- print("Modules\\Chat\\Chat.lua:1901")
 	text = strtrim(text)
 
 	if text ~= "" then
@@ -1920,6 +1934,7 @@ function CH:ChatEdit_AddHistory(_, text)
 end
 
 function CH:UpdateChatKeywords()
+	-- print("Modules\\Chat\\Chat.lua:1927")
 	wipe(CH.Keywords)
 
 	local keywords = self.db.keywords
@@ -1933,6 +1948,7 @@ function CH:UpdateChatKeywords()
 end
 
 function CH:UpdateFading()
+	-- print("Modules\\Chat\\Chat.lua:1941")
 	for _, frameName in ipairs(CHAT_FRAMES) do
 		local frame = _G[frameName]
 		frame:SetTimeVisible(self.db.inactivityTimer)
@@ -1941,6 +1957,7 @@ function CH:UpdateFading()
 end
 
 function CH:DisplayChatHistory()
+	-- print("Modules\\Chat\\Chat.lua:1950")
 	local data = ElvCharacterDB.ChatHistoryLog
 	if not next(data) then
 		return
@@ -2007,6 +2024,7 @@ function CH:DelayGuildMOTD()
 end
 
 function CH:SaveChatHistory(event, ...)
+	-- print("Modules\\Chat\\Chat.lua:2023")
 	if historyTypes[event] and not self.db.showHistory[historyTypes[event]] then
 		return
 	end
@@ -2030,7 +2048,7 @@ function CH:SaveChatHistory(event, ...)
 	if select("#", ...) > 0 then
 		local historyLog = ElvCharacterDB.ChatHistoryLog
 
-		local historyEntry = {...}
+		local historyEntry = { ... }
 		historyEntry[50] = event
 		historyEntry[51] = time()
 		historyEntry[52] = self:GetColoredName(event, ...)
@@ -2057,12 +2075,12 @@ function CH:ON_FCF_SavePositionAndDimensions(_, noLoop)
 	end
 end
 
-local FindURL_Events = {"CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CHAT_MSG_BN_WHISPER",
-						"CHAT_MSG_BN_WHISPER_INFORM", "CHAT_MSG_GUILD_ACHIEVEMENT", "CHAT_MSG_GUILD",
-						"CHAT_MSG_OFFICER", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID",
-						"CHAT_MSG_RAID_LEADER", "CHAT_MSG_RAID_WARNING", "CHAT_MSG_BATTLEGROUND",
-						"CHAT_MSG_BATTLEGROUND_LEADER", "CHAT_MSG_CHANNEL", "CHAT_MSG_SAY", "CHAT_MSG_YELL",
-						"CHAT_MSG_EMOTE", "CHAT_MSG_TEXT_EMOTE", "CHAT_MSG_AFK", "CHAT_MSG_DND"}
+local FindURL_Events = { "CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CHAT_MSG_BN_WHISPER",
+	"CHAT_MSG_BN_WHISPER_INFORM", "CHAT_MSG_GUILD_ACHIEVEMENT", "CHAT_MSG_GUILD",
+	"CHAT_MSG_OFFICER", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID",
+	"CHAT_MSG_RAID_LEADER", "CHAT_MSG_RAID_WARNING", "CHAT_MSG_BATTLEGROUND",
+	"CHAT_MSG_BATTLEGROUND_LEADER", "CHAT_MSG_CHANNEL", "CHAT_MSG_SAY", "CHAT_MSG_YELL",
+	"CHAT_MSG_EMOTE", "CHAT_MSG_TEXT_EMOTE", "CHAT_MSG_AFK", "CHAT_MSG_DND" }
 
 function CH:DefaultSmileys()
 	local x = ":16:16"
@@ -2266,7 +2284,10 @@ CH.TabStyles = {
 	CURVE1 = "%s(|r %s %s)|r"
 }
 
+
+
 function CH:FCFTab_UpdateColors(tab, selected)
+	-- print("Modules\\Chat\\Chat.lua:2286")
 	local chat = _G[format("ChatFrame%s", tab:GetID())]
 
 	tab.selected = selected
@@ -2338,7 +2359,7 @@ function CH:Initialize()
 	self:SecureHook("FCF_SavePositionAndDimensions", "ON_FCF_SavePositionAndDimensions")
 	self:RegisterEvent("UPDATE_CHAT_WINDOWS", "SetupChat")
 	self:RegisterEvent("UPDATE_FLOATING_CHAT_WINDOWS", "SetupChat")
-
+	-- print("Modules\\Chat\\Chat.lua:2355")
 	if WIM then
 		WIM.RegisterWidgetTrigger("chat_display", "whisper,chat,w2w,demo", "OnHyperlinkClick", function(self)
 			CH.clickedframe = self
@@ -2365,6 +2386,7 @@ function CH:Initialize()
 
 	-- Editbox Backdrop Color
 	hooksecurefunc("ChatEdit_UpdateHeader", function(editbox)
+		-- print("Modules\\Chat\\Chat.lua:2382")
 		local chatType = editbox:GetAttribute("chatType")
 		if not chatType then
 			return
