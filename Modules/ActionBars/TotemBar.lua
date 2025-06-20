@@ -210,7 +210,7 @@ function AB:PositionAndSizeBarTotem()
 
 	MultiCastSummonSpellButton:ClearAllPoints()
 	MultiCastSummonSpellButton:Size(size)
-	MultiCastSummonSpellButton:Point("BOTTOMLEFT", E.Border*2, E.Border*2+ 1)
+	MultiCastSummonSpellButton:Point("BOTTOMLEFT", E.Border*2, E.Border*2 + 1)
 
 	for i = 1, numActiveSlots do
 		local button = _G["MultiCastSlotButton"..i]
