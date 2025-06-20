@@ -1014,7 +1014,12 @@ function CH:PositionChat(override)
 					BASE_OFFSET = BASE_OFFSET - 24
 					chat:Point("BOTTOMLEFT", LeftChatToggleButton, "BOTTOMLEFT", 1, 2)
 				end
-				chat:Size(self.db.panelWidth - 11, (self.db.panelHeight - BASE_OFFSET))
+				if id == 1 then
+					chat:Size(self.db.panelWidth - 11, (self.db.panelHeight - BASE_OFFSET))
+				else
+					local x,y = ChatFrame1:GetSize()
+					chat:Size(x,y)
+				end
 
 				-- Pass a 2nd argument which prevents an infinite loop in our ON_FCF_SavePositionAndDimensions function
 				if chat:GetLeft() then
