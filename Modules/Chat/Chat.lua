@@ -972,8 +972,13 @@ function CH:PositionChat(override)
 				chat:Point("BOTTOMLEFT", RightChatDataPanel, "BOTTOMLEFT", 1, 2)
 			end
 			if id ~= 2 then
+				if self.db.separateSizes then
 				chat:Size((self.db.separateSizes and self.db.panelWidthRight or self.db.panelWidth) - 11,
 					(self.db.separateSizes and self.db.panelHeightRight or self.db.panelHeight) - BASE_OFFSET)
+				else
+					local x,y = ChatFrame1:GetSize()
+					chat:Size(x,y)
+				end
 			else
 				chat:Size(self.db.panelWidth - 11,
 					(self.db.panelHeight - BASE_OFFSET) - CombatLogQuickButtonFrame_Custom:GetHeight())
