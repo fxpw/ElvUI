@@ -34,5 +34,7 @@
 	<Script file="SpecSwitch.lua"/>
 	<Script file="Sound.lua"/>
 	<Script file="Professions.lua"/>
+	<Script file="Expertise.lua"/>
+	<Script file="ArmorPenetration.lua"/>
 	<Script file="ConfigElvUI.lua"/>
 </Ui>
