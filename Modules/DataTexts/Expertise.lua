@@ -7,7 +7,6 @@ local join = string.join
 local GetExpertise = GetExpertise
 local GetInventoryItemLink = GetInventoryItemLink
 
-local CR_EXPERTISE = CR_EXPERTISE
 local STAT_EXPERTISE = STAT_EXPERTISE
 
 local displayString = ""
