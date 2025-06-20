@@ -13,15 +13,13 @@ local CR_EXPERTISE = CR_EXPERTISE
 local STAT_EXPERTISE = STAT_EXPERTISE
 
 local displayString = ""
-local mainExpertise, offExpertise, expertiseRating, expertiseBonus = 0, 0, 0, 0
+local mainExpertise, offExpertise = 0, 0
 local hasOffHand = false
 
 local lastPanel
 
 local function OnEvent(self)
     mainExpertise, offExpertise = GetExpertise()
-    expertiseRating = GetCombatRating(CR_EXPERTISE)
-    expertiseBonus = GetCombatRatingBonus(CR_EXPERTISE)
     hasOffHand = GetInventoryItemLink("player", 17) ~= nil
 
     if hasOffHand then
@@ -29,13 +27,13 @@ local function OnEvent(self)
     else
         self.text:SetFormattedText(displayString, STAT_EXPERTISE..": ", format("%d", mainExpertise))
     end
-	
+
 	lastPanel = self
 end
 
 local function ApplySettings(hex)
     displayString = join('', '%s', hex, '%s|r')
-	
+
 	if lastPanel ~= nil then
 		OnEvent(lastPanel)
 	end
