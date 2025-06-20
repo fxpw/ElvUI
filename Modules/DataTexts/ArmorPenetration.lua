@@ -4,15 +4,11 @@ local DT = E:GetModule("DataTexts")
 local strjoin = strjoin
 local format = format
 
-local CR_ARMOR_PENETRATION = CR_ARMOR_PENETRATION
-
-local GetCombatRating = GetCombatRating
-
 local displayString = ''
 local APRating = 0
 
 local function OnEvent(self)
-	APRating = GetCombatRating(CR_ARMOR_PENETRATION)
+	APRating = GetCombatRating(25)
 
 	self.text:SetFormattedText(displayString, APRating)
 
