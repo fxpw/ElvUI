@@ -5,8 +5,6 @@ local format = string.format
 local join = string.join
 
 local GetExpertise = GetExpertise
-local GetCombatRating = GetCombatRating
-local GetCombatRatingBonus = GetCombatRatingBonus
 local GetInventoryItemLink = GetInventoryItemLink
 
 local CR_EXPERTISE = CR_EXPERTISE
