@@ -12,21 +12,18 @@ local displayString = ''
 local APRating = 0
 
 local function OnEvent(self)
-    -- Получаем рейтинг проникновения брони
-    APRating = GetCombatRating(CR_ARMOR_PENETRATION)
+	APRating = GetCombatRating(CR_ARMOR_PENETRATION)
 
-    -- Обновляем текст
-    self.text:SetFormattedText(displayString, APRating)
-    
-    lastPanel = self
+	self.text:SetFormattedText(displayString, APRating)
+
+	lastPanel = self
 end
 
 local function ApplySettings(_, hex)
-    -- Форматируем строку с учетом цвета и числа
-    displayString = strjoin('', 'РПБ: ', '%d')
-    if lastPanel ~= nil then
-        OnEvent(lastPanel)
-    end
+	displayString = strjoin('', 'РПБ: ', '%d')
+	if lastPanel ~= nil then
+		OnEvent(lastPanel)
+	end
 end
 
 E.valueColorUpdateFuncs[ApplySettings] = true
