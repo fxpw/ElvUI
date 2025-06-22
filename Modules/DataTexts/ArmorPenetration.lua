@@ -18,4 +18,4 @@ end
 
 E.valueColorUpdateFuncs[ApplySettings] = true
 
-DT:RegisterDatatext("Armor Penetration", { "UNIT_STATS", "UNIT_AURA", "PLAYER_EQUIPMENT_CHANGED" }, OnEvent, nil, nil, nil, nil, 'Armor Penetration')
+DT:RegisterDatatext("Armor Penetration", { "UNIT_STATS", "UNIT_AURA", "PLAYER_EQUIPMENT_CHANGED" }, OnEvent, nil, nil, nil, nil, 'РПБ')
