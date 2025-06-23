@@ -224,7 +224,8 @@ local Enable = function(self, unit)
 		self:RegisterEvent('UNIT_POWER_UPDATE', OnUnitPowerUpdate)
 
 		element:SetScript('OnUpdate', function(_, elapsed) Path(self, elapsed) end)
-
+		element:Show()
+		element.Spark:Show()
 		return true
 	end
 end
@@ -238,6 +239,7 @@ local Disable = function(self)
 
 		element.Spark:Hide()
 		element:SetScript('OnUpdate', nil)
+		element:Hide()
 
 		return false
 	end

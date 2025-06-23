@@ -35,8 +35,10 @@ function UF:Configure_EnergyManaRegen(frame)
 		frame.EnergyManaRegen:SetFrameStrata(frame.Power:GetFrameStrata())
 		local level = frame.Power:GetFrameLevel()
 		frame.EnergyManaRegen:SetFrameLevel(level+3)
+		frame.EnergyManaRegen:Show()
 		-- frame.EnergyManaRegen:OffsetFrameLevel(3, frame.Power)
 	elseif frame:IsElementEnabled('EnergyManaRegen') then
 		frame:DisableElement('EnergyManaRegen')
+		frame.EnergyManaRegen:Hide()
 	end
 end
