@@ -91,13 +91,13 @@ local GetSpellPowerCost = function(powerTypeToCheck, unit)
 		spellName = GetQueuedSpell()
 	end
 	if spellName then
-		if spelllist[spellName .. rank] then
+		if rank and spelllist[spellName .. rank] then
 			spellName = spelllist[spellName .. rank]
-		end
-		local _, _, _, powerCost, _, powerType = GetSpellInfo(spellName);
-		if powerType and powerCost then
-			if powerType == powerTypeToCheck then
-				return powerCost;
+			local _, _, _, powerCost, _, powerType = GetSpellInfo(spellName);
+			if powerType and powerCost then
+				if powerType == powerTypeToCheck then
+					return powerCost;
+				end
 			end
 		end
 	end
