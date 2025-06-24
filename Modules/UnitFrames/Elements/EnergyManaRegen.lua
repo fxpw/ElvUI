@@ -22,7 +22,7 @@ function UF:Construct_EnergyManaRegen(frame)
 	element.Spark:Point('BOTTOM')
 	element.Spark:Point('TOP')
 	element.Spark:Width(2)
-
+	element.Spark:Hide()
 	return element
 end
 
@@ -36,9 +36,11 @@ function UF:Configure_EnergyManaRegen(frame)
 		local level = frame.Power:GetFrameLevel()
 		frame.EnergyManaRegen:SetFrameLevel(level+3)
 		frame.EnergyManaRegen:Show()
+		frame.EnergyManaRegen.Spark:Show()
 		-- frame.EnergyManaRegen:OffsetFrameLevel(3, frame.Power)
 	elseif frame:IsElementEnabled('EnergyManaRegen') then
 		frame:DisableElement('EnergyManaRegen')
 		frame.EnergyManaRegen:Hide()
+		frame.EnergyManaRegen.Spark:Hide()
 	end
 end

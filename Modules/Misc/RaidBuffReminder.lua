@@ -51,6 +51,7 @@ RB.Spell1Buffs = {
 	41610, -- shattrat elixirs
 	41611, -- shattrat elixirs
 	41608, -- shattrat elixirs
+	45373, -- shattrat elixirs
 }
 
 RB.Spell2Buffs = {
