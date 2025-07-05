@@ -72,11 +72,7 @@ end
 
 local function OnClick(_, button)
 	if button == "LeftButton" then
-		if BattlePassFrame:IsShown() then
-			BattlePassFrame:Hide()
-			return
-		end
-		BattlePassFrame:Show()
+		ToggleFrame(BattlePassFrame)
 	elseif button == "RightButton" then
 		SendServerMessage("ACMSG_BATTLEPASS_TAKE_ALL_REWARDS")
 	elseif button == "MiddleButton" then
