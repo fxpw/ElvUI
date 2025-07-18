@@ -248,11 +248,14 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"VideoOptionsResolutionPanelWindowed",
 		"VideoOptionsResolutionPanelMaximized",
 		"VideoOptionsResolutionPanelDisableResize",
+		"VideoOptionsResolutionPanelCursorRefreshRateFix",
 		"VideoOptionsResolutionPanelDesktopGamma",
 		"VideoOptionsEffectsPanelSpecularLighting",
 		"VideoOptionsEffectsPanelFullScreenGlow",
 		"VideoOptionsEffectsPanelDeathEffect",
 		"VideoOptionsEffectsPanelProjectedTextures",
+		"InterfaceOptionsObjectivesPanelTrackerToggleSelection",
+		"InterfaceOptionsHelpPanelItemExpirationReminder",
 	}
 	for _, checkbox in ipairs(checkboxes) do
 		checkbox = _G[checkbox]
@@ -288,6 +291,9 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"VideoOptionsEffectsPanelWeatherIntensity",
 		"VideoOptionsEffectsPanelPlayerTexture",
 		"VideoOptionsResolutionPanelGammaSlider",
+		"InterfaceOptionsObjectivesPanelTrackerFontSize",
+		"InterfaceOptionsObjectivesPanelTrackerOpacity",
+		"InterfaceOptionsObjectivesPanelTrackerHeight",
 	}
 	for _, slider in ipairs(sliders) do
 		S:HandleSliderFrame(_G[slider])
@@ -307,6 +313,7 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"VideoOptionsFrameOkay",
 		"VideoOptionsFrameCancel",
 		"VideoOptionsFrameApply",
+		"InterfaceOptionsObjectivesPanelTrackerResetPosition",
 	}
 	for _, button in ipairs(buttons) do
 		S:HandleButton(_G[button])
@@ -333,6 +340,7 @@ S:AddCallback("Skin_BlizzardOptions", function()
 
 		"VideoOptionsResolutionPanelResolutionDropDown",
 		"VideoOptionsResolutionPanelRefreshDropDown",
+		"InterfaceOptionsDisplayPanelSpellRange",
 	}
 	for _, dropdown in ipairs(dropdowns) do
 		dropdown = _G[dropdown]
