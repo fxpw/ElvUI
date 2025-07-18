@@ -9,6 +9,7 @@ local GetScreenHeight = GetScreenHeight
 local hideRule = "[@arena1,exists][@arena2,exists][@arena3,exists][@arena4,exists][@arena5,exists][@boss1,exists][@boss2,exists][@boss3,exists][@boss4,exists]"
 
 function B:SetObjectiveFrameAutoHide()
+	if not WatchFrame then return end
 	if E.db.general.watchFrameAutoHide then
 		RegisterStateDriver(WatchFrame, "visibility", hideRule)
 	else
@@ -17,6 +18,7 @@ function B:SetObjectiveFrameAutoHide()
 end
 
 function B:SetWatchFrameHeight()
+	if not WatchFrame then return end
 	local top = WatchFrame:GetTop() or 0
 	local screenHeight = GetScreenHeight()
 	local gapFromTop = screenHeight - top
@@ -27,6 +29,7 @@ function B:SetWatchFrameHeight()
 end
 
 function B:MoveWatchFrame()
+	if not WatchFrame then return end
 	local WatchFrameHolder = CreateFrame("Frame", "WatchFrameHolder", E.UIParent)
 	WatchFrameHolder:Size(207, 22)
 	WatchFrameHolder:Point("TOPRIGHT", -135, -300)
