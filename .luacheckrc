@@ -49,6 +49,15 @@ globals = {
 	"HelpTip",
 	"BattlePassSplashFrame",
 	"C_BattlePass",
+	"ObjectiveTrackerFrame",
+	"ObjectiveTrackerFrameScrollFrame",
+	"InterfaceOptionsObjectivesPanelTrackerFontSize",
+	"InterfaceOptionsObjectivesPanelTrackerOpacity",
+	"InterfaceOptionsObjectivesPanelTrackerHeight",
+	"InterfaceOptionsObjectivesPanelTrackerResetPosition",
+	"InterfaceOptionsObjectivesPanelTrackerToggleSelection",
+	"ObjectiveTrackerFrameHeader",
+	"ObjectiveTrackerFrameScrollFrameScrollBar",
 
 	--fonts
 	"GameFontNormal9",

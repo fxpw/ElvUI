@@ -1,13 +1,13 @@
 local E, L = unpack(select(2, ...)); --Import: Engine, Locales
 local B = E:GetModule("Blizzard")
-local S = E:GetModule("Skins")
+-- local S = E:GetModule("Skins")
 --Lua functions
 local min = math.min
 --WoW API / Variables
 local GetScreenHeight = GetScreenHeight
 
-local hideRule =
-"[@arena1,exists][@arena2,exists][@arena3,exists][@arena4,exists][@arena5,exists][@boss1,exists][@boss2,exists][@boss3,exists][@boss4,exists]"
+-- local hideRule =
+-- "[@arena1,exists][@arena2,exists][@arena3,exists][@arena4,exists][@arena5,exists][@boss1,exists][@boss2,exists][@boss3,exists][@boss4,exists]"
 
 function B:SetObjectiveFrameAutoHide()
 	-- if not WatchFrame then return end
@@ -36,7 +36,7 @@ function B:MoveWatchFrame()
 	InterfaceOptionsObjectivesPanelTrackerResetPosition:Hide()
 	InterfaceOptionsObjectivesPanelTrackerToggleSelection:Hide()
 	local WatchFrameHolder = CreateFrame("Frame", "WatchFrameHolder", E.UIParent)
-	local w, h = ObjectiveTrackerFrame:GetSize()
+	local w, _ = ObjectiveTrackerFrame:GetSize()
 	WatchFrameHolder:Size(w, E.db.general.watchFrameHeight)
 	WatchFrameHolder:Point("TOPRIGHT", -135, -300)
 	E:CreateMover(WatchFrameHolder, "WatchFrameMover", L["Objective Frame"], nil, nil, nil, nil, nil,
