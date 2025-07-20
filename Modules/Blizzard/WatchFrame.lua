@@ -69,6 +69,22 @@ function B:MoveWatchFrame()
 	hooksecurefunc(ObjectiveTrackerFrameScrollFrameScrollBar, "Show", function(frame)
 		frame:Hide()
 	end)
+	-- [20:26:52] Dump: value = QuestObjectiveTrackerHeaderFilterButton:GetNormalTexture()
+	-- [20:26:52] [1] = {
+	-- [20:26:52]   [0] = <userdata>
+	-- [20:26:52] }
+	-- [20:26:57] Dump: value = QuestObjectiveTrackerHeaderFilterButton:GetNormalTexture():GetTexture()
+	-- [20:26:57] [1] = "Interface/HUD/MinimapFilter"
+	-- [20:27:20] Dump: value = ObjectiveTrackerFrameHeaderMinimizeButton:GetNormalTexture():GetTexture()
+	-- [20:27:20] [1] = "Interface/QuestFrame/QuestTracker"
+	-- QuestObjectiveTrackerHeaderFilterButton.NormalTexture:SetAtlas("UI-QuestTrackerButton-Filter", true)
+	-- QuestObjectiveTrackerHeaderFilterButton.NormalTexture:SetAtlas("UI-QuestTrackerButton-Filter", true)
+	-- QuestObjectiveTrackerHeaderFilterButton.PushedTexture:SetAtlas("UI-QuestTrackerButton-Filter-Pressed", true)
+	ObjectiveTrackerFrameHeaderFilterButton:StripTextures()
+	ObjectiveTrackerFrameHeaderFilterButton.NormalTexture:SetBlendMode("ADD")
+	ObjectiveTrackerFrameHeaderFilterButton.NormalTexture:SetAtlas("Map-Filter-Button",true)
+	ObjectiveTrackerFrameHeaderFilterButton.NormalTexture:SetVertexColor(0.86, 0.94, 1)
+	ObjectiveTrackerFrameHeaderFilterButton.PushedTexture:SetAtlas("Map-Filter-Button-down")
 
 	hooksecurefunc(ObjectiveTrackerFrameHeader, "SetCollapsed", function(frame, collapse)
 		local normalTexture = frame.MinimizeButton:GetNormalTexture();
