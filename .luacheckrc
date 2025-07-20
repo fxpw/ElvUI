@@ -58,6 +58,9 @@ globals = {
 	"InterfaceOptionsObjectivesPanelTrackerToggleSelection",
 	"ObjectiveTrackerFrameHeader",
 	"ObjectiveTrackerFrameScrollFrameScrollBar",
+	"ObjectiveTrackerFrameHeaderFilterButton",
+	"InterfaceOptionsObjectivesPanelTrackerStyle",
+	"InterfaceOptionsObjectivesPanelTrackerHeaderAlpha",
 
 	--fonts
 	"GameFontNormal9",
