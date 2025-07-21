@@ -84,6 +84,7 @@ E.valueColorUpdateFuncs = {}
 E.TexCoords = {0, 1, 0, 1}
 E.VehicleLocks = {}
 E.CreditsList = {}
+E.ClearTexture = 0
 
 E.InversePoints = {
 	TOP = "BOTTOM",
