@@ -1137,7 +1137,7 @@ function E:UpdateAll(ignoreInstall)
 		E:Install()
 	end
 
-	Blizzard:SetWatchFrameHeight()
+	-- Blizzard:SetWatchFrameHeight()
 	E:SetMoversClampedToScreen(true) -- Go back to using clamp after resizing has taken place.
 end
 

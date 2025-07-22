@@ -46,7 +46,7 @@
 	<!-- <Script file="Tradeskill.lua"/> -->
 	<Script file="Trainer.lua"/>
 	<Script file="Tutorial.lua"/>
-	<Script file="WatchFrame.lua"/>
+	<Script file="ObjectiveTracker.lua"/>
 	<Script file="Worldmap.lua"/>
 	<Script file="WorldStateFrame.lua"/>
 	<Script file="UpgradeFrame.lua"/>
