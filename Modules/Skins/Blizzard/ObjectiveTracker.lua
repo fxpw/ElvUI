@@ -23,14 +23,12 @@ local function ReskinQuestIcon(button)
 
 	if not button.IsSkinned then
 		button:SetSize(24, 24)
-		button:SetNormalTexture(E.ClearTexture)
-		button:SetPushedTexture(E.ClearTexture)
-		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+		S:HandleButton(button)
 
 		local icon = button.icon or button.Icon
 		if icon then
-			S:HandleIcon(icon, true)
-			icon:SetInside()
+			S:HandleIcon(icon)
+			icon:SetInside(button)
 		end
 
 		button.IsSkinned = true
@@ -130,8 +128,10 @@ function S:Blizzard_ObjectiveTracker()
 			FilterButton:SetHighlightAtlas('UI-QuestTrackerButton-Yellow-Highlight', 'ADD')
 			local normalTexture = FilterButton:GetNormalTexture()
 			local pushedTexture = FilterButton:GetPushedTexture()
+			normalTexture:SetBlendMode("ADD")
 			normalTexture:SetAtlas('Map-Filter-Button', true)
 			normalTexture:SetVertexColor(0.86, 0.94, 1)
+			pushedTexture:SetBlendMode("ADD")
 			pushedTexture:SetAtlas('Map-Filter-Button-down', true)
 		end
 		if MinimizeButton then
