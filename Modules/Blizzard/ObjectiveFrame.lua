@@ -5,9 +5,7 @@ local _G = _G
 local min = min
 local CreateFrame = CreateFrame
 local hooksecurefunc = hooksecurefunc
-local ShowUIPanel = ShowUIPanel
 local GetInstanceInfo = GetInstanceInfo
-local InCombatLockdown = InCombatLockdown
 
 local function ObjectiveTracker_SetPoint(tracker, _, parent)
 	if parent ~= tracker.holder then
@@ -42,22 +40,6 @@ function B:ObjectiveTracker_AutoHideOnHide()
 	end
 end
 
--- Clone of SplashFrameMixin:OnHide() to remove Objective Update to prevent taint on the Quest Button
-local function SplashFrame_OnHide(frame)
-	local fromGameMenu = frame.screenInfo and frame.screenInfo.gameMenuRequest
-	frame.screenInfo = nil
-
-	-- C_TalkingHead_SetConversationsDeferred(false)
-	_G.AlertFrame:SetAlertsEnabled(true, 'splashFrame')
-	-- ObjectiveTrackerFrame:Update()
-
-	if fromGameMenu and not frame.showingQuestDialog and not InCombatLockdown() then
-		ShowUIPanel(_G.GameMenuFrame)
-	end
-
-	frame.showingQuestDialog = nil
-end
-
 function B:ObjectiveTracker_Setup()
 	local holder = CreateFrame('Frame', 'ObjectiveFrameHolder', E.UIParent)
 	holder:Point('TOPRIGHT', E.UIParent, -135, -300)
@@ -79,9 +61,4 @@ function B:ObjectiveTracker_Setup()
 
 	tracker.holder = holder
 	hooksecurefunc(tracker, 'SetPoint', ObjectiveTracker_SetPoint)
-
-	local splash = _G.SplashFrame
-	if splash then
-		splash:SetScript('OnHide', SplashFrame_OnHide)
-	end
 end
