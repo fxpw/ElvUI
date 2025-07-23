@@ -20,11 +20,10 @@ function B:ObjectiveTracker_SetHeight()
 	local gapFromTop = E.screenheight - top
 	local maxHeight = E.screenheight - gapFromTop
 	local frameHeight = min(maxHeight, E.db.general.objectiveFrameHeight)
-
 	tracker:Height(frameHeight)
+	tracker.holder:Height(frameHeight)
+	_G.ObjectiveFrameMover:Height(frameHeight)
 end
-
--- local C_TalkingHead_SetConversationsDeferred = C_TalkingHead.SetConversationsDeferred
 
 function B:ObjectiveTracker_AutoHideOnHide()
 	local tracker = _G.ObjectiveTrackerFrame
@@ -41,11 +40,24 @@ function B:ObjectiveTracker_AutoHideOnHide()
 end
 
 function B:ObjectiveTracker_Setup()
+	ObjectiveTrackerFrameScrollFrameScrollBar:Hide()
+	InterfaceOptionsObjectivesPanelTrackerFontSize:Hide()
+	InterfaceOptionsObjectivesPanelTrackerOpacity:Hide()
+	InterfaceOptionsObjectivesPanelTrackerHeight:Hide()
+	InterfaceOptionsObjectivesPanelTrackerResetPosition:Hide()
+	InterfaceOptionsObjectivesPanelTrackerToggleSelection:Hide()
+	-- TODO ALPHA PARAMS IN CONFIG
+	InterfaceOptionsObjectivesPanelTrackerHeaderAlpha:Hide()
+	InterfaceOptionsObjectivesPanelTrackerStyle:Hide()
+	hooksecurefunc(ObjectiveTrackerFrameScrollFrameScrollBar, "Show", function(frame)
+		frame:Hide()
+	end)
 	local holder = CreateFrame('Frame', 'ObjectiveFrameHolder', E.UIParent)
 	holder:Point('TOPRIGHT', E.UIParent, -135, -300)
-	holder:Size(130, 22)
+	local w, _ = ObjectiveTrackerFrame:GetSize()
+	holder:Size(w, E.db.general.objectiveFrameHeight)
 
-	E:CreateMover(holder, 'ObjectiveFrameMover', L["Objective Frame"], nil, nil, nil, nil, nil, 'general,blizzardImprovements')
+	E:CreateMover(holder, 'ObjectiveFrameMover', L["Objective Frame"], nil, nil, nil, nil, nil, 'general,objectiveFrameGroup')
 	holder:SetAllPoints(_G.ObjectiveFrameMover)
 
 	local tracker = _G.ObjectiveTrackerFrame
@@ -55,10 +67,13 @@ function B:ObjectiveTracker_Setup()
 	tracker:SetClampedToScreen(false)
 	tracker:ClearAllPoints()
 	tracker:SetPoint('TOP', holder)
+	tracker.holder = holder
 
 	B:ObjectiveTracker_AutoHide()
 	B:ObjectiveTracker_SetHeight()
+	C_Timer:After(1, function()
+		B:ObjectiveTracker_SetHeight()
+	end)
 
-	tracker.holder = holder
 	hooksecurefunc(tracker, 'SetPoint', ObjectiveTracker_SetPoint)
 end
