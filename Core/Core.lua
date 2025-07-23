@@ -15,7 +15,7 @@ local ActionBars = E:GetModule("ActionBars")
 local AFK = E:GetModule("AFK")
 local Auras = E:GetModule("Auras")
 local Bags = E:GetModule("Bags")
-local Blizzard = E:GetModule("Blizzard")
+-- local Blizzard = E:GetModule("Blizzard")
 local Chat = E:GetModule("Chat")
 local DataBars = E:GetModule("DataBars")
 local DataTexts = E:GetModule("DataTexts")
@@ -1137,7 +1137,7 @@ function E:UpdateAll(ignoreInstall)
 		E:Install()
 	end
 
-	Blizzard:SetWatchFrameHeight()
+	-- Blizzard:SetWatchFrameHeight()
 	E:SetMoversClampedToScreen(true) -- Go back to using clamp after resizing has taken place.
 end
 

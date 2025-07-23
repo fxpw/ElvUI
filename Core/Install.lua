@@ -258,7 +258,9 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.databars.reputation.width = 222
 		--General
 		E.db.general.minimap.size = 220
-		E.db.general.watchFrameHeight = 400
+		E.db.general.objectiveFrameHeight = 480
+		E.db.general.objectiveFrameAutoHide = true
+		E.db.general.objectiveFrameAutoHideInKeystone = false
 		E.db.general.totems.growthDirection = "HORIZONTAL"
 		E.db.general.totems.size = 50
 		E.db.general.totems.spacing = 8
@@ -296,7 +298,7 @@ function E:SetupLayout(layout, noDataReset, noDisplayMsg)
 		E.db.movers.ExperienceBarMover = "BOTTOM,ElvUIParent,BOTTOM,0,43"
 		E.db.movers.LootFrameMover = "TOPLEFT,ElvUIParent,TOPLEFT,418,-186"
 		E.db.movers.MirrorTimer1Mover = "TOP,ElvUIParent,TOP,-1,-96"
-		E.db.movers.WatchFrameMover = "TOPRIGHT,ElvUIParent,TOPRIGHT,-163,-325"
+		E.db.movers.ObjectiveFrameMover = "TOPRIGHT,ElvUIParent,TOPRIGHT,-163,-325"
 		E.db.movers.ReputationBarMover = "TOPRIGHT,ElvUIParent,TOPRIGHT,-2,-245"
 		E.db.movers.ShiftAB = "TOPLEFT,ElvUIParent,BOTTOMLEFT,4,769"
 		E.db.movers.TempEnchantMover = "TOPRIGHT,ElvUIParent,TOPRIGHT,-4,-257"

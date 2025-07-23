@@ -24,6 +24,50 @@ function B:ADDON_LOADED(_, addon)
 	end
 end
 
+function B:ObjectiveTracker_IsCollapsed(frame)
+	return frame:GetParent() == E.HiddenFrame
+end
+
+function B:ObjectiveTracker_Collapse(frame)
+	frame:SetParent(E.HiddenFrame)
+end
+
+function B:ObjectiveTracker_Expand(frame)
+	frame:SetParent(_G.UIParent)
+end
+
+function B:ObjectiveTracker_AutoHideOnShow()
+	local tracker = _G.ObjectiveTrackerFrame
+	if tracker and B:ObjectiveTracker_IsCollapsed(tracker) then
+		B:ObjectiveTracker_Expand(tracker)
+	end
+end
+
+do
+	local AutoHider
+	function B:ObjectiveTracker_AutoHide()
+		if E.IsAddOnEnabled("BigWigs") or E.IsAddOnEnabled("DBM") then return end
+
+		local tracker = _G.ObjectiveTrackerFrame
+		if not tracker then return end
+
+		if not AutoHider then
+			AutoHider = CreateFrame('Frame', nil, UIParent, 'SecureHandlerStateTemplate')
+			AutoHider:SetAttribute('_onstate-objectiveHider', 'if newstate == 1 then self:Hide() else self:Show() end')
+			AutoHider:SetScript('OnHide', B.ObjectiveTracker_AutoHideOnHide)
+			AutoHider:SetScript('OnShow', B.ObjectiveTracker_AutoHideOnShow)
+		end
+
+		if E.db.general.objectiveFrameAutoHide then
+			RegisterStateDriver(AutoHider, 'objectiveHider',
+				'[@arena1,exists][@arena2,exists][@arena3,exists][@arena4,exists][@arena5,exists][@boss1,exists][@boss2,exists][@boss3,exists][@boss4,exists][@boss5,exists] 1;0')
+		else
+			UnregisterStateDriver(AutoHider, 'objectiveHider')
+			B:ObjectiveTracker_AutoHideOnShow() -- reshow it when needed
+		end
+	end
+end
+
 function B:Initialize()
 	self.Initialized = true
 
@@ -34,7 +78,7 @@ function B:Initialize()
 	self:PositionDurabilityFrame()
 	self:PositionGMFrames()
 	self:PositionVehicleFrame()
-	self:Blizzard_ObjectiveTracker()
+	self:ObjectiveTracker_Setup()
 
 	self:RegisterEvent("ADDON_LOADED")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", SetMapToCurrentZone)
