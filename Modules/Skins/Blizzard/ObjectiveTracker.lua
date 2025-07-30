@@ -4,6 +4,7 @@ local S = E:GetModule('Skins')
 local _G = _G
 local pairs = pairs
 local hooksecurefunc = hooksecurefunc
+local InCombatLockdown = InCombatLockdown
 
 local trackers = {
 	_G.QuestObjectiveTracker,
@@ -18,38 +19,65 @@ local function SkinOjectiveTrackerHeaders(header)
 	end
 end
 
-local function ReskinQuestIcon(button)
-	if not button then return end
-
-	if not button.IsSkinned then
-		button:SetSize(24, 24)
-		S:HandleButton(button)
-
-		local icon = button.icon or button.Icon
-		if icon then
-			S:HandleIcon(icon)
-			icon:SetInside(button)
+local function HotkeyShow(self)
+	local item = self:GetParent()
+	if item.rangeOverlay then item.rangeOverlay:Show() end
+end
+local function HotkeyHide(self)
+	local item = self:GetParent()
+	if item.rangeOverlay then item.rangeOverlay:Hide() end
+end
+local function HotkeyColor(self, r, g, b)
+	local item = self:GetParent()
+	if item.rangeOverlay then
+		if r == 0.6 and g == 0.6 and b == 0.6 then
+			item.rangeOverlay:SetVertexColor(0, 0, 0, 0)
+		else
+			item.rangeOverlay:SetVertexColor(.8, .1, .1, .5)
 		end
-
-		button.IsSkinned = true
-	end
-
-	if button.backdrop then
-		button.backdrop:SetFrameLevel(0)
 	end
 end
 
-local function HandleQuestIcons(_, block)
-	ReskinQuestIcon(block.ItemButton)
-	ReskinQuestIcon(block.itemButton)
+local function SkinItemButton(item)
+	item:SetTemplate('Transparent')
+	item:StyleButton()
+	item:SetNormalTexture(E.ClearTexture)
 
-	local check = block.currentLine and block.currentLine.Check
-	if check and not check.IsSkinned then
-		check:SetAtlas('checkmark-minimal')
-		check:SetDesaturated(true)
-		check:SetVertexColor(0, 1, 0)
+	item.icon:SetTexCoord(unpack(E.TexCoords))
+	item.icon:SetInside()
 
-		check.styled = true
+	item.Cooldown:SetInside()
+	item.Count:ClearAllPoints()
+	item.Count:Point('TOPLEFT', 1, -1)
+	item.Count:FontTemplate(nil, 14, 'OUTLINE')
+	item.Count:SetShadowOffset(5, -5)
+
+	local rangeOverlay = item:CreateTexture(nil, 'OVERLAY')
+	rangeOverlay:SetTexture(E.Media.Textures.White8x8)
+	rangeOverlay:SetInside()
+	item.rangeOverlay = rangeOverlay
+
+	hooksecurefunc(item.HotKey, 'Show', HotkeyShow)
+	hooksecurefunc(item.HotKey, 'Hide', HotkeyHide)
+	hooksecurefunc(item.HotKey, 'SetVertexColor', HotkeyColor)
+	HotkeyColor(item.HotKey, item.HotKey:GetTextColor())
+	item.HotKey:SetAlpha(0)
+
+	E:RegisterCooldown(item.Cooldown)
+end
+
+local function HandleItemButton(_, block)
+	if InCombatLockdown() then return end -- will break quest item button
+	if not block then return end
+	local item = block.itemButton or block.ItemButton
+	if not item then return end
+	if not item.skinned then
+		SkinItemButton(item)
+		item.skinned = true
+	end
+
+	if item.backdrop then
+		item.backdrop:SetFrameLevel(3)
 	end
 end
 
@@ -146,7 +174,7 @@ function S:Blizzard_ObjectiveTracker()
 	for _, tracker in pairs(trackers) do
 		SkinOjectiveTrackerHeaders(tracker.Header)
 
-		hooksecurefunc(tracker, 'AddBlock', HandleQuestIcons)
+		hooksecurefunc(tracker, 'AddBlock', HandleItemButton)
 		hooksecurefunc(tracker, 'GetProgressBar', HandleProgressBar)
 		hooksecurefunc(tracker, 'GetTimerBar', HandleTimers)
 	end
