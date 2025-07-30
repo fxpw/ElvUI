@@ -69,11 +69,9 @@ function B:ObjectiveTracker_Setup()
 	tracker:SetPoint('TOP', holder)
 	tracker.holder = holder
 
+	hooksecurefunc(tracker, 'SetPoint', ObjectiveTracker_SetPoint)
+	tracker.UpdateHeight = E.noop
+
 	B:ObjectiveTracker_AutoHide()
 	B:ObjectiveTracker_SetHeight()
-	C_Timer:After(1, function()
-		B:ObjectiveTracker_SetHeight()
-	end)
-
-	hooksecurefunc(tracker, 'SetPoint', ObjectiveTracker_SetPoint)
 end
