@@ -330,6 +330,7 @@ function M:HideTutorialFrames()
 	end)
 	-- NPE_TutorialPointerFrame:HideAll()
 	function NPE_TutorialPointerFrame:Hide() end
+	function HelpTip:Hide() end
 	function NPE_TutorialPointerFrame:Show() end
 	-- hooksecurefunc(NPE_TutorialPointerFrame, "Show", function() print(328) end)
 end
