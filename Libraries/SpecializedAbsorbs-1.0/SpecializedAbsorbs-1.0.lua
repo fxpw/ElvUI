@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 28
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 29
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -2251,7 +2251,8 @@ local function priest_UpdatePlayerScaling()
 	spFactor = spFactor + (privateScaling["BorrowedTime"] * 0.08)
 	spFactor = spFactor *
 		(1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) *
-		(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))
+		(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))*
+		(1.0 + (privateScaling["2pcRaid5"]) * 0.15)
 	privateScaling.sp = spFactor
 	privateScaling.DA = (privateScaling["DivineAegis"] * 0.1) * (1 + (privateScaling["4pcRaid9"] * 0.03))
 	priest_ApplyScaling(playerid, UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA)
