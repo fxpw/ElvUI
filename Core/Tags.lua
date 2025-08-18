@@ -693,6 +693,12 @@ ElvUF.Tags.Methods["absorbs"] = function(tagUnit)
 		return E:ShortValue(abs)
 	end
 end
+ElvUF.Tags.Methods["absorbsall"] = function(tagUnit)
+	local abs = SA.UnitTotal(UnitGUID(tagUnit))
+	if abs > 0 then
+		return abs
+	end
+end
 ElvUF.Tags.Methods["absorbs()"] = function(tagUnit)
 	local abs = SA.UnitTotal(UnitGUID(tagUnit))
 	if abs > 0 then

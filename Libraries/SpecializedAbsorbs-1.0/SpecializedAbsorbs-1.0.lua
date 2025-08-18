@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 29
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 30
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -134,12 +134,12 @@ local UNIT_STAT_VALUE = {
 
 VIP_MULTIPLY = {
 	[308221] = 1.01, --  Elite VIP Bronze
+	[308222] = 1.02, --  VIP Silver
+	[308223] = 1.03, --  VIP Gold
 	[308224] = 1.04, --  Elite VIP Bronze
 	[308225] = 1.05, --  Elite VIP Silver
 	[308226] = 1.06, --  Elite VIP Gold
 	[308227] = 1.07, --  PRIME VIP Bronze
-	[308222] = 1.02, --  VIP Silver
-	[308223] = 1.03, --  VIP Gold
 	[313090] = 1.08, --  PRIME VIP Silver
 	[313093] = 1.09, --  PRIME VIP Gold
 }
@@ -2142,8 +2142,13 @@ end
 
 local function priest_PowerWordShield_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, priest_defaultScaling, 0.1)
+	-- print(_, sp, quality1, sourceScaling, quality2)
+	-- print(sourceScaling[spellid][1])
+	-- print(sourceScaling[spellid][2])
 	sourceScaling[spellid] = sourceScaling[spellid] or priest_defaultScaling[spellid]
 	if sourceScaling[spellid] then
+		-- print(floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER),
+		-- 	min(quality1, quality2))
 		return floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER),
 			min(quality1, quality2)
 	end
@@ -2247,12 +2252,13 @@ end
 local function priest_UpdatePlayerScaling()
 	privateScaling.base = ((1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) * (1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05)) * (1.0 + (privateScaling["2pcRaid5"]) * 0.15))
 
-	local spFactor = 0.807
+	local spFactor = 0.8068
 	spFactor = spFactor + (privateScaling["BorrowedTime"] * 0.08)
 	spFactor = spFactor *
 		(1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) *
 		(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))*
 		(1.0 + (privateScaling["2pcRaid5"]) * 0.15)
+	-- print(spFactor,privateScaling.base)
 	privateScaling.sp = spFactor
 	privateScaling.DA = (privateScaling["DivineAegis"] * 0.1) * (1 + (privateScaling["4pcRaid9"] * 0.03))
 	priest_ApplyScaling(playerid, UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA)
@@ -2261,26 +2267,32 @@ end
 
 local function priest_ScanTalents()
 	-- Twin Disciplines
+	-- 5
 	local t = select(5, GetTalentInfo(1, 2))
 	privateScaling["TwinDisc"] = t
 
 	-- Improved Power Word: Shield
+	-- 3
 	t = select(5, GetTalentInfo(1, 9))
 	privateScaling["ImpPWS"] = t
 
 	-- Focused Power
+	-- 2
 	t = select(5, GetTalentInfo(1, 16))
 	privateScaling["FocusedPower"] = t
 
 	-- Divine Aegis
+	-- 3
 	t = select(5, GetTalentInfo(1, 24))
 	privateScaling["DivineAegis"] = t
 
 	-- Borrowed Time
+	-- 5
 	t = select(5, GetTalentInfo(1, 27))
 	privateScaling["BorrowedTime"] = t
 
 	-- Spiritual Healing
+	-- 0
 	t = select(5, GetTalentInfo(2, 16))
 	privateScaling["SpiritualHealing"] = t
 end

@@ -360,5 +360,6 @@ end
 E:AddTagInfo("incomingheals", "Sirus", L["Displays all incoming heals"])
 E:AddTagInfo("incomingheals:personal", "Sirus", L["Displays only personal incoming heals"])
 E:AddTagInfo("incomingheals:others", "Sirus", L["Displays only incoming heals from other units"])
-E:AddTagInfo("absorbs", "Sirus", L["Displays the amount of absorbs"])
+E:AddTagInfo("absorbs", "Sirus", L["Displays the short amount of absorbs"])
 E:AddTagInfo("absorbs()", "Sirus", L["Displays the amount of absorbs in ()"])
+E:AddTagInfo("absorbsall", "Sirus", L["Displays the all amount of absorbs"])
