@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 27
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 28
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -153,17 +153,17 @@ local function GetSelfMultipleValue()
 
 	for i = 1, 50 do
 		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId =
-		UnitDebuff("player", i)
+			UnitDebuff("player", i)
 		if not spellId then break end
 		if VIP_MULTIPLY[spellId] then
 			self_cached_value = VIP_MULTIPLY[spellId]
 			break
 		end
 	end
-	for k,v in pairs(VIP_MULTIPLY)do
-		if(IsSpellKnown(k))then
-			if(v>=self_cached_value)then
-				self_cached_value=v
+	for k, v in pairs(VIP_MULTIPLY) do
+		if (IsSpellKnown(k)) then
+			if (v >= self_cached_value) then
+				self_cached_value = v
 			end
 		end
 	end
@@ -682,7 +682,7 @@ end
 function Core.CreateAreaTrigger(timestamp, srcGUID, srcName, triggerGUID, triggerName, spellid, spellschool)
 	if activeAreaEffects[triggerGUID] then
 		Core.Error("Trying to create new area trigger on existing one, triggerGUID: " ..
-		triggerGUID .. ", existing spellid: " .. activeAreaEffects[triggerGUID][1])
+			triggerGUID .. ", existing spellid: " .. activeAreaEffects[triggerGUID][1])
 		return
 	end
 
@@ -1041,7 +1041,7 @@ function Events.PLAYER_ALIVE()
 end
 
 local BITMASK_GROUP = COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY +
-COMBATLOG_OBJECT_AFFILIATION_RAID
+	COMBATLOG_OBJECT_AFFILIATION_RAID
 local function CheckFlags(srcFlags, dstFlags)
 	return (srcFlags and bit.band(srcFlags, BITMASK_GROUP) ~= 0) or (dstFlags and bit.band(dstFlags, BITMASK_GROUP) ~= 0)
 end
@@ -1185,8 +1185,6 @@ function Events.ZONE_CHANGED_NEW_AREA()
 	Core:ScheduleTimer(Events.STATS_CHANGED, 5)
 end
 
-
-
 function Events.STATS_CHANGED()
 	local baseAP, plusAP, minusAP = UnitAttackPower("player")
 
@@ -1217,12 +1215,13 @@ end
 function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 	if not text then return end
 
-	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance, parryChance,vip_multiply = Core:Deserialize(text)
+	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance, parryChance, vip_multiply = Core
+	:Deserialize(text)
 	if not (success and guid and class and ap and sp) then return end
 	if guid == playerid then return end
 
 	if not UnitStatsTable[guid] then
-		UnitStatsTable[guid] = { class, ap, sp, 1.0, dodge, parry, armor, block, blockChance, parryChance,vip_multiply }
+		UnitStatsTable[guid] = { class, ap, sp, 1.0, dodge, parry, armor, block, blockChance, parryChance, vip_multiply }
 	else
 		UnitStatsTable[guid][UNIT_STAT_VALUE.AP] = ap
 		UnitStatsTable[guid][UNIT_STAT_VALUE.SP] = sp
@@ -1324,7 +1323,7 @@ function Events.OnAreaTimeout(areaEntry)
 
 	-- We're only here if we didn't reduce the refcount to zero
 	Core.Error("Positive refcount " ..
-	areaEntry[9] .. " remained for area effect " .. areaEntry[1] .. " by trigger " .. areaEntry[8])
+		areaEntry[9] .. " remained for area effect " .. areaEntry[1] .. " by trigger " .. areaEntry[8])
 end
 
 -- Map client events to our callbacks
@@ -1395,7 +1394,7 @@ function lib.PrintProfiling()
 			time_self, count = GetFunctionCPUUsage(v, false)
 			time_combined = GetFunctionCPUUsage(v, true)
 			Core.Print(k ..
-			" (#" .. count .. "): " .. format("%.4f", time_self) .. " / " .. format("%.4f", time_combined))
+				" (#" .. count .. "): " .. format("%.4f", time_self) .. " / " .. format("%.4f", time_combined))
 		end
 	end
 end
@@ -1430,7 +1429,7 @@ function lib.UnitStats(guid, missingQuality)
 			guidStats[10] or 0,
 			guidStats[11] or 0
 	end
-	return 0, 0, missingQuality or 1, 0, 0, 0, 0, 0,0,0,0
+	return 0, 0, missingQuality or 1, 0, 0, 0, 0, 0, 0, 0, 0
 end
 
 function lib.UnitStatsIndex(guid, index, fallbackValue)
@@ -1899,11 +1898,11 @@ local function druid_ScanEquipment()
 	privateScaling["4dtRaid5"] = privateScaling["4dtRaid5"] or {};
 	table.wipe(privateScaling["4dtRaid5"]);
 	if UnitExists("raid1") then
-		for i = 1,40 do
-			local unit= "raid"..i
-			if(UnitExists(unit)) then
-				local name = UnitBuff(unit,374423)
-				if(name) then
+		for i = 1, 40 do
+			local unit = "raid" .. i
+			if (UnitExists(unit)) then
+				local name = UnitBuff(unit, 374423)
+				if (name) then
 					privateScaling["4dtRaid5"][UnitGUID(unit)] = true
 				end
 			else
@@ -1912,11 +1911,11 @@ local function druid_ScanEquipment()
 		end
 	end
 	if UnitExists("party1") then
-		for i = 1,5 do
-			local unit = "party"..i
-			if(UnitExists(unit)) then
-				local name = UnitBuff(unit,374423)
-				if(name) then
+		for i = 1, 5 do
+			local unit = "party" .. i
+			if (UnitExists(unit)) then
+				local name = UnitBuff(unit, 374423)
+				if (name) then
 					privateScaling["4dtRaid5"][UnitGUID(unit)] = true
 				end
 			else
@@ -2069,7 +2068,7 @@ local absorbPalPokrov = 0
 local function paladin_TTG_Absorb(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	absorbPalPokrov = 0
 	if palPokrovBuff[srcGUID] then
-		if spellid == 319738 then  --4
+		if spellid == 319738 then --4
 			absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1940 and 1940) or palPokrovBuff[srcGUID]
 		elseif spellid == 319996 then --3
 			absorbPalPokrov = (palPokrovBuff[srcGUID] >= 1140 and 1140) or palPokrovBuff[srcGUID]
@@ -2246,13 +2245,13 @@ local function priest_ApplyScaling(guid, level, baseFactor, spFactor, daFactor)
 end
 
 local function priest_UpdatePlayerScaling()
-	privateScaling.base = ((1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) * (1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05)) * (1.0 + (privateScaling["2pcRaid5"]) * 0.16))
+	privateScaling.base = ((1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) * (1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05)) * (1.0 + (privateScaling["2pcRaid5"]) * 0.15))
 
 	local spFactor = 0.807
 	spFactor = spFactor + (privateScaling["BorrowedTime"] * 0.08)
 	spFactor = spFactor *
-	(1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) *
-	(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))
+		(1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) *
+		(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))
 	privateScaling.sp = spFactor
 	privateScaling.DA = (privateScaling["DivineAegis"] * 0.1) * (1 + (privateScaling["4pcRaid9"] * 0.03))
 	priest_ApplyScaling(playerid, UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA)
@@ -2284,6 +2283,19 @@ local function priest_ScanTalents()
 	t = select(5, GetTalentInfo(2, 16))
 	privateScaling["SpiritualHealing"] = t
 end
+
+function lib.FindBuff(unit, id)
+	local index = 1
+	while (true) do
+		local name, _, _, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index)
+		if spellId == id then
+			return true
+		end
+		if not name then return false end
+		index = index + 1
+	end
+end
+
 
 local function priest_ScanEquipment()
 	local n = 0
@@ -2361,20 +2373,26 @@ local function priest_ScanEquipment()
 	end
 	-- t5 priest sirus
 	n = 0
-	if IsEquippedItem(30152) or IsEquippedItem(103443) or IsEquippedItem(151637) then
+	if IsEquippedItem(30152) or IsEquippedItem(158964) or IsEquippedItem(158972) or IsEquippedItem(158980) then
 		n = n + 1
 	end
-	if IsEquippedItem(30154) or IsEquippedItem(103445) or IsEquippedItem(151639) then
+	if IsEquippedItem(30154) or IsEquippedItem(158960) or IsEquippedItem(158970) or IsEquippedItem(158984)  then
 		n = n + 1
 	end
-	if IsEquippedItem(30150) or IsEquippedItem(103441) or IsEquippedItem(151635) then
+	if IsEquippedItem(30150) or IsEquippedItem(158962) or IsEquippedItem(158974) or IsEquippedItem(158982)  then
 		n = n + 1
 	end
-	if IsEquippedItem(30151) or IsEquippedItem(103442) or IsEquippedItem(151636) then
+	if IsEquippedItem(30151) or IsEquippedItem(158963) or IsEquippedItem(158973) or IsEquippedItem(158983)  then
 		n = n + 1
 	end
-	if IsEquippedItem(30153) or IsEquippedItem(103444) or IsEquippedItem(151638) then
+	if IsEquippedItem(30153) or IsEquippedItem(158961) or IsEquippedItem(158971) or IsEquippedItem(158981)  then
 		n = n + 1
+	end
+
+	if lib.FindBuff("player", 374343) then
+		privateScaling["2pcRaid5"] = 1
+	else
+		privateScaling["2pcRaid5"] = 0
 	end
 	if n >= 2 then
 		privateScaling["2pcRaid5"] = 1
@@ -2527,7 +2545,7 @@ end
 
 local function items_Valanyr_OnHeal(srcGUID, srcName, dstGUID, dstName, spellid, amount)
 	local change = 1750;
-	if(IsInInstance()==1) then
+	if (IsInInstance() == 1) then
 		change = 4500;
 	end
 	PushCharge(dstGUID, 64413, change, 8.0)
@@ -2547,8 +2565,8 @@ local function items_Valanyr_Create(srcGUID, srcName, dstGUID, dstName, spellid,
 	if destEffects and destEffects[spellid] then
 		existing = destEffects[spellid][3]
 	end
-	if existing>26250 then
-		existing=26250;
+	if existing > 26250 then
+		existing = 26250;
 	end
 
 	local charge = PopCharge(dstGUID, spellid)
@@ -2599,154 +2617,154 @@ Core.Effects = {
 	[48707] = { 3.0, 5, deathknight_AntiMagicShell_Create, deathknight_AntiMagicShell_Hit }, -- Anti-Magic Shell
 	[50461] = { -3.0, 10, deathknight_AntiMagicZone_Create, deathknight_AntiMagicZone_Hit }, -- Anti-Magic Zone
 
-	[52284] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit1 },         -- Will of the Necropolis (Rank 1)
-	[52285] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit2 },         -- Will of the Necropolis (Rank 2)
-	[52286] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit3 },         -- Will of the Necropolis (Rank 3)
+	[52284] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit1 },           -- Will of the Necropolis (Rank 1)
+	[52285] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit2 },           -- Will of the Necropolis (Rank 2)
+	[52286] = { 1.0, nil, function() return 0, 0.0 end, deathknight_WoN_Hit3 },           -- Will of the Necropolis (Rank 3)
 
-	[62606] = { 1.1, 10, druid_SavageDefense_Create, druid_SavageDefense_Hit },         -- Savage Defense
+	[62606] = { 1.1, 10, druid_SavageDefense_Create, druid_SavageDefense_Hit },           -- Savage Defense
 
-	[543] = mage_FireWard_Entry,                                                        -- Fire Ward (rank 1)
-	[8457] = mage_FireWard_Entry,                                                       -- Fire Ward (rank 2)
-	[8458] = mage_FireWard_Entry,                                                       -- Fire Ward (rank 3)
-	[10223] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 4)
-	[10225] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 5)
-	[27218] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 6)
-	[43010] = mage_FireWard_Entry,                                                      -- Fire Ward (rank 7)
-	[6143] = mage_FrostWard_Entry,                                                      -- Frost Ward (rank 1)
-	[8461] = mage_FrostWard_Entry,                                                      -- Frost Ward (rank 2)
-	[8462] = mage_FrostWard_Entry,                                                      -- Frost Ward (rank 3)
-	[10177] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 4)
-	[28609] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 5)
-	[32796] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 6)
-	[43012] = mage_FrostWard_Entry,                                                     -- Frost Ward (rank 7)
-	[11426] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 1)
-	[13031] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 2)
-	[13032] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 3)
-	[13033] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 4)
-	[27134] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 5)
-	[33405] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 6)
-	[43038] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 7)
-	[43039] = mage_IceBarrier_Entry,                                                    -- Ice Barrier (rank 8)
-	[1463] = mage_ManaShield_Entry,                                                     --  Mana shield (rank 1)
-	[8494] = mage_ManaShield_Entry,                                                     --  Mana shield (rank 2)
-	[8495] = mage_ManaShield_Entry,                                                     --  Mana shield (rank 3)
-	[10191] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 4)
-	[10192] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 5)
-	[10193] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 6)
-	[27131] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 7)
-	[43019] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 8)
-	[43020] = mage_ManaShield_Entry,                                                    --  Mana shield (rank 9)
-	[58597] = { 1.0, 6, paladin_SacredShield_Create, generic_Hit },                     -- Sacred Shield
+	[543] = mage_FireWard_Entry,                                                          -- Fire Ward (rank 1)
+	[8457] = mage_FireWard_Entry,                                                         -- Fire Ward (rank 2)
+	[8458] = mage_FireWard_Entry,                                                         -- Fire Ward (rank 3)
+	[10223] = mage_FireWard_Entry,                                                        -- Fire Ward (rank 4)
+	[10225] = mage_FireWard_Entry,                                                        -- Fire Ward (rank 5)
+	[27218] = mage_FireWard_Entry,                                                        -- Fire Ward (rank 6)
+	[43010] = mage_FireWard_Entry,                                                        -- Fire Ward (rank 7)
+	[6143] = mage_FrostWard_Entry,                                                        -- Frost Ward (rank 1)
+	[8461] = mage_FrostWard_Entry,                                                        -- Frost Ward (rank 2)
+	[8462] = mage_FrostWard_Entry,                                                        -- Frost Ward (rank 3)
+	[10177] = mage_FrostWard_Entry,                                                       -- Frost Ward (rank 4)
+	[28609] = mage_FrostWard_Entry,                                                       -- Frost Ward (rank 5)
+	[32796] = mage_FrostWard_Entry,                                                       -- Frost Ward (rank 6)
+	[43012] = mage_FrostWard_Entry,                                                       -- Frost Ward (rank 7)
+	[11426] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 1)
+	[13031] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 2)
+	[13032] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 3)
+	[13033] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 4)
+	[27134] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 5)
+	[33405] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 6)
+	[43038] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 7)
+	[43039] = mage_IceBarrier_Entry,                                                      -- Ice Barrier (rank 8)
+	[1463] = mage_ManaShield_Entry,                                                       --  Mana shield (rank 1)
+	[8494] = mage_ManaShield_Entry,                                                       --  Mana shield (rank 2)
+	[8495] = mage_ManaShield_Entry,                                                       --  Mana shield (rank 3)
+	[10191] = mage_ManaShield_Entry,                                                      --  Mana shield (rank 4)
+	[10192] = mage_ManaShield_Entry,                                                      --  Mana shield (rank 5)
+	[10193] = mage_ManaShield_Entry,                                                      --  Mana shield (rank 6)
+	[27131] = mage_ManaShield_Entry,                                                      --  Mana shield (rank 7)
+	[43019] = mage_ManaShield_Entry,                                                      --  Mana shield (rank 8)
+	[43020] = mage_ManaShield_Entry,                                                      --  Mana shield (rank 9)
+	[58597] = { 1.0, 6, paladin_SacredShield_Create, generic_Hit },                       -- Sacred Shield
 
-	[17] = priest_PWS_Entry,                                                            -- Power Word: Shield (rank 1)
-	[592] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 2)
-	[600] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 3)
-	[3747] = priest_PWS_Entry,                                                          -- Power Word: Shield (rank 4)
-	[6065] = priest_PWS_Entry,                                                          -- Power Word: Shield (rank 5)
-	[6066] = priest_PWS_Entry,                                                          -- Power Word: Shield (rank 6)
-	[10898] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 7)
-	[10899] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 8)
-	[10900] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 9)
-	[10901] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 10)
-	[25217] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 11)
-	[25218] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 12)
-	[48065] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 13)
-	[48066] = priest_PWS_Entry,                                                         -- Power Word: Shield (rank 14)
+	[17] = priest_PWS_Entry,                                                              -- Power Word: Shield (rank 1)
+	[592] = priest_PWS_Entry,                                                             -- Power Word: Shield (rank 2)
+	[600] = priest_PWS_Entry,                                                             -- Power Word: Shield (rank 3)
+	[3747] = priest_PWS_Entry,                                                            -- Power Word: Shield (rank 4)
+	[6065] = priest_PWS_Entry,                                                            -- Power Word: Shield (rank 5)
+	[6066] = priest_PWS_Entry,                                                            -- Power Word: Shield (rank 6)
+	[10898] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 7)
+	[10899] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 8)
+	[10900] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 9)
+	[10901] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 10)
+	[25217] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 11)
+	[25218] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 12)
+	[48065] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 13)
+	[48066] = priest_PWS_Entry,                                                           -- Power Word: Shield (rank 14)
 
-	[47753] = { 1.0, 12, priest_DivineAegis_Create, generic_Hit },                      -- Divine Aegis
-	[52179] = { 2.5, nil, shaman_AstralShift_Create, shaman_AstralShift_Hit },          -- Astral Shift
-	[7812] = warlock_Sacrifice_Entry,                                                   -- Sacrifice (rank 1)
-	[19438] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 2)
-	[19440] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 3)
-	[19441] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 4)
-	[19442] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 5)
-	[19443] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 6)
-	[27273] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 7)
-	[47985] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 8)
-	[47986] = warlock_Sacrifice_Entry,                                                  -- Sacrifice (rank 9)
-	[6229] = warlock_ShadowWard_Entry,                                                  -- Shadow Ward (rank 1)
-	[11739] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 1)
-	[11740] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 2)
-	[28610] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 3)
-	[47890] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 4)
-	[47891] = warlock_ShadowWard_Entry,                                                 -- Shadow Ward (rank 5)
-	[64413] = { 1.0, 8, items_Valanyr_Create, generic_Hit },                            -- Val'anyr (spellid of the created absorb effect)
-	[60218] = { 5.0, 10, function() return 4000, 1.0 end, items_EssenceOfGossamer_Hit }, -- Essence of Gossamer
-	[310738] = { 1.0, 10, function() return 17400, 1.0 end, generic_Hit },              -- Argussian Compass (226 burning crusade sirus)
-	[71586] = { 1.0, 10, function() return 24600, 1.0 end, generic_Hit },               -- Corroded Skeleton Key
-	[36481] = { 1.0, 4, function() return 100000, 1.0 end, generic_Hit },               -- Phaseshift Bulwark
-	[57350] = { 1.0, 6, function() return 1500, 1.0 end, generic_Hit },                 -- Darkmoon Card: Illusion
-	[17252] = { 1.0, 1800, function() return 500, 1.0 end, generic_Hit },               -- Mark of the Dragon Lord
-	[29506] = { 1.0, 20, function() return 900, 1.0 end, generic_Hit },                 -- The Burrower's Shell
-	[31771] = { 1.0, 20, function() return 440, 1.0 end, generic_Hit },                 -- Runed Fungalcap
-	[9800] = { 1.0, 60, function() return 175, 1.0 end, generic_Hit },                  -- Truesilver Champion
-	[13234] = { 1.0, 600, function() return 500, 1.0 end, generic_Hit },                -- Gnomish Harm Prevention Belt
-	[30458] = { 1.0, 8, function() return 4000, 1.0 end, generic_Hit },                 -- Nigh Invulnerability Belt
-	[27779] = { 1.0, 30, function() return 350, 1.0 end, generic_Hit },                 -- Divine Protection (Priest Dungeon Set 1/2 4pc bonus)
-	[28810] = { 1.0, 30, function() return 500, 1.0 end, generic_Hit },                 -- Armor of Faith (Priest Raid Set 3 4pc bonus)
-	[29674] = { 1.0, nil, function() return 1000, 1.0 end, generic_Hit },               -- Lesser Ward of Shielding
-	[29719] = { 1.0, nil, function() return 4000, 1.0 end, generic_Hit },               -- Greater Ward of Shielding
-	[29701] = { 1.0, nil, function() return 4000, 1.0 end, generic_Hit },               -- Greater Ward of Shielding
-	[28538] = { 1.0, 120, function() return 3400, 1.0 end, Holy_Hit },                  -- Major Holy Protection Potion
-	[28537] = { 1.0, 120, function() return 3400, 1.0 end, Shadow_Hit },                -- Major Shadow Protection Potion
-	[28536] = { 1.0, 120, function() return 3400, 1.0 end, Arcane_Hit },                -- Major Arcane Protection Potion
-	[28513] = { 1.0, 120, function() return 3400, 1.0 end, Nature_Hit },                -- Major Nature Protection Potion
-	[28512] = { 1.0, 120, function() return 3400, 1.0 end, Frost_Hit },                 -- Major Frost Protection Potion
-	[28511] = { 1.0, 120, function() return 3400, 1.0 end, Fire_Hit },                  -- Major Fire Protection Potion
-	[7233] = { 1.0, 120, function() return 1300, 1.0 end, Fire_Hit },                   -- Fire Protection Potion
-	[7239] = { 1.0, 120, function() return 1300, 1.0 end, Frost_Hit },                  -- Frost Protection Potion
-	[7242] = { 1.0, 120, function() return 1300, 1.0 end, Shadow_Hit },                 -- Shadow Protection Potion
-	[7245] = { 1.0, 120, function() return 1300, 1.0 end, Holy_Hit },                   -- Holy Protection Potion
-	[7254] = { 1.0, 120, function() return 1300, 1.0 end, Nature_Hit },                 -- Nature Protection Potion
-	[53915] = { 1.0, 120, function() return 3100, 1.0 end, Shadow_Hit },                -- Mighty Shadow Protection Potion
-	[53914] = { 1.0, 120, function() return 3100, 1.0 end, Nature_Hit },                -- Mighty Nature Protection Potion
-	[53913] = { 1.0, 120, function() return 3100, 1.0 end, Frost_Hit },                 -- Mighty Frost Protection Potion
-	[53911] = { 1.0, 120, function() return 3100, 1.0 end, Fire_Hit },                  -- Mighty Fire Protection Potion
-	[53910] = { 1.0, 120, function() return 3100, 1.0 end, Arcane_Hit },                -- Mighty Arcane Protection Potion
-	[17548] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                --  Greater Shadow Protection Potion
-	[17546] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Nature Protection Potion
-	[17545] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Holy Protection Potion
-	[17544] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Frost Protection Potion
-	[17543] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Fire Protection Potion
-	[17549] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                -- Greater Arcane Protection Potion
-	[28527] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                -- Fel Blossom
-	[29432] = { 1.0, 3600, function() return 2000, 1.0 end, Fire_Hit },                 -- Frozen Rune
-	[25750] = { 1.0, 15, function() return 151, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
-	[25747] = { 1.0, 15, function() return 344, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
-	[25746] = { 1.0, 15, function() return 394, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
-	[23991] = { 1.0, 15, function() return 550, 1.0 end, Physical_Hit },                -- Defiler's Talisman/Talisman of Arathor
-	[30997] = { 1.0, 300, function() return 1800, 1.0 end, Fire_Hit },                  -- Pendant of Frozen Flame Usage
-	[31002] = { 1.0, 300, function() return 1800, 1.0 end, Arcane_Hit },                -- Pendant of the Null Rune
-	[30999] = { 1.0, 300, function() return 1800, 1.0 end, Nature_Hit },                -- Pendant of Withering
-	[30994] = { 1.0, 300, function() return 1800, 1.0 end, Frost_Hit },                 -- Pendant of Thawing
-	[31000] = { 1.0, 300, function() return 1800, 1.0 end, Shadow_Hit },                -- Pendant of Shadow's End
-	[23506] = { 1.0, 20, function() return 1000, 1.0 end, generic_Hit },                -- Arena Grand Master
-	[12561] = { 1.0, 60, function() return 400, 1.0 end, Fire_Hit },                    -- Goblin Construction Helmet
-	[21956] = { 1.0, 15, function() return 250, 1.0 end, Physical_Hit },                -- Mark of Resolution
-	[4057] = { 1.0, 60, function() return 250, 1.0 end, Fire_Hit },                     -- Flame Deflector
-	[4077] = { 1.0, 60, function() return 300, 1.0 end, generic_Hit },                  -- Ice Deflector
-	[39228] = { 1.0, 20, function() return 609, 1.0 end, generic_Hit },                 -- Argussian Compass (may not be an actual absorb)
-	[11657] = { 1.0, 20, function() return 70, 1.0 end, generic_Hit },                  -- Jang'thraze (Zul Farrak)
-	[10368] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                -- Uther's Strength
-	[37515] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                -- Warbringer Armor Proc
-	[42137] = { 1.0, 86400, function() return 1000, 1.0 end, generic_Hit },             -- Greater Rune of Warding Proc
-	[26467] = { 1.0, 30, function() return 1000, 1.0 end, generic_Hit },                -- Scarab Brooch
-	[26470] = { 1.0, 8, function() return 1000, 1.0 end, generic_Hit },                 -- Scarab Brooch
-	[27539] = { 1.0, 6, function() return 1000, 1.0 end, generic_Hit },                 -- Thick Obsidian Breatplate
-	[54808] = { 1.0, 12, function() return 1000, 1.0 end, generic_Hit },                -- Noise Machine Sonic Shield
-	[55019] = { 1.0, 12, function() return 1000, 1.0 end, generic_Hit },                -- Sonic Shield
-	[70845] = { 1.0, 10, items_Stoicism_Create, generic_Hit },                          -- Stoicism (Warrior Raid Set 10 4pc bonus)
-	[65686] = { 1.0, 0, function() return 0, 0.0 end, nil },                            -- Twin Val'kyr: Light Essence
-	[65684] = { 1.0, 0, function() return 0, 0.0 end, nil },                            -- Twin Val'kyr: Dark Essence
+	[47753] = { 1.0, 12, priest_DivineAegis_Create, generic_Hit },                        -- Divine Aegis
+	[52179] = { 2.5, nil, shaman_AstralShift_Create, shaman_AstralShift_Hit },            -- Astral Shift
+	[7812] = warlock_Sacrifice_Entry,                                                     -- Sacrifice (rank 1)
+	[19438] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 2)
+	[19440] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 3)
+	[19441] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 4)
+	[19442] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 5)
+	[19443] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 6)
+	[27273] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 7)
+	[47985] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 8)
+	[47986] = warlock_Sacrifice_Entry,                                                    -- Sacrifice (rank 9)
+	[6229] = warlock_ShadowWard_Entry,                                                    -- Shadow Ward (rank 1)
+	[11739] = warlock_ShadowWard_Entry,                                                   -- Shadow Ward (rank 1)
+	[11740] = warlock_ShadowWard_Entry,                                                   -- Shadow Ward (rank 2)
+	[28610] = warlock_ShadowWard_Entry,                                                   -- Shadow Ward (rank 3)
+	[47890] = warlock_ShadowWard_Entry,                                                   -- Shadow Ward (rank 4)
+	[47891] = warlock_ShadowWard_Entry,                                                   -- Shadow Ward (rank 5)
+	[64413] = { 1.0, 8, items_Valanyr_Create, generic_Hit },                              -- Val'anyr (spellid of the created absorb effect)
+	[60218] = { 5.0, 10, function() return 4000, 1.0 end, items_EssenceOfGossamer_Hit },  -- Essence of Gossamer
+	[310738] = { 1.0, 10, function() return 17400, 1.0 end, generic_Hit },                -- Argussian Compass (226 burning crusade sirus)
+	[71586] = { 1.0, 10, function() return 24600, 1.0 end, generic_Hit },                 -- Corroded Skeleton Key
+	[36481] = { 1.0, 4, function() return 100000, 1.0 end, generic_Hit },                 -- Phaseshift Bulwark
+	[57350] = { 1.0, 6, function() return 1500, 1.0 end, generic_Hit },                   -- Darkmoon Card: Illusion
+	[17252] = { 1.0, 1800, function() return 500, 1.0 end, generic_Hit },                 -- Mark of the Dragon Lord
+	[29506] = { 1.0, 20, function() return 900, 1.0 end, generic_Hit },                   -- The Burrower's Shell
+	[31771] = { 1.0, 20, function() return 440, 1.0 end, generic_Hit },                   -- Runed Fungalcap
+	[9800] = { 1.0, 60, function() return 175, 1.0 end, generic_Hit },                    -- Truesilver Champion
+	[13234] = { 1.0, 600, function() return 500, 1.0 end, generic_Hit },                  -- Gnomish Harm Prevention Belt
+	[30458] = { 1.0, 8, function() return 4000, 1.0 end, generic_Hit },                   -- Nigh Invulnerability Belt
+	[27779] = { 1.0, 30, function() return 350, 1.0 end, generic_Hit },                   -- Divine Protection (Priest Dungeon Set 1/2 4pc bonus)
+	[28810] = { 1.0, 30, function() return 500, 1.0 end, generic_Hit },                   -- Armor of Faith (Priest Raid Set 3 4pc bonus)
+	[29674] = { 1.0, nil, function() return 1000, 1.0 end, generic_Hit },                 -- Lesser Ward of Shielding
+	[29719] = { 1.0, nil, function() return 4000, 1.0 end, generic_Hit },                 -- Greater Ward of Shielding
+	[29701] = { 1.0, nil, function() return 4000, 1.0 end, generic_Hit },                 -- Greater Ward of Shielding
+	[28538] = { 1.0, 120, function() return 3400, 1.0 end, Holy_Hit },                    -- Major Holy Protection Potion
+	[28537] = { 1.0, 120, function() return 3400, 1.0 end, Shadow_Hit },                  -- Major Shadow Protection Potion
+	[28536] = { 1.0, 120, function() return 3400, 1.0 end, Arcane_Hit },                  -- Major Arcane Protection Potion
+	[28513] = { 1.0, 120, function() return 3400, 1.0 end, Nature_Hit },                  -- Major Nature Protection Potion
+	[28512] = { 1.0, 120, function() return 3400, 1.0 end, Frost_Hit },                   -- Major Frost Protection Potion
+	[28511] = { 1.0, 120, function() return 3400, 1.0 end, Fire_Hit },                    -- Major Fire Protection Potion
+	[7233] = { 1.0, 120, function() return 1300, 1.0 end, Fire_Hit },                     -- Fire Protection Potion
+	[7239] = { 1.0, 120, function() return 1300, 1.0 end, Frost_Hit },                    -- Frost Protection Potion
+	[7242] = { 1.0, 120, function() return 1300, 1.0 end, Shadow_Hit },                   -- Shadow Protection Potion
+	[7245] = { 1.0, 120, function() return 1300, 1.0 end, Holy_Hit },                     -- Holy Protection Potion
+	[7254] = { 1.0, 120, function() return 1300, 1.0 end, Nature_Hit },                   -- Nature Protection Potion
+	[53915] = { 1.0, 120, function() return 3100, 1.0 end, Shadow_Hit },                  -- Mighty Shadow Protection Potion
+	[53914] = { 1.0, 120, function() return 3100, 1.0 end, Nature_Hit },                  -- Mighty Nature Protection Potion
+	[53913] = { 1.0, 120, function() return 3100, 1.0 end, Frost_Hit },                   -- Mighty Frost Protection Potion
+	[53911] = { 1.0, 120, function() return 3100, 1.0 end, Fire_Hit },                    -- Mighty Fire Protection Potion
+	[53910] = { 1.0, 120, function() return 3100, 1.0 end, Arcane_Hit },                  -- Mighty Arcane Protection Potion
+	[17548] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                  --  Greater Shadow Protection Potion
+	[17546] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                  -- Greater Nature Protection Potion
+	[17545] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                  -- Greater Holy Protection Potion
+	[17544] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                  -- Greater Frost Protection Potion
+	[17543] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                  -- Greater Fire Protection Potion
+	[17549] = { 1.0, 120, function() return 2600, 1.0 end, Shadow_Hit },                  -- Greater Arcane Protection Potion
+	[28527] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                  -- Fel Blossom
+	[29432] = { 1.0, 3600, function() return 2000, 1.0 end, Fire_Hit },                   -- Frozen Rune
+	[25750] = { 1.0, 15, function() return 151, 1.0 end, Physical_Hit },                  -- Defiler's Talisman/Talisman of Arathor
+	[25747] = { 1.0, 15, function() return 344, 1.0 end, Physical_Hit },                  -- Defiler's Talisman/Talisman of Arathor
+	[25746] = { 1.0, 15, function() return 394, 1.0 end, Physical_Hit },                  -- Defiler's Talisman/Talisman of Arathor
+	[23991] = { 1.0, 15, function() return 550, 1.0 end, Physical_Hit },                  -- Defiler's Talisman/Talisman of Arathor
+	[30997] = { 1.0, 300, function() return 1800, 1.0 end, Fire_Hit },                    -- Pendant of Frozen Flame Usage
+	[31002] = { 1.0, 300, function() return 1800, 1.0 end, Arcane_Hit },                  -- Pendant of the Null Rune
+	[30999] = { 1.0, 300, function() return 1800, 1.0 end, Nature_Hit },                  -- Pendant of Withering
+	[30994] = { 1.0, 300, function() return 1800, 1.0 end, Frost_Hit },                   -- Pendant of Thawing
+	[31000] = { 1.0, 300, function() return 1800, 1.0 end, Shadow_Hit },                  -- Pendant of Shadow's End
+	[23506] = { 1.0, 20, function() return 1000, 1.0 end, generic_Hit },                  -- Arena Grand Master
+	[12561] = { 1.0, 60, function() return 400, 1.0 end, Fire_Hit },                      -- Goblin Construction Helmet
+	[21956] = { 1.0, 15, function() return 250, 1.0 end, Physical_Hit },                  -- Mark of Resolution
+	[4057] = { 1.0, 60, function() return 250, 1.0 end, Fire_Hit },                       -- Flame Deflector
+	[4077] = { 1.0, 60, function() return 300, 1.0 end, generic_Hit },                    -- Ice Deflector
+	[39228] = { 1.0, 20, function() return 609, 1.0 end, generic_Hit },                   -- Argussian Compass (may not be an actual absorb)
+	[11657] = { 1.0, 20, function() return 70, 1.0 end, generic_Hit },                    -- Jang'thraze (Zul Farrak)
+	[10368] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                  -- Uther's Strength
+	[37515] = { 1.0, 15, function() return 1000, 1.0 end, generic_Hit },                  -- Warbringer Armor Proc
+	[42137] = { 1.0, 86400, function() return 1000, 1.0 end, generic_Hit },               -- Greater Rune of Warding Proc
+	[26467] = { 1.0, 30, function() return 1000, 1.0 end, generic_Hit },                  -- Scarab Brooch
+	[26470] = { 1.0, 8, function() return 1000, 1.0 end, generic_Hit },                   -- Scarab Brooch
+	[27539] = { 1.0, 6, function() return 1000, 1.0 end, generic_Hit },                   -- Thick Obsidian Breatplate
+	[54808] = { 1.0, 12, function() return 1000, 1.0 end, generic_Hit },                  -- Noise Machine Sonic Shield
+	[55019] = { 1.0, 12, function() return 1000, 1.0 end, generic_Hit },                  -- Sonic Shield
+	[70845] = { 1.0, 10, items_Stoicism_Create, generic_Hit },                            -- Stoicism (Warrior Raid Set 10 4pc bonus)
+	[65686] = { 1.0, 0, function() return 0, 0.0 end, nil },                              -- Twin Val'kyr: Light Essence
+	[65684] = { 1.0, 0, function() return 0, 0.0 end, nil },                              -- Twin Val'kyr: Dark Essence
 
-	[55277] = { 1.0, 15, function() return 1084 * 4, 1.0 end, generic_Hit },            --shaman totem pvp
+	[55277] = { 1.0, 15, function() return 1084 * 4, 1.0 end, generic_Hit },              --shaman totem pvp
 
 	--t4 abilities
-	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },           -- Paladin 2T4 God's Hand
-	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },             -- Paladin 2T4 God's Hand
-	[305082] = priest_PWS_EntryT4,                                     -- Power Word: Shield (rank 14) t4 increase
+	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },             -- Paladin 2T4 God's Hand
+	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },               -- Paladin 2T4 God's Hand
+	[305082] = priest_PWS_EntryT4,                                       -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
-	[308143] = priest_PWS_Entry,                                       -- Power Word: Shield (rank 15)
+	[308143] = priest_PWS_Entry,                                         -- Power Word: Shield (rank 15)
 	[319521] = { 1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit }, -- t6 absorb feral
 	[308125] = { 1.0, 10, deathknight_T52FrostTankOnCreate, generic_Hit }, --t5 fdk tank
 	[319552] = { 1.0, 2, deathknight_T62FrostTankOnCreate, generic_Hit }, --t6 fdk tank
@@ -2755,7 +2773,7 @@ Core.Effects = {
 
 	[310210] = { 1.0, 2, function() return 50000, 1.0 end, generic_Hit }, --t5 warrior
 
-	[307921] = { 1.0, 10, paladin_T5TankOnCreate, generic_Hit },       -- t5 paladin
+	[307921] = { 1.0, 10, paladin_T5TankOnCreate, generic_Hit },         -- t5 paladin
 	--items
 	[319189] = { 1.0, 4, function() return 18000, 1.0 end, generic_Hit }, --303 запястья
 
@@ -2765,10 +2783,10 @@ Core.Effects = {
 	[75480] = { 1.0, 10, function() return 66420, 1.0 end, generic_Hit }, -- чешка хм
 
 	[317911] = { 1.0, 10, function() return 722, 1.0 end, generic_Hit }, -- духовный барьер
-	[319738] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 4
-	[319996] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 3
-	[320110] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 2
-	[320221] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },            -- enchant ttg 1
+	[319738] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 4
+	[319996] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 3
+	[320110] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 2
+	[320221] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 1
 	[319795] = { 1.0, 5, function() return 3235, 1.0 end, generic_Hit }, -- tg priest
 	[320059] = { 1.0, 5, function() return 2587, 1.0 end, generic_Hit }, -- tg priest
 	[320173] = { 1.0, 5, function() return 1940, 1.0 end, generic_Hit }, -- tg priest
@@ -2777,7 +2795,7 @@ Core.Effects = {
 	[315523] = { 1.0, 10, function() return 2550, 1.0 end, generic_Hit }, -- tg pal?
 	[315525] = { 1.0, 10, function() return 2880, 1.0 end, generic_Hit }, -- tg pal?
 	[315527] = { 1.0, 10, function() return 3240, 1.0 end, generic_Hit }, -- tg pal?
-	[320439] = { 1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit },    -- race pandaren absorb
+	[320439] = { 1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit },      -- race pandaren absorb
 }
 
 Core.AreaTriggers = {
