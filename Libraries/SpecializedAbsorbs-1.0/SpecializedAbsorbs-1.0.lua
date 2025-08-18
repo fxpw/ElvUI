@@ -574,7 +574,7 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 
 	local value, quality = effectInfo[3](srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	if value == nil then return end
-	value = value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1)
+	-- value = value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1)
 	if t5TanksSpellId[spellid] and value > 50000 then
 		value = 50000
 	end
