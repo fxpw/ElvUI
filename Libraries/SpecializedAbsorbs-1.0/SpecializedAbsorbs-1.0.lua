@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 local _, ns = ...
 local Compat = ns.Compat
-local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 30
+local MAJOR, MINOR = "SpecializedAbsorbs-1.0", 31
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 local Core
@@ -574,7 +574,7 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 
 	local value, quality = effectInfo[3](srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	if value == nil then return end
-	-- value = value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1)
+	value = value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1)
 	if t5TanksSpellId[spellid] and value > 50000 then
 		value = 50000
 	end
