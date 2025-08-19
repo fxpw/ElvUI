@@ -6,12 +6,12 @@ local pairs = pairs
 local format = string.format
 local tinsert, wipe = tinsert, wipe
 --WoW API / Variables
-local GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
+-- local GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
 local GetMoney = GetMoney
 local IsLoggedIn = IsLoggedIn
 local IsShiftKeyDown = IsShiftKeyDown
 local CURRENCY = CURRENCY
-local MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS
+-- local MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 
 local currencyString = "|T%s:14:14:0:0:64:64:4:60:4:60|t %s"
@@ -121,10 +121,8 @@ local function OnEnter(self)
 	-- local name, count, currencyType, icon
 
 	for i = 1, GetCurrencyListSize() do
-		local name, isHeader, isExpanded, isUnused, isWatched, count, extraCurrencyType, icon, itemID = GetCurrencyListInfo(i)
-		if not isHeader and (itemID ~=43307) then
-			local count = GetItemCount(itemID)
-
+		local name, isHeader, _, _, _, count, _, icon = GetCurrencyListInfo(i)
+		if not isHeader then
 			DT.tooltip:AddDoubleLine(format(currencyString, icon, name), count, 1, 1, 1)
 		end
 		-- name, count, currencyType, icon = GetBackpackCurrencyInfo(i)
