@@ -118,25 +118,31 @@ local function OnEnter(self)
 	DT.tooltip:AddLine(L["Server: "])
 	DT.tooltip:AddDoubleLine(L["Total: "], E:FormatMoney(totalGold, style, textOnly), 1, 1, 1, 1, 1, 1)
 
-	local name, count, currencyType, icon
+	-- local name, count, currencyType, icon
 
-	for i = 1, MAX_WATCHED_TOKENS do
-		name, count, currencyType, icon = GetBackpackCurrencyInfo(i)
+	for i = 1, GetCurrencyListSize() do
+		local name, isHeader, isExpanded, isUnused, isWatched, count, extraCurrencyType, icon, itemID = GetCurrencyListInfo(i)
+		if not isHeader and (itemID ~=43307) then
+			local count = GetItemCount(itemID)
+
+			DT.tooltip:AddDoubleLine(format(currencyString, icon, name), count, 1, 1, 1)
+		end
+		-- name, count, currencyType, icon = GetBackpackCurrencyInfo(i)
 
 		if name and i == 1 then
 			DT.tooltip:AddLine(" ")
 			DT.tooltip:AddLine(CURRENCY..":")
 		end
 
-		if name and count then
-			if currencyType == 1 then
-				icon = "Interface\\PVPFrame\\PVP-ArenaPoints-Icon"
-			elseif currencyType == 2 then
-				icon = "Interface\\PVPFrame\\PVP-Currency-"..E.myfaction
-			end
+		-- if name and count then
+		-- 	if currencyType == 1 then
+		-- 		icon = "Interface\\PVPFrame\\PVP-ArenaPoints-Icon"
+		-- 	elseif currencyType == 2 then
+		-- 		icon = "Interface\\PVPFrame\\PVP-Currency-"..E.myfaction
+		-- 	end
 
-			DT.tooltip:AddDoubleLine(format(currencyString, icon, name), count, 1, 1, 1)
-		end
+		-- 	DT.tooltip:AddDoubleLine(format(currencyString, icon, name), count, 1, 1, 1)
+		-- end
 	end
 
 	DT.tooltip:AddLine(" ")
