@@ -2762,7 +2762,7 @@ Core.Effects = {
 	--t4 abilities
 	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },             -- Paladin 2T4 God's Hand
 	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },               -- Paladin 2T4 God's Hand
-	[305082] = { 1.0, 30, generic_SpellScalingByTable_Create, generic_Hit,  0.2}, -- Power Word: Shield (rank 14) t4 increase
+	[305082] = { 1.0, 30, generic_SpellScalingByTable_Create, generic_Hit, { [305082] = 1250 }, 0.2}, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
 	[308143] = priest_PWS_Entry,                                         -- Power Word: Shield (rank 15)
 	[319521] = { 1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit }, -- t6 absorb feral
