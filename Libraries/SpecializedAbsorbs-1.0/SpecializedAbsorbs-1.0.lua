@@ -114,7 +114,7 @@ local CombatTriggersOnAuraRemoved
 
 -- Table of all unit stats relevant to absorb effects like attack power and spell power
 -- (mastery rating later on)
--- [GUID] = { class, AttackPower, SpellPower, quality }
+-- [GUID] = { class, AttackPower, SpellPower, quality, dodge, parry, armor, block, bkockChance, parryChance, vip_multiply }
 -- Shortcut to Core.UnitStats
 local UnitStatsTable
 
@@ -133,7 +133,7 @@ local UNIT_STAT_VALUE = {
 }
 
 VIP_MULTIPLY = {
-	[308221] = 1.01, --  Elite VIP Bronze
+	[308221] = 1.01, --  VIP Bronze
 	[308222] = 1.02, --  VIP Silver
 	[308223] = 1.03, --  VIP Gold
 	[308224] = 1.04, --  Elite VIP Bronze
@@ -574,7 +574,7 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 
 	local value, quality = effectInfo[3](srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	if value == nil then return end
-	value = value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1)
+	value = floor(value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1))
 	if t5TanksSpellId[spellid] and value > 50000 then
 		value = 50000
 	end
@@ -2120,9 +2120,8 @@ local priest_PWS_Ranks = {
 	[11] = { 25217, 65, 1125, 18 },
 	[12] = { 25218, 70, 1265, 20 },
 	[13] = { 48065, 75, 1920, 30 },
-	[14] = { 48066, 80, 2230, 30 },
-	[15] = { 308143, 80, 2230, 30 },
-	[16] = { 305082, 80, 1250, 30 },
+	[14] = { 48066, 80, 2230, 0 },
+	[15] = { 308143, 80, 2230, 0 },
 }
 
 -- Public Scaling:
@@ -2131,7 +2130,7 @@ local priest_PWS_Ranks = {
 local priest_defaultScaling = { [PRIEST_DIVINEAEGIS_SPELLID] = 0 }
 do
 	for _, v in pairs(priest_PWS_Ranks) do
-		priest_defaultScaling[v[1]] = { v[3], 0.809 }
+		priest_defaultScaling[v[1]] = { v[3], 0.809, 1 }
 	end
 end
 
@@ -2142,25 +2141,15 @@ end
 
 local function priest_PowerWordShield_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, priest_defaultScaling, 0.1)
-	-- print(_, sp, quality1, sourceScaling, quality2)
-	-- print(sourceScaling[spellid][1])
-	-- print(sourceScaling[spellid][2])
 	sourceScaling[spellid] = sourceScaling[spellid] or priest_defaultScaling[spellid]
 	if sourceScaling[spellid] then
-		-- print(floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER),
-		-- 	min(quality1, quality2))
-		return floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER),
+		return
+		floor(floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER) *
+				sourceScaling[spellid][3]),
 			min(quality1, quality2)
 	end
 end
 
-local function priest_PowerWordShieldT4_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
-	local _, sp, quality1, sourceScaling, quality2 = UnitStatsAndScaling(srcGUID, 0.1, priest_defaultScaling, 0.1)
-	sourceScaling[spellid] = sourceScaling[spellid] or priest_defaultScaling[spellid]
-	if sourceScaling[spellid] then
-		return floor((1250 + sp * 0.2) * ZONE_MODIFIER), min(quality1, quality2)
-	end
-end
 
 local function priest_DivineAegis_Create(srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	local existing = 0
@@ -2244,21 +2233,20 @@ local function priest_ApplyScaling(guid, level, baseFactor, spFactor, daFactor)
 				rankSP = spFactor
 			end
 
-			guidScaling[v[1]] = { rankValue * baseFactor, rankSP }
+			guidScaling[v[1]] = { rankValue, rankSP, baseFactor }
 		end
 	end
 end
 
 local function priest_UpdatePlayerScaling()
-	privateScaling.base = ((1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) * (1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05)) * (1.0 + (privateScaling["2pcRaid5"]) * 0.15))
+	local baseFactor = (1.0 + (privateScaling["TwinDisc"] * 0.01)) *
+			(1.0 + (privateScaling["FocusedPower"] * 0.02)) *
+			(1.0 + (privateScaling["SpiritualHealing"] * 0.02)) *
+			(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05 + privateScaling["2pcRaid5"] * 0.15))
+	privateScaling.base = baseFactor
 
 	local spFactor = 0.8068
 	spFactor = spFactor + (privateScaling["BorrowedTime"] * 0.08)
-	spFactor = spFactor *
-		(1.0 + (privateScaling["TwinDisc"] * 0.01) + (privateScaling["FocusedPower"] * 0.02) + (privateScaling["SpiritualHealing"] * 0.02)) *
-		(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05))*
-		(1.0 + (privateScaling["2pcRaid5"]) * 0.15)
-	-- print(spFactor,privateScaling.base)
 	privateScaling.sp = spFactor
 	privateScaling.DA = (privateScaling["DivineAegis"] * 0.1) * (1 + (privateScaling["4pcRaid9"] * 0.03))
 	priest_ApplyScaling(playerid, UnitLevel("player"), privateScaling.base, privateScaling.sp, privateScaling.DA)
@@ -2616,7 +2604,6 @@ local mage_FrostWard_Entry = { 2.0, 30, generic_SpellScalingByTable_Create, mage
 local mage_IceBarrier_Entry = { 1.0, 60, mage_IceBarrier_Create, generic_Hit }
 local mage_ManaShield_Entry = { 1.0, 60, generic_SpellScalingByTable_Create, generic_Hit, mage_Absorb_Spells, 0.8053 }
 local priest_PWS_Entry = { 1.0, 30, priest_PowerWordShield_Create, generic_Hit }
-local priest_PWS_EntryT4 = { 1.0, 30, priest_PowerWordShieldT4_Create, generic_Hit }
 local warlock_Sacrifice_Entry = { 1.0, 30, generic_ConstantByTable_Create, generic_Hit, warlock_Sacrifice_Spells }
 local warlock_ShadowWard_Entry = { 2.0, 30, generic_SpellScalingByTable_Create, warlock_ShadowWard_Hit,
 	warlock_ShadowWard_Spells, 0.8053 }
@@ -2775,7 +2762,7 @@ Core.Effects = {
 	--t4 abilities
 	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },             -- Paladin 2T4 God's Hand
 	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },               -- Paladin 2T4 God's Hand
-	[305082] = priest_PWS_EntryT4,                                       -- Power Word: Shield (rank 14) t4 increase
+	[305082] = { 1.0, 30, generic_SpellScalingByTable_Create, generic_Hit,  0.2}, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
 	[308143] = priest_PWS_Entry,                                         -- Power Word: Shield (rank 15)
 	[319521] = { 1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit }, -- t6 absorb feral
