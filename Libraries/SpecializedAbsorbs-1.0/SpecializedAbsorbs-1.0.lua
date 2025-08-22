@@ -2242,8 +2242,7 @@ local function priest_UpdatePlayerScaling()
 	local baseFactor = (1.0 + (privateScaling["TwinDisc"] * 0.01)) *
 			(1.0 + (privateScaling["FocusedPower"] * 0.02)) *
 			(1.0 + (privateScaling["SpiritualHealing"] * 0.02)) *
-			(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05)) *
-			(1.0 + (privateScaling["2pcRaid5"]) * 0.15)
+			(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05 + privateScaling["2pcRaid5"] * 0.15))
 	privateScaling.base = baseFactor
 
 	local spFactor = 0.8068
