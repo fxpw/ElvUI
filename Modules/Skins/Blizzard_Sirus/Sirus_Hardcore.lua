@@ -17,6 +17,15 @@ local function LoadSkin()
 			S:HandleTab(tab)
 		end
 	end
+	S:HandleButton(HardcoreFrameNavBarHomeButton)
+	S:HandleButton(HardcoreFrameSuggestTab, true)
+	S:HandleButton(HardcoreFrameChallengeListTab, true)
+	S:HandleButton(HardcoreFrameParticipantsTab, true)
+	S:HandleButton(HardcoreFrameLadderTab, true)
+	S:HandleButton(HardcoreFrameSuggestFrameSuggestion2CenterDisplayButton)
+	S:HandleButton(HardcoreFrameSuggestFrameSuggestion3CenterDisplayButton)
+	HardcoreFrameNavBar:StripTextures()
+	HardcoreFrameNavBarOverlay:StripTextures()
 end
 
 S:AddCallback("Sirus_Hardcore", LoadSkin)

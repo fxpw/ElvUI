@@ -146,7 +146,11 @@ local function LoadSkin()
 	end
 
 	-- EncounterJournal.LootJournal:StripTextures()
-	-- S:HandleButton(EncounterJournal.LootJournal.ItemSetsScrollFrame.ClassButton, true)
+	S:HandleButton(EncounterJournalSuggestFrameSuggestion1Button)
+	S:HandleButton(EncounterJournalSuggestFrameSuggestion2CenterDisplayButton)
+	S:HandleButton(EncounterJournalSuggestFrameSuggestion3CenterDisplayButton)
+	S:HandleNextPrevButton(EncounterJournalSuggestFrameSuggestion1PrevButton)
+	S:HandleNextPrevButton(EncounterJournalSuggestFrameSuggestion1NextButton)
 	-- S:HandleScrollBar(EncounterJournalLootJournalScrollFrameScrollBar)
 
 	-- for i = 1, #EncounterJournal.LootJournal.ItemSetsScrollFrame.buttons do
