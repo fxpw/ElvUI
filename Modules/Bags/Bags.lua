@@ -514,6 +514,30 @@ function B:UpdateAllSlots(frame)
 	end
 end
 
+function B:ScheduleCoalescedBagUpdate(frame, bagID)
+	if not (frame and bagID) then return end
+
+	frame._pendingBagUpdates = frame._pendingBagUpdates or {}
+	frame._pendingBagUpdates[bagID] = true
+
+	if frame._bagUpdateScheduled then return end
+	frame._bagUpdateScheduled = true
+
+	E:Delay(0.05, function()
+		if not frame then return end
+		if frame._pendingBagUpdates then
+			for pendingBagID in pairs(frame._pendingBagUpdates) do
+				B:UpdateBagSlots(frame, pendingBagID)
+			end
+			twipe(frame._pendingBagUpdates)
+		end
+
+		frame._bagUpdateScheduled = nil
+
+		if B:IsSearching() then B:RefreshSearch() end
+	end)
+end
+
 function B:SetSlotAlphaForBag(f)
 	for _, bagID in ipairs(f.BagIDs) do
 		if f.Bags[bagID] then
@@ -957,9 +981,14 @@ function B:OnEvent(event, ...)
 			end
 		end
 
-		B:UpdateBagSlots(self, ...)
-
-		--Refresh search in case we moved items around
+		if bag ~= KEYRING_CONTAINER then
+			B:ScheduleCoalescedBagUpdate(self, bag)
+		end
+	elseif event == "BAG_UPDATE_DELAYED" then
+		if not self:IsShown() then return end
+		self._bagUpdateScheduled = nil
+		if self._pendingBagUpdates then twipe(self._pendingBagUpdates) end
+		B:UpdateAllSlots(self)
 		if B:IsSearching() then B:RefreshSearch() end
 	elseif event == "BAG_UPDATE_COOLDOWN" then
 		if not self:IsShown() then return end
@@ -1144,6 +1173,7 @@ function B:ContructContainerFrame(name, isBank)
 	f:SetTemplate("Transparent")
 	f:SetFrameStrata(strata)
 	f:RegisterEvent("BAG_UPDATE") -- Has to be on both frames
+	f:RegisterEvent("BAG_UPDATE_DELAYED")
 	f:RegisterEvent("BAG_UPDATE_COOLDOWN") -- Has to be on both frames
 	f.events = isBank and {"PLAYERBANKSLOTS_CHANGED"} or {"ITEM_LOCK_CHANGED", "ITEM_UNLOCKED", "QUEST_ACCEPTED", "QUEST_REMOVED", "QUEST_LOG_UPDATE"}
 
