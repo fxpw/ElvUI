@@ -90,6 +90,7 @@ RB.Spell4Buffs = {
 
 RB.CasterSpell5Buffs = {
 	61316, -- Dalaran Brilliance
+	61024, -- Dalaran Brilliance
 	43002, -- Arcane Brilliance
 	42995, -- Arcane Intellect
 }
