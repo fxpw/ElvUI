@@ -3,7 +3,6 @@ local S = E:GetModule("Skins")
 
 --Lua functions
 --WoW API / Variables
-
 local function LoadSkin()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.hardcore then return end
 	local HardcoreFrame = HardcoreFrame
