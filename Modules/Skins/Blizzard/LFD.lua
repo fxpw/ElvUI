@@ -587,7 +587,13 @@ local function LoadSkin()
 	end
 
 	for i = 1, 4 do
-		S:HandleTab(_G["PVPUIFrameTab"..i])
+		local tab = _G["PVPUIFrameTab"..i]
+		if(tab)then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	for i = 1, 3 do
@@ -870,7 +876,13 @@ local function LoadSkin()
 	end
 
 	for i = 1, 4 do
-		S:HandleTab(_G["PVPLadderFrameTab"..i])
+		local tab = G["PVPLadderFrameTab"..i]
+		if(tab)then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	local c = .035
@@ -975,7 +987,13 @@ local function LoadSkin()
 	end
 
 	for i = 1, 4 do
-		S:HandleTab(_G["RenegadeLadderFrameTab"..i])
+		local tab = G["RenegadeLadderFrameTab"..i]
+		if(tab)then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	SkinCategoryButton(RenegadeLadderFrame.Container.CategoryButton1, 1)

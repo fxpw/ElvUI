@@ -8443,6 +8443,7 @@ globals = {
 	"InterfaceOptionsCombatPanelEnemyCastBars",
 	"InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates",
 	"InterfaceOptionsCombatPanelEnemyCastBarsOnPortrait",
+	"InterfaceOptionsCombatPanelActionButtonUseKeyDown",
 	"InterfaceOptionsCombatPanelFocusCastKeyDropDown",
 	"InterfaceOptionsCombatPanelFocusCastKeyDropDownButton",
 	"InterfaceOptionsCombatPanelNameplateClassColors",

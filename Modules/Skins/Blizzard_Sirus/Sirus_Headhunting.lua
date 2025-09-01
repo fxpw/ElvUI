@@ -95,8 +95,14 @@ local function LoadSkin()
 
 	SkinRewardFrame(YouTargetsPanel.SetRewardFrame)
 
-	for i = 1, 2 do
-		S:HandleTab(_G["HeadHuntingFrameTab"..i])
+	for i = 1, 3 do
+		if _G["HeadHuntingFrameTab"..i] then
+			local tab = _G["HeadHuntingFrameTab"..i]
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
 	end
 
 	HeadHuntingSetRewardExternalFrame:SetParent(UIParent)
