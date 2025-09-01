@@ -8048,6 +8048,7 @@ globals = {
 	"FriendsTabHeaderTab2",
 	"FriendsTabHeaderTab3",
 	"FriendsTooltip",
+	"HardcoreFrame",
 	"GMChatOpenLog",
 	"GRAY_FONT_COLOR",
 	"GREEN_FONT_COLOR",

@@ -878,9 +878,17 @@ local function LoadSkin()
 	for i = 1, 4 do
 		local tab = G["PVPLadderFrameTab"..i]
 		if(tab)then
-			tab.HighlightLeft:StripTextures()
-			tab.HighlightMiddle:StripTextures()
-			tab.HighlightRight:StripTextures()
+			if tab.HighlightLeft then
+				tab.HighlightLeft:StripTextures()
+			end
+			if tab.HighlightMiddle then
+				tab.HighlightMiddle:StripTextures()
+			end
+			if tab.HighlightRight then
+				tab.HighlightRight:StripTextures()
+			end
+			-- tab.HighlightMiddle:StripTextures()
+			-- tab.HighlightRight:StripTextures()
 			S:HandleTab(tab)
 		end
 	end
@@ -989,9 +997,15 @@ local function LoadSkin()
 	for i = 1, 4 do
 		local tab = G["RenegadeLadderFrameTab"..i]
 		if(tab)then
-			tab.HighlightLeft:StripTextures()
-			tab.HighlightMiddle:StripTextures()
-			tab.HighlightRight:StripTextures()
+			if(tab.HighlightLeft)then
+				tab.HighlightLeft:StripTextures()
+			end
+			if(tab.HighlightMiddle)then
+				tab.HighlightMiddle:StripTextures()
+			end
+			if(tab.HighlightRight)then
+				tab.HighlightRight:StripTextures()
+			end
 			S:HandleTab(tab)
 		end
 	end
