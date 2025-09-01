@@ -16,7 +16,7 @@ local find = string.find
 local function SkinMiniGameLoot(frame)
 	if frame.isSkinned then return end
 
-	local nameFrame = _G[frame:GetName().."NameFrame"]
+	local nameFrame = _G[frame:GetName() .. "NameFrame"]
 
 	frame:StripTextures()
 
@@ -30,21 +30,22 @@ local function updateMiniGames()
 	MiniGamesParentFrameBottomInset:StripTextures()
 	MiniGamesParentFrameBottomInsetScrollFrame:StripTextures()
 	MiniGamesParentFrameTopInset:StripTextures()
-	S:HandleButton(MiniGamesParentFrameFindGroupButton,true)
+	S:HandleButton(MiniGamesParentFrameFindGroupButton, true)
 	S:HandleScrollBar(MiniGamesParentFrameBottomInsetScrollFrameScrollBar)
 
-	for i = 1,LFD_MAX_REWARDS do
-		local butt  = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i]
+	for i = 1, LFD_MAX_REWARDS do
+		local butt = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i]
 		if butt then
-
-				SkinMiniGameLoot(butt)
+			SkinMiniGameLoot(butt)
 
 			local link = butt.itemLink
 			if link then
 				local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
 				if quality then
-					local a = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i.."IconTexture"]
-					local name = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i.."Name"]
+					local a = _G
+					["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i .. "IconTexture"]
+					local name = _G
+					["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i .. "Name"]
 
 					if butt.Icon then
 						butt.Icon:StripTextures()
@@ -64,7 +65,8 @@ local function updateMiniGames()
 				end
 			else
 				butt.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
-				local name = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate"..i.."Name"]
+				local name = _G
+				["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i .. "Name"]
 				name:SetTextColor(1, 1, 1)
 			end
 		end
@@ -327,15 +329,15 @@ local function LoadSkin()
 			S:HandleTab(tab)
 		end
 	end
-	local tabstorem ={
+	local tabstorem = {
 		"LFDParentFrameTab",
 		"PVPUIFrameTab",
 		"PVPLadderFrameTab",
 		"RenegadeLadderFrameTab",
 	}
-	for i = 1,4 do
-		for _,tab in pairs(tabstorem) do
-		tab = _G[tab..1]
+	for i = 1, 4 do
+		for _, tab in pairs(tabstorem) do
+			tab = _G[tab .. 1]
 			if tab then
 				tab:ClearAllPoints()
 				tab:SetPoint("BOTTOMLEFT", 2, -30)
@@ -397,9 +399,9 @@ local function LoadSkin()
 	local function SkinLFDRandomDungeonLoot(frame)
 		if frame.isSkinned then return end
 
-		local icon = _G[frame:GetName().."IconTexture"]
-		local nameFrame = _G[frame:GetName().."NameFrame"]
-		local count = _G[frame:GetName().."Count"]
+		local icon = _G[frame:GetName() .. "IconTexture"]
+		local nameFrame = _G[frame:GetName() .. "NameFrame"]
+		local count = _G[frame:GetName() .. "Count"]
 
 		frame:StripTextures()
 		frame:CreateBackdrop("Transparent")
@@ -436,15 +438,15 @@ local function LoadSkin()
 
 		local _, _, _, _, _, numRewards = GetLFGDungeonRewards(dungeonID)
 		for i = 1, numRewards do
-			local frame = _G["LFDQueueFrameRandomScrollFrameChildFrameItem"..i]
-			local name = _G["LFDQueueFrameRandomScrollFrameChildFrameItem"..i.."Name"]
+			local frame = _G["LFDQueueFrameRandomScrollFrameChildFrameItem" .. i]
+			local name = _G["LFDQueueFrameRandomScrollFrameChildFrameItem" .. i .. "Name"]
 			SkinLFDRandomDungeonLoot(frame)
 
 			local link = GetLFGDungeonRewardLinkFix(dungeonID, i)
 			if link then
 				local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
 				if quality then
-					_G["LFDQueueFrameRandomScrollFrameChildFrameItem"..i.."IconTexture"]:SetTexture(texture)
+					_G["LFDQueueFrameRandomScrollFrameChildFrameItem" .. i .. "IconTexture"]:SetTexture(texture)
 					frame.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
 					name:SetTextColor(GetItemQualityColor(quality))
 				end
@@ -456,7 +458,7 @@ local function LoadSkin()
 	end)
 
 	for i = 1, NUM_LFD_CHOICE_BUTTONS do
-		local button = _G["LFDQueueFrameSpecificListButton"..i]
+		local button = _G["LFDQueueFrameSpecificListButton" .. i]
 		button.enableButton:StripTextures()
 		button.enableButton:CreateBackdrop("Default")
 		button.enableButton.backdrop:SetInside(nil, 4, 4)
@@ -587,8 +589,8 @@ local function LoadSkin()
 	end
 
 	for i = 1, 4 do
-		local tab = _G["PVPUIFrameTab"..i]
-		if(tab)then
+		local tab = _G["PVPUIFrameTab" .. i]
+		if (tab) then
 			tab.HighlightLeft:StripTextures()
 			tab.HighlightMiddle:StripTextures()
 			tab.HighlightRight:StripTextures()
@@ -597,7 +599,7 @@ local function LoadSkin()
 	end
 
 	for i = 1, 3 do
-		local b = PVPQueueFrame["CategoryButton"..i]
+		local b = PVPQueueFrame["CategoryButton" .. i]
 		b.Ring:Kill()
 		b.Background:Kill()
 		S:HandleButton(b)
@@ -620,7 +622,8 @@ local function LoadSkin()
 	PVPQueueFrameBattlePassToggleButton.Icon:CreateBackdrop()
 	PVPQueueFrameBattlePassToggleButton.Icon:SetParent(PVPQueueFrameBattlePassToggleButton.Icon.backdrop)
 	PVPQueueFrameBattlePassToggleButton.Name:SetParent(PVPQueueFrameBattlePassToggleButton.Icon.backdrop)
-	PVPQueueFrameBattlePassToggleButton.Icon.backdrop:SetFrameLevel(PVPQueueFrameBattlePassToggleButton:GetFrameLevel() + 2)
+	PVPQueueFrameBattlePassToggleButton.Icon.backdrop:SetFrameLevel(PVPQueueFrameBattlePassToggleButton:GetFrameLevel() +
+	2)
 	PVPQueueFrameBattlePassToggleButton.LevelFrame:SetFrameLevel(PVPQueueFrameBattlePassToggleButton:GetFrameLevel() + 3)
 
 	PVPQueueFrame.CapTopFrame:StripTextures()
@@ -643,9 +646,9 @@ local function LoadSkin()
 	PVPQueueFrame.StepBottomFrame:StripTextures()
 	PVPQueueFrame.StepBottomFrame:CreateBackdrop()
 	PVPQueueFrame.StepBottomFrame.backdrop:SetInside(PVPQueueFrame.StepBottomFrame.ShadowOverlay)
---	PVPQueueFrame.StepBottomFrame.backdrop:SetOutside(PVPQueueFrame.StepBottomFrame.Step1.Background, nil, nil, PVPQueueFrame.StepBottomFrame.StepEnd.Background)
+	--	PVPQueueFrame.StepBottomFrame.backdrop:SetOutside(PVPQueueFrame.StepBottomFrame.Step1.Background, nil, nil, PVPQueueFrame.StepBottomFrame.StepEnd.Background)
 
---[[
+	--[[
 	for i = 1, 4 do
 		local step = PVPQueueFrame.StepBottomFrame["Step"..i]
 		step.Background:SetTexture(E.media.normTex)
@@ -720,9 +723,11 @@ local function LoadSkin()
 	StyleRewardFrame(ConquestFrame.BottomInset.ArenaContainer.Header.RewardFrame)
 
 	StyleButton(ConquestFrame.BottomInset.ArenaContainer.Arena2v2)
-	ConquestFrame.BottomInset.ArenaContainer.Arena2v2:Point("TOP", ConquestFrame.BottomInset.ArenaContainer.Header, "BOTTOM", 0, 10)
+	ConquestFrame.BottomInset.ArenaContainer.Arena2v2:Point("TOP", ConquestFrame.BottomInset.ArenaContainer.Header,
+		"BOTTOM", 0, 10)
 	StyleButton(ConquestFrame.BottomInset.ArenaContainer.Arena1v1)
-	ConquestFrame.BottomInset.ArenaContainer.Arena1v1:Point("TOP", ConquestFrame.BottomInset.ArenaContainer.Arena2v2, "BOTTOM", 0, -(E.Border*2))
+	ConquestFrame.BottomInset.ArenaContainer.Arena1v1:Point("TOP", ConquestFrame.BottomInset.ArenaContainer.Arena2v2,
+		"BOTTOM", 0, -(E.Border * 2))
 
 	ConquestFrame.BottomInset.SoloArenaContainer:StripTextures()
 	ConquestFrame.BottomInset.SoloArenaContainer.Header:StripTextures()
@@ -751,9 +756,11 @@ local function LoadSkin()
 	StyleRewardFrame(PVPHonorFrame.BottomInset.BonusBattlefieldContainer.Header.RewardFrame)
 
 	StyleButton(PVPHonorFrame.BottomInset.BonusBattlefieldContainer.RandomBGButton)
-	PVPHonorFrame.BottomInset.BonusBattlefieldContainer.RandomBGButton:Point("TOP", PVPHonorFrame.BottomInset.BonusBattlefieldContainer.Header, "BOTTOM", 0, 10)
+	PVPHonorFrame.BottomInset.BonusBattlefieldContainer.RandomBGButton:Point("TOP",
+		PVPHonorFrame.BottomInset.BonusBattlefieldContainer.Header, "BOTTOM", 0, 10)
 	StyleButton(PVPHonorFrame.BottomInset.BonusBattlefieldContainer.CallToArmsButton)
-	PVPHonorFrame.BottomInset.BonusBattlefieldContainer.CallToArmsButton:Point("TOP", PVPHonorFrame.BottomInset.BonusBattlefieldContainer.RandomBGButton, "BOTTOM", 0, -(E.Border*2))
+	PVPHonorFrame.BottomInset.BonusBattlefieldContainer.CallToArmsButton:Point("TOP",
+		PVPHonorFrame.BottomInset.BonusBattlefieldContainer.RandomBGButton, "BOTTOM", 0, -(E.Border * 2))
 
 	PVPHonorFrame.BottomInset.WorldPVPContainer:StripTextures()
 	PVPHonorFrame.BottomInset.WorldPVPContainer.Header:StripTextures()
@@ -770,15 +777,17 @@ local function LoadSkin()
 		if i == 1 then
 			button:SetPoint("TOPLEFT", PVPHonorFrameSpecificFrame.scrollChild, "TOPLEFT", E.Border, -E.Border)
 		else
-			button:SetPoint("TOPLEFT", PVPHonorFrameSpecificFrame.buttons[i-1], "BOTTOMLEFT", 0, -E.Border)
+			button:SetPoint("TOPLEFT", PVPHonorFrameSpecificFrame.buttons[i - 1], "BOTTOMLEFT", 0, -E.Border)
 		end
 
 		StyleButton(button, true)
 	end
 
 	PVPHonorFrameSpecificFrame.buttonHeight = PVPHonorFrameSpecificFrame.buttonHeight - 4
-	PVPHonorFrameSpecificFrame.scrollChild:SetHeight(#PVPHonorFrameSpecificFrame.buttons * PVPHonorFrameSpecificFrame.buttonHeight)
-	PVPHonorFrameSpecificFrame.scrollBar:SetMinMaxValues(0, #PVPHonorFrameSpecificFrame.buttons * PVPHonorFrameSpecificFrame.buttonHeight)
+	PVPHonorFrameSpecificFrame.scrollChild:SetHeight(#PVPHonorFrameSpecificFrame.buttons *
+	PVPHonorFrameSpecificFrame.buttonHeight)
+	PVPHonorFrameSpecificFrame.scrollBar:SetMinMaxValues(0,
+		#PVPHonorFrameSpecificFrame.buttons * PVPHonorFrameSpecificFrame.buttonHeight)
 
 	PVPHonorFrame.BottomInset.ShadowOverlay:StripTextures()
 
@@ -796,8 +805,8 @@ local function LoadSkin()
 
 	hooksecurefunc("RateBattleground_SetProgress", function(bar, value)
 		if value then
-			local r, g, b = E:ColorGradient(value * 100, 0.8,0,0, 0.8,0.8,0, 0,0.8,0)
-			bar.backdrop:SetBackdropColor(r*0.25, g*0.25, b*0.25)
+			local r, g, b = E:ColorGradient(value * 100, 0.8, 0, 0, 0.8, 0.8, 0, 0, 0.8, 0)
+			bar.backdrop:SetBackdropColor(r * 0.25, g * 0.25, b * 0.25)
 			bar.Progress:SetVertexColor(r, g, b)
 		end
 	end)
@@ -848,19 +857,19 @@ local function LoadSkin()
 	S:HandleDropDownBox(PVPDropDown)
 
 	for i = 1, 5 do
-		_G["PVPUI_ArenaTeamDetailsColumnHeader"..i]:StripTextures()
+		_G["PVPUI_ArenaTeamDetailsColumnHeader" .. i]:StripTextures()
 	end
 	for i = 1, 10 do
-		_G["PVPUI_ArenaTeamDetailsButton"..i]:StripTextures()
+		_G["PVPUI_ArenaTeamDetailsButton" .. i]:StripTextures()
 	end
 
 	S:HandleButton(PVPUI_ArenaTeamDetailsAddTeamMember)
 
---	BattlegroundInviteFrame:SetTemplate("Transparent")
---	BattlegroundInviteFrame.Background:SetAlpha(0)
+	--	BattlegroundInviteFrame:SetTemplate("Transparent")
+	--	BattlegroundInviteFrame.Background:SetAlpha(0)
 
---	S:HandleButton(BattlegroundInviteFrame.PopupFrame.EnterButton)
---	S:HandleButton(BattlegroundInviteFrame.PopupFrame.CancelButton)
+	--	S:HandleButton(BattlegroundInviteFrame.PopupFrame.EnterButton)
+	--	S:HandleButton(BattlegroundInviteFrame.PopupFrame.CancelButton)
 
 	S:HandlePortraitFrame(PVPLadderFrame)
 	S:HandleCloseButton(PVPLadderFrameCloseButton)
@@ -876,29 +885,29 @@ local function LoadSkin()
 	end
 
 	for i = 1, 4 do
-		local tab = G["PVPLadderFrameTab"..i]
-		if(tab)then
-			if tab.HighlightLeft then
-				tab.HighlightLeft:StripTextures()
+		-- local tab =
+		if (_G["PVPLadderFrameTab" .. i]) then
+			if _G["PVPLadderFrameTab" .. i].HighlightLeft then
+				_G["PVPLadderFrameTab" .. i].HighlightLeft:StripTextures()
 			end
-			if tab.HighlightMiddle then
-				tab.HighlightMiddle:StripTextures()
+			if _G["PVPLadderFrameTab" .. i].HighlightMiddle then
+				_G["PVPLadderFrameTab" .. i].HighlightMiddle:StripTextures()
 			end
-			if tab.HighlightRight then
-				tab.HighlightRight:StripTextures()
+			if _G["PVPLadderFrameTab" .. i].HighlightRight then
+				_G["PVPLadderFrameTab" .. i].HighlightRight:StripTextures()
 			end
-			-- tab.HighlightMiddle:StripTextures()
-			-- tab.HighlightRight:StripTextures()
-			S:HandleTab(tab)
+			-- _G["PVPLadderFrameTab"..i].HighlightMiddle:StripTextures()
+			-- _G["PVPLadderFrameTab"..i].HighlightRight:StripTextures()
+			S:HandleTab(_G["PVPLadderFrameTab" .. i])
 		end
 	end
 
 	local c = .035
 	local tc = {
-		{.253906 + c, 0.503906 - c, 0.507813 + c, 0.757813 - c},
-		{c, 0.25 - c, c, 0.25 - c},
-		{c, 0.250000 - c, 0.253906 + c, 0.503906 - c},
-		{.507813 + c, 0.757813 - c, c, 0.25 - c},
+		{ .253906 + c, 0.503906 - c, 0.507813 + c, 0.757813 - c },
+		{ c,           0.25 - c,     c,            0.25 - c },
+		{ c,           0.250000 - c, 0.253906 + c, 0.503906 - c },
+		{ .507813 + c, 0.757813 - c, c,            0.25 - c },
 	}
 
 	local function SkinCategoryButton(b, i)
@@ -923,7 +932,7 @@ local function LoadSkin()
 	end
 
 	for i = 1, 2 do
-		local tab = PVPLadderFrame.Container["RightBigTab"..i]
+		local tab = PVPLadderFrame.Container["RightBigTab" .. i]
 		tab:SetTemplate()
 		tab:StyleButton()
 		tab:GetRegions():Hide()
@@ -932,7 +941,7 @@ local function LoadSkin()
 	end
 	PVPLadderFrame.Container.RightBigTab1:Point("TOPLEFT", PVPLadderFrame.Container, "TOPRIGHT", -E.Border, -34)
 	for i = 1, 10 do
-		local tab = PVPLadderFrame.Container["RightSmallTab"..i]
+		local tab = PVPLadderFrame.Container["RightSmallTab" .. i]
 		tab:SetTemplate()
 		tab:StyleButton()
 		tab:GetRegions():Hide()
@@ -946,8 +955,10 @@ local function LoadSkin()
 	PVPLadderFrame.Container.RightContainer.CentralContainer:StripTextures(true)
 
 	S:HandleScrollBar(PVPLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBar)
-	S:SetNextPrevButtonDirection(PVPLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollUpButton, "up")
-	S:SetNextPrevButtonDirection(PVPLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollDownButton, "down")
+	S:SetNextPrevButtonDirection(PVPLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollUpButton,
+		"up")
+	S:SetNextPrevButtonDirection(
+	PVPLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollDownButton, "down")
 	S:HandleCheckBox(ConquestFrameBottomInsetRatedConquestRadioButton)
 	S:HandleCheckBox(ConquestFrameBottomInsetSkirmishConquestRadioButton)
 
@@ -995,19 +1006,16 @@ local function LoadSkin()
 	end
 
 	for i = 1, 4 do
-		local tab = G["RenegadeLadderFrameTab"..i]
-		if(tab)then
-			if(tab.HighlightLeft)then
-				tab.HighlightLeft:StripTextures()
-			end
-			if(tab.HighlightMiddle)then
-				tab.HighlightMiddle:StripTextures()
-			end
-			if(tab.HighlightRight)then
-				tab.HighlightRight:StripTextures()
-			end
-			S:HandleTab(tab)
+		if (_G["RenegadeLadderFrameTab" .. i].HighlightLeft) then
+			_G["RenegadeLadderFrameTab" .. i].HighlightLeft:StripTextures()
 		end
+		if (_G["RenegadeLadderFrameTab" .. i].HighlightMiddle) then
+			_G["RenegadeLadderFrameTab" .. i].HighlightMiddle:StripTextures()
+		end
+		if (_G["RenegadeLadderFrameTab" .. i].HighlightRight) then
+			_G["RenegadeLadderFrameTab" .. i].HighlightRight:StripTextures()
+		end
+		S:HandleTab(_G["RenegadeLadderFrameTab" .. i])
 	end
 
 	SkinCategoryButton(RenegadeLadderFrame.Container.CategoryButton1, 1)
@@ -1020,7 +1028,7 @@ local function LoadSkin()
 	end
 
 	for i = 1, 2 do
-		local tab = RenegadeLadderFrame.Container["RightBigTab"..i]
+		local tab = RenegadeLadderFrame.Container["RightBigTab" .. i]
 		tab:SetTemplate()
 		tab:StyleButton()
 		tab:GetRegions():Hide()
@@ -1029,22 +1037,25 @@ local function LoadSkin()
 	end
 	RenegadeLadderFrame.Container.RightBigTab1:Point("TOPLEFT", RenegadeLadderFrame.Container, "TOPRIGHT", -E.Border, -34)
 	for i = 1, 10 do
-		local tab = RenegadeLadderFrame.Container["RightSmallTab"..i]
+		local tab = RenegadeLadderFrame.Container["RightSmallTab" .. i]
 		tab:SetTemplate()
 		tab:StyleButton()
 		tab:GetRegions():Hide()
 		tab.Icon:SetTexCoord(unpack(E.TexCoords))
 		tab.Icon:SetInside()
 	end
-	RenegadeLadderFrame.Container.RightSmallTab1:Point("TOPLEFT", RenegadeLadderFrame.Container, "TOPRIGHT", -E.Border, -130)
+	RenegadeLadderFrame.Container.RightSmallTab1:Point("TOPLEFT", RenegadeLadderFrame.Container, "TOPRIGHT", -E.Border,
+		-130)
 
 	RenegadeLadderFrame.Container.RightContainer.BottomContainer:StripTextures()
 	RenegadeLadderFrame.Container.RightContainer.CentralContainer:StripTextures(true)
 	RenegadeLadderFrame.Container.RightContainer.CentralContainer.ScrollFrame.ShadowOverlay:StripTextures()
 
 	S:HandleScrollBar(RenegadeLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBar)
-	S:SetNextPrevButtonDirection(RenegadeLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollUpButton, "up")
-	S:SetNextPrevButtonDirection(RenegadeLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollDownButton, "down")
+	S:SetNextPrevButtonDirection(
+	RenegadeLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollUpButton, "up")
+	S:SetNextPrevButtonDirection(
+	RenegadeLadderFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollDownButton, "down")
 
 	RenegadeLadderFrame.Container.RightContainer.TopContainer:StripTextures()
 	RenegadeLadderFrame.Container.RightContainer.TopContainer.RegionMask.TextureMask:StripTextures()
@@ -1058,28 +1069,28 @@ local function LoadSkin()
 
 	----------------- mini games frame
 
-	MiniGamesParentFrame:HookScript("OnEvent",function(...) -------- first check
+	MiniGamesParentFrame:HookScript("OnEvent", function(...) -------- first check
 		updateMiniGames()
-		end)
-	MiniGamesParentFrame:HookScript("OnShow",function() -------- ye i now but its maxin
-		for i = 1,5 do
-			local but = _G["MiniGamesParentFrameTopInsetScrollFrameChildFramePoolFrameMiniGameButtonTemplate"..i]
+	end)
+	MiniGamesParentFrame:HookScript("OnShow", function() -------- ye i now but its maxin
+		for i = 1, 5 do
+			local but = _G["MiniGamesParentFrameTopInsetScrollFrameChildFramePoolFrameMiniGameButtonTemplate" .. i]
 			if but then
-				but:HookScript("OnClick",updateMiniGames)
+				but:HookScript("OnClick", updateMiniGames)
 			end
 		end
 
 		updateMiniGames()
 	end)
 
-	MiniGameReadyDialog:HookScript("OnShow",function()
+	MiniGameReadyDialog:HookScript("OnShow", function()
 		MiniGameReadyDialog:StripTextures()
 		MiniGameReadyDialog:CreateBackdrop("Transparent")
 		S:HandleButton(MiniGameReadyDialogEnterButton)
 		S:HandleButton(MiniGameReadyDialogLeaveQueueButton)
 		S:HandleCloseButton(MiniGameReadyDialogCloseButton)
 	end)
-	MiniGameScoreFrame:HookScript("OnShow",function()
+	MiniGameScoreFrame:HookScript("OnShow", function()
 		if MiniGameScoreFrame then
 			MiniGameScoreFrame:StripTextures()
 		end
@@ -1092,10 +1103,10 @@ local function LoadSkin()
 		S:HandleCloseButton(MiniGameScoreFrameCloseButton)
 		S:HandleButton(MiniGameScoreFrameLeaveButton)
 		if MiniGameScoreFrameContentScrollFrameScrollBar then
-		S:HandleScrollBar(MiniGameScoreFrameContentScrollFrameScrollBar)
+			S:HandleScrollBar(MiniGameScoreFrameContentScrollFrameScrollBar)
 		end
 	end)
-	MiniGameReadyStatus:HookScript("OnShow",function()
+	MiniGameReadyStatus:HookScript("OnShow", function()
 		MiniGameReadyStatus:StripTextures()
 		MiniGameReadyStatus:CreateBackdrop("Transparent")
 		S:HandleCloseButton(MiniGameReadyStatusCloseButton)
