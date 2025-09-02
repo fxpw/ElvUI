@@ -9,9 +9,30 @@ local hooksecurefunc = hooksecurefunc
 local function LoadSkin()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.auctionhouse then return end
 	--tab
-	S:HandleTab(AuctionHouseFrameBuyTab)
-	S:HandleTab(AuctionHouseFrameSellTab)
-	S:HandleTab(AuctionHouseFrameAuctionsTab)
+	local tab = AuctionHouseFrameBuyTab
+	if (tab) then
+		tab.HighlightLeft:StripTextures()
+		tab.HighlightMiddle:StripTextures()
+		tab.HighlightRight:StripTextures()
+		S:HandleTab(tab)
+	end
+	local tab = AuctionHouseFrameSellTab
+	if (tab) then
+		tab.HighlightLeft:StripTextures()
+		tab.HighlightMiddle:StripTextures()
+		tab.HighlightRight:StripTextures()
+		S:HandleTab(tab)
+	end
+	local tab = AuctionHouseFrameAuctionsTab
+	if (tab) then
+		tab.HighlightLeft:StripTextures()
+		tab.HighlightMiddle:StripTextures()
+		tab.HighlightRight:StripTextures()
+		S:HandleTab(tab)
+	end
+	-- S:HandleTab(AuctionHouseFrameBuyTab)
+	-- S:HandleTab(AuctionHouseFrameSellTab)
+	-- S:HandleTab(AuctionHouseFrameAuctionsTab)
 
 --buy tab
 	--frames
