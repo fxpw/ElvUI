@@ -16,14 +16,14 @@ local function LoadSkin()
 		tab.HighlightRight:StripTextures()
 		S:HandleTab(tab)
 	end
-	local tab = AuctionHouseFrameSellTab
+	tab = AuctionHouseFrameSellTab
 	if (tab) then
 		tab.HighlightLeft:StripTextures()
 		tab.HighlightMiddle:StripTextures()
 		tab.HighlightRight:StripTextures()
 		S:HandleTab(tab)
 	end
-	local tab = AuctionHouseFrameAuctionsTab
+	tab = AuctionHouseFrameAuctionsTab
 	if (tab) then
 		tab.HighlightLeft:StripTextures()
 		tab.HighlightMiddle:StripTextures()
