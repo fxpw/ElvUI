@@ -45,11 +45,19 @@ S:AddCallbackForAddon("Blizzard_GuildBankUI", "Skin_Blizzard_GuildBankUI", funct
 	GuildBankTransactionsScrollFrame:StripTextures()
 
 	S:HandleScrollBar(GuildBankTransactionsScrollFrameScrollBar)
-
-	S:HandleTab(GuildBankFrameTab1)
-	S:HandleTab(GuildBankFrameTab2)
-	S:HandleTab(GuildBankFrameTab3)
-	S:HandleTab(GuildBankFrameTab4)
+	for i = 1,4 do
+		local tab = _G["GuildBankFrameTab"..i]
+		if (tab) then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
+			S:HandleTab(tab)
+		end
+	end
+	-- S:HandleTab(GuildBankFrameTab1)
+	-- S:HandleTab(GuildBankFrameTab2)
+	-- S:HandleTab(GuildBankFrameTab3)
+	-- S:HandleTab(GuildBankFrameTab4)
 
 	for i = 1, 6 do
 		local tab = _G["GuildBankTab" .. i]
