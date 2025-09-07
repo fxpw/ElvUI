@@ -16,6 +16,9 @@ local function LoadSkin()
 	for i = 1, 5 do
 		tab = _G["InspectFrameTab"..i]
 		if tab then
+			tab.HighlightLeft:StripTextures()
+			tab.HighlightMiddle:StripTextures()
+			tab.HighlightRight:StripTextures()
 			S:HandleTab(tab)
 			tab:SetWidth(25)
 		end

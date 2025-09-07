@@ -32,6 +32,7 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 	S:HandleTab(InspectFrameTab2)
 	S:HandleTab(InspectFrameTab3)
 
+
 	InspectPaperDollFrame:StripTextures()
 
 	local slots = {
