@@ -8050,6 +8050,7 @@ globals = {
 	"HardcoreFrameNavBar",
 	"HardcoreFrameNavBarOverlay",
 	"HardcoreFrameNavBarHomeButton",
+	"Custom_RouletteFrameCloseButton",
 	"FriendsFriendsScrollFrameScrollBar",
 	"FriendsFriendsScrollFrameScrollBarScrollDownButton",
 	"FriendsFriendsScrollFrameScrollBarScrollUpButton",
