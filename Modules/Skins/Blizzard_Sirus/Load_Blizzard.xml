@@ -41,4 +41,5 @@
 	<Script file="Sirus_ToyCollection.lua"/>
 	<Script file="Sirus_LegacyCollection.lua"/>
 	<Script file="Sirus_Hardcore.lua"/>
+	<Script file="Sirus_BattlePass.lua"/>
 </Ui>

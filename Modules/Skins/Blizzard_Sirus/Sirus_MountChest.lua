@@ -7,6 +7,8 @@ local S = E:GetModule("Skins")
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.mountChest ~= true then return end
 
+	if not Custom_MountChestFrame then return end
+
 	--Custom_MountChestFrame:SetParent(UIParent)
 	Custom_MountChestFrame:SetScale(E.mult * UIParent:GetScale())
 
