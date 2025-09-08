@@ -37,7 +37,8 @@ local function ApplyElvUIFontForce(frame)
 		local r = select(i, frame:GetRegions())
 		if r and r.GetObjectType and r:GetObjectType() == "FontString" and r.SetFont then
 			local _, size, flags = r:GetFont()
-			r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())), (size and size > 0) and size or 12, flags or "")
+			r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())), (size and size > 0) and size or 12,
+				flags or "")
 		end
 	end
 	for i = 1, (frame:GetNumChildren() or 0) do
@@ -352,6 +353,47 @@ local function HandleBattlePassFrame()
 			for i = 1, (root:GetNumChildren() or 0) do
 				local child = select(i, root:GetChildren())
 				if child then
+					local cb = child.CancelButton
+					if cb then
+						child:StripTextures()
+						-- child:CreateBackdrop("Transparent")
+						-- child:SetBackdropBorderColor(unpack(E.media.bordercolor))
+						-- S:HandleFrame(child,true,false)
+						S:HandleCloseButton(cb);
+					end
+					local ns = child.NineSliceBorder
+					if(ns)then
+						ns:StripTextures()
+					end
+					local ng = child.NineSliceGlow
+					if(ng)then
+						ng:StripTextures()
+					end
+					-- local checkbox = child.TrackButton
+					-- if(checkbox)then
+					-- 	S:HandleCheckBox(checkbox)
+					-- end
+					--  _G.ElvUI[1]:GetModule("Skins"):HandleStatusBar(BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar)
+					-- BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar:SetFrameLevel(BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar:GetFrameLevel()+1)
+					-- BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2Progress:SetFrameLevel(BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2Progress:GetFrameLevel()+1)
+					-- BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2Progress:SetFrameStrata("DIALOG")
+					-- S:HandleStatusBar(esb)
+					-- if esb.Background then
+					-- 	BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar.backdrop:SetTexture(nil)
+					-- 	BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar.backdrop:SetAlpha(0)
+					-- end
+					-- if esb.Overlay then
+					-- 	BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar.Overlay:SetTexture(nil)
+					-- 	BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar.Overlay:SetAlpha(0)
+					-- end
+					local status = child.Progress and child.Progress.StatusBar
+					if(status)then
+						S:HandleStatusBar(status)
+						if status.backdrop and status.backdrop.SetTexture then
+							status.backdrop:SetTexture(nil)
+						end
+					end
+					-- S:HandleFrame(child)
 					if child.ActionButton then
 						ReskinPKBTButton(child.ActionButton)
 						child.ActionButton:Show()
@@ -387,12 +429,14 @@ local function HandleBattlePassFrame()
 				local freeButton = self.FreeFrame and self.FreeFrame.ActionButton
 				local premButton = self.PremiumFrame and self.PremiumFrame.ActionButton
 				if freeButton then
-					ReskinPKBTButton(freeButton)
-					freeButton:Show()
+					S:HandleButton(freeButton)
+					-- ReskinPKBTButton(freeButton)
+					-- freeButton:Show()
 				end
 				if premButton then
-					ReskinPKBTButton(premButton)
-					premButton:Show()
+					S:HandleButton(premButton)
+					-- ReskinPKBTButton(premButton)
+					-- premButton:Show()
 				end
 			end)
 			hooksecurefunc(_G.BattlePassLevelCardMixin, "SetState", function(self)
@@ -402,9 +446,11 @@ local function HandleBattlePassFrame()
 				local fb = self.FreeFrame and self.FreeFrame.ActionButton
 				local pb = self.PremiumFrame and self.PremiumFrame.ActionButton
 				if fb then
+					S:HandleButton(fb)
 					fb:Show()
 				end
 				if pb then
+					S:HandleButton(pb)
 					pb:Show()
 				end
 			end)
@@ -412,9 +458,11 @@ local function HandleBattlePassFrame()
 				local fb = self.FreeFrame and self.FreeFrame.ActionButton
 				local pb = self.PremiumFrame and self.PremiumFrame.ActionButton
 				if fb then
+					S:HandleButton(fb)
 					fb:Show()
 				end
 				if pb then
+					S:HandleButton(pb)
 					pb:Show()
 				end
 			end)
@@ -425,12 +473,14 @@ local function HandleBattlePassFrame()
 				local fb = card.FreeFrame and card.FreeFrame.ActionButton
 				local pb = card.PremiumFrame and card.PremiumFrame.ActionButton
 				if fb then
-					ReskinPKBTButton(fb)
-					fb:Show()
+					S:HandleButton(fb)
+					-- ReskinPKBTButton(fb)
+					-- fb:Show()
 				end
 				if pb then
-					ReskinPKBTButton(pb)
-					pb:Show()
+					S:HandleButton(pb)
+					-- ReskinPKBTButton(pb)
+					-- pb:Show()
 				end
 			end
 		end
@@ -471,7 +521,8 @@ local function HandleBattlePassFrame()
 									r:Show()
 								end
 								local _, size, flags = r:GetFont()
-								r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())), size and size > 0 and size or 12,
+								r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())),
+									size and size > 0 and size or 12,
 									flags or "")
 							end
 						end
@@ -519,8 +570,10 @@ local function HandleBattlePassFrame()
 
 	if f.PurchasePremiumDialog then
 		local d = f.PurchasePremiumDialog
-		d:StripTextures(true)
-		d:SetTemplate("Transparent")
+		S:HandleFrame(BattlePassFramePurchasePremiumDialog)
+		S:HandleFrame(d)
+		-- d:StripTextures(true)
+		-- d:SetTemplate("Transparent")
 		if d.CloseButton then
 			S:HandleCloseButton(d.CloseButton)
 		end
@@ -532,8 +585,9 @@ local function HandleBattlePassFrame()
 
 	if f.PurchaseExperienceDialog then
 		local d = f.PurchaseExperienceDialog
-		d:StripTextures(true)
-		d:SetTemplate("Transparent")
+		S:HandleFrame(BattlePassFramePurchaseLevelExperienceDialog)
+		-- d:StripTextures(true)
+		-- d:SetTemplate("Transparent")
 		if d.CloseButton then
 			S:HandleCloseButton(d.CloseButton)
 		end
@@ -634,6 +688,7 @@ local function HandleBattlePassFrame()
 
 	if f.PurchaseLevelExperienceDialog then
 		local d = f.PurchaseLevelExperienceDialog
+		S:HandleFrame(BattlePassFramePurchaseLevelExperienceDialog)
 		d:StripTextures(true)
 		d:SetTemplate("Transparent")
 		if d.CloseButton then
@@ -705,4 +760,3 @@ local function LoadSkin()
 end
 
 S:AddCallback("Custom_BattlePass", LoadSkin)
-
