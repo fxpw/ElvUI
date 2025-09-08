@@ -345,9 +345,31 @@ local function HandleBattlePassFrame()
 
 	if f.Content and f.Content.QuestPage and not f.Content.QuestPage._Elv_FontHooked then
 		f.Content.QuestPage._Elv_FontHooked = true
+		local function SkinAllQuestActionButtons(root)
+			if not root or not root.GetNumChildren then
+				return
+			end
+			for i = 1, (root:GetNumChildren() or 0) do
+				local child = select(i, root:GetChildren())
+				if child then
+					if child.ActionButton then
+						ReskinPKBTButton(child.ActionButton)
+						child.ActionButton:Show()
+					end
+					SkinAllQuestActionButtons(child)
+				end
+			end
+		end
 		hooksecurefunc(f.Content.QuestPage, "UpdateQuestHolders", function(self)
 			ApplyElvUIFont(self)
+			if self.ScrollFrame and self.ScrollFrame.ScrollChild then
+				SkinAllQuestActionButtons(self.ScrollFrame.ScrollChild)
+			end
 		end)
+		-- run once for currently existing frames
+		if f.Content.QuestPage.ScrollFrame and f.Content.QuestPage.ScrollFrame.ScrollChild then
+			SkinAllQuestActionButtons(f.Content.QuestPage.ScrollFrame.ScrollChild)
+		end
 	end
 	if _G.BattlePassQuestHolderMixin and _G.BattlePassQuestHolderMixin.UpdateQuests and not S._Elv_QuestHolderFontsHooked then
 		S._Elv_QuestHolderFontsHooked = true
@@ -619,6 +641,28 @@ local function HandleBattlePassFrame()
 		end
 		if d.PurchaseButton then
 			S:HandleButton(d.PurchaseButton)
+		end
+		ApplyElvUIFont(d)
+	end
+
+	if f.QuestActionDialog then
+		local d = f.QuestActionDialog
+		d:StripTextures(true)
+		d:SetTemplate("Transparent")
+		if d.NineSlice then
+			d.NineSlice:Hide()
+		end
+		if d.SetBackdropBorderColor then
+			d:SetBackdropBorderColor(0, 0, 0, 0)
+		end
+		if d.backdrop and d.backdrop.SetBackdropBorderColor then
+			d.backdrop:SetBackdropBorderColor(0, 0, 0, 0)
+		end
+		if d.OkButton then
+			S:HandleButton(d.OkButton)
+		end
+		if d.CancelButton then
+			S:HandleButton(d.CancelButton)
 		end
 		ApplyElvUIFont(d)
 	end
