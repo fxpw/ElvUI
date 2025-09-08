@@ -7,6 +7,8 @@ local S = E:GetModule("Skins")
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.roulette ~= true then return end
 
+	if not Custom_RouletteFrame then return end
+
 	Custom_RouletteFrame:SetParent(UIParent)
 	Custom_RouletteFrame:SetScale(1)
 	Custom_RouletteFrame:SetFrameStrata("HIGH")
@@ -15,7 +17,10 @@ local function LoadSkin()
 	Custom_RouletteFrame:SetTemplate("Transparent")
 	Custom_RouletteFrame:SetSize(804, 600)
 
-	S:HandleCloseButton(Custom_RouletteFrame.closeButton)
+	local closeBtn = Custom_RouletteFrame.closeButton or Custom_RouletteFrameCloseButton
+	if closeBtn then
+		S:HandleCloseButton(closeBtn)
+	end
 
 	Custom_RouletteFrame.HeaderFrame.Background:Hide()
 	Custom_RouletteFrame.HeaderFrame:SetPoint("TOP", 0, 6)

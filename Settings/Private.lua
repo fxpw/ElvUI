@@ -161,6 +161,7 @@ V.skins.blizzard.hardcore = true
 V.skins.blizzard.encounterjournal = true
 V.skins.blizzard.roulette = true
 V.skins.blizzard.mountChest = true
+V.skins.blizzard.battlePass = true
 V.skins.blizzard.extraButton = true
 V.skins.blizzard.headhunting = true
 V.skins.blizzard.toyCollection = true
