@@ -252,7 +252,7 @@ local function HandleBattlePassFrame()
 	if not f._Elv_ScaleHooked then
 		f._Elv_ScaleHooked = true
 		f:HookScript("OnShow", function(self)
-			self:SetScale(0.90)
+			self:SetScale(E.global.general.UIScale)
 		end)
 	end
 
