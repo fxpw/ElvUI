@@ -572,8 +572,6 @@ local function HandleBattlePassFrame()
 		local d = f.PurchasePremiumDialog
 		S:HandleFrame(BattlePassFramePurchasePremiumDialog)
 		S:HandleFrame(d)
-		-- d:StripTextures(true)
-		-- d:SetTemplate("Transparent")
 		if d.CloseButton then
 			S:HandleCloseButton(d.CloseButton)
 		end
