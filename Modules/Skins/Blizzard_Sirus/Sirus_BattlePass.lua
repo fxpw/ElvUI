@@ -389,8 +389,9 @@ local function HandleBattlePassFrame()
 					local status = child.Progress and child.Progress.StatusBar
 					if(status)then
 						S:HandleStatusBar(status)
-						if status.backdrop and status.backdrop.SetTexture then
-							status.backdrop:SetTexture(nil)
+						if status.backdrop then
+							status.backdrop:Hide()
+							status.backdrop:StripTextures()
 						end
 					end
 					-- S:HandleFrame(child)
