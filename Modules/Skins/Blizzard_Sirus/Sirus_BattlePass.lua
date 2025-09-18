@@ -355,20 +355,43 @@ local function HandleBattlePassFrame()
 				if child then
 					local cb = child.CancelButton
 					if cb then
-						child:StripTextures()
+						-- child:StripTextures()
+						-- child.backdrop = CreateFrame("Frame", nil, child)
+						-- child.backdrop:SetAllPoints(child)
+						-- local frameLevel = child.GetFrameLevel and child:GetFrameLevel()
+						-- local frameLevelMinusOne = frameLevel and (frameLevel - 4)
+
+						-- if frameLevelMinusOne and (frameLevelMinusOne >= 0) then
+						-- 	child.backdrop:SetFrameLevel(frameLevelMinusOne)
+						-- else
+						-- 	child.backdrop:SetFrameLevel(0)
+						-- end
+						-- local borderr, borderg, borderb = unpack( E.media.bordercolor)
+						-- local backdropr, backdropg, backdropb, backdropa = unpack(E.media.backdropfadecolor)
+						-- child.backdrop:SetBackdrop({
+						-- 	bgFile = E.media.blankTex,
+						-- 	edgeFile = E.media.blankTex,
+						-- 	tile = false, tileSize = 0, edgeSize = E.mult,
+						-- 	insets = {left = 0, right = 0, top = 0, bottom = 0}
+						-- })
+
+						-- child.backdrop:SetBackdropColor(backdropr, backdropg, backdropb, backdropa)
+						-- child.backdrop:SetBackdropBorderColor(borderr, borderg, borderb, 1)
 						-- child:CreateBackdrop("Transparent")
 						-- child:SetBackdropBorderColor(unpack(E.media.bordercolor))
 						-- S:HandleFrame(child,true,false)
-						S:HandleCloseButton(cb);
+						-- S:HandleCloseButton(cb);
 					end
-					local ns = child.NineSliceBorder
-					if(ns)then
-						ns:StripTextures()
-					end
-					local ng = child.NineSliceGlow
-					if(ng)then
-						ng:StripTextures()
-					end
+					-- local ns = child.NineSliceBorder
+					-- if(ns)then
+					-- 	ns:StripTextures()
+					-- 	ns:Hide()
+					-- end
+					-- local ng = child.NineSliceGlow
+					-- if(ng)then
+					-- 	ng:Hide()
+					-- 	ng:StripTextures()
+					-- end
 					-- local checkbox = child.TrackButton
 					-- if(checkbox)then
 					-- 	S:HandleCheckBox(checkbox)
@@ -386,14 +409,14 @@ local function HandleBattlePassFrame()
 					-- 	BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar.Overlay:SetTexture(nil)
 					-- 	BattlePassFrameContentQuestPageScrollFrameScrollChildQuestHolder2QuestFrame2ProgressStatusBar.Overlay:SetAlpha(0)
 					-- end
-					local status = child.Progress and child.Progress.StatusBar
-					if(status)then
-						S:HandleStatusBar(status)
-						if status.backdrop then
-							status.backdrop:Hide()
-							status.backdrop:StripTextures()
-						end
-					end
+					-- local status = child.Progress and child.Progress.StatusBar
+					-- if(status)then
+					-- 	S:HandleStatusBar(status)
+					-- 	if status.backdrop then
+					-- 		status.backdrop:Hide()
+					-- 		status.backdrop:StripTextures()
+					-- 	end
+					-- end
 					-- S:HandleFrame(child)
 					if child.ActionButton then
 						ReskinPKBTButton(child.ActionButton)
