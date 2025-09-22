@@ -353,8 +353,8 @@ local function HandleBattlePassFrame()
 			for i = 1, (root:GetNumChildren() or 0) do
 				local child = select(i, root:GetChildren())
 				if child then
-					local cb = child.CancelButton
-					if cb then
+					-- local cb = child.CancelButton
+					-- if cb then
 						-- child:StripTextures()
 						-- child.backdrop = CreateFrame("Frame", nil, child)
 						-- child.backdrop:SetAllPoints(child)
@@ -381,7 +381,7 @@ local function HandleBattlePassFrame()
 						-- child:SetBackdropBorderColor(unpack(E.media.bordercolor))
 						-- S:HandleFrame(child,true,false)
 						-- S:HandleCloseButton(cb);
-					end
+					-- end
 					-- local ns = child.NineSliceBorder
 					-- if(ns)then
 					-- 	ns:StripTextures()

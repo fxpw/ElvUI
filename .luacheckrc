@@ -8057,6 +8057,8 @@ globals = {
 	"FriendsFriendsScrollFrameScrollBarScrollDownButton",
 	"FriendsFriendsScrollFrameScrollBarScrollUpButton",
 	"FriendsFriendsScrollFrameScrollChildFrame",
+	"InterfaceOptionsNotificationPanelResetPosition",
+	"InterfaceOptionsNotificationPanelToggleMove",
 	"FriendsFriendsSendRequestButton",
 	"FriendsFriendsWaitFrame",
 	"FriendsListFrame",
