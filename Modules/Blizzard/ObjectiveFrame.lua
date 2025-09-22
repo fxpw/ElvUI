@@ -75,3 +75,38 @@ function B:ObjectiveTracker_Setup()
 	B:ObjectiveTracker_AutoHide()
 	B:ObjectiveTracker_SetHeight()
 end
+
+local function SocialToast_SetPoint(tracker, _, parent)
+	if parent ~= tracker.holder then
+		tracker:ClearAllPoints()
+		tracker:SetPoint('TOP', tracker.holder)
+	end
+end
+
+function B:SocialToast_Setup()
+	InterfaceOptionsNotificationPanelResetPosition:Hide()
+	InterfaceOptionsNotificationPanelToggleMove:Hide()
+
+	local holder = CreateFrame('Frame', 'SocialToastHolder', E.UIParent)
+	holder:Point('TOPRIGHT', E.UIParent, -135, -300)
+	local w, h = SocialToastAnchorFrame:GetSize()
+	holder:Size(w, h)
+
+	E:CreateMover(holder, 'SocialToastMover', L["SocialToast Frame"], nil, nil, nil, nil, nil, 'general,objectiveFrameGroup')
+	holder:SetAllPoints(_G.SocialToastMover)
+
+	local tracker = _G.SocialToastAnchorFrame
+	tracker:SetMovable(true)
+	tracker:SetUserPlaced(true)
+	tracker:SetDontSavePosition(true)
+	tracker:SetClampedToScreen(false)
+	tracker:ClearAllPoints()
+	tracker:SetPoint('TOP', holder)
+	tracker.holder = holder
+
+	hooksecurefunc(tracker, 'SetPoint', SocialToast_SetPoint)
+	-- tracker.UpdateHeight = E.noop
+
+	-- B:ObjectiveTracker_AutoHide()
+	-- B:ObjectiveTracker_SetHeight()
+end

@@ -79,6 +79,7 @@ function B:Initialize()
 	self:PositionGMFrames()
 	self:PositionVehicleFrame()
 	self:ObjectiveTracker_Setup()
+	self:SocialToast_Setup()
 
 	self:RegisterEvent("ADDON_LOADED")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", SetMapToCurrentZone)
