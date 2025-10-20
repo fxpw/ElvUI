@@ -15,7 +15,7 @@
 	<Script file='LibAceConfigHelper\LibAceConfigHelper.lua'/>
 	<Script file='LibDeflate\LibDeflate.lua'/>
 	<Include file="Compat\Compat.xml"/>
-	<Script file="SpecializedAbsorbs-1.0\SpecializedAbsorbs-1.0.lua"/>
+	<!-- <Script file="SpecializedAbsorbs-1.0\SpecializedAbsorbs-1.0.lua"/> -->
 	<!--  -->
 	<Script file="LibSimpleSticky\LibSimpleSticky.lua"/>
 	<Script file="LibSpellRange-1.0\LibSpellRange-1.0.lua"/>

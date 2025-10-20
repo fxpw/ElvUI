@@ -90,12 +90,12 @@ local UnitGUID = UnitGUID
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 
-local SA = LibStub("SpecializedAbsorbs-1.0")
+-- local SA = LibStub("SpecializedAbsorbs-1.0")
 local has_absorb_func = UnitGetTotalAbsorbs and true or false
 
 local HealComm = LibStub("LibHealComm-4.0")
 
-SA.CheckFlags = false -- for everyone/true for only groups.
+-- SA.CheckFlags = false -- for everyone/true for only groups.
 
 local myIncomingHeal
 local allIncomingHeal
@@ -124,11 +124,11 @@ local function Update(self, event, unit, absorb)
 	unitGUID = UnitGUID(unit)
 	-- local lookAhead = element.lookAhead or 5
 	-- print(absorb,"---------------124")
-	
+
 	myIncomingHeal = (HealComm:GetHealAmount(unitGUID, HealComm.ALL_HEALS, nil--[[GetTime() + lookAhead]], UnitGUID("player")) or 0) * ((HealComm:GetHealModifier(unitGUID) or 1) or 0)
 	allIncomingHeal = (HealComm:GetHealAmount(unitGUID, HealComm.ALL_HEALS, nil--[[GetTime() + lookAhead]]) or 0) * ((HealComm:GetHealModifier(unitGUID) or 1) or 0)
-	local abs = has_absorb_func and UnitGetTotalAbsorbs(unit) or SA.UnitTotal(UnitGUID(unit)) or 0
-	local abs2 = has_absorb_func and UnitGetTotalHealAbsorbs(unit) or SA.UnitTotalHealAbsorbs(UnitGUID(unit)) or 0
+	local abs = UnitGetTotalAbsorbs(unit) or 0
+	local abs2 = UnitGetTotalHealAbsorbs(unit) or 0
 	absorb = absorb or abs or 0
 	healAbsorb = abs2 or 0
 	health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
@@ -244,7 +244,9 @@ local function Enable(self)
 		element.healType = element.healType or HealComm.ALL_HEALS
 
 		self:RegisterEvent("UNIT_HEALTH", Path)
-		self:RegisterEvent("UNIT_MAXHEALTH", Path)
+		self:RegisterEvent("UNIT_HEALTH", Path)
+		self:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED", Path)
+
 
 		local function HealCommUpdate(...)
 			if self.HealCommBar and self:IsVisible() then
@@ -277,7 +279,8 @@ local function Enable(self)
 		HealComm.RegisterCallback(element, "HealComm_ModifierChanged", HealComm_Modified)
 		HealComm.RegisterCallback(element, "HealComm_GUIDDisappeared", HealComm_Modified)
 		self.UNIT_ABSORB_AMOUNT_CHANGED = UNIT_ABSORB_AMOUNT_CHANGED
-		SA.RegisterUnitCallbacks(self, "UNIT_ABSORB_AMOUNT_CHANGED")
+		-- HealComm.RegisterCallback(self, "UNIT_ABSORB_AMOUNT_CHANGED", UNIT_ABSORB_AMOUNT_CHANGED)
+		-- SA.RegisterUnitCallbacks(self, "UNIT_ABSORB_AMOUNT_CHANGED")
 
 		if not element.maxOverflow then
 			element.maxOverflow = 1.05
@@ -358,6 +361,7 @@ local function Disable(self)
 
 		self:UnregisterEvent("UNIT_HEALTH", Path)
 		self:UnregisterEvent("UNIT_MAXHEALTH", Path)
+		self:UnregisterEvent("UNIT_ABSORB_AMOUNT_CHANGED", Path)
 
 		HealComm.UnregisterCallback(element, "HealComm_HealStarted")
 		HealComm.UnregisterCallback(element, "HealComm_HealUpdated")
@@ -366,7 +370,8 @@ local function Disable(self)
 		HealComm.UnregisterCallback(element, "HealComm_ModifierChanged")
 		HealComm.UnregisterCallback(element, "HealComm_GUIDDisappeared")
 		self.UNIT_ABSORB_AMOUNT_CHANGED = nil
-		SA.UnregisterAllCallbacks(self)
+		-- HealComm.UnregisterCallback(self, "UNIT_ABSORB_AMOUNT_CHANGED")
+		-- SA.UnregisterAllCallbacks(self)
 	end
 end
 
