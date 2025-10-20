@@ -91,6 +91,8 @@ local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 
 local SA = LibStub("SpecializedAbsorbs-1.0")
+local has_absorb_func = UnitGetTotalAbsorbs and true or false
+
 local HealComm = LibStub("LibHealComm-4.0")
 
 SA.CheckFlags = false -- for everyone/true for only groups.
@@ -122,10 +124,13 @@ local function Update(self, event, unit, absorb)
 	unitGUID = UnitGUID(unit)
 	-- local lookAhead = element.lookAhead or 5
 	-- print(absorb,"---------------124")
+	
 	myIncomingHeal = (HealComm:GetHealAmount(unitGUID, HealComm.ALL_HEALS, nil--[[GetTime() + lookAhead]], UnitGUID("player")) or 0) * ((HealComm:GetHealModifier(unitGUID) or 1) or 0)
 	allIncomingHeal = (HealComm:GetHealAmount(unitGUID, HealComm.ALL_HEALS, nil--[[GetTime() + lookAhead]]) or 0) * ((HealComm:GetHealModifier(unitGUID) or 1) or 0)
-	absorb = absorb or SA.UnitTotal(UnitGUID(unit)) or 0
-	healAbsorb = SA.UnitTotalHealAbsorbs(UnitGUID(unit)) or 0
+	local abs = has_absorb_func and UnitGetTotalAbsorbs(unit) or SA.UnitTotal(UnitGUID(unit)) or 0
+	local abs2 = has_absorb_func and UnitGetTotalHealAbsorbs(unit) or SA.UnitTotalHealAbsorbs(UnitGUID(unit)) or 0
+	absorb = absorb or abs or 0
+	healAbsorb = abs2 or 0
 	health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
 	otherIncomingHeal = 0
 	hasOverHealAbsorb = false

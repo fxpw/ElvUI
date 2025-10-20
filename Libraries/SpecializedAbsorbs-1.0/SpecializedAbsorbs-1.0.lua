@@ -419,96 +419,103 @@ function Core.Error(...)
 end
 
 function Core.Enable()
-	playerclass = select(2, UnitClass("player"))
-	playerid = UnitGUID("player")
+	print(UnitGetTotalAbsorbs);
+	if UnitGetTotalAbsorbs then
+		playerclass = select(2, UnitClass("player"))
+		playerid = UnitGUID("player")
+		PlayerGUID = UnitGUID("player")
+		lib.Enabled = true
+	else
+		playerclass = select(2, UnitClass("player"))
+		playerid = UnitGUID("player")
+		Core.activeEffects = { bySpell = {}, byPriority = {}, Area = {} }
 
-	Core.activeEffects = { bySpell = {}, byPriority = {}, Area = {} }
+		activeEffectsBySpell = Core.activeEffects.bySpell
+		activeEffectsByPriority = Core.activeEffects.byPriority
+		activeAreaEffects = Core.activeEffects.Area
 
-	activeEffectsBySpell = Core.activeEffects.bySpell
-	activeEffectsByPriority = Core.activeEffects.byPriority
-	activeAreaEffects = Core.activeEffects.Area
+		Core.activeCharges = {}
+		activeCharges = Core.activeCharges
 
-	Core.activeCharges = {}
-	activeCharges = Core.activeCharges
+		Effects = Core.Effects
+		AreaTriggers = Core.AreaTriggers
 
-	Effects = Core.Effects
-	AreaTriggers = Core.AreaTriggers
+		CombatTriggersOnHeal = Core.CombatTriggers.OnHeal
+		CombatTriggersOnHealCrit = Core.CombatTriggers.OnHealCrit
+		CombatTriggersOnAuraApplied = Core.CombatTriggers.OnAuraApplied
+		CombatTriggersOnAuraRemoved = Core.CombatTriggers.OnAuraRemoved
 
-	CombatTriggersOnHeal = Core.CombatTriggers.OnHeal
-	CombatTriggersOnHealCrit = Core.CombatTriggers.OnHealCrit
-	CombatTriggersOnAuraApplied = Core.CombatTriggers.OnAuraApplied
-	CombatTriggersOnAuraRemoved = Core.CombatTriggers.OnAuraRemoved
+		Core.UnitStatsTable = { [playerid] = { playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0, 0, GetSelfMultipleValue() } }
+		UnitStatsTable = Core.UnitStatsTable
 
-	Core.UnitStatsTable = { [playerid] = { playerclass, 0, 0, 1.0, 0, 0, 0, 0, 0, 0, GetSelfMultipleValue() } }
-	UnitStatsTable = Core.UnitStatsTable
+		Core.Scaling = { [-1] = {}, [playerid] = {} }
+		Scaling = Core.Scaling
 
-	Core.Scaling = { [-1] = {}, [playerid] = {} }
-	Scaling = Core.Scaling
+		playerScaling = Scaling[playerid]
+		privateScaling = Scaling[-1]
 
-	playerScaling = Scaling[playerid]
-	privateScaling = Scaling[-1]
+		Core.GUIDtoAbsorbHealSpells = {}
+		GUIDtoAbsorbHealSpells = Core.GUIDtoAbsorbHealSpells
 
-	Core.GUIDtoAbsorbHealSpells = {}
-	GUIDtoAbsorbHealSpells = Core.GUIDtoAbsorbHealSpells
+		Core.RegisterEvent("ZONE_CHANGED_NEW_AREA")
+		Events.ZONE_CHANGED_NEW_AREA()
 
-	Core.RegisterEvent("ZONE_CHANGED_NEW_AREA")
-	Events.ZONE_CHANGED_NEW_AREA()
+		if playerclass == "DEATHKNIGHT" then
+			Core.RegisterEvent("UNIT_ATTACK_POWER")
+		elseif playerclass == "DRUID" then
+			Core.RegisterEvent("UNIT_ATTACK_POWER")
+		elseif playerclass == "MAGE" then
+			Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+		elseif playerclass == "PALADIN" then
+			Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+		elseif playerclass == "PRIEST" then
+			Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+		elseif playerclass == "WARLOCK" then
+			Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+		end
 
-	if playerclass == "DEATHKNIGHT" then
-		Core.RegisterEvent("UNIT_ATTACK_POWER")
-	elseif playerclass == "DRUID" then
-		Core.RegisterEvent("UNIT_ATTACK_POWER")
-	elseif playerclass == "MAGE" then
-		Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
-	elseif playerclass == "PALADIN" then
-		Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
-	elseif playerclass == "PRIEST" then
-		Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
-	elseif playerclass == "WARLOCK" then
-		Core.RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
+		Events.STATS_CHANGED()
+
+		-- This has to happen before class init, else we get no initial scaling broadcast
+		if not Core.Silent then
+			Core.SetVerbose()
+		end
+
+		if OnEnableClass[playerclass] then
+			OnEnableClass[playerclass]()
+		end
+
+		if Events.PLAYER_LEVEL_UP then
+			Core.RegisterEvent("PLAYER_LEVEL_UP")
+		end
+
+		if Events.PLAYER_TALENT_UPDATE then
+			Core.RegisterEvent("PLAYER_TALENT_UPDATE")
+		end
+
+		if Events.GLYPH_UPDATED then
+			Core.RegisterEvent("GLYPH_UPDATED")
+		end
+
+		if Events.PLAYER_EQUIPMENT_CHANGED then
+			Core.RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		end
+
+		Core:ScheduleRepeatingTimer(Events.OnPeriodicBroadcast, 300)
+
+		Core:RegisterComm(COMM_UNITSTATS, Events.OnUnitStatsReceived)
+		Core:RegisterComm(COMM_UNITSTATS_ALT, Events.OnUnitStatsReceived)
+
+		Core:RegisterComm(COMM_SCALING, Events.OnScalingReceived)
+		Core:RegisterComm(COMM_SCALING_ALT, Events.OnScalingReceived)
+
+		if not lib.Passive then
+			Core:SetActive()
+		end
+		TankCLEUFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+		PlayerGUID = UnitGUID("player")
+		lib.Enabled = true
 	end
-
-	Events.STATS_CHANGED()
-
-	-- This has to happen before class init, else we get no initial scaling broadcast
-	if not Core.Silent then
-		Core.SetVerbose()
-	end
-
-	if OnEnableClass[playerclass] then
-		OnEnableClass[playerclass]()
-	end
-
-	if Events.PLAYER_LEVEL_UP then
-		Core.RegisterEvent("PLAYER_LEVEL_UP")
-	end
-
-	if Events.PLAYER_TALENT_UPDATE then
-		Core.RegisterEvent("PLAYER_TALENT_UPDATE")
-	end
-
-	if Events.GLYPH_UPDATED then
-		Core.RegisterEvent("GLYPH_UPDATED")
-	end
-
-	if Events.PLAYER_EQUIPMENT_CHANGED then
-		Core.RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	end
-
-	Core:ScheduleRepeatingTimer(Events.OnPeriodicBroadcast, 300)
-
-	Core:RegisterComm(COMM_UNITSTATS, Events.OnUnitStatsReceived)
-	Core:RegisterComm(COMM_UNITSTATS_ALT, Events.OnUnitStatsReceived)
-
-	Core:RegisterComm(COMM_SCALING, Events.OnScalingReceived)
-	Core:RegisterComm(COMM_SCALING_ALT, Events.OnScalingReceived)
-
-	if not lib.Passive then
-		Core:SetActive()
-	end
-	TankCLEUFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	PlayerGUID = UnitGUID("player")
-	lib.Enabled = true
 end
 
 -- These function has to clear any memory this version of the library may
@@ -574,7 +581,8 @@ function Core.ApplySingularEffect(timestamp, srcGUID, srcName, dstGUID, dstName,
 
 	local value, quality = effectInfo[3](srcGUID, srcName, dstGUID, dstName, spellid, destEffects)
 	if value == nil then return end
-	value = floor(value * ((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1))
+	value = floor(value *
+		((UnitStatsTable[srcGUID] and UnitStatsTable[srcGUID][UNIT_STAT_VALUE.VIP_MULTIPLY_VALUE]) or 1))
 	if t5TanksSpellId[spellid] and value > 50000 then
 		value = 50000
 	end
@@ -1024,6 +1032,7 @@ RemoveActiveEffect = Core.RemoveActiveEffect
 ---------------------
 
 function Events.PLAYER_ENTERING_WORLD()
+	if UnitGetTotalAbsorbs then return end
 	if not GetTalentInfo(1, 1) then
 		Core.RegisterEvent("PLAYER_ALIVE")
 	else
@@ -1216,7 +1225,7 @@ function Events.OnUnitStatsReceived(prefix, text, distribution, target)
 	if not text then return end
 
 	local success, guid, class, ap, sp, dodge, parry, armor, block, blockChance, parryChance, vip_multiply = Core
-	:Deserialize(text)
+		:Deserialize(text)
 	if not (success and guid and class and ap and sp) then return end
 	if guid == playerid then return end
 
@@ -2144,7 +2153,7 @@ local function priest_PowerWordShield_Create(srcGUID, srcName, dstGUID, dstName,
 	sourceScaling[spellid] = sourceScaling[spellid] or priest_defaultScaling[spellid]
 	if sourceScaling[spellid] then
 		return
-		floor(floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER) *
+			floor(floor((sourceScaling[spellid][1] + sp * sourceScaling[spellid][2]) * ZONE_MODIFIER) *
 				sourceScaling[spellid][3]),
 			min(quality1, quality2)
 	end
@@ -2240,9 +2249,9 @@ end
 
 local function priest_UpdatePlayerScaling()
 	local baseFactor = (1.0 + (privateScaling["TwinDisc"] * 0.01)) *
-			(1.0 + (privateScaling["FocusedPower"] * 0.02)) *
-			(1.0 + (privateScaling["SpiritualHealing"] * 0.02)) *
-			(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05 + privateScaling["2pcRaid5"] * 0.15))
+		(1.0 + (privateScaling["FocusedPower"] * 0.02)) *
+		(1.0 + (privateScaling["SpiritualHealing"] * 0.02)) *
+		(1.0 + ((privateScaling["ImpPWS"] + privateScaling["4pcRaid10"]) * 0.05 + privateScaling["2pcRaid5"] * 0.15))
 	privateScaling.base = baseFactor
 
 	local spFactor = 0.8068
@@ -2296,7 +2305,6 @@ function lib.FindBuff(unit, id)
 		index = index + 1
 	end
 end
-
 
 local function priest_ScanEquipment()
 	local n = 0
@@ -2377,16 +2385,16 @@ local function priest_ScanEquipment()
 	if IsEquippedItem(30152) or IsEquippedItem(158964) or IsEquippedItem(158972) or IsEquippedItem(158980) then
 		n = n + 1
 	end
-	if IsEquippedItem(30154) or IsEquippedItem(158960) or IsEquippedItem(158970) or IsEquippedItem(158984)  then
+	if IsEquippedItem(30154) or IsEquippedItem(158960) or IsEquippedItem(158970) or IsEquippedItem(158984) then
 		n = n + 1
 	end
-	if IsEquippedItem(30150) or IsEquippedItem(158962) or IsEquippedItem(158974) or IsEquippedItem(158982)  then
+	if IsEquippedItem(30150) or IsEquippedItem(158962) or IsEquippedItem(158974) or IsEquippedItem(158982) then
 		n = n + 1
 	end
-	if IsEquippedItem(30151) or IsEquippedItem(158963) or IsEquippedItem(158973) or IsEquippedItem(158983)  then
+	if IsEquippedItem(30151) or IsEquippedItem(158963) or IsEquippedItem(158973) or IsEquippedItem(158983) then
 		n = n + 1
 	end
-	if IsEquippedItem(30153) or IsEquippedItem(158961) or IsEquippedItem(158971) or IsEquippedItem(158981)  then
+	if IsEquippedItem(30153) or IsEquippedItem(158961) or IsEquippedItem(158971) or IsEquippedItem(158981) then
 		n = n + 1
 	end
 
@@ -2760,42 +2768,42 @@ Core.Effects = {
 	[55277] = { 1.0, 15, function() return 1084 * 4, 1.0 end, generic_Hit },              --shaman totem pvp
 
 	--t4 abilities
-	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },             -- Paladin 2T4 God's Hand
-	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },               -- Paladin 2T4 God's Hand
-	[305082] = { 1.0, 30, generic_SpellScalingByTable_Create, generic_Hit, { [305082] = 1250 }, 0.2}, -- Power Word: Shield (rank 14) t4 increase
+	[319166] = { 1.0, 30, paladin_T4GodsHand, generic_Hit },                                        -- Paladin 2T4 God's Hand
+	[321447] = { 1.0, 10, paladin_2T4proto, generic_Hit },                                          -- Paladin 2T4 God's Hand
+	[305082] = { 1.0, 30, generic_SpellScalingByTable_Create, generic_Hit, { [305082] = 1250 }, 0.2 }, -- Power Word: Shield (rank 14) t4 increase
 	--t5 abilities
-	[308143] = priest_PWS_Entry,                                         -- Power Word: Shield (rank 15)
-	[319521] = { 1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit }, -- t6 absorb feral
-	[308125] = { 1.0, 10, deathknight_T52FrostTankOnCreate, generic_Hit }, --t5 fdk tank
-	[319552] = { 1.0, 2, deathknight_T62FrostTankOnCreate, generic_Hit }, --t6 fdk tank
+	[308143] = priest_PWS_Entry,                                                                    -- Power Word: Shield (rank 15)
+	[319521] = { 1.0, 10, druid_t6_SpellAbsorb_Create, druid_t6_SpellHit },                         -- t6 absorb feral
+	[308125] = { 1.0, 10, deathknight_T52FrostTankOnCreate, generic_Hit },                          --t5 fdk tank
+	[319552] = { 1.0, 2, deathknight_T62FrostTankOnCreate, generic_Hit },                           --t6 fdk tank
 
-	[308136] = { 1.0, 20, deathknight_T52BloodTankOnCreate, generic_Hit }, --t5 bdk tank
+	[308136] = { 1.0, 20, deathknight_T52BloodTankOnCreate, generic_Hit },                          --t5 bdk tank
 
-	[310210] = { 1.0, 2, function() return 50000, 1.0 end, generic_Hit }, --t5 warrior
+	[310210] = { 1.0, 2, function() return 50000, 1.0 end, generic_Hit },                           --t5 warrior
 
-	[307921] = { 1.0, 10, paladin_T5TankOnCreate, generic_Hit },         -- t5 paladin
+	[307921] = { 1.0, 10, paladin_T5TankOnCreate, generic_Hit },                                    -- t5 paladin
 	--items
-	[319189] = { 1.0, 4, function() return 18000, 1.0 end, generic_Hit }, --303 запястья
+	[319189] = { 1.0, 4, function() return 18000, 1.0 end, generic_Hit },                           --303 запястья
 
-	[317293] = { 1.0, 10, function() return 1700, 1.0 end, generic_Hit }, -- статуэтка бронзового дракона
-	[315529] = { 1.0, 10, function() return 3660, 1.0 end, generic_Hit }, -- расколотое солнце
-	[75477] = { 1.0, 10, function() return 49207, 1.0 end, generic_Hit }, -- чешка об
-	[75480] = { 1.0, 10, function() return 66420, 1.0 end, generic_Hit }, -- чешка хм
+	[317293] = { 1.0, 10, function() return 1700, 1.0 end, generic_Hit },                           -- статуэтка бронзового дракона
+	[315529] = { 1.0, 10, function() return 3660, 1.0 end, generic_Hit },                           -- расколотое солнце
+	[75477] = { 1.0, 10, function() return 49207, 1.0 end, generic_Hit },                           -- чешка об
+	[75480] = { 1.0, 10, function() return 66420, 1.0 end, generic_Hit },                           -- чешка хм
 
-	[317911] = { 1.0, 10, function() return 722, 1.0 end, generic_Hit }, -- духовный барьер
-	[319738] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 4
-	[319996] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 3
-	[320110] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 2
-	[320221] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },              -- enchant ttg 1
-	[319795] = { 1.0, 5, function() return 3235, 1.0 end, generic_Hit }, -- tg priest
-	[320059] = { 1.0, 5, function() return 2587, 1.0 end, generic_Hit }, -- tg priest
-	[320173] = { 1.0, 5, function() return 1940, 1.0 end, generic_Hit }, -- tg priest
-	[320284] = { 1.0, 5, function() return 1213, 1.0 end, generic_Hit }, -- tg priest
-	[315521] = { 1.0, 10, function() return 2265, 1.0 end, generic_Hit }, -- tg pal?
-	[315523] = { 1.0, 10, function() return 2550, 1.0 end, generic_Hit }, -- tg pal?
-	[315525] = { 1.0, 10, function() return 2880, 1.0 end, generic_Hit }, -- tg pal?
-	[315527] = { 1.0, 10, function() return 3240, 1.0 end, generic_Hit }, -- tg pal?
-	[320439] = { 1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit },      -- race pandaren absorb
+	[317911] = { 1.0, 10, function() return 722, 1.0 end, generic_Hit },                            -- духовный барьер
+	[319738] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },                                         -- enchant ttg 4
+	[319996] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },                                         -- enchant ttg 3
+	[320110] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },                                         -- enchant ttg 2
+	[320221] = { 1.0, 6, paladin_TTG_Absorb, generic_Hit },                                         -- enchant ttg 1
+	[319795] = { 1.0, 5, function() return 3235, 1.0 end, generic_Hit },                            -- tg priest
+	[320059] = { 1.0, 5, function() return 2587, 1.0 end, generic_Hit },                            -- tg priest
+	[320173] = { 1.0, 5, function() return 1940, 1.0 end, generic_Hit },                            -- tg priest
+	[320284] = { 1.0, 5, function() return 1213, 1.0 end, generic_Hit },                            -- tg priest
+	[315521] = { 1.0, 10, function() return 2265, 1.0 end, generic_Hit },                           -- tg pal?
+	[315523] = { 1.0, 10, function() return 2550, 1.0 end, generic_Hit },                           -- tg pal?
+	[315525] = { 1.0, 10, function() return 2880, 1.0 end, generic_Hit },                           -- tg pal?
+	[315527] = { 1.0, 10, function() return 3240, 1.0 end, generic_Hit },                           -- tg pal?
+	[320439] = { 1.0, 10, race_Panda_AbsorbOnCreate, generic_Hit },                                 -- race pandaren absorb
 }
 
 Core.AreaTriggers = {
