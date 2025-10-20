@@ -266,11 +266,11 @@ local function Enable(self)
 			HealCommUpdate(guid)
 		end
 
-		local function UNIT_ABSORB_AMOUNT_CHANGED(_, event, guid, absorb)
-			if UnitGUID(self.unit) == guid then
-				Path(self, event, self.unit, absorb)
-			end
-		end
+		-- local function UNIT_ABSORB_AMOUNT_CHANGED(_, event, guid, absorb)
+		-- 	if UnitGUID(self.unit) == guid then
+		-- 		Path(self, event, self.unit, absorb)
+		-- 	end
+		-- end
 
 		HealComm.RegisterCallback(element, "HealComm_HealStarted", HealComm_Heal_Update)
 		HealComm.RegisterCallback(element, "HealComm_HealUpdated", HealComm_Heal_Update)
@@ -278,7 +278,7 @@ local function Enable(self)
 		HealComm.RegisterCallback(element, "HealComm_HealStopped", HealComm_Heal_Update)
 		HealComm.RegisterCallback(element, "HealComm_ModifierChanged", HealComm_Modified)
 		HealComm.RegisterCallback(element, "HealComm_GUIDDisappeared", HealComm_Modified)
-		self.UNIT_ABSORB_AMOUNT_CHANGED = UNIT_ABSORB_AMOUNT_CHANGED
+		-- self.UNIT_ABSORB_AMOUNT_CHANGED = UNIT_ABSORB_AMOUNT_CHANGED
 
 		if not element.maxOverflow then
 			element.maxOverflow = 1.05
@@ -367,7 +367,7 @@ local function Disable(self)
 		HealComm.UnregisterCallback(element, "HealComm_HealStopped")
 		HealComm.UnregisterCallback(element, "HealComm_ModifierChanged")
 		HealComm.UnregisterCallback(element, "HealComm_GUIDDisappeared")
-		self.UNIT_ABSORB_AMOUNT_CHANGED = nil
+		-- self.UNIT_ABSORB_AMOUNT_CHANGED = nil
 	end
 end
 
