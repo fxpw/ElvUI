@@ -279,8 +279,6 @@ local function Enable(self)
 		HealComm.RegisterCallback(element, "HealComm_ModifierChanged", HealComm_Modified)
 		HealComm.RegisterCallback(element, "HealComm_GUIDDisappeared", HealComm_Modified)
 		self.UNIT_ABSORB_AMOUNT_CHANGED = UNIT_ABSORB_AMOUNT_CHANGED
-		-- HealComm.RegisterCallback(self, "UNIT_ABSORB_AMOUNT_CHANGED", UNIT_ABSORB_AMOUNT_CHANGED)
-		-- SA.RegisterUnitCallbacks(self, "UNIT_ABSORB_AMOUNT_CHANGED")
 
 		if not element.maxOverflow then
 			element.maxOverflow = 1.05
@@ -370,8 +368,6 @@ local function Disable(self)
 		HealComm.UnregisterCallback(element, "HealComm_ModifierChanged")
 		HealComm.UnregisterCallback(element, "HealComm_GUIDDisappeared")
 		self.UNIT_ABSORB_AMOUNT_CHANGED = nil
-		-- HealComm.UnregisterCallback(self, "UNIT_ABSORB_AMOUNT_CHANGED")
-		-- SA.UnregisterAllCallbacks(self)
 	end
 end
 
