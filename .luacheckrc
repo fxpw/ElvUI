@@ -62,6 +62,7 @@ globals = {
 	"InterfaceOptionsObjectivesPanelTrackerStyle",
 	"InterfaceOptionsObjectivesPanelTrackerHeaderAlpha",
 
+	"UnitGetTotalAbsorbs",
 	--fonts
 	"GameFontNormal9",
 	"Number18Font",
