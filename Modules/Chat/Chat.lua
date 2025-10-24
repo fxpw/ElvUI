@@ -198,7 +198,6 @@ local mottidowerro = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\mo
 local da1mon12 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da1mon12]], ":32:32")
 local spokes = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\spokes]], ":24:24")
 local butterfly2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\butterfly2]], ":32:32")
-local skull1 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\skull1]], ":32:32")
 local skull2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\skull2]], ":32:32")
 
 local RaindomElvUIIcon = { [[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
