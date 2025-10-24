@@ -197,6 +197,9 @@ local funnyterry = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\funn
 local mottidowerro = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\mottidowerro]], ":32:32")
 local da1mon12 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\da1mon12]], ":32:32")
 local spokes = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\spokes]], ":24:24")
+local butterfly2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\butterfly2]], ":32:32")
+local skull1 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\skull1]], ":32:32")
+local skull2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\skull2]], ":32:32")
 
 local RaindomElvUIIcon = { [[Blue]], [[Green]], [[Melon]], [[Orange]], [[Pink]], [[Purple]], [[Rainbow]], [[Red]],
 	[[Yellow]] }
@@ -408,13 +411,29 @@ local specialChatIconsSirus = {
 
 	["Даймон-Sirus x5 - 3.3.5a+"] = da1mon12,
 	["Худший-Sirus x5 - 3.3.5a+"] = da1mon12,
-	["Zippio-Sirus x5 - 3.3.5a+"] = da1mon12
+	["Zippio-Sirus x5 - 3.3.5a+"] = da1mon12,
+
+
+
+
+	["Колючка-Neverest x3 - 3.3.5a+"] = butterfly2,
+	["Калючка-Neverest x3 - 3.3.5a+"] = butterfly2,
+	["Koluchka-Neverest x3 - 3.3.5a+"] = butterfly2,
+	["Беспокойная-Neverest x3 - 3.3.5a+"] = butterfly2,
+	["Pain-Neverest x3 - 3.3.5a+"] = skull2,
+	["Пэин-Neverest x3 - 3.3.5a+"] = skull2,
+	["Oldpain-Neverest x3 - 3.3.5a+"] = skull2,
+	["Пеин-Neverest x3 - 3.3.5a+"] = skull2,
+	["Пейн-Neverest x3 - 3.3.5a+"] = skull2,
+
+
 }
 local randomChatIcons = {
 	["Шутка-Soulseeker x1 - 3.3.5a+"] = true,
 	["Fxpw-Soulseeker x1 - 3.3.5a+"] = true,
-	["Шутка-Scourge x2 - 3.3.5a+"] = true,
 	["Шутка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Шутка-Neverest x3 - 3.3.5a+"] = true,
+	["Шутка-Scourge x2 - 3.3.5a+"] = true,
 	["Пьяная-Scourge x2 - 3.3.5a+"] = true,
 	["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true
 }
