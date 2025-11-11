@@ -19,15 +19,11 @@ function NP:OnEvent(event, arg1, arg2, arg3, arg4)
 		lastPhaseUpdate = currentTime
 		
 		C_Timer:After(0.05, function()
-			if original_OnEvent then
-				original_OnEvent(self, event, arg1, arg2, arg3, arg4)
-			end
+			original_OnEvent(self, event, arg1, arg2, arg3, arg4)
 		end)
 		
 		return
 	end
 	
-	if original_OnEvent then
-		original_OnEvent(self, event, arg1, arg2, arg3, arg4)
-	end
+	original_OnEvent(self, event, arg1, arg2, arg3, arg4)
 end

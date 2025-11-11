@@ -4,13 +4,16 @@ local oUF = ns.oUF
 local lastUpdateTimes = {}
 local UPDATE_THROTTLE = 0.3
 
-hooksecurefunc(oUF, 'Spawn', function(self, unit, overrideName, ignoreOUFDB)
-	local name = overrideName or unit
-	local object = _G[name]
+local originalSpawn = oUF.Spawn
+
+function oUF:Spawn(unit, overrideName)
+	local object = originalSpawn(self, unit, overrideName)
 	
-	if not object or object.__phaseOptimized then return end
+	if not object or object.__phaseOptimized then 
+		return object 
+	end
+	
 	object.__phaseOptimized = true
-	
 	local originalUpdate = object.UpdateAllElements
 	
 	object.UpdateAllElements = function(self, ...)
@@ -22,10 +25,11 @@ hooksecurefunc(oUF, 'Spawn', function(self, unit, overrideName, ignoreOUFDB)
 		end
 		
 		lastUpdateTimes[objectName] = currentTime
-		
 		return originalUpdate(self, ...)
 	end
-end)
+	
+	return object
+end
 
 C_Timer:NewTicker(300, function()
 	local currentTime = GetTime()
@@ -35,3 +39,4 @@ C_Timer:NewTicker(300, function()
 		end
 	end
 end)
+
