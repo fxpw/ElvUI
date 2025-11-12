@@ -235,6 +235,18 @@ for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 
 		local targetName = Translit:Transliterate(UnitName(unit.."target"), translitMark)
 		return targetName ~= nil and E:ShortenString(targetName, length) or nil
 	end
+
+	ElvUF.Tags.Events[format("targetname:%s", textFormat)] = "UNIT_TARGET"
+	ElvUF.Tags.Methods[format("targetname:%s", textFormat)] = function(unit)
+		local targetName = UnitName(unit.."target")
+		return targetName ~= nil and E:ShortenString(targetName, length) or nil
+	end
+
+	ElvUF.Tags.Events[format("targetname:%s:translit", textFormat)] = "UNIT_TARGET"
+	ElvUF.Tags.Methods[format("targetname:%s:translit", textFormat)] = function(unit)
+		local targetName = Translit:Transliterate(UnitName(unit.."target"), translitMark)
+		return targetName ~= nil and E:ShortenString(targetName, length) or nil
+	end
 end
 
 ElvUF.Tags.Events["health:max"] = "UNIT_MAXHEALTH"
@@ -310,6 +322,26 @@ ElvUF.Tags.Methods["namecolor"] = function(unit)
 	local unitPlayer = UnitIsPlayer(unit)
 	if unitPlayer then
 		local _, unitClass = UnitClass(unit)
+		local class = ElvUF.colors.class[unitClass]
+		if not class then return "" end
+		return Hex(class[1], class[2], class[3])
+	elseif unitReaction then
+		local reaction = ElvUF.colors.reaction[unitReaction]
+		return Hex(reaction[1], reaction[2], reaction[3])
+	else
+		return "|cFFC2C2C2"
+	end
+end
+
+ElvUF.Tags.Events["targetnamecolor"] = "UNIT_TARGET UNIT_NAME_UPDATE UNIT_FACTION"
+ElvUF.Tags.Methods["targetnamecolor"] = function(unit)
+	local targetUnit = unit.."target"
+	if not UnitExists(targetUnit) then return "" end
+	
+	local unitReaction = UnitReaction(targetUnit, "player")
+	local unitPlayer = UnitIsPlayer(targetUnit)
+	if unitPlayer then
+		local _, unitClass = UnitClass(targetUnit)
 		local class = ElvUF.colors.class[unitClass]
 		if not class then return "" end
 		return Hex(class[1], class[2], class[3])
@@ -580,13 +612,25 @@ ElvUF.Tags.Methods["target"] = function(unit)
 	return targetName or nil
 end
 
-ElvUF.Tags.Events["target:translit"] = "UNIT_TARGET"
-ElvUF.Tags.Methods["target:translit"] = function(unit)
-	local targetName = Translit:Transliterate(UnitName(unit.."target"), translitMark)
-	return targetName or nil
-end
+	ElvUF.Tags.Events["target:translit"] = "UNIT_TARGET"
+	ElvUF.Tags.Methods["target:translit"] = function(unit)
+		local targetName = Translit:Transliterate(UnitName(unit.."target"), translitMark)
+		return targetName or nil
+	end
 
-ElvUF.Tags.Events["guild:rank"] = "UNIT_NAME_UPDATE"
+	ElvUF.Tags.Events["targetname"] = "UNIT_TARGET"
+	ElvUF.Tags.Methods["targetname"] = function(unit)
+		local targetName = UnitName(unit.."target")
+		return targetName or nil
+	end
+
+	ElvUF.Tags.Events["targetname:translit"] = "UNIT_TARGET"
+	ElvUF.Tags.Methods["targetname:translit"] = function(unit)
+		local targetName = Translit:Transliterate(UnitName(unit.."target"), translitMark)
+		return targetName or nil
+	end
+
+	ElvUF.Tags.Events["guild:rank"] = "UNIT_NAME_UPDATE"
 ElvUF.Tags.Methods["guild:rank"] = function(unit)
 	if (UnitIsPlayer(unit)) then
 		return select(2, GetGuildInfo(unit)) or ""
@@ -732,6 +776,7 @@ end
 E.TagInfo = {
 	--Colors
 	["namecolor"] = {category = L["Colors"], description = L["Colors names by player class or NPC reaction"]},
+	["targetnamecolor"] = {category = L["Colors"], description = "Colors target name by player class or NPC reaction"},
 	["powercolor"] = {category = L["Colors"], description = L["Colors the power text based upon its type"]},
 	["difficultycolor"] = {category = L["Colors"], description = L["Colors the following tags by difficulty, red for impossible, orange for hard, green for easy"]},
 	["healthcolor"] = {category = L["Colors"], description = L["Changes color of health text, depending on the unit's current health"]},
@@ -845,6 +890,16 @@ E.TagInfo = {
 	["target:short:translit"] = {category = L["Target"], description = L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 10 letters)"]},
 	["target:medium:translit"] = {category = L["Target"], description = L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 15 letters)"]},
 	["target:long:translit"] = {category = L["Target"], description = L["Displays the current target of the unit with transliteration for cyrillic letters (limited to 20 letters)"]},
+	["targetname"] = {category = L["Target"], description = "Displays the target name of the current unit (same as target but with different tag name)"},
+	["targetname:veryshort"] = {category = L["Target"], description = "Displays the target name of the current unit (limited to 5 letters)"},
+	["targetname:short"] = {category = L["Target"], description = "Displays the target name of the current unit (limited to 10 letters)"},
+	["targetname:medium"] = {category = L["Target"], description = "Displays the target name of the current unit (limited to 15 letters)"},
+	["targetname:long"] = {category = L["Target"], description = "Displays the target name of the current unit (limited to 20 letters)"},
+	["targetname:translit"] = {category = L["Target"], description = "Displays the target name of the current unit with transliteration for cyrillic letters"},
+	["targetname:veryshort:translit"] = {category = L["Target"], description = "Displays the target name of the current unit with transliteration for cyrillic letters (limited to 5 letters)"},
+	["targetname:short:translit"] = {category = L["Target"], description = "Displays the target name of the current unit with transliteration for cyrillic letters (limited to 10 letters)"},
+	["targetname:medium:translit"] = {category = L["Target"], description = "Displays the target name of the current unit with transliteration for cyrillic letters (limited to 15 letters)"},
+	["targetname:long:translit"] = {category = L["Target"], description = "Displays the target name of the current unit with transliteration for cyrillic letters (limited to 20 letters)"},
 	--Threat
 	["threat"] = {category = L["Threat"], description = L["Displays the current threat"]},
 	["threat:percent"] = {category = L["Threat"], description = L["Displays the current threat as a percent"]},
