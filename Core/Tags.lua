@@ -325,7 +325,7 @@ ElvUF.Tags.Events["targetnamecolor"] = "UNIT_TARGET UNIT_NAME_UPDATE UNIT_FACTIO
 ElvUF.Tags.Methods["targetnamecolor"] = function(unit)
 	local targetUnit = unit.."target"
 	if not UnitExists(targetUnit) then return "" end
-	
+
 	local unitReaction = UnitReaction(targetUnit, "player")
 	local unitPlayer = UnitIsPlayer(targetUnit)
 	if unitPlayer then
