@@ -711,21 +711,21 @@ local HealComm = LibStub("LibHealComm-4.0")
 ElvUF.Tags.Events["absorbs"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 ElvUF.Tags.Methods["absorbs"] = function(tagUnit)
 	local abs = UnitGetTotalAbsorbs(tagUnit)
-	if abs > 0 then
+	if abs and abs > 0 then
 		return E:ShortValue(abs)
 	end
 end
 ElvUF.Tags.Events["absorbsall"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 ElvUF.Tags.Methods["absorbsall"] = function(tagUnit)
 	local abs = UnitGetTotalAbsorbs(tagUnit)
-	if abs > 0 then
+	if abs and abs > 0 then
 		return abs
 	end
 end
 ElvUF.Tags.Events["absorbs()"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 ElvUF.Tags.Methods["absorbs()"] = function(tagUnit)
 	local abs = UnitGetTotalAbsorbs(tagUnit)
-	if abs > 0 then
+	if abs and abs > 0 then
 		return "(" .. E:ShortValue(abs) .. ")"
 	end
 end
