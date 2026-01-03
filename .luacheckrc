@@ -2631,6 +2631,8 @@ globals = {
 	"LadderDummyFrameContainerRightContainerCentralContainerScrollFrameScrollBar",
 	"LadderDummyFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollUpButton",
 	"LadderDummyFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollDownButton",
+	"DressUpModelShowMountCheckButton",
+	"MountDisplayModelSceneTogglePlayer",
 	"GuildLeave",
 	"GuildPromote",
 	"GuildRegistrar_OnShow",

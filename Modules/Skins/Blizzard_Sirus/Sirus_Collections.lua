@@ -72,7 +72,6 @@ local function LoadSkin()
 	hooksecurefunc("MountJournal_CategoryDisplayButton", function(button, element)
 		if element then
 			button.backdrop:SetShown(element.isCategory)
-
 			local highlight = button:GetHighlightTexture()
 			highlight:SetTexCoord(0, 1, 0, 1)
 			highlight:SetAllPoints()
