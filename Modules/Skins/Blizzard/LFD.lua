@@ -1183,5 +1183,4 @@ local function LoadSkin()
 	LadderDummyFrame.Container.RightContainer.TopContainer.ShadowOverlay:StripTextures()
 end
 
--- S:RemoveCallback("Skin_LFD")
 S:AddCallback("Skin_LFD", LoadSkin)
