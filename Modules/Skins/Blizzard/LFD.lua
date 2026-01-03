@@ -320,7 +320,7 @@ local function LoadSkin()
 	end
 
 
-	for i = 1, 4 do
+	for i = 1, 5 do
 		local tab = _G["LFDParentFrameTab" .. i]
 		if tab then
 			tab.HighlightLeft:StripTextures()
@@ -588,7 +588,7 @@ local function LoadSkin()
 		end
 	end
 
-	for i = 1, 4 do
+	for i = 1, 5 do
 		local tab = _G["PVPUIFrameTab" .. i]
 		if (tab) then
 			tab.HighlightLeft:StripTextures()
@@ -884,7 +884,7 @@ local function LoadSkin()
 		end
 	end
 
-	for i = 1, 4 do
+	for i = 1, 5 do
 		-- local tab =
 		if (_G["PVPLadderFrameTab" .. i]) then
 			if _G["PVPLadderFrameTab" .. i].HighlightLeft then
@@ -990,7 +990,7 @@ local function LoadSkin()
 			end
 		end
 	end)
-
+	-- !RenegadeLadderFrame
 	S:HandlePortraitFrame(RenegadeLadderFrame)
 	S:HandleCloseButton(RenegadeLadderFrameCloseButton)
 	RenegadeLadderFrame:SetTemplate("Transparent")
@@ -1005,7 +1005,7 @@ local function LoadSkin()
 		end
 	end
 
-	for i = 1, 4 do
+	for i = 1, 5 do
 		if (_G["RenegadeLadderFrameTab" .. i].HighlightLeft) then
 			_G["RenegadeLadderFrameTab" .. i].HighlightLeft:StripTextures()
 		end
@@ -1111,6 +1111,76 @@ local function LoadSkin()
 		MiniGameReadyStatus:CreateBackdrop("Transparent")
 		S:HandleCloseButton(MiniGameReadyStatusCloseButton)
 	end)
+
+	-- LadderDummyFrameTab
+	S:HandlePortraitFrame(LadderDummyFrame)
+	S:HandleCloseButton(LadderDummyFrameCloseButton)
+	LadderDummyFrame:SetTemplate("Transparent")
+	LadderDummyFrame.LeftInset:StripTextures()
+	LadderDummyFrameArt:StripTextures()
+	LadderDummyFrame.Shadows:StripTextures()
+
+	for i = 1, LadderDummyFrame:GetNumChildren() do
+		local child = select(i, LadderDummyFrame:GetChildren())
+		if child and child:GetName() and find(child:GetName(), "Art") then
+			child:StripTextures()
+		end
+	end
+
+	for i = 1, 5 do
+		if (_G["LadderDummyFrameTab" .. i].HighlightLeft) then
+			_G["LadderDummyFrameTab" .. i].HighlightLeft:StripTextures()
+		end
+		if (_G["LadderDummyFrameTab" .. i].HighlightMiddle) then
+			_G["LadderDummyFrameTab" .. i].HighlightMiddle:StripTextures()
+		end
+		if (_G["LadderDummyFrameTab" .. i].HighlightRight) then
+			_G["LadderDummyFrameTab" .. i].HighlightRight:StripTextures()
+		end
+		S:HandleTab(_G["LadderDummyFrameTab" .. i])
+	end
+
+	SkinCategoryButton(LadderDummyFrameContainerCategoryButton1, 1)
+	SkinCategoryButton(LadderDummyFrameContainerCategoryButton2, 1)
+
+	for i = 1, 2 do
+		local tab = LadderDummyFrame.Container["RightBigTab" .. i]
+		tab:SetTemplate()
+		tab:StyleButton()
+		tab:GetRegions():Hide()
+		tab.Icon:SetTexCoord(unpack(E.TexCoords))
+		tab.Icon:SetInside()
+	end
+	LadderDummyFrame.Container.RightBigTab1:Point("TOPLEFT", LadderDummyFrame.Container, "TOPRIGHT", -E.Border, -34)
+	for i = 1, 10 do
+		local tab = LadderDummyFrame.Container["RightSmallTab" .. i]
+		tab:SetTemplate()
+		tab:StyleButton()
+		tab:GetRegions():Hide()
+		tab.Icon:SetTexCoord(unpack(E.TexCoords))
+		tab.Icon:SetInside()
+	end
+	LadderDummyFrame.Container.RightSmallTab1:Point("TOPLEFT", LadderDummyFrame.Container, "TOPRIGHT", -E.Border,
+		-130)
+
+	LadderDummyFrame.Container.RightContainer.BottomContainer:StripTextures()
+	LadderDummyFrame.Container.RightContainer.CentralContainer:StripTextures(true)
+	LadderDummyFrame.Container.RightContainer.CentralContainer.ScrollFrame.ShadowOverlay:StripTextures()
+
+	S:HandleScrollBar(LadderDummyFrameContainerRightContainerCentralContainerScrollFrameScrollBar)
+	S:SetNextPrevButtonDirection(
+	LadderDummyFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollUpButton, "up")
+	S:SetNextPrevButtonDirection(
+	LadderDummyFrameContainerRightContainerCentralContainerScrollFrameScrollBarScrollDownButton, "down")
+
+	LadderDummyFrame.Container.RightContainer.TopContainer:StripTextures()
+	LadderDummyFrame.Container.RightContainer.TopContainer.RegionMask.TextureMask:StripTextures()
+
+	S:HandleEditBox(LadderDummyFrame.Container.RightContainer.TopContainer.SearchBox)
+	S:HandleButton(LadderDummyFrame.Container.RightContainer.TopContainer.SearchButton)
+
+	LadderDummyFrame.Container.RightContainer.TopContainer.TitleFrame:StripTextures()
+	LadderDummyFrame.Container.RightContainer.TopContainer.ShadowOverlay:StripTextures()
 end
 
 -- S:RemoveCallback("Skin_LFD")

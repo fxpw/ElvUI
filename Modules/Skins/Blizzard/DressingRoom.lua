@@ -59,6 +59,7 @@ local function LoadSkin()
 
 	S:HandleButton(DressUpFrameCancelButton)
 	S:HandleButton(DressUpFrameResetButton)
+	S:HandleCheckBox(DressUpModelShowMountCheckButton)
 
 	DressUpModel:CreateBackdrop("Default")
 

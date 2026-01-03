@@ -96,6 +96,7 @@ local function LoadSkin()
 
 	S:HandleRotateButton(MountDisplayModelSceneRotateLeftButton)
 	S:HandleRotateButton(MountDisplayModelSceneRotateRightButton)
+	S:HandleCheckBox(MountDisplayModelSceneTogglePlayer)
 
 	-- Не нашел отдельного метода под ActionButton.
 	S:HandleItemButton(MountJournal.SummonRandomFavoriteButton)
