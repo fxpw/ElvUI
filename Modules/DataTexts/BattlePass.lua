@@ -35,13 +35,14 @@ local function OnEnter(self)
 		-- if i == 1 then
 		-- DT.tooltip:AddLine(" ")
 		-- end
-		local _, description, _, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(1,
-			i)
+		local _, description, _,_, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(1, i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
 			DT.tooltip:AddLine(string.format("Выполнен - %s", description), .31, .99, .46)
 		else
-			DT.tooltip:AddLine(string.format("|cFFFFFF00%d|r/|cFF00FF00%d|r - %s", progressValue, progressMaxValue, description), 1, 1, 1)
+			DT.tooltip:AddLine(
+				string.format("|cFFFFFF00%d|r/|cFF00FF00%d|r - %s", progressValue, progressMaxValue, description), 1, 1,
+				1)
 		end
 		-- DT.tooltip:AddLine(" ")
 	end
@@ -51,13 +52,13 @@ local function OnEnter(self)
 		-- if i == 1 then
 		-- DT.tooltip:AddLine(" ")
 		-- end
-		local _, description, _, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(2,
-			i)
+		local _, description, _,_, progressValue, progressMaxValue = C_BattlePass.GetQuestInfo(2, i)
 		local isComplete = progressValue == progressMaxValue
 		if isComplete then
 			DT.tooltip:AddLine(string.format("Выполнен - %s", description), .31, .99, .46)
 		else
-			DT.tooltip:AddLine(string.format("|cFFFFFF00%d|r/|cFF00FF00%d|r - %s", progressValue, progressMaxValue, description), 1, 1, 1)
+			DT.tooltip:AddLine(
+			string.format("|cFFFFFF00%d|r/|cFF00FF00%d|r - %s", progressValue, progressMaxValue, description), 1, 1, 1)
 		end
 		-- DT.tooltip:AddLine(" ")
 	end
@@ -84,14 +85,14 @@ local function OnEvent(self, event)
 	Premium              = C_BattlePass:IsPremiumActive()
 	curLvL, lvlXP, maxXP = C_BattlePass.GetLevelInfo()
 	unclaimed            = C_BattlePass.HasUnclaimedReward()
-	self.text:SetFormattedText(displayString, curLvL, lvlXP, maxXP,unclaimed and "!" or "")
+	self.text:SetFormattedText(displayString, curLvL, lvlXP, maxXP, unclaimed and "!" or "")
 end
 
 local function ValueColorUpdate(hex)
 	if Premium == true then
-		displayString = join("", "|cfff5cf00БП (%s)|r: ", hex, "%.0f/%.0f|r"," %s")
+		displayString = join("", "|cfff5cf00БП (%s)|r: ", hex, "%.0f/%.0f|r", " %s")
 	else
-		displayString = join("", "БП (%s): ", hex, "%.0f/%.0f |r"," %s")
+		displayString = join("", "БП (%s): ", hex, "%.0f/%.0f |r", " %s")
 	end
 
 	if lastPanel ~= nil then
