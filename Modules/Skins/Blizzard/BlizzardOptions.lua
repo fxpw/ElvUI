@@ -256,6 +256,10 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"VideoOptionsEffectsPanelProjectedTextures",
 		"InterfaceOptionsObjectivesPanelTrackerToggleSelection",
 		"InterfaceOptionsHelpPanelItemExpirationReminder",
+		"InterfaceOptionsCombatPanelAoeCastAtMaxDistance",
+		"InterfaceOptionsDisplayPanelDoNotFlashLowHealthWarning",
+		"InterfaceOptionsHelpPanelCurrencyLimitReminder",
+		"InterfaceOptionsHardcorePanelNotificationChatMessage",
 	}
 	for _, checkbox in ipairs(checkboxes) do
 		checkbox = _G[checkbox]
@@ -341,6 +345,8 @@ S:AddCallback("Skin_BlizzardOptions", function()
 		"VideoOptionsResolutionPanelResolutionDropDown",
 		"VideoOptionsResolutionPanelRefreshDropDown",
 		"InterfaceOptionsDisplayPanelSpellRange",
+		"InterfaceOptionsControlsPanelBlockPlayerMail",
+		"InterfaceOptionsControlsPanelBlockChannelInvites",
 	}
 	for _, dropdown in ipairs(dropdowns) do
 		dropdown = _G[dropdown]

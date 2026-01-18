@@ -26,48 +26,66 @@ local function SkinMiniGameLoot(frame)
 end
 
 
-local function updateMiniGames()
-	MiniGamesParentFrameBottomInset:StripTextures()
-	MiniGamesParentFrameBottomInsetScrollFrame:StripTextures()
-	MiniGamesParentFrameTopInset:StripTextures()
-	S:HandleButton(MiniGamesParentFrameFindGroupButton, true)
-	S:HandleScrollBar(MiniGamesParentFrameBottomInsetScrollFrameScrollBar)
+local function SkinMiniGameReward(frame)
+	local icon = frame.Icon or _G[frame:GetName().."IconTexture"]
+	if not icon then return end
+	
+	if not frame.isSkinned then
+		if frame.NameFrame then
+			frame.NameFrame:Kill()
+		end
+		
+		icon:SetTexCoord(unpack(E.TexCoords))
+		icon:ClearAllPoints()
+		icon:Point("TOPLEFT", 2, -2)
+		icon:Size(frame:GetHeight() - 4)
+		icon:SetDrawLayer("ARTWORK")
+		
+		frame:CreateBackdrop("Default")
+		frame.backdrop:SetOutside(icon)
+		icon:SetParent(frame.backdrop)
+		
+		frame.Icon = icon
+		
+		if frame.Name then
+			frame.Name:ClearAllPoints()
+			frame.Name:Point("LEFT", frame.backdrop, "RIGHT", 10, 0)
+		end
+		
+		local count = frame.Count or _G[frame:GetName().."Count"]
+		if count then
+			count:SetParent(frame.backdrop)
+			count:SetDrawLayer("OVERLAY")
+			count:ClearAllPoints()
+			count:Point("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 2, 2)
+			frame.Count = count
+		end
+		
+		frame.isSkinned = true
+	end
+end
 
-	for i = 1, LFD_MAX_REWARDS do
-		local butt = _G["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i]
-		if butt then
-			SkinMiniGameLoot(butt)
+local function UpdateMiniGameRewards(self)
+	self.BottomInset.Background:Kill()
+	if self.TopInset.TopTileStreaks then self.TopInset.TopTileStreaks:Kill() end
 
-			local link = butt.itemLink
-			if link then
-				local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
+	if self.lootPool then
+		for frame in self.lootPool:EnumerateActive() do
+			SkinMiniGameReward(frame)
+
+			if frame.itemLink and frame.backdrop then
+				local _, _, quality = GetItemInfo(frame.itemLink)
 				if quality then
-					local a = _G
-					["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i .. "IconTexture"]
-					local name = _G
-					["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i .. "Name"]
-
-					if butt.Icon then
-						butt.Icon:StripTextures()
-						butt.Icon:CreateBackdrop("Transparent")
-
-
-						butt.Icon:SetTexCoord(unpack(E.TexCoords))
-						butt.Icon:SetDrawLayer("BORDER")
-
-						butt.Icon.backdrop:SetOutside(butt.Icon)
-						butt.Icon:SetParent(butt.Icon.backdrop)
-
-						a:SetTexture(texture)
+					frame.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
+					if frame.Name then
+						frame.Name:SetTextColor(GetItemQualityColor(quality))
 					end
-					butt.Icon.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
-					name:SetTextColor(GetItemQualityColor(quality))
+				else
+					frame.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
+					if frame.Name then
+						frame.Name:SetTextColor(1, 1, 1)
+					end
 				end
-			else
-				butt.backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
-				local name = _G
-				["MiniGamesParentFrameBottomInsetScrollFrameChildFramePoolFrameMiniGameLootTemplate" .. i .. "Name"]
-				name:SetTextColor(1, 1, 1)
 			end
 		end
 	end
@@ -1066,21 +1084,35 @@ local function LoadSkin()
 	RenegadeLadderFrame.Container.RightContainer.TopContainer.TitleFrame:StripTextures()
 	RenegadeLadderFrame.Container.RightContainer.TopContainer.ShadowOverlay:StripTextures()
 
-
 	----------------- mini games frame
+	MiniGamesParentFrame:StripTextures()
+	MiniGamesParentFrame.TopInset:StripTextures()
+	MiniGamesParentFrame.BottomInset:StripTextures()
+	MiniGamesParentFrame.BottomInset.Background:Kill()
+	S:HandleButton(MiniGamesParentFrameFindGroupButton, true)
 
-	MiniGamesParentFrame:HookScript("OnEvent", function(...) -------- first check
-		updateMiniGames()
-	end)
-	MiniGamesParentFrame:HookScript("OnShow", function() -------- ye i now but its maxin
-		for i = 1, 5 do
-			local but = _G["MiniGamesParentFrameTopInsetScrollFrameChildFramePoolFrameMiniGameButtonTemplate" .. i]
-			if but then
-				but:HookScript("OnClick", updateMiniGames)
+	if _G.LFDParentFrameArt then _G.LFDParentFrameArt:StripTextures() end
+	if _G.LFDParentFrameLeftArt then _G.LFDParentFrameLeftArt:StripTextures() end
+
+	hooksecurefunc(MiniGamesParentFrame, "UpdateGames", function(self)
+		if self.gameButtonPool then
+			for button in self.gameButtonPool:EnumerateActive() do
+				if not button.isSkinned then
+					S:HandleButton(button)
+					button:StyleButton()
+					if button.Icon then
+						button.Icon:SetTexCoord(unpack(E.TexCoords))
+						button.Icon:SetInside()
+					end
+					button.isSkinned = true
+				end
 			end
 		end
+	end)
 
-		updateMiniGames()
+	hooksecurefunc(MiniGamesParentFrame, "SetSelectedGame", UpdateMiniGameRewards)
+	MiniGamesParentFrame:HookScript("OnShow", function(self)
+		UpdateMiniGameRewards(self)
 	end)
 
 	MiniGameReadyDialog:HookScript("OnShow", function()

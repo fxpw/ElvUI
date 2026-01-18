@@ -28,6 +28,25 @@ local function LoadSkin()
 	MountJournal.navBar:ClearAllPoints()
 	MountJournal.navBar:SetPoint("TOPLEFT", 6, -22)
 
+	hooksecurefunc("NavBar_AddButton", function(self, buttonData)
+		if self ~= MountJournal.navBar then return end
+		local navButton = self.navList[#self.navList]
+		if navButton and not navButton.isSkinned then
+			S:HandleButton(navButton, true)
+			navButton.xoffset = 1
+			navButton.isSkinned = true
+		end
+	end)
+
+	for i = 1, #MountJournal.navBar.navList do
+		local navButton = MountJournal.navBar.navList[i]
+		if navButton and not navButton.isSkinned then
+			S:HandleButton(navButton, true)
+			navButton.xoffset = 1
+			navButton.isSkinned = true
+		end
+	end
+
 	S:HandleEditBox(MountJournal.searchBox)
 
 	MountJournal.FilterButton:StripTextures(true)

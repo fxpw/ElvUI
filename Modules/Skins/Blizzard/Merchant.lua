@@ -23,6 +23,14 @@ local function LoadSkin()
 	MerchantMoneyBg:StripTextures()
 	MerchantMoneyInset:StripTextures()
 
+	if _G.MerchantFrameSearchEditBox then
+		S:HandleEditBox(_G.MerchantFrameSearchEditBox)
+	end
+
+	if _G.MerchantFrameLootFilter then
+		S:HandleDropDownBox(_G.MerchantFrameLootFilter)
+	end
+
 	MerchantFrame:EnableMouseWheel(true)
 	MerchantFrame:SetScript("OnMouseWheel", function(_, value)
 		if value > 0 then

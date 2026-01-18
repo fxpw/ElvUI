@@ -24309,6 +24309,12 @@ globals = {
 	"InterfaceOptionsUnitFramePanelRaidRangeText",
 	"InterfaceOptionsUnitFramePanelSubText",
 	"InterfaceOptionsUnitFramePanelTitle",
+	"InterfaceOptionsControlsPanelBlockPlayerMail",
+	"InterfaceOptionsControlsPanelBlockChannelInvites",
+	"InterfaceOptionsCombatPanelAoeCastAtMaxDistance",
+	"InterfaceOptionsDisplayPanelDoNotFlashLowHealthWarning",
+	"InterfaceOptionsHelpPanelCurrencyLimitReminder",
+	"InterfaceOptionsHardcorePanelNotificationChatMessage",
 	"InvoiceFont_Med",
 	"InvoiceFont_Small",
 	"InvoiceTextFontNormal",
@@ -43028,6 +43034,5 @@ globals = {
 	"ItemUpgradeFramePagingFrameNextPageButton",
 	"ItemUpgradeFramePagingFramePrevPageButton",
 	"EquipmentFlyoutFrameNavigationFrame",
-
 
 }
