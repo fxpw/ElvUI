@@ -13,45 +13,32 @@ local hooksecurefunc = hooksecurefunc
 local find = string.find
 
 
-local function SkinMiniGameLoot(frame)
-	if frame.isSkinned then return end
-
-	local nameFrame = _G[frame:GetName() .. "NameFrame"]
-
-	frame:StripTextures()
-
-	nameFrame:SetSize(118, 39)
-
-	frame.isSkinned = true
-end
-
-
 local function SkinMiniGameReward(frame)
 	local icon = frame.Icon or _G[frame:GetName().."IconTexture"]
 	if not icon then return end
-	
+
 	if not frame.isSkinned then
 		if frame.NameFrame then
 			frame.NameFrame:Kill()
 		end
-		
+
 		icon:SetTexCoord(unpack(E.TexCoords))
 		icon:ClearAllPoints()
 		icon:Point("TOPLEFT", 2, -2)
 		icon:Size(frame:GetHeight() - 4)
 		icon:SetDrawLayer("ARTWORK")
-		
+
 		frame:CreateBackdrop("Default")
 		frame.backdrop:SetOutside(icon)
 		icon:SetParent(frame.backdrop)
-		
+
 		frame.Icon = icon
-		
+
 		if frame.Name then
 			frame.Name:ClearAllPoints()
 			frame.Name:Point("LEFT", frame.backdrop, "RIGHT", 10, 0)
 		end
-		
+
 		local count = frame.Count or _G[frame:GetName().."Count"]
 		if count then
 			count:SetParent(frame.backdrop)
@@ -60,7 +47,7 @@ local function SkinMiniGameReward(frame)
 			count:Point("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 2, 2)
 			frame.Count = count
 		end
-		
+
 		frame.isSkinned = true
 	end
 end
