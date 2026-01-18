@@ -298,14 +298,53 @@ S:AddCallback("Skin_Bags", function()
 			end
 		end
 	end)
-	ChooseItemFrame:HookScript("OnShow",function(self)
-		for i = 1,5 do
-			local opt = _G["ChooseItemOption"..i]
-			if opt then
-				S:HandleButton(opt.OptionButton)
-				-- opt.Item.Icon:SetTexCoord(unpack(E.TexCoords))
+	local function SkinChooseItemOption(opt)
+		if opt.isSkinned then return end
+
+		if opt.ArtBackground then opt.ArtBackground:Kill() end
+		if opt.Header then
+			if opt.Header.Background then opt.Header.Background:Kill() end
+			if opt.Header.Text then
+				opt.Header.Text:SetTextColor(1, 0.82, 0)
+				opt.Header.Text:ClearAllPoints()
+				opt.Header.Text:Point("BOTTOM", opt.RoleBackground, "TOP", 0, 5)
 			end
 		end
-		S:HandleCloseButton(self.CloseButton)
+
+		opt:CreateBackdrop("Transparent")
+		opt.backdrop:Point("TOPLEFT", 5, -5)
+		opt.backdrop:Point("BOTTOMRIGHT", -5, 5)
+
+		S:HandleButton(opt.OptionButton)
+
+		if opt.Item then
+			if opt.Item.Icon then
+				opt.Item.Icon:SetTexCoord(unpack(E.TexCoords))
+				opt.Item:CreateBackdrop("Default")
+				opt.Item.backdrop:SetOutside(opt.Item.Icon)
+				opt.Item.Icon:SetParent(opt.Item.backdrop)
+			end
+			if opt.Item.IconBorder then opt.Item.IconBorder:Kill() end
+		end
+
+		opt.isSkinned = true
+	end
+
+	ChooseItemFrame:HookScript("OnShow", function(self)
+		if self.isSkinned then return end
+
+		self:StripTextures()
+		self:CreateBackdrop("Transparent")
+		self.backdrop:Point("TOPLEFT", 15, -8)
+		self.backdrop:Point("BOTTOMRIGHT", -15, 15)
+		S:HandleCloseButton(self.CloseButton, self.backdrop)
+
+		self.isSkinned = true
+	end)
+
+	hooksecurefunc(ChooseItemFrame, "Update", function(self)
+		for _, opt in ipairs(self.itemOptions) do
+			SkinChooseItemOption(opt)
+		end
 	end)
 end)
