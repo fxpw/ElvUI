@@ -172,9 +172,15 @@ function AB:TotemOnLeave()
 end
 
 function AB:ShowMultiCastActionBar()
-	if not InCombatLockdown() then
-		self:PositionAndSizeBarTotem()
+	if InCombatLockdown() then
+		if not bar.buttons then
+			MultiCastActionBarFrame:Hide()
+		end
+		AB.NeedsPositionAndSizeBarTotem = true
+		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+		return
 	end
+	self:PositionAndSizeBarTotem()
 end
 
 function AB:PositionAndSizeBarTotem()
