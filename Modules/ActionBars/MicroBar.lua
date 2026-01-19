@@ -166,6 +166,10 @@ function AB:HandleMicroButton(button)
 			disabled:SetInside(f)
 		end
 	end
+
+	if button.Flash then
+		button.Flash:Kill()
+	end
 end
 
 function AB:UpdateMicroButtonsParent()
