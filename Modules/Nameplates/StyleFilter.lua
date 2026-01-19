@@ -835,7 +835,7 @@ function mod:StyleFilterUpdate(frame, event)
 
 	for filterNum in ipairs(mod.StyleFilterTriggerList) do
 		local filter = E.global.nameplates.filters[mod.StyleFilterTriggerList[filterNum][1]]
-		if filter then
+		if filter and filter.triggers then
 			mod:StyleFilterConditionCheck(frame, filter, filter.triggers)
 		end
 	end
