@@ -117,7 +117,7 @@ function UF:UpdateThreat(unit, status, r, g, b)
 				parent.Power.backdrop:SetBackdropBorderColor(r, g, b)
 			end
 
-			if parent.ClassBar and parent[parent.ClassBar] and parent[parent.ClassBar].backdrop then
+			if parent.USE_CLASSBAR and parent.ClassBar and parent[parent.ClassBar] and parent[parent.ClassBar].backdrop then
 				parent[parent.ClassBar].backdrop:SetBackdropBorderColor(r, g, b)
 			end
 
@@ -144,7 +144,7 @@ function UF:UpdateThreat(unit, status, r, g, b)
 				parent.Power.backdrop:SetBackdropBorderColor(r, g, b)
 			end
 
-			if parent.ClassBar and parent[parent.ClassBar] and parent[parent.ClassBar].backdrop then
+			if parent.USE_CLASSBAR and parent.ClassBar and parent[parent.ClassBar] and parent[parent.ClassBar].backdrop then
 				parent[parent.ClassBar].backdrop:SetBackdropBorderColor(r, g, b)
 			end
 
