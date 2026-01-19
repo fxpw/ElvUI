@@ -196,8 +196,8 @@ function AB:PositionAndSizeBarTotem()
 
 	bar:Width((size * (2 + numActiveSlots)) + (buttonSpacing * (2 + numActiveSlots - 1)))
 	MultiCastActionBarFrame:Width((size * (2 + numActiveSlots)) + (buttonSpacing * (2 + numActiveSlots - 1)))
-	bar:Height(size + 2)
-	MultiCastActionBarFrame:Height(size + 2)
+	bar:Height(size)
+	MultiCastActionBarFrame:Height(size)
 	bar.db = self.db.barTotem
 
 	bar.mouseover = self.db.barTotem.mouseover
@@ -216,7 +216,7 @@ function AB:PositionAndSizeBarTotem()
 
 	MultiCastSummonSpellButton:ClearAllPoints()
 	MultiCastSummonSpellButton:Size(size)
-	MultiCastSummonSpellButton:Point("BOTTOMLEFT", E.Border*2, E.Border*2 + 1)
+	MultiCastSummonSpellButton:Point("BOTTOMLEFT", 0, 0)
 
 	for i = 1, numActiveSlots do
 		local button = _G["MultiCastSlotButton"..i]
@@ -234,6 +234,12 @@ function AB:PositionAndSizeBarTotem()
 
 	MultiCastRecallSpellButton:Size(size)
 	MultiCastRecallSpellButton_Update(MultiCastRecallSpellButton)
+
+	MultiCastRecallSpellButton:ClearAllPoints()
+	local lastSlot = _G["MultiCastSlotButton"..numActiveSlots]
+	if lastSlot then
+		MultiCastRecallSpellButton:Point("LEFT", lastSlot, "RIGHT", buttonSpacing, 0)
+	end
 
 	MultiCastFlyoutFrameCloseButton:Width(size)
 	MultiCastFlyoutFrameOpenButton:Width(size)
@@ -278,7 +284,7 @@ function AB:CreateTotemBar()
 
 	MultiCastActionBarFrame:SetParent(bar)
 	MultiCastActionBarFrame:ClearAllPoints()
-	MultiCastActionBarFrame:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT", -E.Border, -E.Border)
+	MultiCastActionBarFrame:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT", 0, 0)
 	MultiCastActionBarFrame:SetScript("OnUpdate", nil)
 	MultiCastActionBarFrame:SetScript("OnShow", nil)
 	MultiCastActionBarFrame:SetScript("OnHide", nil)
@@ -323,10 +329,10 @@ function AB:CreateTotemBar()
 	bar.buttons[MultiCastSummonSpellButton] = true
 
 	hooksecurefunc(MultiCastRecallSpellButton, "SetPoint", function(self, point, attachTo, anchorPoint, xOffset, yOffset)
-		if xOffset ~= AB.db.barTotem.buttonspacing then
+		if xOffset ~= AB.db.barTotem.buttonspacing or yOffset ~= 0 then
 			if InCombatLockdown() then AB.NeedRecallButtonUpdate = true AB:RegisterEvent("PLAYER_REGEN_ENABLED") return end
 
-			self:SetPoint(point, attachTo, anchorPoint, AB.db.barTotem.buttonspacing, yOffset)
+			self:SetPoint(point, attachTo, anchorPoint, AB.db.barTotem.buttonspacing, 0)
 		end
 	end)
 

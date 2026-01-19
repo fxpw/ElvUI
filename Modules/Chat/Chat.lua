@@ -2386,6 +2386,12 @@ function CH:Initialize()
 	self:SecureHook("FCFTab_UpdateColors")
 	self:SecureHook("FCF_SetChatWindowFontSize", "SetChatFont")
 	self:SecureHook("FCF_SavePositionAndDimensions", "ON_FCF_SavePositionAndDimensions")
+
+	self:SecureHook("ChatEdit_DeactivateChat", function(editBox)
+		if GetCVar("chatStyle") == "im" then
+			editBox:Hide()
+		end
+	end)
 	self:RegisterEvent("UPDATE_CHAT_WINDOWS", "SetupChat")
 	self:RegisterEvent("UPDATE_FLOATING_CHAT_WINDOWS", "SetupChat")
 	-- print("Modules\\Chat\\Chat.lua:2355")
