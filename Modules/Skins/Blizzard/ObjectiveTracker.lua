@@ -6,11 +6,63 @@ local pairs = pairs
 local hooksecurefunc = hooksecurefunc
 local InCombatLockdown = InCombatLockdown
 
+local MODULE_HEADER_COLORS = {
+	['QuestObjectiveTracker'] = { r = 1, g = 0.82, b = 0 },           -- Желтый (стандартный)
+	['AchievementObjectiveTracker'] = { r = 0.6, g = 0.4, b = 0.9 },  -- Фиолетовый
+	['ProfessionsRecipeTracker'] = { r = 0.4, g = 0.7, b = 1 },       -- Голубой
+	['BattlePassQuestTracker'] = { r = 1, g = 0.5, b = 0 },           -- Оранжевый
+}
+
+local function ColorModuleHeader(tracker)
+	if not tracker or not tracker.Header or not tracker.Header.Text then return end
+	local trackerName = tracker:GetName()
+	if trackerName then
+		local color = MODULE_HEADER_COLORS[trackerName]
+		if color then
+			tracker.Header.Text:SetTextColor(color.r, color.g, color.b)
+		end
+	end
+end
+
+local function ColorBlockHeader(block)
+	if not block or not block.HeaderText then return end
+	local module = block.parentModule
+	if module then
+		local trackerName = module:GetName()
+		if trackerName then
+			if trackerName == 'QuestObjectiveTracker' then
+				local color
+				local questIndex = block.index and _G.GetQuestIndexForWatch(block.index)
+				if questIndex then
+					local _, level = _G.GetQuestLogTitle(questIndex)
+					if level then
+						color = _G.GetQuestDifficultyColor(level)
+					end
+				end
+
+				if not color then
+					color = MODULE_HEADER_COLORS[trackerName]
+				end
+
+				if color then
+					block.HeaderText:SetTextColor(color.r, color.g, color.b)
+				end
+				return
+			end
+
+			local color = MODULE_HEADER_COLORS[trackerName]
+			if color then
+				block.HeaderText:SetTextColor(color.r, color.g, color.b)
+			end
+		end
+	end
+end
+
 local trackers = {
 	_G.QuestObjectiveTracker,
 	_G.AchievementObjectiveTracker,
 	_G.BattlePassQuestTracker,
-  _G.ProfessionsRecipeTracker,
+	_G.ProfessionsRecipeTracker,
 }
 
 local function SkinOjectiveTrackerHeaders(header)
@@ -174,7 +226,51 @@ function S:Blizzard_ObjectiveTracker()
 	for _, tracker in pairs(trackers) do
 		SkinOjectiveTrackerHeaders(tracker.Header)
 
+		ColorModuleHeader(tracker)
+
+		local function HandleBlockColors(_, block)
+			if block then
+				ColorBlockHeader(block)
+				if not block.elvuiColorHooked then
+					hooksecurefunc(block, 'UpdateHighlight', function(self)
+						ColorBlockHeader(self)
+					end)
+					block.elvuiColorHooked = true
+				end
+
+				local enableLineClicks = true
+				if block.parentModule and block.parentModule:GetName() == 'ProfessionsRecipeTracker' then
+					enableLineClicks = false
+				end
+
+				if block.usedLines and enableLineClicks then
+					for _, line in pairs(block.usedLines) do
+						if not line.clickHooked then
+							line:EnableMouse(true)
+							line:SetScript("OnMouseUp", function(self, button)
+								if self.parentBlock then
+									self.parentBlock:OnHeaderClick(button)
+								end
+							end)
+							line:SetScript("OnEnter", function(self)
+								if self.parentBlock then
+									self.parentBlock:OnHeaderEnter()
+								end
+							end)
+							line:SetScript("OnLeave", function(self)
+								if self.parentBlock then
+									self.parentBlock:OnHeaderLeave()
+								end
+							end)
+							line.clickHooked = true
+						end
+					end
+				end
+			end
+		end
+
 		hooksecurefunc(tracker, 'AddBlock', HandleItemButton)
+		hooksecurefunc(tracker, 'AddBlock', HandleBlockColors)
 		hooksecurefunc(tracker, 'GetProgressBar', HandleProgressBar)
 		hooksecurefunc(tracker, 'GetTimerBar', HandleTimers)
 	end
