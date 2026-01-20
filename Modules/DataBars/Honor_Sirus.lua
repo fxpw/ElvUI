@@ -139,11 +139,3 @@ end
 hooksecurefunc(DB, "Initialize", function()
 	DB:LoadHonorBar()
 end)
-
--- Temp
-function DB:OnLeave()
-	if (self == ElvUI_ExperienceBar and DB.db.experience.mouseover) or (self == ElvUI_ReputationBar and DB.db.reputation.mouseover) or (self == ElvUI_HonorBar and DB.db.honor.mouseover) then
-		E:UIFrameFadeOut(self, 1, self:GetAlpha(), 0)
-	end
-	GameTooltip:Hide()
-end
