@@ -58,6 +58,69 @@ local function ColorBlockHeader(block)
 	end
 end
 
+local function FormatCooldownTime(seconds)
+	if seconds <= 0 then return nil end
+
+	local days = math.floor(seconds / 86400)
+	local hours = math.floor((seconds % 86400) / 3600)
+	local minutes = math.floor((seconds % 3600) / 60)
+
+	if days > 0 then
+		return string.format("%d д. %d ч.", days, hours)
+	elseif hours > 0 then
+		return string.format("%d ч. %d мин.", hours, minutes)
+	else
+		return string.format("%d мин.", minutes)
+	end
+end
+
+local function HandleRecipeCooldown(block, recipeID)
+	if not block or not recipeID then return end
+
+	local start, duration = _G.GetSpellCooldown(recipeID)
+	if not start or not duration or duration == 0 then return end
+	
+	local remaining = (start + duration) - _G.GetTime()
+	if remaining <= 0 then return end
+	
+	local cooldownText = FormatCooldownTime(remaining)
+	if not cooldownText then return end
+
+	if block.usedLines then
+		for key, line in pairs(block.usedLines) do
+			if key ~= "cooldown" then
+				if block.FreeLine then
+					block:FreeLine(line)
+				else
+					line:Hide()
+				end
+			end
+		end
+		local cooldownLine = block.usedLines["cooldown"]
+		table.wipe(block.usedLines)
+		if cooldownLine then
+			block.usedLines["cooldown"] = cooldownLine
+		end
+	end
+	
+	block.lastRegion = block.HeaderText
+
+	if block.HeaderText then
+		block.height = block.HeaderText:GetHeight() or 0
+	end
+
+	local text = "|cffffffffКД:|r " .. cooldownText
+	local line = block:AddObjective("cooldown", text, nil, nil, _G.OBJECTIVE_DASH_STYLE_HIDE, _G.OBJECTIVE_TRACKER_COLOR["TimeLeft"])
+	if line then
+		if line.Icon then
+			line.Icon:Hide()
+		end
+		block.height = (block.height or 0) + (line:GetHeight() or 0) + 2
+	end
+	
+	block:SetHeight(block.height)
+end
+
 local trackers = {
 	_G.QuestObjectiveTracker,
 	_G.AchievementObjectiveTracker,
@@ -273,6 +336,16 @@ function S:Blizzard_ObjectiveTracker()
 		hooksecurefunc(tracker, 'AddBlock', HandleBlockColors)
 		hooksecurefunc(tracker, 'GetProgressBar', HandleProgressBar)
 		hooksecurefunc(tracker, 'GetTimerBar', HandleTimers)
+	end
+
+	local ProfessionsTracker = _G.ProfessionsRecipeTracker
+	if ProfessionsTracker and ProfessionsTracker.AddRecipe then
+		hooksecurefunc(ProfessionsTracker, 'AddRecipe', function(self, recipeID)
+			local block = self:GetExistingBlock(recipeID)
+			if block then
+				HandleRecipeCooldown(block, recipeID)
+			end
+		end)
 	end
 end
 
