@@ -1050,7 +1050,25 @@ local function LoadSkin()
 	if CharacterCustomizationButton then
 		CharacterCustomizationButton:ClearAllPoints()
 		local anchorTab = ElvUI_PaperDollSidebarTab1 or PaperDollSidebarTab1
-		CharacterCustomizationButton:SetPoint("RIGHT", anchorTab, "LEFT", 0, 25)
+		CharacterCustomizationButton:SetPoint("RIGHT", anchorTab, "LEFT", 0, 26)
+
+		CharacterCustomizationButton:Size(28, 28)
+		CharacterCustomizationButton:CreateBackdrop()
+
+		if CharacterCustomizationButton.NormalTexture then
+			CharacterCustomizationButton.NormalTexture:SetInside()
+			CharacterCustomizationButton.NormalTexture:SetTexCoord(unpack(E.TexCoords))
+		end
+
+		if CharacterCustomizationButton.HighlightTexture then
+			CharacterCustomizationButton.HighlightTexture:SetTexture(1, 1, 1, 0.3)
+			CharacterCustomizationButton.HighlightTexture:SetInside()
+		end
+
+		if CharacterCustomizationButton.DisabledTexture then
+			CharacterCustomizationButton.DisabledTexture:SetInside()
+			CharacterCustomizationButton.DisabledTexture:SetTexCoord(unpack(E.TexCoords))
+		end
 	end
 
 	_G["GearManagerToggleButton"]:Size(26, 32)

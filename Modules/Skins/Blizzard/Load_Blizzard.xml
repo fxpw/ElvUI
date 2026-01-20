@@ -32,6 +32,7 @@
 	<Script file="Misc.lua"/>
 	<Script file="Petition.lua"/>
 	<Script file="PvP.lua"/>
+	<Script file="PromoCode.lua"/>
 	<Script file="Quest.lua"/>
 	<Script file="Raid.lua"/>
 	<Script file="Socket.lua"/>

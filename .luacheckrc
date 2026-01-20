@@ -44,6 +44,8 @@ ignore = {
 }
 
 globals = {
+	"CharacterCustomizationButton",
+	"PromoCodeFrame",
 	"C_Unit",
 	"GetItemLevelColor",
 	"HelpTip",
