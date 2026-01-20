@@ -1095,6 +1095,7 @@ function E:UpdateAll(ignoreInstall)
 
 	-- DataBars:ExperienceBar_Toggle()
 	-- DataBars:ReputationBar_Toggle()
+	DataBars:ToggleAll()
 	DataBars:UpdateAll()
 
 	DataTexts:LoadDataTexts()

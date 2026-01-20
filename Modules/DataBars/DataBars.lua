@@ -72,12 +72,18 @@ function mod:UpdateDataBarDimensions()
 	self:ExperienceBar_UpdateDimensions()
 	self:PetExperienceBar_UpdateDimensions()
 	self:ReputationBar_UpdateDimensions()
+	if self.honorBar then
+		self:UpdateHonorDimensions()
+	end
 end
 
 function mod:ToggleAll()
 	mod:ExperienceBar_Toggle()
+	mod:PetExperienceBar_Toggle()
 	mod:ReputationBar_Toggle()
-	mod:ThreatBar_Toggle()
+	if self.honorBar then
+		self:EnableDisable_HonorBar()
+	end
 end
 
 function mod:UpdateAll()
