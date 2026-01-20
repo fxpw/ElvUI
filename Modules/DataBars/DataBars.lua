@@ -5,6 +5,7 @@ function mod.OnLeave(self)
 	if (self == ElvUI_ExperienceBar and mod.db.experience.mouseover)
 	or (self == ElvUI_PetExperienceBar and mod.db.petExperience.mouseover)
 	or (self == ElvUI_ReputationBar and mod.db.reputation.mouseover)
+	or (self == ElvUI_HonorBar and mod.db.honor and mod.db.honor.mouseover)
 	then
 		E:UIFrameFadeOut(self, 1, self:GetAlpha(), 0)
 	end

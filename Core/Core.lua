@@ -189,13 +189,6 @@ do -- used in optionsUI
 	end
 end
 
-do -- used in optionsUI
-	E.DEFAULT_FILTER = {}
-	for filter, tbl in pairs(G.unitframe.aurafilters) do
-		E.DEFAULT_FILTER[filter] = tbl.type
-	end
-end
-
 do
 	local a1,a2 = '','[%s%-]'
 	function E:ShortenRealm(realm)
@@ -911,25 +904,14 @@ do
 
 	local function SendRecieve(_, event, prefix, message, _, sender)
 		if event == "CHAT_MSG_ADDON" then
-			-- print(845)
 			if prefix ~= "ELVUI_VERSIONCHK" then return end
-			-- print(847)
 			if not sender or sender == E.myname then return end
-			-- print(849)
 
-			local ver,msg = tonumber(E.version), tonumber(message)
-			-- local msg = tonumber(message)
+			local ver, msg = tonumber(E.version), tonumber(message)
 			if msg then
 				E.UserList[sender] = msg
-				-- print(msg,sender)
-				-- print(852)
 			end
-			-- if ver ~= G.general.version then
-			-- 	if not E.shownUpdatedWhileRunningPopup and not InCombatLockdown() then
-			-- 		E:StaticPopup_Show("ELVUI_UPDATED_WHILE_RUNNING")
 
-			-- 		E.shownUpdatedWhileRunningPopup = true
-			-- 	end
 			if msg and (msg > ver) then
 				if not E.recievedOutOfDateMessage and not E.db.general.updateAlert then
 					E:Print(L["ElvUI is out of date. You can download the newest version from https://github.com/ElvUI-WotLK/ElvUI"])
@@ -967,11 +949,7 @@ do
 	f:SetScript("OnEvent", SendRecieve)
 end
 
-local ElvUIVersions = {
-
-
-}
-
+local ElvUIVersions = {}
 
 local function CheckVersionWhenRequest(_, event, prefix, message, _, sender)
 	if prefix == "ElvUICheckVerRequest" and sender then

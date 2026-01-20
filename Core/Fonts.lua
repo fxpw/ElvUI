@@ -99,8 +99,7 @@ function E:UpdateBlizzardFonts()
 		SetFont(AchievementFont_Small, NORMAL, self.db.general.fontSize)
 		SetFont(ReputationDetailFont, NORMAL, self.db.general.fontSize)
 
-		SetFont(Fancy12Font, NORMAL, 12)                                         -- wtf is from 7.3.5
-		SetFont(Fancy12Font, NORMAL, 12)                                         -- Added in 7.3.5 used for ?
+		SetFont(Fancy12Font, NORMAL, 12)                                         -- Added in 7.3.5
 		SetFont(Fancy14Font, NORMAL, 14)                                         -- Added in 7.3.5 used for ?
 		SetFont(Fancy22Font, NORMAL, self.db.general.fontSize and 22 or 20)      -- Talking frame Title font
 		SetFont(Fancy24Font, NORMAL, self.db.general.fontSize and 24 or 20)      -- Artifact frame - weapon name
