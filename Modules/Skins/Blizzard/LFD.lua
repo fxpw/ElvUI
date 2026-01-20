@@ -375,6 +375,19 @@ local function LoadSkin()
 	LFDParentFrameGroupButton2.icon:SetParent(LFDParentFrameGroupButton2.icon.backdrop)
 	LFDParentFrameGroupButton2.icon.backdrop:SetFrameLevel(LFDParentFrameGroupButton2:GetFrameLevel() + 2)
 
+	if LFDParentFrameGroupButton3 then
+		LFDParentFrameGroupButton3.ring:Kill()
+		LFDParentFrameGroupButton3.bg:Kill()
+		S:HandleButton(LFDParentFrameGroupButton3)
+		LFDParentFrameGroupButton3.icon:Size(45)
+		LFDParentFrameGroupButton3.icon:ClearAllPoints()
+		LFDParentFrameGroupButton3.icon:Point("LEFT", 10, 0)
+		LFDParentFrameGroupButton3.icon:SetTexCoord(unpack(E.TexCoords))
+		LFDParentFrameGroupButton3.icon:CreateBackdrop()
+		LFDParentFrameGroupButton3.icon:SetParent(LFDParentFrameGroupButton3.icon.backdrop)
+		LFDParentFrameGroupButton3.icon.backdrop:SetFrameLevel(LFDParentFrameGroupButton3:GetFrameLevel() + 2)
+	end
+
 	LFDQueueParentFrame:StripTextures()
 	LFDQueueParentFrameInset:StripTextures()
 
@@ -1131,7 +1144,399 @@ local function LoadSkin()
 		S:HandleCloseButton(MiniGameReadyStatusCloseButton)
 	end)
 
-	-- LadderDummyFrameTab
+	if LFGListFrame then
+		local categorySelection = LFGListFrame.CategorySelection
+		if categorySelection then
+			if categorySelection.Inset then
+				categorySelection.Inset:StripTextures()
+				if categorySelection.Inset.CustomBG then
+					categorySelection.Inset.CustomBG:Kill()
+				end
+			end
+
+			local function SkinLFGListCategoryButton(button)
+				if button and not button.isSkinned then
+					if button.Icon then button.Icon:SetAlpha(0) end
+					if button.Cover then button.Cover:Kill() end
+					if button.GetHighlightTexture and button:GetHighlightTexture() then
+						button:GetHighlightTexture():Kill()
+					end
+
+					S:HandleButton(button)
+
+					if button.Label then
+						button.Label:ClearAllPoints()
+						button.Label:Point("CENTER", 0, 0)
+						button.Label:SetJustifyH("CENTER")
+					end
+
+					if button.SelectedTexture then
+						button.SelectedTexture:SetAlpha(0)
+
+						hooksecurefunc(button.SelectedTexture, "Show", function()
+							button:SetBackdropBorderColor(unpack(E.media.rgbvaluecolor))
+						end)
+						hooksecurefunc(button.SelectedTexture, "Hide", function()
+							button:SetBackdropBorderColor(unpack(E.media.bordercolor))
+						end)
+
+						if button.SelectedTexture:IsShown() then
+							button:SetBackdropBorderColor(unpack(E.media.rgbvaluecolor))
+						end
+					end
+
+					button.isSkinned = true
+				end
+			end
+
+			if _G.LFGListFrameCategorySelectionCategoryButton1 then
+				SkinLFGListCategoryButton(_G.LFGListFrameCategorySelectionCategoryButton1)
+			end
+
+			if categorySelection.CategoryButtons then
+				for _, button in pairs(categorySelection.CategoryButtons) do
+					SkinLFGListCategoryButton(button)
+				end
+			end
+
+			if categorySelection.buttonList then
+				for _, button in pairs(categorySelection.buttonList) do
+					SkinLFGListCategoryButton(button)
+				end
+			end
+
+			categorySelection:HookScript("OnShow", function(self)
+				if self.CategoryButtons then
+					for _, button in pairs(self.CategoryButtons) do
+						SkinLFGListCategoryButton(button)
+					end
+				end
+				for i = 1, 10 do
+					local button = _G["LFGListFrameCategorySelectionCategoryButton"..i]
+					if button then
+						SkinLFGListCategoryButton(button)
+					end
+				end
+			end)
+
+			if categorySelection.FindGroupButton then
+				categorySelection.FindGroupButton:StripTextures()
+				S:HandleButton(categorySelection.FindGroupButton)
+			end
+			if categorySelection.StartGroupButton then
+				categorySelection.StartGroupButton:StripTextures()
+				S:HandleButton(categorySelection.StartGroupButton)
+			end
+		end
+
+		local nothingAvailable = LFGListFrame.NothingAvailable
+		if nothingAvailable then
+			if nothingAvailable.Inset then
+				nothingAvailable.Inset:StripTextures()
+				if nothingAvailable.Inset.CustomBG then
+					nothingAvailable.Inset.CustomBG:Kill()
+				end
+			end
+		end
+
+		local searchPanel = LFGListFrame.SearchPanel
+		if searchPanel then
+			if searchPanel.ResultsInset then
+				searchPanel.ResultsInset:StripTextures()
+			end
+
+			if searchPanel.SearchBox then
+				S:HandleEditBox(searchPanel.SearchBox)
+			end
+
+			if searchPanel.FilterButton then
+				S:HandleButton(searchPanel.FilterButton)
+			end
+
+			if searchPanel.AutoCompleteFrame then
+				if searchPanel.AutoCompleteFrame.BottomLeftBorder then searchPanel.AutoCompleteFrame.BottomLeftBorder:Kill() end
+				if searchPanel.AutoCompleteFrame.BottomRightBorder then searchPanel.AutoCompleteFrame.BottomRightBorder:Kill() end
+				if searchPanel.AutoCompleteFrame.BottomBorder then searchPanel.AutoCompleteFrame.BottomBorder:Kill() end
+				if searchPanel.AutoCompleteFrame.LeftBorder then searchPanel.AutoCompleteFrame.LeftBorder:Kill() end
+				if searchPanel.AutoCompleteFrame.RightBorder then searchPanel.AutoCompleteFrame.RightBorder:Kill() end
+				searchPanel.AutoCompleteFrame:CreateBackdrop("Transparent")
+				if searchPanel.AutoCompleteFrame.backdrop then
+					searchPanel.AutoCompleteFrame.backdrop:Point("TOPLEFT", 0, 0)
+					searchPanel.AutoCompleteFrame.backdrop:Point("BOTTOMRIGHT", 0, 0)
+				end
+			end
+
+			if searchPanel.RefreshButton then
+				S:HandleButton(searchPanel.RefreshButton)
+				if searchPanel.RefreshButton.Icon then
+					searchPanel.RefreshButton.Icon:SetTexCoord(0, 1, 0, 1)
+				end
+			end
+
+			if searchPanel.ScrollFrame then
+				if searchPanel.ScrollFrame.scrollBar then
+					S:HandleScrollBar(searchPanel.ScrollFrame.scrollBar)
+				end
+				if searchPanel.ScrollFrame.StartGroupButton then
+					searchPanel.ScrollFrame.StartGroupButton:StripTextures()
+					S:HandleButton(searchPanel.ScrollFrame.StartGroupButton)
+				end
+				if searchPanel.ScrollFrame.ScrollChild and searchPanel.ScrollFrame.ScrollChild.StartGroupButton then
+					searchPanel.ScrollFrame.ScrollChild.StartGroupButton:StripTextures()
+					S:HandleButton(searchPanel.ScrollFrame.ScrollChild.StartGroupButton)
+				end
+			end
+
+			if searchPanel.BackButton then
+				S:HandleButton(searchPanel.BackButton)
+			end
+			if searchPanel.BackToGroupButton then
+				S:HandleButton(searchPanel.BackToGroupButton)
+			end
+			if searchPanel.SignUpButton then
+				S:HandleButton(searchPanel.SignUpButton)
+			end
+		end
+
+		local appViewer = LFGListFrame.ApplicationViewer
+		if appViewer then
+			if appViewer.InfoBackground then
+				appViewer.InfoBackground:Kill()
+			end
+
+			if appViewer.Inset then
+				appViewer.Inset:StripTextures()
+			end
+
+			if appViewer.NameColumnHeader then
+				appViewer.NameColumnHeader:StripTextures()
+				S:HandleButton(appViewer.NameColumnHeader)
+			end
+			if appViewer.RoleColumnHeader then
+				appViewer.RoleColumnHeader:StripTextures()
+				S:HandleButton(appViewer.RoleColumnHeader)
+			end
+			if appViewer.ItemLevelColumnHeader then
+				appViewer.ItemLevelColumnHeader:StripTextures()
+				S:HandleButton(appViewer.ItemLevelColumnHeader)
+			end
+			if appViewer.RatingColumnHeader then
+				appViewer.RatingColumnHeader:StripTextures()
+				S:HandleButton(appViewer.RatingColumnHeader)
+			end
+
+			if appViewer.AutoAcceptButton then
+				S:HandleCheckBox(appViewer.AutoAcceptButton)
+			end
+
+			if appViewer.RefreshButton then
+				S:HandleButton(appViewer.RefreshButton)
+				if appViewer.RefreshButton.Icon then
+					appViewer.RefreshButton.Icon:SetTexCoord(0, 1, 0, 1)
+				end
+			end
+
+			if appViewer.ScrollFrame and appViewer.ScrollFrame.scrollBar then
+				S:HandleScrollBar(appViewer.ScrollFrame.scrollBar)
+			end
+
+			if appViewer.RemoveEntryButton then
+				S:HandleButton(appViewer.RemoveEntryButton)
+			end
+			if appViewer.EditButton then
+				S:HandleButton(appViewer.EditButton)
+			end
+			if appViewer.BrowseGroupsButton then
+				S:HandleButton(appViewer.BrowseGroupsButton)
+			end
+		end
+
+		local entryCreation = LFGListFrame.EntryCreation
+		if entryCreation then
+			if entryCreation.Inset then
+				entryCreation.Inset:StripTextures()
+			end
+
+			if entryCreation.Name then
+				S:HandleEditBox(entryCreation.Name)
+			end
+			if entryCreation.Description then
+				if entryCreation.Description.Bg then
+					entryCreation.Description.Bg:Kill()
+				end
+				for _, region in pairs({entryCreation.Description:GetRegions()}) do
+					if region:IsObjectType("Texture") then
+						local textureName = region:GetName()
+						if textureName and (textureName:find("Left") or textureName:find("Right") or 
+						   textureName:find("Top") or textureName:find("Bottom") or textureName:find("Middle")) then
+							region:Kill()
+						end
+					end
+				end
+				entryCreation.Description:CreateBackdrop("Transparent")
+				if entryCreation.Description.EditBox then
+					entryCreation.Description.EditBox:SetTextInsets(4, 4, 4, 4)
+				end
+			end
+
+			if entryCreation.ActivityDropDown then
+				S:HandleDropDownBox(entryCreation.ActivityDropDown)
+			end
+			if entryCreation.GroupDropDown then
+				S:HandleDropDownBox(entryCreation.GroupDropDown)
+			end
+			if entryCreation.PlayStyleDropdown then
+				S:HandleDropDownBox(entryCreation.PlayStyleDropdown)
+			end
+			if entryCreation.CategoryDropdown then
+				S:HandleDropDownBox(entryCreation.CategoryDropdown)
+			end
+
+			if entryCreation.ItemLevel then
+				if entryCreation.ItemLevel.CheckButton then
+					S:HandleCheckBox(entryCreation.ItemLevel.CheckButton)
+				end
+				if entryCreation.ItemLevel.EditBox then
+					S:HandleEditBox(entryCreation.ItemLevel.EditBox)
+				end
+			end
+
+			if entryCreation.VoiceChat then
+				if entryCreation.VoiceChat.CheckButton then
+					S:HandleCheckBox(entryCreation.VoiceChat.CheckButton)
+				end
+				if entryCreation.VoiceChat.EditBox then
+					S:HandleEditBox(entryCreation.VoiceChat.EditBox)
+				end
+			end
+
+			if entryCreation.PrivateGroup then
+				if entryCreation.PrivateGroup.CheckButton then
+					S:HandleCheckBox(entryCreation.PrivateGroup.CheckButton)
+				end
+			end
+
+			if entryCreation.RaidRules then
+				if entryCreation.RaidRules.CheckButton then
+					S:HandleCheckBox(entryCreation.RaidRules.CheckButton)
+				end
+			end
+
+			if entryCreation.RaidRulesDescription then
+				entryCreation.RaidRulesDescription:StripTextures()
+				if entryCreation.RaidRulesDescription.EditBox then
+					S:HandleEditBox(entryCreation.RaidRulesDescription.EditBox)
+				end
+			end
+
+			if entryCreation.PVPRating then
+				if entryCreation.PVPRating.CheckButton then
+					S:HandleCheckBox(entryCreation.PVPRating.CheckButton)
+				end
+				if entryCreation.PVPRating.EditBox then
+					S:HandleEditBox(entryCreation.PVPRating.EditBox)
+				end
+			end
+
+			if entryCreation.MythicPlusRating then
+				if entryCreation.MythicPlusRating.CheckButton then
+					S:HandleCheckBox(entryCreation.MythicPlusRating.CheckButton)
+				end
+				if entryCreation.MythicPlusRating.EditBox then
+					S:HandleEditBox(entryCreation.MythicPlusRating.EditBox)
+				end
+			end
+
+			if entryCreation.ListGroupButton then
+				S:HandleButton(entryCreation.ListGroupButton)
+			end
+			if entryCreation.CancelButton then
+				S:HandleButton(entryCreation.CancelButton)
+			end
+		end
+
+		hooksecurefunc("LFGListSearchEntry_Update", function(button)
+			if button and not button.isSkinned then
+				button:SetTemplate("Transparent")
+				button:StyleButton()
+				if button.HighlightTexture then
+					button.HighlightTexture:SetTexture(1, 1, 1, 0.1)
+					button.HighlightTexture:SetInside()
+				end
+				if button.Selected then
+					button.Selected:SetTexture(E.media.normTex)
+					button.Selected:SetVertexColor(1, 1, 1)
+					button.Selected:SetAlpha(0.2)
+					button.Selected:SetInside()
+				end
+				if button.ExpirationTime and button.ExpirationTime.pointed then
+					button.ExpirationTime.pointed:Kill()
+				end
+
+				if button.Selected then
+					hooksecurefunc(button.Selected, "Show", function()
+						if button.backdrop then
+							button.backdrop:SetBackdropColor(0.3, 0.3, 0.3, 0.8)
+						end
+						button:SetBackdropBorderColor(unpack(E.media.rgbvaluecolor))
+					end)
+					hooksecurefunc(button.Selected, "Hide", function()
+						if button.backdrop then
+							button.backdrop:SetBackdropColor(unpack(E.media.backdropcolor))
+						end
+						button:SetBackdropBorderColor(unpack(E.media.bordercolor))
+					end)
+					if button.Selected:IsShown() then
+						if button.backdrop then
+							button.backdrop:SetBackdropColor(0.3, 0.3, 0.3, 0.8)
+						end
+						button:SetBackdropBorderColor(unpack(E.media.rgbvaluecolor))
+					end
+				end
+
+				button.isSkinned = true
+			end
+		end)
+
+		hooksecurefunc("LFGListApplicantMember_OnEnter", function(button)
+			if button and not button.isSkinned then
+				button:SetTemplate("Transparent")
+				button.isSkinned = true
+			end
+		end)
+	end
+
+	if LFGListInviteDialog then
+		LFGListInviteDialog:StripTextures()
+		LFGListInviteDialog:SetTemplate("Transparent")
+		if LFGListInviteDialog.AcceptButton then
+			S:HandleButton(LFGListInviteDialog.AcceptButton)
+		end
+		if LFGListInviteDialog.DeclineButton then
+			S:HandleButton(LFGListInviteDialog.DeclineButton)
+		end
+		if LFGListInviteDialog.AcknowledgeButton then
+			S:HandleButton(LFGListInviteDialog.AcknowledgeButton)
+		end
+	end
+
+	if LFGListApplicationDialog then
+		LFGListApplicationDialog:StripTextures()
+		LFGListApplicationDialog:SetTemplate("Transparent")
+		if LFGListApplicationDialog.Description then
+			LFGListApplicationDialog.Description:StripTextures()
+			if LFGListApplicationDialog.Description.EditBox then
+				S:HandleEditBox(LFGListApplicationDialog.Description.EditBox)
+			end
+		end
+		if LFGListApplicationDialog.SignUpButton then
+			S:HandleButton(LFGListApplicationDialog.SignUpButton)
+		end
+		if LFGListApplicationDialog.CancelButton then
+			S:HandleButton(LFGListApplicationDialog.CancelButton)
+		end
+	end
+
 	S:HandlePortraitFrame(LadderDummyFrame)
 	S:HandleCloseButton(LadderDummyFrameCloseButton)
 	LadderDummyFrame:SetTemplate("Transparent")
