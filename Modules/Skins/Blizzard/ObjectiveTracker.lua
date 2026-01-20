@@ -79,10 +79,10 @@ local function HandleRecipeCooldown(block, recipeID)
 
 	local start, duration = _G.GetSpellCooldown(recipeID)
 	if not start or not duration or duration == 0 then return end
-	
+
 	local remaining = (start + duration) - _G.GetTime()
 	if remaining <= 0 then return end
-	
+
 	local cooldownText = FormatCooldownTime(remaining)
 	if not cooldownText then return end
 
@@ -102,7 +102,7 @@ local function HandleRecipeCooldown(block, recipeID)
 			block.usedLines["cooldown"] = cooldownLine
 		end
 	end
-	
+
 	block.lastRegion = block.HeaderText
 
 	if block.HeaderText then
@@ -117,7 +117,7 @@ local function HandleRecipeCooldown(block, recipeID)
 		end
 		block.height = (block.height or 0) + (line:GetHeight() or 0) + 2
 	end
-	
+
 	block:SetHeight(block.height)
 end
 
