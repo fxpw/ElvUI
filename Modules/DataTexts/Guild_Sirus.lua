@@ -31,7 +31,7 @@ local activezone, inactivezone = {r=0.3, g=1.0, b=0.3}, {r=0.65, g=0.65, b=0.65}
 
 local levelNameFormat = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r %s"
 local levelNameStatusFormat = "|cff%02x%02x%02x%d|r %s%s"
-local levelNameStatusFormatCategory = "|T%s:16:16:0:0:64:64:4:60:4:60|t |cff%02x%02x%02x%d|r %s%s "
+local levelNameStatusFormatCategory = "|T%s:16:16:0:0:64:64:4:60:4:60|t %s%s "
 local onlineInfoFormat = join("", GUILD, ": %d/%d")
 
 local guildMotDFormat = "%s |cffaaaaaa- |cffffffff%s"
@@ -274,7 +274,7 @@ local function OnEnter(self, _, noUpdate)
 
 			if info[11] then
 				DT.tooltip:AddDoubleLine(
-					format(levelNameStatusFormatCategory, info[11], levelc.r*255, levelc.g*255, levelc.b*255, info[3], info[1], grouped, info[8]),
+					format(levelNameStatusFormatCategory, info[11], info[1], grouped, info[8]),
 					info[4],
 					classc.r, classc.g, classc.b,
 					zonec.r, zonec.g, zonec.b
