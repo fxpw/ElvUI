@@ -325,6 +325,7 @@ S:AddCallback("Skin_Bags", function()
 				opt.Item.Icon:SetParent(opt.Item.backdrop)
 			end
 			if opt.Item.IconBorder then opt.Item.IconBorder:Kill() end
+			if opt.Item.glow then opt.Item.glow:Kill() end
 		end
 
 		opt.isSkinned = true
