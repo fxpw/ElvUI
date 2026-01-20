@@ -1049,8 +1049,7 @@ local function LoadSkin()
 
 	if CharacterCustomizationButton then
 		CharacterCustomizationButton:ClearAllPoints()
-		local anchorTab = ElvUI_PaperDollSidebarTab1 or PaperDollSidebarTab1
-		CharacterCustomizationButton:SetPoint("RIGHT", anchorTab, "LEFT", 0, 26)
+		CharacterCustomizationButton:SetPoint("TOPLEFT", CharacterFrame, "TOPLEFT", 18, -18)
 
 		CharacterCustomizationButton:Size(28, 28)
 		CharacterCustomizationButton:CreateBackdrop()
