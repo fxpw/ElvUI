@@ -1047,7 +1047,11 @@ local function LoadSkin()
 		end
 	end
 
-
+	if CharacterCustomizationButton then
+		CharacterCustomizationButton:ClearAllPoints()
+		local anchorTab = ElvUI_PaperDollSidebarTab1 or PaperDollSidebarTab1
+		CharacterCustomizationButton:SetPoint("RIGHT", anchorTab, "LEFT", 0, 25)
+	end
 
 	_G["GearManagerToggleButton"]:Size(26, 32)
 	_G["GearManagerToggleButton"]:CreateBackdrop("Default")
