@@ -1367,7 +1367,7 @@ local function LoadSkin()
 				for _, region in pairs({entryCreation.Description:GetRegions()}) do
 					if region:IsObjectType("Texture") then
 						local textureName = region:GetName()
-						if textureName and (textureName:find("Left") or textureName:find("Right") or 
+						if textureName and (textureName:find("Left") or textureName:find("Right") or
 						   textureName:find("Top") or textureName:find("Bottom") or textureName:find("Middle")) then
 							region:Kill()
 						end

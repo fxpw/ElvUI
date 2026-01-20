@@ -49,6 +49,11 @@ globals = {
 	"HelpTip",
 	"BattlePassSplashFrame",
 	"C_BattlePass",
+	-- LFGList (Pre-made Groups)
+	"LFGListFrame",
+	"LFGListInviteDialog",
+	"LFGListApplicationDialog",
+	"LFDParentFrameGroupButton3",
 	"ObjectiveTrackerFrame",
 	"ObjectiveTrackerFrameScrollFrame",
 	"InterfaceOptionsObjectivesPanelTrackerFontSize",
