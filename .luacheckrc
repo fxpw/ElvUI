@@ -40130,7 +40130,7 @@ globals = {
 	"InspectShoulderSlot",
 	"InspectTabardSlot",
 	"InspectTalentFrame",
-	"PlayerTalentFrameResetTalentGroupButton"
+	"PlayerTalentFrameResetTalentGroupButton",
 	"InspectTalentFrameArrowFrame",
 	"InspectTalentFrameCloseButton",
 	"InspectTalentFramePointsBar",
