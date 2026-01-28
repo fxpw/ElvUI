@@ -1288,13 +1288,13 @@ local function LoadSkin()
 			end
 
 			if searchPanel.BackButton then
-				S:HandleButton(searchPanel.BackButton)
+				S:HandleButton(searchPanel.BackButton, true)
 			end
 			if searchPanel.BackToGroupButton then
-				S:HandleButton(searchPanel.BackToGroupButton)
+				S:HandleButton(searchPanel.BackToGroupButton, true)
 			end
 			if searchPanel.SignUpButton then
-				S:HandleButton(searchPanel.SignUpButton)
+				S:HandleButton(searchPanel.SignUpButton, true)
 			end
 		end
 
@@ -1451,10 +1451,10 @@ local function LoadSkin()
 			end
 
 			if entryCreation.ListGroupButton then
-				S:HandleButton(entryCreation.ListGroupButton)
+				S:HandleButton(entryCreation.ListGroupButton, true)
 			end
 			if entryCreation.CancelButton then
-				S:HandleButton(entryCreation.CancelButton)
+				S:HandleButton(entryCreation.CancelButton, true)
 			end
 		end
 
