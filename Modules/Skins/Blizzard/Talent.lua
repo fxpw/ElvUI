@@ -120,6 +120,8 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 	PlayerTalentFrameResetTalentGroupButton:Point("RIGHT", -4, 1)
 	PlayerTalentFrameResetButton:Point("RIGHT", PlayerTalentFrameResetTalentGroupButton, "LEFT", -3, 0)
 	PlayerTalentFrameLearnButton:Point("RIGHT", PlayerTalentFrameResetButton, "LEFT", -3, 0)
+	S:HandleButton(PlayerTalentFrameToggleSummariesButton)
+	PlayerTalentFrameToggleSummariesButton:Point("RIGHT", PlayerTalentFrameLearnButton, "LEFT", -3, 0)
 
 	-- PlayerSpecTab1:Point("TOPLEFT", PlayerTalentFrame, "TOPRIGHT", -33, -65)
 	-- PlayerSpecTab1.ClearAllPoints = E.noop
