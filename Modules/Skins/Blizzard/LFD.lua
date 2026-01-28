@@ -1425,7 +1425,10 @@ local function LoadSkin()
 			if entryCreation.RaidRulesDescription then
 				entryCreation.RaidRulesDescription:StripTextures()
 				if entryCreation.RaidRulesDescription.EditBox then
-					S:HandleEditBox(entryCreation.RaidRulesDescription.EditBox)
+					entryCreation.RaidRulesDescription:CreateBackdrop("Transparent")
+					entryCreation.RaidRulesDescription.EditBox:SetTextInsets(4, 4, 4, 4)
+				else
+					S:HandleEditBox(entryCreation.RaidRulesDescription)
 				end
 			end
 
