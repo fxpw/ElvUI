@@ -47,6 +47,7 @@ globals = {
 	"CharacterCustomizationButton",
 	"PromoCodeFrame",
 	"C_Unit",
+	"C_PlayerInfo",
 	"GetItemLevelColor",
 	"HelpTip",
 	"BattlePassSplashFrame",
