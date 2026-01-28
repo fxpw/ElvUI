@@ -988,8 +988,25 @@ local function LoadSkin()
 	PaperDollFrame:StripTextures(true)
 
 	PaperDollFrame.NewPanel:StripTextures()
-	ColorizeStatPane(PaperDollFrameStrengthenFrame.StrengthenTittle)
-	PaperDollFrameStrengthenFrame.StrengthenTittle.Background:SetAlpha(0)
+	ColorizeStatPane(PaperDollFrameStrengthenFrame.Title)
+	PaperDollFrameStrengthenFrame.Title.Background:SetAlpha(0)
+
+	S:HandleButton(PaperDollFrameStrengthenFrame.ResetButton)
+
+	for i = 1, C_PlayerInfo.GetNumBonusStats() do
+		local statPlus = _G["PaperDollFrameStrengthenFrameStat"..i.."Plus"]
+		if statPlus then
+			statPlus:StripTextures()
+			S:HandleButton(statPlus)
+			statPlus:SetNormalTexture(E.Media.Textures.Plus)
+			statPlus:GetNormalTexture():SetInside()
+			statPlus:SetPushedTexture(E.Media.Textures.Plus)
+			statPlus:GetPushedTexture():SetInside()
+			statPlus:SetDisabledTexture(E.Media.Textures.Plus)
+			statPlus:GetDisabledTexture():SetInside()
+			statPlus:GetDisabledTexture():SetDesaturated(true)
+		end
+	end
 
 	PaperDollSidebarTabs:StripTextures()
 
