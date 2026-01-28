@@ -26,6 +26,7 @@
 	</Button>
 
 	<Script file="UnitFrames.lua"/>
+	<Script file="PhaseOptimization.lua"/>
 	<Script file="ConfigEnviroment.lua"/>
 	<Include file="Elements\Load_Elements.xml"/>
 	<Include file="Units\Load_Units.xml"/>
