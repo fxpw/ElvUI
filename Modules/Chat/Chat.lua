@@ -437,17 +437,19 @@ local randomChatIcons = {
 	["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true
 }
 local pepeChatIcons = {
-	["Выстрелбелка-Scourge x2 - 3.3.5a+"] = true,
-	["Выстрелбелка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
-	["Тымолодец-Scourge x2 - 3.3.5a+"] = true,
-	["Тымолодец-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Выстрелбелка-Sirus x5 - 3.3.5a+"] = true,
+	["Выстрелбелка-ProxyEU Sirus x5 - 3.3.5a+"] = true,
+	["Тымолодец-Sirus x5 - 3.3.5a+"] = true,
+	["Тымолодец-ProxyEU Sirus x5 - 3.3.5a+"] = true,
+	["Тридвараз-Sirus x5 - 3.3.5a+"] = true,
+	["Тридвараз-ProxyEU Sirus x5 - 3.3.5a+"] = true,
 	["Выстрелбелка-Soulseeker x1 - 3.3.5a+"] = true,
-	["Наглость-Scourge x2 - 3.3.5a+"] = true,
-	["Наглость-ProxyEU Scourge x2 - 3.3.5a+"] = true,
-	["Root-Scourge x2 - 3.3.5a+"] = true,
-	["Root-ProxyEU Scourge x2 - 3.3.5a+"] = true,
-	["Cureit-Scourge x2 - 3.3.5a+"] = true,
-	["Cureit-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Наглость-Sirus x5 - 3.3.5a+"] = true,
+	["Наглость-ProxyEU Sirus x5 - 3.3.5a+"] = true,
+	["Root-Sirus x5 - 3.3.5a+"] = true,
+	["Root-ProxyEU Sirus x5 - 3.3.5a+"] = true,
+	["Cureit-Sirus x5 - 3.3.5a+"] = true,
+	["Cureit-ProxyEU Sirus x5 - 3.3.5a+"] = true,
 	["Murr-Neverest x3 - 3.3.5a+"] = true,
 }
 
