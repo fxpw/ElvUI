@@ -929,6 +929,7 @@ local function LoadSkin()
 	}
 
 	local function SkinCategoryButton(b, i)
+		if not b then return end
 		b.Ring:SetAlpha(0)
 		b.Background:SetAlpha(0)
 		S:HandleButton(b)
@@ -1605,9 +1606,11 @@ local function LoadSkin()
 
 	S:HandleEditBox(LadderDummyFrame.Container.RightContainer.TopContainer.SearchBox)
 	S:HandleButton(LadderDummyFrame.Container.RightContainer.TopContainer.SearchButton)
+	S:HandleDropDownBox(LadderDummyFrame.Container.RightContainer.TopContainer.FilterDropDown)
 
 	LadderDummyFrame.Container.RightContainer.TopContainer.TitleFrame:StripTextures()
 	LadderDummyFrame.Container.RightContainer.TopContainer.ShadowOverlay:StripTextures()
+	
 end
 
 S:AddCallback("Skin_LFD", LoadSkin)
