@@ -1610,7 +1610,6 @@ local function LoadSkin()
 
 	LadderDummyFrame.Container.RightContainer.TopContainer.TitleFrame:StripTextures()
 	LadderDummyFrame.Container.RightContainer.TopContainer.ShadowOverlay:StripTextures()
-	
 end
 
 S:AddCallback("Skin_LFD", LoadSkin)
