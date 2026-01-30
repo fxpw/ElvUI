@@ -217,7 +217,8 @@ end
 local specialChatIconsSirus = {
 	["Крольчонок-Scourge x2 - 3.3.5a+"] = ElvBlue,
 	["Додзё-Scourge x2 - 3.3.5a+"] = Dodzo,
-	["Apolexis-Scourge x2 - 3.3.5a+"] = Apolexis,
+	["Apolexis-Sirus x5 - 3.3.5a+"] = Apolexis,
+	["Алексей-Sirus x5 - 3.3.5a+"] = Apolexis,
 	["Tossman-Scourge x2 - 3.3.5a+"] = Toss,
 	["Toss-Scourge x2 - 3.3.5a+"] = Toss,
 	["Toc-Scourge x2 - 3.3.5a+"] = Toss,
@@ -430,11 +431,11 @@ local specialChatIconsSirus = {
 local randomChatIcons = {
 	["Шутка-Soulseeker x1 - 3.3.5a+"] = true,
 	["Fxpw-Soulseeker x1 - 3.3.5a+"] = true,
-	["Шутка-ProxyEU Scourge x2 - 3.3.5a+"] = true,
+	["Шутка-ProxyEU Sirus x5 - 3.3.5a+"] = true,
 	["Шутка-Neverest x3 - 3.3.5a+"] = true,
-	["Шутка-Scourge x2 - 3.3.5a+"] = true,
-	["Пьяная-Scourge x2 - 3.3.5a+"] = true,
-	["Пьяная-ProxyEU Scourge x2 - 3.3.5a+"] = true
+	["Шутка-Sirus x5 - 3.3.5a+"] = true,
+	["Пьяная-Sirus x5 - 3.3.5a+"] = true,
+	["Пьяная-ProxyEU Sirus x5 - 3.3.5a+"] = true
 }
 local pepeChatIcons = {
 	["Выстрелбелка-Sirus x5 - 3.3.5a+"] = true,
