@@ -30,8 +30,6 @@ local GetItemInfo = GetItemInfo
 local GetItemCount = GetItemCount
 local CreateFrame = CreateFrame
 local GameTooltip = GameTooltip
-local ActionButton_ShowOverlayGlow = ActionButton_ShowOverlayGlow
-local ActionButton_HideOverlayGlow = ActionButton_HideOverlayGlow
 
 local LOCKED = LOCKED or "Locked"
 local VIDEO_OPTIONS_ENABLED = VIDEO_OPTIONS_ENABLED or "Enabled"
