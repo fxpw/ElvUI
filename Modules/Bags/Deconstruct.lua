@@ -20,7 +20,7 @@ end
 
 local _G = _G
 local format, strfind, type, tostring = format, strfind, type, tostring
-local pairs, select, unpack = pairs, select, unpack
+local pairs, unpack = pairs, unpack
 
 local GetTradeTargetItemLink = GetTradeTargetItemLink
 local InCombatLockdown = InCombatLockdown
@@ -30,7 +30,8 @@ local GetItemInfo = GetItemInfo
 local GetItemCount = GetItemCount
 local CreateFrame = CreateFrame
 local GameTooltip = GameTooltip
-local C_Item = C_Item or _G.C_Item
+local ActionButton_ShowOverlayGlow = ActionButton_ShowOverlayGlow
+local ActionButton_HideOverlayGlow = ActionButton_HideOverlayGlow
 
 local LOCKED = LOCKED or "Locked"
 local VIDEO_OPTIONS_ENABLED = VIDEO_OPTIONS_ENABLED or "Enabled"
@@ -171,8 +172,8 @@ function D:UpdateProfessions()
 		D.DEPrimeName = GetSpellInfo(D.PrimeDEID)
 	end
 
-	if (D.DEname and GetSpellInfo(D.DEname)) or (D.DEPrimeName and GetSpellInfo(D.DEPrimeName)) or (D.PrimeDEID and IsSpellKnown(D.PrimeDEID)) then 
-		D.HasEnchanting = true 
+	if (D.DEname and GetSpellInfo(D.DEname)) or (D.DEPrimeName and GetSpellInfo(D.DEPrimeName)) or (D.PrimeDEID and IsSpellKnown(D.PrimeDEID)) then
+		D.HasEnchanting = true
 	end
 	if D.MILLname and GetSpellInfo(D.MILLname) then D.HasInscription = true end
 	if D.PROSPECTname and GetSpellInfo(D.PROSPECTname) then D.HasJewelcrafting = true end
@@ -181,10 +182,10 @@ function D:UpdateProfessions()
 	wipe(D.ItemProcessingCache)
 end
 
-local function HaveKey() 
-	for key in pairs(D.Keys) do 
-		if GetItemCount(key) > 0 then return key end 
-	end 
+local function HaveKey()
+	for key in pairs(D.Keys) do
+		if GetItemCount(key) > 0 then return key end
+	end
 end
 
 function D:Blacklisting(skill)
@@ -210,7 +211,7 @@ function D:BuildBlacklistDE()
 		db = parsed
 	end
 
-	for key, value in pairs(db) do
+	for _, value in pairs(db) do
 		if value and value ~= "" then
 			local entry = tostring(value)
 			entry = entry:match("^%s*(.-)%s*$") or entry
@@ -223,7 +224,7 @@ function D:BuildBlacklistDE()
 		end
 	end
 
-	for key, value in pairs(g) do
+	for _, value in pairs(g) do
 		if value and value ~= "" then
 			local entry = tostring(value)
 			entry = entry:match("^%s*(.-)%s*$") or entry
@@ -244,7 +245,7 @@ function D:BuildBlacklistLOCK()
 	local db = E.db.bags.lockBlacklist or {}
 	local g = E.global.bags.lockBlacklist or {}
 
-	for key, value in pairs(db) do
+	for _, value in pairs(db) do
 		if value and value ~= "" then
 			local entry = tostring(value)
 			entry = entry:match("^%s*(.-)%s*$") or entry
@@ -257,7 +258,7 @@ function D:BuildBlacklistLOCK()
 		end
 	end
 
-	for key, value in pairs(g) do
+	for _, value in pairs(g) do
 		if value and value ~= "" then
 			local entry = tostring(value)
 			entry = entry:match("^%s*(.-)%s*$") or entry
@@ -295,10 +296,10 @@ end
 
 function D:IsDisenchantableTooltip(itemLink)
 	if not itemLink then return false end
-	
+
 	GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	GameTooltip:SetHyperlink(itemLink)
-	
+
 	for i = 2, GameTooltip:NumLines() do
 		local line = _G["GameTooltipTextLeft" .. i]
 		if line and line:GetText() then
@@ -476,7 +477,7 @@ function D:DeconstructParser()
 	local itemId = tonumber(itemLink:match("item:(%d+)"))
 	if not itemId then return end
 
-	local itemName, _, itemRarity, _, _, itemType, itemSubType, _, itemEquipLoc = GetItemInfo(itemId)
+	local itemName, _, itemRarity, _, _, itemType, _, _, itemEquipLoc = GetItemInfo(itemId)
 
 	if InCombatLockdown() then return end
 
@@ -544,7 +545,7 @@ end
 
 function D:ToggleMode()
 	if not D:HasRelevantProfession() then return end
-	
+
 	D.DeconstructMode = not D.DeconstructMode
 
 	if D.DeconstructButton then
