@@ -2,5 +2,5 @@
 	<Script file="Bags.lua"/>
 	<Script file="BagBar.lua"/>
 	<Script file="Sort.lua"/>
-	<!-- <Script file="Bags_Sirus.lua"/> -->
+	<Script file="Deconstruct.lua"/>
 </Ui>
