@@ -445,6 +445,8 @@ globals = {
 	"ActionButton_OnLoad",
 	"ActionButton_OnUpdate",
 	"ActionButton_SetTooltip",
+	"ActionButton_ShowOverlayGlow",
+	"ActionButton_HideOverlayGlow",
 	"ActionButton_ShowGrid",
 	"ActionButton_StartFlash",
 	"ActionButton_StopFlash",
