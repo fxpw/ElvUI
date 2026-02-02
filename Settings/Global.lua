@@ -31,6 +31,8 @@ G.chat = {
 
 G.bags = {
 	ignoredItems = {},
+	deconstructBlacklist = {},
+	lockBlacklist = {},
 }
 
 G.nameplates = {}
