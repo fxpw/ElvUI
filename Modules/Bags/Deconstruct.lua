@@ -777,6 +777,7 @@ function D:Initialize()
 			B.BagFrame:HookScript("OnDragStop", function(self)
 				if D.DeconstructMode then
 					D:UpdateBagSlots(self, true)
+					if B.BankFrame then D:UpdateBagSlots(B.BankFrame, true) end
 				end
 			end)
 			B.BagFrame.deconstructDragHooked = true
@@ -786,6 +787,7 @@ function D:Initialize()
 			B.BankFrame:HookScript("OnDragStop", function(self)
 				if D.DeconstructMode then
 					D:UpdateBagSlots(self, true)
+					if B.BagFrame then D:UpdateBagSlots(B.BagFrame, true) end
 				end
 			end)
 			B.BankFrame.deconstructDragHooked = true
