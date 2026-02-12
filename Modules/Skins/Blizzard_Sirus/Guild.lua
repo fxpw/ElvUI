@@ -263,7 +263,6 @@ local function LoadSkin()
 		GuildRecruitmentCommentInputFrame:StripTextures()
 
 
-
 		--guild faction
 		GuildFactionFrame:ClearAllPoints()
 		GuildFactionFrame:SetPoint("LEFT", GuildFrame.TabardOverlay, "RIGHT", -8, -2)
