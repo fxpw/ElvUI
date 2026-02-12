@@ -19,7 +19,7 @@ local function LoadSkin()
 	local MerchantFrame = _G.MerchantFrame
 	S:HandlePortraitFrame(MerchantFrame)
 	MerchantFrameInset:StripTextures()
-	MerchantArtFrame:StripTextures()
+	MerchantFrame.ArtworkFrame:StripTextures()
 	MerchantMoneyBg:StripTextures()
 	MerchantMoneyInset:StripTextures()
 
