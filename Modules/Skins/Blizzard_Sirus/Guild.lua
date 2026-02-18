@@ -224,6 +224,9 @@ local function LoadSkin()
 --				GuildLevelFrame:SetTemplate("Transparent")
 			GuildLevelFrame:ClearAllPoints()
 			GuildLevelFrame:Point("TOPLEFT", 20, -30)
+			GuildLevelFrame:Point("TOP", GuildFrame, "TOPLEFT", 26, -46)
+			GuildLevelFrame:Size(35, 20)
+			GuildLevelFrameText:SetFont(E.media.normFont, 12, "OUTLINE")
 
 		end
 		GuildFrame:HookScript("OnShow", handlelvl)
@@ -260,10 +263,11 @@ local function LoadSkin()
 		GuildRecruitmentCommentInputFrame:StripTextures()
 
 
-
-		--guild fraction
+		--guild faction
 		GuildFactionFrame:ClearAllPoints()
-		GuildFactionFrame:SetPoint("TOPLEFT",GuildFrame, "TOPLEFT", 0, 0)
+		GuildFactionFrame:SetPoint("LEFT", GuildFrame.TabardOverlay, "RIGHT", -8, -2)
+		GuildFactionFrame:Size(48, 48)
+		GuildFactionFrame.Icon:SetAllPoints()
 
 		--look for guild
 		LookingForGuildFrame:StripTextures();

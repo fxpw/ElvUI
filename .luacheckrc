@@ -2621,6 +2621,7 @@ globals = {
 	"GuildControlPopup_UpdateDepositCheckBox",
 	"GuildControlPopupframe_Update",
 	"GuildControlSaveRank",
+	"GuildLevelFrameText",
 	"GuildControlSetRank",
 	"GuildControlSetRankFlag",
 	"GuildDemote",
