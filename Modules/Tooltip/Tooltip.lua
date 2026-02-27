@@ -76,7 +76,6 @@ local classification = {
 
 function TT:GetItemLvL(unit, guid)
 	if not unit then return end
-	
 	local ilvl = C_Inspect.GetAvgItemLevel(unit)
     if ilvl and ilvl ~= 0 then
         local color = GetItemLevelColor(ilvl)

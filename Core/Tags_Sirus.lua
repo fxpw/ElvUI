@@ -110,7 +110,7 @@ addon.Premium = Premium
 ElvUF.Tags.Events["category:name"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:name"] = function(unit)
 	local _, spellID = C_Unit.GetCategoryInfo(unit)
-	if spellID and Categories[spellID] then 
+	if spellID and Categories[spellID] then
 		local index = C_Unit.GetAuraIndexForSpellID(unit, spellID, "HARMFUL")
 		if index then
 			local name = UnitAura(unit, index, "HARMFUL")
@@ -170,7 +170,7 @@ ElvUF.Tags.Methods["category:name:veryshort"] = function(unit)
 		if index then
 			name = UnitAura(unit, index, "HARMFUL")
 		end
-		
+
 		return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
 	end
 end
@@ -392,7 +392,6 @@ for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 
 	end
 end
 
-local ilvl
 local color
 local hex
 -- COLORTEST = nil
@@ -460,7 +459,7 @@ ElvUF.Tags.Methods["classification:sirus"] = function(unit)
 		if info.vipCategory and info.vipName then
 			return info.vipName
 		end
-		
+
 		local c = info.classification
 		if c == 'worldboss' then return L["Boss"] end
 		if c == 'rareelite' then return L["Rare Elite"] end

@@ -3,7 +3,6 @@ local DT = E:GetModule("DataTexts")
 
 --Lua functions
 local format, join = string.format, string.join
-local toggle = false
 --WoW API / Variables
 local displayString = ""
 local lastPanel

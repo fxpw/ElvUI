@@ -29,7 +29,6 @@ local function LoadSkin()
 					button.Background:SetTexture(nil)
 					S:HandleIcon(button.Icon)
 					button.Icon:SetDrawLayer("ARTWORK")
-					
 					button:CreateBackdrop("Default")
                     button.backdrop:SetPoint("TOPLEFT", 38, 0)
                     button.backdrop:SetPoint("BOTTOMRIGHT", 0, 0)

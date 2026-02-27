@@ -25,7 +25,6 @@ local GetThreatStatusColor = GetThreatStatusColor
 local GetTime = GetTime
 local GetUnitSpeed = GetUnitSpeed
 local UnitClass = UnitClass
-local UnitClassification = UnitClassification
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local UnitExists = UnitExists
 local UnitGUID = UnitGUID

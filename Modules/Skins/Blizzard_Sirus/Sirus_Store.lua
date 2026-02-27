@@ -1,6 +1,5 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local S = E:GetModule("Skins")
-local GetItemInfo = C_Item.GetItemInfo
 
 --Lua functions
 --WoW API / Variables
