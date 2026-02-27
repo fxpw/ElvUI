@@ -8,6 +8,7 @@ local unpack = unpack
 local GetCurrentGuildBankTab = GetCurrentGuildBankTab
 local GetGuildBankItemLink = GetGuildBankItemLink
 local GetItemQualityColor = GetItemQualityColor
+local GetItemInfo = C_Item.GetItemInfo
 
 S:AddCallbackForAddon("Blizzard_GuildBankUI", "Skin_Blizzard_GuildBankUI", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.gbank then return end

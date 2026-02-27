@@ -44,6 +44,23 @@ ignore = {
 }
 
 globals = {
+	"UnitIsGroupLeader",
+	"C_Inspect",
+	"C_CurrencyInfo",
+	"C_Guild",
+	"LadderFrame",
+	"LadderFrameCloseButton",
+	"LadderMythicPlusFrame",
+	"ChallengesFrame",
+	"ChallengesFrameCloseButton",
+	"ChallengesKeystoneFrameAffixMixin",
+	"ChallengesKeystoneFrame",
+	"ChallengesInspectFrame",
+	"ChallengesInspectFrameCloseButton",
+	"ChallengesInspectIconDungeonIconMixin",
+	"ChallengesInspectMemberIconMixin",
+	"TradeSkillTrackButton",
+	"UnitInRangeIndex",
 	"CharacterCustomizationButton",
 	"PromoCodeFrame",
 	"C_Unit",

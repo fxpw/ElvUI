@@ -74,9 +74,10 @@ local classification = {
     rare = format("|cffAF5050 %s|r", ITEM_QUALITY3_DESC)
 }
 
-function TT:GetItemLvL(unit, giud)
-    local ilvl = ItemLevelMixIn:GetItemLevel(giud or UnitGUID(unit))
-    if ilvl and ilvl ~= -1 then
+function TT:GetItemLvL(unit, guid)
+	if not unit then return end
+	local ilvl = C_Inspect.GetAvgItemLevel(unit)
+    if ilvl and ilvl ~= 0 then
         local color = GetItemLevelColor(ilvl)
         if color then
             return format("%s%s|r", E:RGBToHex(color.r, color.g, color.b), ilvl)
@@ -198,26 +199,7 @@ function TT:GameTooltip_SetDefaultAnchor(tt, parent)
     end
 end
 
--- function TT:GetItemLvL(unit)
--- 	local total, items = 0, 0
--- 	for i = 1, #inventorySlots do
--- 		local itemLink = GetInventoryItemLink(unit, GetInventorySlotInfo(inventorySlots[i]))
 
--- 		if itemLink then
--- 			local iLvl = select(4, GetItemInfo(itemLink))
--- 			if iLvl and iLvl > 0 then
--- 				items = items + 1
--- 				total = total + iLvl
--- 			end
--- 		end
--- 	end
-
--- 	if items == 0 then
--- 		return 0
--- 	end
-
--- 	return E:Round(total / items, 2)
--- end
 
 function TT:RemoveTrashLines(tt)
     for i = 3, tt:NumLines() do
@@ -272,14 +254,11 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
             end
         end
 
-        local category = ElvUF.Tags.Methods["category:sirus"](unit)
-        if category then
-            -- print(category)
-            -- if true then
-            -- 	local categoryicon = ElvUF.Tags.Methods["category:icon"](unit)
-            -- 	name =  name.."   "..categoryicon
-            -- end
-            name = name .. " |cffffffff" .. category .. "|r"
+        local _, categorySpellID = C_Unit.GetCategoryInfo(unit)
+        local Categories = E:GetModule("Sirus").Categories
+
+        if categorySpellID and Categories and Categories[categorySpellID] then
+            name = name .. " |cffffffff" .. Categories[categorySpellID].name2 .. "|r"
         end
 
         if UnitIsAFK(unit) then
@@ -342,7 +321,13 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 
         local levelLine = self:GetLevelLine(tt, 2)
         if levelLine then
-            local creatureClassification = UnitClassification(unit)
+            local creatureClassification
+            if C_Unit and C_Unit.GetClassification then
+                local classificationInfo = C_Unit.GetClassification(unit)
+                creatureClassification = classificationInfo and classificationInfo.classification or UnitClassification(unit)
+            else
+                creatureClassification = UnitClassification(unit)
+            end
             local creatureType = UnitCreatureType(unit)
             local pvpFlag = ""
             local diffColor = GetQuestDifficultyColor(level)
@@ -527,7 +512,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 
     if isPlayerUnit then
 
-		if self.db.zodiacName then
+		if self.db.zodiacName and C_Unit and C_Unit.GetZodiacByDebuff then
 			local zodiacName = select(2, C_Unit.GetZodiacByDebuff(unit))
 			if zodiacName then
 				tt:AddDoubleLine(L["Zodiac:"], zodiacName, nil, nil, nil, 1, 1, 1)
@@ -538,7 +523,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
             self:ShowInspectInfo(tt, unit, color.r, color.g, color.b)
 
             if not UnitIsEnemy("player", unit) then
-                ItemLevelMixIn:Request(unit)
+                C_Inspect.RequestAvgItemLevel(unit)
 
                 tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
             end

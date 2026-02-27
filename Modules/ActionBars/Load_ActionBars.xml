@@ -5,5 +5,4 @@
 	<Script file="StanceBar.lua"/>
 	<Script file="TotemBar.lua"/>
 	<Script file="Bind.lua"/>
-	<!-- <Script file="MicroBar_Sirus.lua"/> -->
 </Ui>

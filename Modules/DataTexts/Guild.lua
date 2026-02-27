@@ -125,6 +125,12 @@ local function BuildDataTable()
 	dataUpdated = true
 end
 
+local function UpdateGuildOnline()
+	if C_Guild and C_Guild.GetGuildOnline then
+		totalOnline, totalMembers = C_Guild.GetGuildOnline()
+	end
+end
+
 local function OnClick(_, btn)
 	if btn == "RightButton" and IsInGuild() then
 		if totalOnline <= 1 then return end
@@ -182,7 +188,7 @@ local function OnEnter(self, _, noUpdate)
 
 	DT:SetupTooltip(self)
 
-	if totalOnline == 0 then
+	if (not dataUpdated) or totalOnline == 0 then
 		BuildDataTable()
 	end
 
@@ -294,7 +300,13 @@ local eventHandlers = {
 	end,
 	["GUILD_ROSTER_UPDATE"] = function(self)
 		GuildRoster()
-		BuildDataTable()
+
+		if C_Guild and C_Guild.GetGuildOnline then
+			UpdateGuildOnline()
+			dataUpdated = false
+		else
+			BuildDataTable()
+		end
 
 		if GetMouseFocus() == self then
 			self:GetScript("OnEnter")(self, nil, true)

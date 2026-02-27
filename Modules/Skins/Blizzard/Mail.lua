@@ -9,7 +9,7 @@ local unpack = unpack
 --WoW API / Variables
 local GetInboxHeaderInfo = GetInboxHeaderInfo
 local GetInboxItemLink = GetInboxItemLink
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local GetSendMailItem = GetSendMailItem
 

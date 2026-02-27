@@ -25,7 +25,6 @@ local GetThreatStatusColor = GetThreatStatusColor
 local GetTime = GetTime
 local GetUnitSpeed = GetUnitSpeed
 local UnitClass = UnitClass
-local UnitClassification = UnitClassification
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local UnitExists = UnitExists
 local UnitGUID = UnitGUID
@@ -556,11 +555,20 @@ end
 
 ElvUF.Tags.Events["classificationcolor"] = "UNIT_CLASSIFICATION_CHANGED"
 ElvUF.Tags.Methods["classificationcolor"] = function(unit)
-	local c = UnitClassification(unit)
-	if c == "rare" or c == "elite" then
-		return Hex(1, 0.5, 0.25) -- Orange
-	elseif c == "rareelite" or c == "worldboss" then
-		return Hex(1, 0, 0) -- Red
+	if C_Unit and C_Unit.GetClassification then
+		local info = C_Unit.GetClassification(unit)
+		if info then
+			if info.vipCategory and info.color then
+				return Hex(info.color.r, info.color.g, info.color.b)
+			end
+
+			local c = info.classification
+			if c == "rare" or c == "elite" then
+				return Hex(1, 0.5, 0.25) -- Orange
+			elseif c == "rareelite" or c == "worldboss" then
+				return Hex(1, 0, 0) -- Red
+			end
+		end
 	end
 end
 
@@ -663,16 +671,18 @@ ElvUF.Tags.Methods["group"] = function(unit)
 	end
 end
 
-ElvUF.Tags.Events["leader"] = "PARTY_LEADER_CHANGED"
-ElvUF.Tags.Methods["leader"] =function(u)
-	if(UnitIsPartyLeader(u)) then
+ElvUF.Tags.Events["leader"] = "PARTY_LEADER_CHANGED RAID_ROSTER_UPDATE PARTY_MEMBERS_CHANGED"
+ElvUF.Tags.Methods["leader"] = function(u)
+	local isLeader = UnitIsGroupLeader and UnitIsGroupLeader(u) or UnitIsPartyLeader(u)
+	if isLeader then
 		return 'L'
 	end
 end
 
-ElvUF.Tags.Events["leaderlong"] = "PARTY_LEADER_CHANGED"
-ElvUF.Tags.Methods["leaderlong"] =function(u)
-	if(UnitIsPartyLeader(u)) then
+ElvUF.Tags.Events["leaderlong"] = "PARTY_LEADER_CHANGED RAID_ROSTER_UPDATE PARTY_MEMBERS_CHANGED"
+ElvUF.Tags.Methods["leaderlong"] = function(u)
+	local isLeader = UnitIsGroupLeader and UnitIsGroupLeader(u) or UnitIsPartyLeader(u)
+	if isLeader then
 		return 'Leader'
 	end
 end
@@ -891,5 +901,14 @@ function E:AddTagInfo(tagName, category, description, order, hidden)
 	E.TagInfo[tagName].hidden = hidden or nil
 	return E.TagInfo[tagName]
 end
+
+
+ElvUF.Tags.Events["onslaught"] = "UNIT_STATS"
+ElvUF.Tags.Methods["onslaught"] = function(unit)
+	if UnitIsPlayer(unit) and GetOnslaughtRating then
+		return GetOnslaughtRating()
+	end
+end
+E:AddTagInfo("onslaught", "Miscellaneous", "Показывать сколько натиска")
 
 RefreshNewTags = true

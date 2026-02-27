@@ -97,13 +97,7 @@ do
 		end
 	end
 end
--- if E.private.actionbar.enable then
--- 	for _, frame in pairs({"ShapeshiftBarFrame", "PossessBarFrame", "PETACTIONBAR_YPOS", "MULTICASTACTIONBAR_YPOS", "MultiBarBottomLeft", "MultiCastActionBarFrame"}) do
--- 		if UIPARENT_MANAGED_FRAME_POSITIONS[frame] then
--- 			UIPARENT_MANAGED_FRAME_POSITIONS[frame].ignoreFramePositionManager = true
--- 		end
--- 	end
--- end
+
 
 local function onEnter(button)
 	if AB.db.microbar.mouseover then
@@ -259,12 +253,6 @@ function AB:UpdateMicroButtons()
 		GuildMicroButtonTabard.background:ClearAllPoints()
 		GuildMicroButtonTabard.background:SetAllPoints(GuildMicroButtonTabard.emblem)
 	end
-	-- GuildMicroButtonTabard:SetPoint("TOPLEFT", -5, 24)
-	-- for k,v in pairs(GuildMicroButtonTabard) do
-	-- 	print(k, v)
-	-- end
-	-- local a,d = GuildMicroButton:GetSize()
-	-- GuildMicroButtonTabard.background:Size(a,d)
 end
 
 function AB:DFEvent(event)
