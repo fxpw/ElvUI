@@ -561,7 +561,7 @@ ElvUF.Tags.Methods["classificationcolor"] = function(unit)
 			if info.vipCategory and info.color then
 				return Hex(info.color.r, info.color.g, info.color.b)
 			end
-			
+
 			local c = info.classification
 			if c == "rare" or c == "elite" then
 				return Hex(1, 0.5, 0.25) -- Orange

@@ -256,7 +256,7 @@ function TT:SetUnitText(tt, unit, level, isShiftKeyDown)
 
         local _, categorySpellID = C_Unit.GetCategoryInfo(unit)
         local Categories = E:GetModule("Sirus").Categories
-        
+
         if categorySpellID and Categories and Categories[categorySpellID] then
             name = name .. " |cffffffff" .. Categories[categorySpellID].name2 .. "|r"
         end

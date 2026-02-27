@@ -299,7 +299,6 @@ local eventHandlers = {
 		end
 	end,
 	["GUILD_ROSTER_UPDATE"] = function(self)
-	["GUILD_ROSTER_UPDATE"] = function(self)
 		GuildRoster()
 
 		if C_Guild and C_Guild.GetGuildOnline then

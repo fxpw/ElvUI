@@ -164,7 +164,7 @@ ElvUF.Tags.Methods["category:name:veryshort"] = function(unit)
 		if Categories[spellID].name2 then
 			return Categories[spellID].name2
 		end
-		
+
 		local name = Categories[spellID].name
 		local index = C_Unit.GetAuraIndexForSpellID(unit, spellID, "HARMFUL")
 		if index then
