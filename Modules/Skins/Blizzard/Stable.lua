@@ -11,16 +11,15 @@ local UnitExists = UnitExists
 S:AddCallback("Skin_Stable", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.stable then return end
 
-	PetStableFrame:StripTextures()
-	PetStableFramePortrait:Kill()
-	PetStableFrame:CreateBackdrop("Transparent")
-	PetStableFrame.backdrop:Point("TOPLEFT", 11, -12)
-	PetStableFrame.backdrop:Point("BOTTOMRIGHT", -32, 76)
+	S:HandlePortraitFrame(PetStableFrame)
 
-	S:SetUIPanelWindowInfo(PetStableFrame, "width")
-	S:SetBackdropHitRect(PetStableFrame)
+	PetStableFrameInset:StripTextures()
+	PetStableBottomInset:StripTextures()
 
-	S:HandleCloseButton(PetStableFrameCloseButton, PetStableFrame.backdrop)
+	PetStableFrameModelBg:Hide()
+	if PetStableModelShadow then
+		PetStableModelShadow:Kill()
+	end
 
 	S:HandleRotateButton(PetStableModelRotateLeftButton)
 	S:HandleRotateButton(PetStableModelRotateRightButton)
@@ -30,20 +29,24 @@ S:AddCallback("Skin_Stable", function()
 	S:HandleItemButton(PetStableCurrentPet, true)
 	PetStableCurrentPetIconTexture:SetDrawLayer("OVERLAY")
 
-	PetStableModel:Size(325, 190)
-	PetStableModel:Point("TOPLEFT", 19, -71)
+	PetStableModel:CreateBackdrop("Transparent")
 
+	PetStableModelRotateLeftButton:ClearAllPoints()
 	PetStableModelRotateLeftButton:Point("TOPLEFT", PetStableModel, "TOPLEFT", 4, -4)
+	PetStableModelRotateRightButton:ClearAllPoints()
 	PetStableModelRotateRightButton:Point("TOPLEFT", PetStableModelRotateLeftButton, "TOPRIGHT", 3, 0)
 
 	-- texWidth, texHeight, cropWidth, cropHeight, offsetX, offsetY = 128, 64, 16, 16, 52, 4
 	PetStablePetInfo:GetRegions():SetTexCoord(0.03125, 0.15625, 0.0625, 0.3125)
-	PetStablePetInfo:SetFrameLevel(PetModelFrame:GetFrameLevel() + 2)
+	PetStablePetInfo:SetFrameLevel(PetStableModel:GetFrameLevel() + 2)
 	PetStablePetInfo:CreateBackdrop("Default")
 	PetStablePetInfo:Size(25)
+	PetStablePetInfo:ClearAllPoints()
 	PetStablePetInfo:Point("TOPLEFT", PetStableModelRotateLeftButton, "BOTTOMLEFT", 10, -4)
 
-	PetStableCurrentPet:Point("BOTTOMLEFT", 40, 118)
+	if PetStableMoneyBg then
+		PetStableMoneyBg:StripTextures()
+	end
 
 	local function UpdateSlot(self, r, g, b)
 		if g ~= 1 then
@@ -54,7 +57,8 @@ S:AddCallback("Skin_Stable", function()
 	end
 
 	for i = 1, NUM_PET_STABLE_SLOTS do
-		S:HandleItemButton(_G["PetStableStabledPet"..i], true)
+		local button = _G["PetStableStabledPet"..i]
+		S:HandleItemButton(button, true)
 		_G["PetStableStabledPet"..i.."IconTexture"]:SetDrawLayer("OVERLAY")
 
 		local bg = _G["PetStableStabledPet"..i.."Background"]
