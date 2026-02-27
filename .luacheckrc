@@ -226,6 +226,11 @@ globals = {
 	"oUF_RaidDebuffs",
 
 	-- frames created via CreateFrame
+	"PetStableFrameInset",
+	"PetStableBottomInset",
+	"PetStableFrameModelBg",
+	"PetStableModelShadow",
+	"PetStableMoneyBg",
 	"AchievementFrameMiniAchievement1",
 	"DeclensionFrame",
 	"DeclensionFrameSet",
