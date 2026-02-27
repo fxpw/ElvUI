@@ -5,7 +5,7 @@ local S = E:GetModule("Skins")
 local _G = _G
 local unpack, select = unpack, select
 --WoW API / Variables
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local GetTradePlayerItemLink = GetTradePlayerItemLink
 local GetTradeTargetItemLink = GetTradeTargetItemLink

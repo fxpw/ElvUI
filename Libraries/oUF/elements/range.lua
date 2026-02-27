@@ -32,6 +32,7 @@ local _FRAMES = {}
 local OnRangeFrame
 
 local UnitInRange, UnitIsConnected = UnitInRange, UnitIsConnected
+local UnitInRangeIndex = UnitInRangeIndex
 
 local function Update(self, event)
 	local element = self.Range
@@ -49,7 +50,11 @@ local function Update(self, event)
 	local inRange
 	local connected = UnitIsConnected(unit)
 	if(connected) then
-		inRange = UnitInRange(unit)
+		if UnitInRangeIndex then
+			inRange = UnitInRangeIndex(unit, 4) -- 40 yards
+		else
+			inRange = UnitInRange(unit)
+		end
 		if(not inRange) then
 			self:SetAlpha(element.outsideAlpha)
 		else

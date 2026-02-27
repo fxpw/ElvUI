@@ -328,8 +328,9 @@ end
 function NP:GetUnitTypeFromUnit(unit)
 	local reaction = UnitReaction("player", unit)
 	local isPlayer = UnitIsPlayer(unit)
+	local isRenegade = C_Unit and C_Unit.IsRenegade and C_Unit.IsRenegade(unit)
 
-	if isPlayer and UnitIsFriend("player", unit) and reaction and reaction >= 5 then
+	if isPlayer and UnitIsFriend("player", unit) and reaction and reaction >= 5 and not isRenegade then
 		return "FRIENDLY_PLAYER"
 	elseif not isPlayer and (reaction and reaction >= 5) or UnitFactionGroup(unit) == "Neutral" then
 		return "FRIENDLY_NPC"

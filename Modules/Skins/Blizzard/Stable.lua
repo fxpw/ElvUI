@@ -30,7 +30,7 @@ S:AddCallback("Skin_Stable", function()
 	S:HandleItemButton(PetStableCurrentPet, true)
 	PetStableCurrentPetIconTexture:SetDrawLayer("OVERLAY")
 
-	PetStableModel:Size(325, 224)
+	PetStableModel:Size(325, 190)
 	PetStableModel:Point("TOPLEFT", 19, -71)
 
 	PetStableModelRotateLeftButton:Point("TOPLEFT", PetStableModel, "TOPLEFT", 4, -4)
@@ -43,7 +43,7 @@ S:AddCallback("Skin_Stable", function()
 	PetStablePetInfo:Size(25)
 	PetStablePetInfo:Point("TOPLEFT", PetStableModelRotateLeftButton, "BOTTOMLEFT", 10, -4)
 
-	PetStableCurrentPet:Point("BOTTOMLEFT", 40, 150)
+	PetStableCurrentPet:Point("BOTTOMLEFT", 40, 118)
 
 	local function UpdateSlot(self, r, g, b)
 		if g ~= 1 then

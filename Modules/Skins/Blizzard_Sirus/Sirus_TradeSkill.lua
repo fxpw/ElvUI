@@ -7,7 +7,7 @@ local select = select
 local unpack = unpack
 local find = string.find
 --WoW API / Variables
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local GetTradeSkillItemLink = GetTradeSkillItemLink
 local GetTradeSkillNumReagents = GetTradeSkillNumReagents
@@ -59,6 +59,17 @@ local function LoadSkin()
 	S:HandleButton(TradeSkillCreateAllButton, true)
 	S:HandleButton(TradeSkillCancelButton, true)
 	S:HandleButton(TradeSkillCreateButton, true)
+	S:HandleButton(TradeSkillTrackButton, true)
+	local checked = TradeSkillTrackButton:CreateTexture(nil, "OVERLAY")
+	checked:SetTexture(E.media.normTex)
+	checked:SetVertexColor(1, 0.82, 0, 0.8)
+	checked:SetInside()
+	TradeSkillTrackButton:SetCheckedTexture(checked)
+
+	if TradeSkillTrackButton.text then
+		TradeSkillTrackButton.text:ClearAllPoints()
+		TradeSkillTrackButton.text:Point("LEFT", TradeSkillTrackButton, "RIGHT", 3, 0)
+	end
 
 	TradeSkillInputBox:Height(16)
 	S:HandleEditBox(TradeSkillInputBox)
@@ -109,6 +120,19 @@ local function LoadSkin()
 	TradeSkillRankFrame:SetStatusBarTexture(E.media.normTex)
 	E:RegisterStatusBar(TradeSkillRankFrame)
 	E:SetSmoothing(TradeSkillRankFrame, 1)
+
+	TradeSkillCollapseAllButton:StripTextures()
+	TradeSkillCollapseAllButton:SetNormalTexture(E.Media.Textures.Minus)
+	hooksecurefunc(TradeSkillCollapseAllButton, "SetNormalTexture", function(self, texture)
+		if not texture then return end
+		if find(texture, "MinusButton") then
+			self:GetNormalTexture():SetTexture(E.Media.Textures.Minus)
+		elseif find(texture, "PlusButton") then
+			self:GetNormalTexture():SetTexture(E.Media.Textures.Plus)
+		end
+	end)
+
+	TradeSkillExpandButtonFrame:StripTextures()
 
 	TradeSkillFrame.FilterButton:StripTextures(true)
 	S:HandleButton(TradeSkillFrame.FilterButton)

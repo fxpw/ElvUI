@@ -13,6 +13,10 @@ local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
 
 local function CheckLeader(unit)
+	if UnitIsGroupLeader then
+		return UnitIsGroupLeader(unit)
+	end
+
 	if unit == "player" then
 		return IsPartyLeader()
 	elseif unit ~= "player" and (UnitInParty(unit) or UnitInRaid(unit)) then

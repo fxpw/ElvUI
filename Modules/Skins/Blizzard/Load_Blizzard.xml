@@ -16,7 +16,6 @@
 	<Script file="DressingRoom.lua"/>
 	<Script file="Friends.lua"/>
 	<Script file="GuildBank.lua"/>
-	<!-- <Script file="Glyph.lua"/> -->
 	<Script file="GMChat.lua"/>
 	<Script file="Gossip.lua"/>
 	<Script file="GuildRegistrar.lua"/>
@@ -44,7 +43,6 @@
 	<Script file="Tooltip.lua"/>
 	<Script file="TimeManager.lua"/>
 	<Script file="Trade.lua"/>
-	<!-- <Script file="Tradeskill.lua"/> -->
 	<Script file="Trainer.lua"/>
 	<Script file="Tutorial.lua"/>
 	<Script file="ObjectiveTracker.lua"/>

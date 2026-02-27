@@ -23,7 +23,7 @@ local GetGuildBankItemLink = GetGuildBankItemLink
 local GetGuildBankTabInfo = GetGuildBankTabInfo
 local GetInventoryItemLink = GetInventoryItemLink
 local GetItemFamily = GetItemFamily
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetTime = GetTime
 local InCombatLockdown = InCombatLockdown
 local PickupContainerItem = PickupContainerItem
@@ -527,7 +527,7 @@ function B.Sort(bags, sorter, invertDirection)
 	wipe(blackListedSlots)
 
 	--Build blacklist of items based on the profile and global list
-	B:BuildBlacklist(B.db.ignoredItems)
+	if B.db then B:BuildBlacklist(B.db.ignoredItems) end
 	B:BuildBlacklist(E.global.bags.ignoredItems)
 
 	for i, bag, slot in B:IterateBags(bags, nil, "both") do
@@ -610,7 +610,7 @@ function B.Fill(sourceBags, targetBags, reverse, canMove)
 	wipe(blackListedSlots)
 
 	--Build blacklist of items based on the profile and global list
-	B:BuildBlacklist(B.db.ignoredItems)
+	if B.db then B:BuildBlacklist(B.db.ignoredItems) end
 	B:BuildBlacklist(E.global.bags.ignoredItems)
 
 	for _, bag, slot in B:IterateBags(targetBags, reverse, "deposit") do
@@ -638,6 +638,7 @@ function B.Fill(sourceBags, targetBags, reverse, canMove)
 end
 
 function B.SortBags(...)
+	local sortInverted = B.db and B.db.sortInverted or false
 	for i = 1, select("#", ...) do
 		local bags = select(i, ...)
 		for _, slotNum in ipairs(bags) do
@@ -651,15 +652,15 @@ function B.SortBags(...)
 			if bagType ~= "Normal" then
 				B.Stack(sortedBags, sortedBags, B.IsPartial)
 				B.Stack(bagCache.Normal, sortedBags)
-				B.Fill(bagCache.Normal, sortedBags, B.db.sortInverted)
-				B.Sort(sortedBags, nil, B.db.sortInverted)
+				B.Fill(bagCache.Normal, sortedBags, sortInverted)
+				B.Sort(sortedBags, nil, sortInverted)
 				wipe(sortedBags)
 			end
 		end
 
 		if bagCache.Normal then
 			B.Stack(bagCache.Normal, bagCache.Normal, B.IsPartial)
-			B.Sort(bagCache.Normal, nil, B.db.sortInverted)
+			B.Sort(bagCache.Normal, nil, sortInverted)
 			wipe(bagCache.Normal)
 		end
 		wipe(bagCache)
@@ -684,21 +685,23 @@ end
 function B:RegisterUpdateDelayed()
 	local shouldUpdateFade
 
-	for _, bagFrame in pairs(B.BagFrames) do
-		if bagFrame.registerUpdate then
-			B:UpdateAllSlots(bagFrame)
+	if B.BagFrames then
+		for _, bagFrame in pairs(B.BagFrames) do
+			if bagFrame.registerUpdate then
+				B:UpdateAllSlots(bagFrame)
 
-			bagFrame:RegisterEvent("BAG_UPDATE")
-			bagFrame:RegisterEvent("BAG_UPDATE_COOLDOWN")
+				bagFrame:RegisterEvent("BAG_UPDATE")
+				bagFrame:RegisterEvent("BAG_UPDATE_COOLDOWN")
 
-			for _, event in pairs(bagFrame.events) do
-				bagFrame:RegisterEvent(event)
+				for _, event in pairs(bagFrame.events) do
+					bagFrame:RegisterEvent(event)
+				end
+
+				bagFrame.registerUpdate = nil
+				shouldUpdateFade = true -- we should refresh the bag search after sorting
+
+				E:StopSpinnerFrame(bagFrame.holderFrame)
 			end
-
-			bagFrame.registerUpdate = nil
-			shouldUpdateFade = true -- we should refresh the bag search after sorting
-
-			E:StopSpinnerFrame(bagFrame.holderFrame)
 		end
 	end
 

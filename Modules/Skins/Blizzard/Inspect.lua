@@ -6,7 +6,7 @@ local _G = _G
 local unpack = unpack
 --WoW API / Variables
 local GetInventoryItemID = GetInventoryItemID
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 
 S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function()

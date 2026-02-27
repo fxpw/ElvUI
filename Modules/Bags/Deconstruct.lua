@@ -425,17 +425,18 @@ function D:ApplyDeconstruct(itemLink, itemId, spell, spellType, r, g, b, slot)
 	if not slot then return end
 	if slot == D.DeconstructionReal then return end
 
-	local bag = slot:GetParent():GetID()
+	local bag = slot.bag or slot:GetParent():GetID()
+	local slotID = slot.slot or slot:GetID()
 
-	local validBag = (B.BagFrame and B.BagFrame.Bags and B.BagFrame.Bags[bag]) or (B.BankFrame and B.BankFrame.Bags and B.BankFrame.Bags[bag])
+	local validBag = slot.bag or (B.BagFrame and B.BagFrame.Bags and B.BagFrame.Bags[bag]) or (B.BankFrame and B.BankFrame.Bags and B.BankFrame.Bags[bag])
 	if not validBag then return end
 
 	D.DeconstructionReal.Bag = bag
-	D.DeconstructionReal.Slot = slot:GetID()
+	D.DeconstructionReal.Slot = slotID
 
 	if GetTradeTargetItemLink and GetTradeTargetItemLink(7) == itemLink then
 		return
-	elseif GetContainerItemLink(bag, slot:GetID()) == itemLink then
+	elseif GetContainerItemLink(bag, slotID) == itemLink then
 		D.DeconstructionReal.ID = itemId
 		D.DeconstructionReal:SetAttribute('type1', spellType)
 		D.DeconstructionReal:SetAttribute(spellType, spell)
@@ -458,14 +459,19 @@ function D:DeconstructParser()
 	local ownerName = owner.GetName and owner:GetName()
 	if not ownerName then return end
 
-	if not (strfind(ownerName, 'ElvUI_ContainerFrameBag') or strfind(ownerName, 'ElvUI_BankContainerFrameBag')) then return end
+	if not (strfind(ownerName, 'ElvUI_ContainerFrameBag') or strfind(ownerName, 'ElvUI_BankContainerFrameBag') or strfind(ownerName, 'AdiBagsItemButton')) then return end
 
 	local bag, slot
-	if owner.GetParent then
-		local parent = owner:GetParent()
-		if parent.GetID then bag = parent:GetID() end
+	if strfind(ownerName, 'AdiBagsItemButton') then
+		bag = owner.bag
+		slot = owner.slot
+	else
+		if owner.GetParent then
+			local parent = owner:GetParent()
+			if parent.GetID then bag = parent:GetID() end
+		end
+		if owner.GetID then slot = owner:GetID() end
 	end
-	if owner.GetID then slot = owner:GetID() end
 
 	if not bag or not slot then return end
 
@@ -699,6 +705,10 @@ local function SetupDeconstructButton()
 		GameTooltip:HookScript('OnShow', function() D:DeconstructParser() end)
 		GameTooltip:HookScript('OnUpdate', function() D:DeconstructParser() end)
 	end
+
+	D:RegisterEvent('SKILL_LINES_CHANGED')
+	D:RegisterEvent('SPELLS_CHANGED')
+	D:RegisterEvent('LEARNED_SPELL_IN_TAB')
 
 	B.BagFrame:HookScript('OnHide', function()
 		D.DeconstructMode = false

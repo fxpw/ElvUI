@@ -14,6 +14,7 @@ local UnitInRange = UnitInRange
 local UnitIsConnected = UnitIsConnected
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsUnit = UnitIsUnit
+local UnitInRangeIndex = UnitInRangeIndex
 
 local SRT = {}
 local function AddTable(tbl)
@@ -68,6 +69,10 @@ local function friendlyIsInRange(unit)
 
 	if CheckInteractDistance(unit, 1) then
 		return true -- within 28 yards (arg2 as 1 is Compare Achievements distance)
+	end
+
+	if UnitInRangeIndex and UnitInRangeIndex(unit, 4) then -- 40 yards
+		return true
 	end
 
 	if SRT[E.myclass] then

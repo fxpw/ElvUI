@@ -7,7 +7,7 @@ local select = select
 local unpack = unpack
 local find, gsub = string.find, string.gsub
 --WoW API / Variables
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local GetMoney = GetMoney
 local GetNumQuestLeaderBoards = GetNumQuestLeaderBoards

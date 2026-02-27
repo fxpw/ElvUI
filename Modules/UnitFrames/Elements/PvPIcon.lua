@@ -51,9 +51,12 @@ function UF:UpdateOverridePvP(event, unit)
 
 		if factionGroup == "Alliance" then
 			element:SetTexCoord(0.545, 0.935, 0.070, 0.940)
-		elseif factionGroup == "Renegade" then
+		elseif (C_Unit and C_Unit.IsRenegade and C_Unit.IsRenegade(unit)) or factionGroup == "Renegade" then
 			element:SetTexCoord(0, 1, 0, 1)
 			element:SetTexture(FACTION_ICON_RENEGATE)
+		elseif (C_Unit and C_Unit.IsNeutral and C_Unit.IsNeutral(unit)) then
+			element:SetTexCoord(0, 1, 0, 1)
+			element:SetTexCoord(0.100, 0.475, 0.070, 0.940)
 		else
 			element:SetTexCoord(0.100, 0.475, 0.070, 0.940)
 		end

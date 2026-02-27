@@ -109,13 +109,14 @@ addon.Premium = Premium
 
 ElvUF.Tags.Events["category:name"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:name"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Categories[spellID] then
+	local _, spellID = C_Unit.GetCategoryInfo(unit)
+	if spellID and Categories[spellID] then 
+		local index = C_Unit.GetAuraIndexForSpellID(unit, spellID, "HARMFUL")
+		if index then
+			local name = UnitAura(unit, index, "HARMFUL")
 			return name
 		end
+		return Categories[spellID].name
 	end
 end
 
@@ -135,99 +136,89 @@ end
 
 ElvUF.Tags.Events["category:name:short"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:name:short"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Categories[spellID] then
-			-- return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
-			return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
+	local _, spellID = C_Unit.GetCategoryInfo(unit)
+	if spellID and Categories[spellID] then
+		local index = C_Unit.GetAuraIndexForSpellID(unit, spellID, "HARMFUL")
+		local name = Categories[spellID].name
+		if index then
+			name = UnitAura(unit, index, "HARMFUL")
 		end
+		return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
 	end
 end
 
 
 ElvUF.Tags.Events["category:sirus"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:sirus"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Categories[spellID] then
-			-- return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
-			return Categories[spellID].name2
-		end
+	local _, spellID = C_Unit.GetCategoryInfo(unit)
+	if spellID and Categories[spellID] then
+		return Categories[spellID].name2
 	end
 end
 
 
 ElvUF.Tags.Events["category:name:veryshort"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:name:veryshort"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Categories[spellID] then
-			return Categories[spellID].name2 or (spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name))
+	local _, spellID = C_Unit.GetCategoryInfo(unit)
+	if spellID and Categories[spellID] then
+		if Categories[spellID].name2 then
+			return Categories[spellID].name2
 		end
+		
+		local name = Categories[spellID].name
+		local index = C_Unit.GetAuraIndexForSpellID(unit, spellID, "HARMFUL")
+		if index then
+			name = UnitAura(unit, index, "HARMFUL")
+		end
+		
+		return spellID < 90036 and gsub(name, "%s(%S+)$", "") or abbrev(name)
 	end
 end
 
 ElvUF.Tags.Events["category:icon"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:icon"] = function(unit)
-	for i = 1, 40 do
-		local name, _, icon, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Categories[spellID] then
-			return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", icon)
+	local _, spellID = C_Unit.GetCategoryInfo(unit)
+	if spellID and Categories[spellID] then
+		local icon = Categories[spellID].icon
+		local index = C_Unit.GetAuraIndexForSpellID(unit, spellID, "HARMFUL")
+		if index then
+			_, _, icon = UnitAura(unit, index, "HARMFUL")
 		end
+		return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", icon)
 	end
 end
 
 ElvUF.Tags.Events["vip:name"] = "UNIT_AURA"
 ElvUF.Tags.Methods["vip:name"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if VIP[spellID] then
-			return name
-		end
+	local info = C_Unit.GetClassification(unit)
+	if info and info.vipSpellID and VIP[info.vipSpellID] then
+		return info.vipName or VIP[info.vipSpellID].name
 	end
 end
 
 ElvUF.Tags.Events["vip:icon"] = "UNIT_AURA"
 ElvUF.Tags.Methods["vip:icon"] = function(unit)
-	for i = 1, 40 do
-		local name, _, icon, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if VIP[spellID] then
-			return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", icon)
-		end
+	local info = C_Unit.GetClassification(unit)
+	if info and info.vipSpellID and VIP[info.vipSpellID] then
+		return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", VIP[info.vipSpellID].icon)
 	end
 end
 
 ElvUF.Tags.Events["premium:name"] = "UNIT_AURA"
 ElvUF.Tags.Methods["premium:name"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Premium[spellID] then
-			return name
-		end
+	local index = C_Unit.FindAuraBySpell(unit, Premium, "HARMFUL")
+	if index then
+		local name = UnitAura(unit, index, "HARMFUL")
+		return name
 	end
 end
 
 ElvUF.Tags.Events["premium:name:short"] = "UNIT_AURA"
 ElvUF.Tags.Methods["premium:name:short"] = function(unit)
-	for i = 1, 40 do
-		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Premium[spellID] then
+	local index = C_Unit.FindAuraBySpell(unit, Premium, "HARMFUL")
+	if index then
+		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, index, "HARMFUL")
+		if spellID and Premium[spellID] then
 			return Premium[spellID].name2
 		end
 	end
@@ -235,13 +226,10 @@ end
 
 ElvUF.Tags.Events["premium:icon"] = "UNIT_AURA"
 ElvUF.Tags.Methods["premium:icon"] = function(unit)
-	for i = 1, 40 do
-		local name, _, icon, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
-		if not name then break end
-
-		if Premium[spellID] then
-			return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", icon)
-		end
+	local index = C_Unit.FindAuraBySpell(unit, Premium, "HARMFUL")
+	if index then
+		local _, _, icon = UnitAura(unit, index, "HARMFUL")
+		return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", icon)
 	end
 end
 
@@ -409,12 +397,14 @@ local color
 local hex
 -- COLORTEST = nil
 E:AddTag(format('ilvl'), 'UNIT_FACTION UNIT_TARGET UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_NAME_UPDATE',function(unit)
-	ilvl = ItemLevelMixIn:GetItemLevel(UnitGUID(unit))
-	if not ilvl then return "-_-" end
-	color = GetItemLevelColor( ilvl )
-	if not color then return ilvl end
-	hex = color:GenerateHexColor()
-	return "|c"..hex..ilvl.."|r"
+	local ilvl = C_Inspect.GetAvgItemLevel(unit)
+	if ilvl and ilvl ~= 0 then
+		color = GetItemLevelColor( ilvl )
+		if not color then return ilvl end
+		hex = color:GenerateHexColor()
+		return "|c"..hex..ilvl.."|r"
+	end
+	return "-_-"
 end)
 
 -----------------------------------
@@ -448,3 +438,37 @@ for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 
 	E:AddTagInfo(format("namenp:abbrev:%s", textFormat), "NamePlate", "Отображает имя юнита с сокращением (ограничено "..length.." букв)")
 	E:AddTagInfo(format("namenp:%s:translit", textFormat), "NamePlate", "Отображает имя юнита с транслитерацией для кириллических букв (ограничено "..length.." букв)")
 end
+
+ElvUF.Tags.Events["zodiac:name"] = "UNIT_AURA"
+ElvUF.Tags.Methods["zodiac:name"] = function(unit)
+	local _, name = C_Unit.GetZodiacByDebuff(unit)
+	return name
+end
+
+ElvUF.Tags.Events["zodiac:icon"] = "UNIT_AURA"
+ElvUF.Tags.Methods["zodiac:icon"] = function(unit)
+	local _, _, _, icon = C_Unit.GetZodiacByDebuff(unit)
+	if icon then
+		return format("|T%s:18:18:0:0:64:64:4:60:4:60|t", icon)
+	end
+end
+
+ElvUF.Tags.Events["classification:sirus"] = "UNIT_CLASSIFICATION_CHANGED"
+ElvUF.Tags.Methods["classification:sirus"] = function(unit)
+	local info = C_Unit.GetClassification(unit)
+	if info then
+		if info.vipCategory and info.vipName then
+			return info.vipName
+		end
+		
+		local c = info.classification
+		if c == 'worldboss' then return L["Boss"] end
+		if c == 'rareelite' then return L["Rare Elite"] end
+		if c == 'elite' then return L["Elite"] end
+		if c == 'rare' then return L["Rare"] end
+	end
+end
+
+E:AddTagInfo("zodiac:name", "Sirus", "Показывает знак зодиака в виде текста")
+E:AddTagInfo("zodiac:icon", "Sirus", "Показывает знак зодиака в виде иконки")
+E:AddTagInfo("classification:sirus", "Sirus", "Показывает классификацию с учетом VIP статуса")

@@ -7,7 +7,7 @@ local format = string.format
 local tinsert, wipe = tinsert, wipe
 --WoW API / Variables
 -- local GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
-local GetMoney = GetMoney
+local GetMoney = C_PlayerInfo and C_PlayerInfo.GetMoney or GetMoney
 local IsLoggedIn = IsLoggedIn
 local IsShiftKeyDown = IsShiftKeyDown
 local CURRENCY = CURRENCY
@@ -121,26 +121,31 @@ local function OnEnter(self)
 	-- local name, count, currencyType, icon
 
 	for i = 1, GetCurrencyListSize() do
-		local name, isHeader, _, _, _, count, _, icon = GetCurrencyListInfo(i)
+		local name, isHeader, _, _, _, count, _, icon, itemID = GetCurrencyListInfo(i)
 		if not isHeader then
-			DT.tooltip:AddDoubleLine(format(currencyString, icon, name), count, 1, 1, 1)
+			local value = count
+			if itemID and C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
+				local _, _, _, earnedThisWeek, weeklyMax, maxQuantity = C_CurrencyInfo.GetCurrencyInfo(itemID)
+				if weeklyMax and weeklyMax > 0 then
+					value = format("%s / %s (Неделя: %s / %s)", count, maxQuantity > 0 and maxQuantity or "?", earnedThisWeek, weeklyMax)
+				elseif maxQuantity and maxQuantity > 0 then
+					value = format("%s / %s", count, maxQuantity)
+				end
+			end
+			if icon and name then
+				DT.tooltip:AddDoubleLine(format(currencyString, icon, name), value, 1, 1, 1)
+			elseif name then
+				DT.tooltip:AddDoubleLine(name, value, 1, 1, 1)
+			end
 		end
-		-- name, count, currencyType, icon = GetBackpackCurrencyInfo(i)
+
 
 		if name and i == 1 then
 			DT.tooltip:AddLine(" ")
 			DT.tooltip:AddLine(CURRENCY..":")
 		end
 
-		-- if name and count then
-		-- 	if currencyType == 1 then
-		-- 		icon = "Interface\\PVPFrame\\PVP-ArenaPoints-Icon"
-		-- 	elseif currencyType == 2 then
-		-- 		icon = "Interface\\PVPFrame\\PVP-Currency-"..E.myfaction
-		-- 	end
 
-		-- 	DT.tooltip:AddDoubleLine(format(currencyString, icon, name), count, 1, 1, 1)
-		-- end
 	end
 
 	DT.tooltip:AddLine(" ")

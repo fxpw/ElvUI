@@ -7,7 +7,7 @@ local unpack = unpack
 -- local floor = math.floor
 -- WoW API / Variables
 local GetBuybackItemInfo = GetBuybackItemInfo
-local GetItemInfo = GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local GetMerchantNumItems = GetMerchantNumItems
 

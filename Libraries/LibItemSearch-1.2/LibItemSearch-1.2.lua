@@ -5,6 +5,22 @@
 
 local Search = LibStub("CustomSearch-1.0")
 local Unfit = LibStub("Unfit-1.0")
+local GetItemInfo = (_G.C_Item and _G.C_Item.GetItemInfo) or _G.GetItemInfo
+local GetItemInfoRaw = _G.C_Item and _G.C_Item.GetItemInfoRaw
+local RequestServerCache = _G.C_Item and _G.C_Item.RequestServerCache
+
+local function GetItemInfoSmart(item)
+	if GetItemInfoRaw and type(item) == "number" or (type(item) == "string" and item:match("item:(%d+)")) then
+		local id = tonumber(item) or tonumber(item:match("item:(%d+)"))
+		if id then
+			local info = {GetItemInfoRaw(id)}
+			if #info > 0 then return unpack(info) end
+			RequestServerCache(id)
+		end
+	end
+	return GetItemInfo(item)
+end
+
 local Lib = LibStub:NewLibrary("LibItemSearch-1.2-ElvUI", 17)
 if Lib then
 	Lib.Scanner = LibItemSearchTooltipScanner or CreateFrame("GameTooltip", "LibItemSearchTooltipScanner", UIParent, "GameTooltipTemplate")
@@ -104,7 +120,7 @@ Lib.Filters.type = {
 	end,
 
 	match = function(self, item, _, search)
-		local type, subType, _, equipSlot = select(6, GetItemInfo(item))
+		local type, subType, _, equipSlot = select(6, GetItemInfoSmart(item))
 		return Search:Find(search, type, subType, _G[equipSlot])
 	end
 }
@@ -117,7 +133,7 @@ Lib.Filters.level = {
 	end,
 
 	match = function(self, link, operator, num)
-		local lvl = select(4, GetItemInfo(link))
+		local lvl = select(4, GetItemInfoSmart(link))
 		if lvl then
 			return Search:Compare(operator, lvl, num)
 		end
@@ -132,7 +148,7 @@ Lib.Filters.requiredlevel = {
 	end,
 
 	match = function(self, link, operator, num)
-		local lvl = select(5, GetItemInfo(link))
+		local lvl = select(5, GetItemInfoSmart(link))
 		if lvl then
 			return Search:Compare(operator, lvl, num)
 		end
@@ -164,7 +180,7 @@ Lib.Filters.quality = {
 	end,
 
 	match = function(self, link, operator, num)
-		local quality = select(3, GetItemInfo(link))
+		local quality = select(3, GetItemInfoSmart(link))
 		return Search:Compare(operator, quality, num)
 	end,
 }
@@ -196,7 +212,7 @@ Lib.Filters.usable = {
 
 	match = function(self, link)
 		if not Unfit:IsItemUnusable(link) then
-			local lvl = select(5, GetItemInfo(link))
+			local lvl = select(5, GetItemInfoSmart(link))
 			return lvl and (lvl ~= 0 and lvl <= UnitLevel("player"))
 		end
 	end
