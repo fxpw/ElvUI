@@ -20,7 +20,7 @@ function UF:Configure_ClassBar(frame)
 	local db = frame.db
 	bars.Holder = frame.ClassBarHolder
 	bars.origParent = frame
-	
+
 	if not frame.USE_CLASSBAR then
 		if bars and bars.Holder then
 			bars.Holder:Hide()
