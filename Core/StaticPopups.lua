@@ -154,6 +154,31 @@ E.PopupDialogs.TUKUI_ELVUI_INCOMPATIBLE = {
 	hideOnEscape = false
 }
 
+E.PopupDialogs.CELL_ELVUI_INCOMPATIBLE = {
+	text = "Обнаружено одновременное использование ElvUI и Cell. Выберите, какие рейд-фреймы вы хотите использовать (остальные будут отключены), или оставьте оба.",
+	OnAccept = function()
+		E.db.unitframe.units.party.enable = false
+		E.db.unitframe.units.raid10.enable = false
+		E.db.unitframe.units.raid25.enable = false
+		E.db.unitframe.units.raid40.enable = false
+		E.global.ignoreCellWarning = true
+		ReloadUI()
+	end,
+	OnCancel = function()
+		DisableAddOn("Cell_Wrath")
+		E.global.ignoreCellWarning = true
+		ReloadUI()
+	end,
+	OnAlt = function()
+		E.global.ignoreCellWarning = true
+	end,
+	button1 = "Оставить Cell",
+	button2 = "Оставить ElvUI",
+	button3 = "Оставить оба",
+	whileDead = 1,
+	hideOnEscape = false
+}
+
 E.PopupDialogs.DISABLE_INCOMPATIBLE_ADDON = {
 	text = L["Do you swear not to post in technical support about something not working without first disabling the addon/module combination first?"],
 	OnAccept = function() E.global.ignoreIncompatible = true end,
