@@ -1448,7 +1448,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 		if chatType == "SYSTEM" or chatType == "SKILL" or chatType == "LOOT" or chatType == "MONEY" or chatType ==
 			"OPENING" or chatType == "TRADESKILLS" or chatType == "PET_INFO" or chatType == "TARGETICONS" then
 			if chatType == "SYSTEM" then
-				for index, rule in ipairs(WHO_LIST_EXTENSION_RULES) do
+				for rule in ipairs(WHO_LIST_EXTENSION_RULES) do
 					local newWhoText = string.gsub(arg1, rule.pattern, rule.action)
 					if newWhoText and newWhoText ~= arg1 then
 						arg1 = newWhoText
