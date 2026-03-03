@@ -44,6 +44,7 @@ ignore = {
 }
 
 globals = {
+	"C_CategorySpell",
 	"UnitIsGroupLeader",
 	"C_Inspect",
 	"C_CurrencyInfo",
