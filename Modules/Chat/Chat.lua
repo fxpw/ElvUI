@@ -1300,13 +1300,13 @@ local WHO_LIST_EXTENSION_RULES = {
 			local result = string.format(WHO_LIST_GUILD_FORMAT, name, name, level, string.trim(race), class, guild, zone)
 
 			WHO_LIST_EXTENSION_RESULT_NUMBER = WHO_LIST_EXTENSION_RESULT_NUMBER + 1
-			local _name, _guild, _level, _race, _class, _zone, classFileName, itemLevel, mythicRating, category = GetWhoInfo(
+			local _name, itemLevel, mythicRating, category = GetWhoInfo(
 			WHO_LIST_EXTENSION_RESULT_NUMBER)
 			if _name and _name == name then
 				result = string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
 
 				if category and category ~= 0 then
-					local categoryName, categoryIcon = C_CategorySpell.GetCategoryInfo(category)
+					local categoryName = C_CategorySpell.GetCategoryInfo(category)
 					if categoryName then
 						result = string.format("%s. %s", result, categoryName)
 					end
@@ -1324,13 +1324,13 @@ local WHO_LIST_EXTENSION_RULES = {
 			local result = string.format(WHO_LIST_FORMAT, name, name, level, string.trim(race), class, zone)
 
 			WHO_LIST_EXTENSION_RESULT_NUMBER = WHO_LIST_EXTENSION_RESULT_NUMBER + 1
-			local _name, _guild, _level, _race, _class, _zone, classFileName, itemLevel, mythicRating, category = GetWhoInfo(
+			local _name, itemLevel, mythicRating, category = GetWhoInfo(
 			WHO_LIST_EXTENSION_RESULT_NUMBER)
 			if _name and _name == name then
 				result = string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
 
 				if category and category ~= 0 then
-					local categoryName, categoryIcon = C_CategorySpell.GetCategoryInfo(category)
+					local categoryName = C_CategorySpell.GetCategoryInfo(category)
 					if categoryName then
 						result = string.format("%s. %s", result, categoryName)
 					end
@@ -1365,14 +1365,11 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 		if chatFilters then
 			local filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12
 			for _, filterFunc in next, chatFilters do
-				filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10,
-				newarg11, newarg12 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
-					arg10, arg11, arg12)
+				filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
 				if filter then
 					return true
 				elseif newarg1 then
-					arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = newarg1, newarg2,
-						newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12
+					arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12
 				end
 			end
 		end
