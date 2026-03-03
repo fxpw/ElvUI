@@ -1300,7 +1300,7 @@ local WHO_LIST_EXTENSION_RULES = {
 			local result = string.format(WHO_LIST_GUILD_FORMAT, name, name, level, string.trim(race), class, guild, zone)
 
 			WHO_LIST_EXTENSION_RESULT_NUMBER = WHO_LIST_EXTENSION_RESULT_NUMBER + 1
-			local _name, itemLevel, mythicRating, category = GetWhoInfo(
+			local _name, _, _, _, _, _, _, itemLevel, mythicRating, category = GetWhoInfo(
 			WHO_LIST_EXTENSION_RESULT_NUMBER)
 			if _name and _name == name then
 				result = string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
@@ -1324,7 +1324,7 @@ local WHO_LIST_EXTENSION_RULES = {
 			local result = string.format(WHO_LIST_FORMAT, name, name, level, string.trim(race), class, zone)
 
 			WHO_LIST_EXTENSION_RESULT_NUMBER = WHO_LIST_EXTENSION_RESULT_NUMBER + 1
-			local _name, itemLevel, mythicRating, category = GetWhoInfo(
+			local _name, _, _, _, _, _, _, itemLevel, mythicRating, category = GetWhoInfo(
 			WHO_LIST_EXTENSION_RESULT_NUMBER)
 			if _name and _name == name then
 				result = string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
@@ -1656,9 +1656,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 			if (frame == DEFAULT_CHAT_FRAME and info.flashTabOnGeneral) or
 				(frame ~= DEFAULT_CHAT_FRAME and info.flashTab) then
 				if not CHAT_OPTIONS.HIDE_FRAME_ALERTS or chatType == "WHISPER" or chatType == "BN_WHISPER" then
-					if not FCFManager_ShouldSuppressMessageFlash(frame, chatGroup, chatTarget) then
-						FCF_StartAlertFlash(frame)
-					end
+					FCF_StartAlertFlash(frame) -- This would taint if we were not using LibChatAnims
 				end
 			end
 		end
