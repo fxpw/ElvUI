@@ -156,7 +156,7 @@ do -- this can save some main file locals
 end
 
 local ElvBlue = E:TextureString(E.Media.ChatLogos.ElvBlue, ":13:25")
--- local accidev      = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\pepeShy]], ":32:32")
+-- local accidev = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\pepeShy]], ":32:32")
 local Dodzo = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Dodzo]], ":16:16")
 local Apolexis = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Apolexis]], ":24:58")
 -- local Fxpw = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\Fxpw]], ":24:24")
@@ -775,8 +775,8 @@ do
 	end
 	removeIconFromLine = function(text)
 		text = gsub(text, "|TInterface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) -- converts raid icons into {star} etc, if possible.
-		text = gsub(text, "(%s?)(|?)|T.-|t(%s?)", stripTextureFunc)                               -- strip any other texture out but keep a single space from the side(s).
-		text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc)                                    -- strip hyperlink data only keeping the actual text.
+		text = gsub(text, "(%s?)(|?)|T.-|t(%s?)", stripTextureFunc)										-- strip any other texture out but keep a single space from the side(s).
+		text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc)									-- strip hyperlink data only keeping the actual text.
 		return text
 	end
 end
@@ -1236,48 +1236,6 @@ function CH:ShortChannel()
 	return format("|Hchannel:%s|h[%s]|h", self, DEFAULT_STRINGS[strupper(self)] or gsub(self, "channel:", ""))
 end
 
-function CH:CleanPlayerName(name)
-	if not name then return "" end
-
-	-- Remove (ID) patterns like (123) from names
-	local cleanedName = gsub(name, "%s*%(%d+%)%s*", "")
-	return cleanedName
-end
-
---[[
-  Cleans up hyperlinks in system messages:
-  - Removes (ID) from the displayed name
-  - Preserves correct whisper target name
-  - Appends ". Уровень предметов: N" after the first found ID
---]]
-function CH:CleanPlayerNameInSystemMessage(message)
-	if not message or not string.find(message, "|Hplayer:") then
-		return message
-	end
-
-	local firstFoundItemLevel = nil
-
-	local cleanedMessage = gsub(message,
-		"(|Hplayer:)([^%(|]+)(%((%d+)%))([^|]*)(|h)([^|]+)(|h)",
-		function(linkStart, playerName, fullIdWithParens, itemLevelDigits, linkRest, h1, visibleText, h2)
-			if not firstFoundItemLevel and itemLevelDigits ~= "" then
-				firstFoundItemLevel = itemLevelDigits
-			end
-
-			local strippedVisibleText = gsub(visibleText, "%s*%(%d+%)%s*", "")
-			local fullLink = playerName .. linkRest
-
-			return linkStart .. fullLink .. h1 .. strippedVisibleText .. h2
-		end
-	)
-
-	if firstFoundItemLevel then
-		cleanedMessage = cleanedMessage .. ". Уровень предметов: " .. firstFoundItemLevel
-	end
-
-	return cleanedMessage
-end
-
 function CH:HandleShortChannels(msg)
 	msg = gsub(msg, "|Hchannel:(.-)|h%[(.-)%]|h", self.ShortChannel)
 	msg = gsub(msg, "CHANNEL:", "")
@@ -1333,8 +1291,66 @@ function CH:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
 	return arg2
 end
 
-function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
-										  arg11, arg12, arg13, isHistory, historyTime, historyName)
+local WHO_LIST_EXTENSION_RESULT_NUMBER = 0
+local WHO_LIST_EXTENSION_RULES = {
+	{ -- WHO_LIST_GUILD_FORMAT
+		pattern = WHO_LIST_GUILD_FORMAT_PATTERN,
+		action = function(name, race, class, level, guild, zone)
+			race = string.gsub(race, "^([^%(]+)%s*%(?.*$", "%1")
+			local result = string.format(WHO_LIST_GUILD_FORMAT, name, name, level, string.trim(race), class, guild, zone)
+
+			WHO_LIST_EXTENSION_RESULT_NUMBER = WHO_LIST_EXTENSION_RESULT_NUMBER + 1
+			local _name, _, _, _, _, _, _, itemLevel, mythicRating, category = GetWhoInfo(
+			WHO_LIST_EXTENSION_RESULT_NUMBER)
+			if _name and _name == name then
+				result = string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
+
+				if category and category ~= 0 then
+					local categoryName = C_CategorySpell.GetCategoryInfo(category)
+					if categoryName then
+						result = string.format("%s. %s", result, categoryName)
+					end
+				end
+
+				result = string.format(WHO_LIST_MYTHIC_RATING_FORMAT, result, mythicRating)
+			end
+			return result
+		end,
+	},
+	{ -- WHO_LIST_FORMAT
+		pattern = WHO_LIST_FORMAT_PATTERN,
+		action = function(name, race, class, level, zone)
+			race = string.gsub(race, "^([^%(]+)%s*%(?.*$", "%1")
+			local result = string.format(WHO_LIST_FORMAT, name, name, level, string.trim(race), class, zone)
+
+			WHO_LIST_EXTENSION_RESULT_NUMBER = WHO_LIST_EXTENSION_RESULT_NUMBER + 1
+			local _name, _, _, _, _, _, _, itemLevel, mythicRating, category = GetWhoInfo(
+			WHO_LIST_EXTENSION_RESULT_NUMBER)
+			if _name and _name == name then
+				result = string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
+
+				if category and category ~= 0 then
+					local categoryName = C_CategorySpell.GetCategoryInfo(category)
+					if categoryName then
+						result = string.format("%s. %s", result, categoryName)
+					end
+				end
+
+				result = string.format(WHO_LIST_MYTHIC_RATING_FORMAT, result, mythicRating)
+			end
+			return result
+		end,
+	},
+	{
+		pattern = "%|Hplayer%:(.-)%((%d+)%)%|h%[.-%]%|h%:(.*)",
+		action = function(name, itemLevel, leftover)
+			local result = string.format("|Hplayer:%s|h[%s]|h:%s", name, name, leftover)
+			return string.format(WHO_LIST_ITEM_LEVEL_FORMAT, result, itemLevel)
+		end,
+	},
+}
+
+function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, isHistory, historyTime, historyName)
 	-- print("Modules\\Chat\\Chat.lua:1303")
 	if strsub(event, 1, 8) == "CHAT_MSG" then
 		local historySavedName -- we need to extend the arguments on CH.ChatFrame_MessageEventHandler so we can properly handle saved names without overriding
@@ -1347,15 +1363,13 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 
 		local chatFilters = ChatFrame_GetMessageEventFilters(event)
 		if chatFilters then
+			local filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12
 			for _, filterFunc in next, chatFilters do
-				local filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10,
-				newarg11, newarg12 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
-					arg10, arg11, arg12)
+				filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
 				if filter then
 					return true
 				elseif newarg1 then
-					arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = newarg1, newarg2,
-						newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12
+					arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12
 				end
 			end
 		end
@@ -1384,12 +1398,12 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 				end
 			end
 
-			local found = 0
+			local found = false
 			for index, value in pairs(frame.channelList) do
 				if channelLength > strlen(value) then
 					-- arg9 is the channel name without the number in front...
 					if ((arg7 > 0) and (frame.zoneChannelList[index] == arg7)) or (strupper(value) == strupper(arg9)) then
-						found = 1
+						found = true
 						infoType = "CHANNEL" .. arg8
 						info = ChatTypeInfo[infoType]
 						if (chatType == "CHANNEL_NOTICE") and (arg1 == "YOU_LEFT") then
@@ -1400,7 +1414,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 					end
 				end
 			end
-			if (found == 0) or not info then
+			if not found or not info then
 				return true
 			end
 		end
@@ -1433,7 +1447,21 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 
 		if chatType == "SYSTEM" or chatType == "SKILL" or chatType == "LOOT" or chatType == "MONEY" or chatType ==
 			"OPENING" or chatType == "TRADESKILLS" or chatType == "PET_INFO" or chatType == "TARGETICONS" then
-			arg1 = CH:CleanPlayerNameInSystemMessage(arg1)
+			if chatType == "SYSTEM" then
+				for _, rule in ipairs(WHO_LIST_EXTENSION_RULES) do
+					local newWhoText = string.gsub(arg1, rule.pattern, rule.action)
+					if newWhoText and newWhoText ~= arg1 then
+						arg1 = newWhoText
+						break
+					end
+				end
+				if WHO_LIST_EXTENSION_RESULT_NUMBER > 0 then
+				 local whoResults = string.match(arg1, WHO_NUM_RESULTS_PATTERN)
+					if whoResults then
+						WHO_LIST_EXTENSION_RESULT_NUMBER = 0
+					end
+				end
+			end
 			frame:AddMessage(arg1, info.r, info.g, info.b, info.id, false, nil, nil, isHistory, historyTime)
 		elseif strsub(chatType, 1, 7) == "COMBAT_" then
 			frame:AddMessage(arg1, info.r, info.g, info.b, info.id, false, nil, nil, isHistory, historyTime)
@@ -1505,7 +1533,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 			if type(chatIcon) == "function" then
 				chatIcon = chatIcon()
 			end
-			if arg6 ~= "" then
+			if strlen(arg6) > 0 then
 				if arg6 == "GM" then
 					-- If it was a whisper, dispatch it to the GMChat addon.
 					if chatType == "WHISPER" then
@@ -1558,18 +1586,15 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 
 			local playerLink
 
-			local cleanedName = CH:CleanPlayerName(arg2) -- This line was already here
-
 			if chatType ~= "BN_WHISPER" and chatType ~= "BN_WHISPER_INFORM" and chatType ~= "BN_CONVERSATION" then
-				playerLink = "|Hplayer:" .. cleanedName .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
-					(chatTarget and ":" .. chatTarget or "") .. "|h"
+				playerLink = "|Hplayer:" .. arg2 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
 			else
 				playerLink = "|HBNplayer:" ..
-					cleanedName .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. -- Use cleanedName
-					(chatTarget and ":" .. chatTarget or "") .. "|h"
-			end
+										arg2 .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
+				end
 
-			if arg3 ~= "" and arg3 ~= "Universal" and arg3 ~= frame.defaultLanguage then
+				if arg3 ~= "" and arg3 ~= "Universal" and arg3 ~= frame.defaultLanguage
+				or arg3 == LANGUAGE_RENEGADE then
 				local languageHeader = "[" .. arg3 .. "] "
 				if showLink and arg2 ~= "" then
 					body = format(_G["CHAT_" .. chatType .. "_GET"] .. languageHeader .. arg1,
@@ -1578,7 +1603,7 @@ function CH:ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, 
 					body = format(_G["CHAT_" .. chatType .. "_GET"] .. languageHeader .. arg1, pflag .. arg2)
 				end
 			else
-				if not showLink or strlen(arg2) == 0 then
+				if not showLink or arg2 == "" then
 					body = format(_G["CHAT_" .. chatType .. "_GET"] .. arg1, pflag .. arg2, arg2)
 				else
 					if chatType == "EMOTE" then
@@ -2390,11 +2415,6 @@ function CH:Initialize()
 	self:SecureHook("FCF_SetChatWindowFontSize", "SetChatFont")
 	self:SecureHook("FCF_SavePositionAndDimensions", "ON_FCF_SavePositionAndDimensions")
 
-	self:SecureHook("ChatEdit_DeactivateChat", function(editBox)
-		if GetCVar("chatStyle") == "im" then
-			editBox:Hide()
-		end
-	end)
 	self:RegisterEvent("UPDATE_CHAT_WINDOWS", "SetupChat")
 	self:RegisterEvent("UPDATE_FLOATING_CHAT_WINDOWS", "SetupChat")
 	-- print("Modules\\Chat\\Chat.lua:2355")
