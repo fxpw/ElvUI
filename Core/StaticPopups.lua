@@ -165,7 +165,7 @@ E.PopupDialogs.CELL_ELVUI_INCOMPATIBLE = {
 		ReloadUI()
 	end,
 	OnCancel = function()
-		DisableAddOn("Cell_Wrath")
+		DisableAddOn("Cell")
 		E.global.ignoreCellWarning = true
 		ReloadUI()
 	end,

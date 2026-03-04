@@ -188,7 +188,7 @@ function AddOn:OnInitialize()
 		C_Timer:After(5,function() self:StaticPopup_Show("TUKUI_ELVUI_INCOMPATIBLE") end)
 	end
 
-	if IsAddOnLoaded("Cell_Wrath") and not self.global.ignoreCellWarning then
+	if IsAddOnLoaded("Cell") and not self.global.ignoreCellWarning then
 		C_Timer:After(4,function() self:StaticPopup_Show("CELL_ELVUI_INCOMPATIBLE") end)
 	end
 
