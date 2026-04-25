@@ -1,4 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="Chat.lua"/>
-	<!-- <Script file="Chat_Sirus.lua"/> -->
-</Ui>

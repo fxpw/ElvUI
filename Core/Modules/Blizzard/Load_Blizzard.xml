@@ -1,0 +1,10 @@
+<Ui xmlns='http://www.blizzard.com/wow/ui/'>
+	<Script file='Blizzard.lua'/>
+	<Script file='AlertFrame.lua'/>
+	<Script file='CaptureBar.lua'/>
+	<Script file='GuildBank.lua'/>
+	<Script file='ColorPicker.lua'/>
+	<Script file='ObjectiveFrame.lua'/>
+	<Script file='Vehicle.lua'/>
+	<Script file='MiscFrames.lua'/>
+</Ui>

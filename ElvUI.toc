@@ -1,21 +1,11 @@
-## Interface: 30300
-## Author: Elv, Bunny, fxpw, Accidev
-## Version: 8.04
-## Title: |cff1784d1E|r|cffe5e3e3lvUI|r for sirus
-## Notes: User Interface replacement AddOn for World of Warcraft.
-## SavedVariables: ElvDB, ElvPrivateDB, ElvSirusDB
+## Title: |cff1784d1E|cff3399d1l|cff4daed1v|cff66c3d1U|cff80d8d1I|r
+## Notes: User Interface Replacement
+## Author: Elv, Simpy - Backported by Bunny67, Loaal, Apollyonn, Crum
+## Version: 7.00
+## SavedVariables: ElvDB, ElvPrivateDB
 ## SavedVariablesPerCharacter: ElvCharacterDB
-## OptionalDeps: Blizzard_DebugTools, SharedMedia, Tukui, ButtonFacade, Masque
-## X-oUF: ElvUF
-## X-Sirus-Update: https://github.com/fxpw/ElvUI/tree/main
+## OptionalDeps: Blizzard_DebugTools, SharedMedia, Tukui, Masque, BigWigs
+## RequiredDeps: ElvUI_Libraries
+## Interface: 30300
 
-Developer\Load_Developer.xml
-Libraries\Load_Libraries.xml
-Init.lua
-
-Locales\Load_Locales.xml
-Media\Load_Media.xml
-Settings\Load_Config.xml
-Core\Load_Core.xml
-Layout\Load_Layout.xml
-Modules\Load_Modules.xml
+Core\Load.xml
