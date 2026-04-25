@@ -1,0 +1,60 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Script file="Custom_ClassNameplateBar_DeathKnight.lua"/>
+    <Button name="ClassNameplateBarDeathKnightRuneButton" inherits="RuneButtonIndividualTemplate" virtual="true">
+        <!-- Parent template has a tooltip, we don't want to show tooltips on this frame. -->
+        <Scripts>
+			<OnLoad function="ClassNameplateBarDeathKnightRuneButton_OnLoad" />
+            <OnEnter/>
+            <OnLeave/>
+        </Scripts>
+    </Button>
+
+    <Frame name="DeathKnightResourceOverlayFrame" inherits="ClassNameplateBarFrame">
+        <Size x="123" y="20"/>
+        <Frames>
+            <Button name="$parentRune1" parentKey="Rune1" inherits="ClassNameplateBarDeathKnightRuneButton" id="1">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" x="0" y="4"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentRune2" parentKey="Rune2" inherits="ClassNameplateBarDeathKnightRuneButton" id="2">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentRune1" relativePoint="RIGHT" x="3" y="0"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentRune3" parentKey="Rune3" inherits="ClassNameplateBarDeathKnightRuneButton" id="5">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentRune2" relativePoint="RIGHT" x="3" y="0"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentRune4" parentKey="Rune4" inherits="ClassNameplateBarDeathKnightRuneButton" id="6">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentRune3" relativePoint="RIGHT" x="3" y="0"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentRune5" parentKey="Rune5" inherits="ClassNameplateBarDeathKnightRuneButton" id="3">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentRune4" relativePoint="RIGHT" x="3" y="0"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentRune6" parentKey="Rune6" inherits="ClassNameplateBarDeathKnightRuneButton" id="4">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentRune5" relativePoint="RIGHT" x="3" y="0"/>
+                </Anchors>
+            </Button>
+        </Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self, ClassNameplateBar, ClassNameplateBarDeathKnight)
+				self:OnLoad()
+			</OnLoad>
+			<OnEvent>
+				self:OnEvent(event, ...)
+			</OnEvent>
+			<OnShow>
+				self:OnShow()
+			</OnShow>
+		</Scripts>
+    </Frame>
+</Ui>
