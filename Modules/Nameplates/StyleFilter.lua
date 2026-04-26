@@ -264,7 +264,8 @@ local function ScaleIconFrame(frame, scale)
 	end
 end
 
-function mod:StyleFilterAuraCheck(names, icons, mustHaveAll, missing, minTimeLeft, maxTimeLeft)
+function mod:StyleFilterAuraCheck(frame, names, icons, mustHaveAll, missing, minTimeLeft, maxTimeLeft, fromMe, onMe)
+	if onMe and frame.UnitType ~= 'PLAYER' then return false end
 	local total, count = 0, 0
 	for name, value in pairs(names) do
 		if value == true then --only if they are turned on
@@ -272,7 +273,8 @@ function mod:StyleFilterAuraCheck(names, icons, mustHaveAll, missing, minTimeLef
 		end
 		for _, icon in ipairs(icons) do
 			if icon:IsShown() and (value == true) and ((icon.name and icon.name == name) or (icon.spellID and icon.spellID == tonumber(name)))
-				and (not minTimeLeft or (minTimeLeft == 0 or (icon.expirationTime and (icon.expirationTime - GetTime()) > minTimeLeft))) and (not maxTimeLeft or (maxTimeLeft == 0 or (icon.expirationTime and (icon.expirationTime - GetTime()) < maxTimeLeft))) then
+				and (not minTimeLeft or (minTimeLeft == 0 or (icon.expirationTime and (icon.expirationTime - GetTime()) > minTimeLeft))) and (not maxTimeLeft or (maxTimeLeft == 0 or (icon.expirationTime and (icon.expirationTime - GetTime()) < maxTimeLeft)))
+				and (not fromMe or icon.isPlayer) then
 				count = count + 1 --keep track of how many matches we have
 			end
 		end
@@ -706,7 +708,7 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 	-- Buffs
 	if frame.Buffs and trigger.buffs and trigger.buffs.names and next(trigger.buffs.names) then
-		local buff = mod:StyleFilterAuraCheck(trigger.buffs.names, frame.Buffs, trigger.buffs.mustHaveAll, trigger.buffs.missing, trigger.buffs.minTimeLeft, trigger.buffs.maxTimeLeft)
+		local buff = mod:StyleFilterAuraCheck(frame, trigger.buffs.names, frame.Buffs, trigger.buffs.mustHaveAll, trigger.buffs.missing, trigger.buffs.minTimeLeft, trigger.buffs.maxTimeLeft, trigger.buffs.fromMe, trigger.buffs.onMe)
 		if buff ~= nil then -- ignore if none are selected
 			if buff then passed = true else return end
 		end
@@ -714,7 +716,7 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 	-- Debuffs
 	if frame.Debuffs and trigger.debuffs and trigger.debuffs.names and next(trigger.debuffs.names) then
-		local debuff = mod:StyleFilterAuraCheck(trigger.debuffs.names, frame.Debuffs, trigger.debuffs.mustHaveAll, trigger.debuffs.missing, trigger.debuffs.minTimeLeft, trigger.debuffs.maxTimeLeft)
+		local debuff = mod:StyleFilterAuraCheck(frame, trigger.debuffs.names, frame.Debuffs, trigger.debuffs.mustHaveAll, trigger.debuffs.missing, trigger.debuffs.minTimeLeft, trigger.debuffs.maxTimeLeft, trigger.debuffs.fromMe, trigger.debuffs.onMe)
 		if debuff ~= nil then -- ignore if none are selected
 			if debuff then passed = true else return end
 		end

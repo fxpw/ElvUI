@@ -63,6 +63,9 @@ function NP:UpdateCVars()
 	NP:SetCVar('ShowClassColorInNameplate', '1')
 	NP:SetCVar('showVKeyCastbar', '1')
 	NP:SetCVar('nameplateAllowOverlap', NP.db.motionType == 'STACKED' and '0' or '1')
+	if NP.db.plateSize and NP.db.plateSize.loadDistance then
+		NP:SetCVar('nameplateMaxDistance', NP.db.plateSize.loadDistance)
+	end
 end
 
 function NP:UnitNPCID(unit)
@@ -87,6 +90,7 @@ function NP:UpdatePlateType(nameplate)
 		nameplate.UnitType     = 'PLAYER'
 		nameplate.UnitName     = nameplate.unitName
 		nameplate.UnitReaction = nameplate.reaction
+		nameplate.UnitClass    = nameplate.classFile
 		return
 	end
 
@@ -111,6 +115,7 @@ function NP:UpdatePlateType(nameplate)
 	nameplate.UnitType     = nameplate.frameType
 	nameplate.UnitName     = nameplate.unitName
 	nameplate.UnitReaction = nameplate.reaction
+	nameplate.UnitClass    = nameplate.classFile
 end
 
 function NP:GetUnitTypeFromUnit(unit)
@@ -131,7 +136,9 @@ end
 function NP:UpdatePlateSize(nameplate)
 	if not InCombatLockdown() then
 		local ft = nameplate.frameType
-		if ft == 'PLAYER' or ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
+		if ft == 'PLAYER' then
+			nameplate:SetSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
+		elseif ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
 			nameplate:SetSize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
 		else
 			nameplate:SetSize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
@@ -169,6 +176,8 @@ function NP:StylePlate(nameplate)
 
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.Health.Text = NP:Construct_TagText(nameplate.RaisedElement)
+
+	nameplate.HealCommBar = NP:Construct_HealComm(nameplate)
 
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.RaisedElement)

@@ -364,6 +364,22 @@ local NP_Health = {
 		fontOutline = 'OUTLINE',
 		fontSize = 11,
 	},
+	healPrediction = {
+		enable = false,
+		absorbStyle = 'REVERSED',
+		anchorPoint = 'BOTTOM',
+		absorbTexture = 'ElvUI Norm',
+		height = -1,
+		maxOverflow = 0,
+		colors = {
+			myBar = {r = 0, g = 1, b = 0.5, a = 0.25},
+			otherBar = {r = 0, g = 1, b = 0, a = 0.25},
+			absorbs = {r = 1, g = 1, b = 0, a = 0.25},
+			healAbsorbs = {r = 1, g = 0, b = 0, a = 0.25},
+			overabsorbs = {r = 1, g = 1, b = 0, a = 1},
+			overhealabsorbs = {r = 1, g = 0, b = 0, a = 1},
+		},
+	},
 }
 
 local NP_Power = {
@@ -504,6 +520,9 @@ P.nameplates = {
 		friendlyHeight = 30,
 		enemyWidth = 150,
 		enemyHeight = 30,
+		personalWidth = 150,
+		personalHeight = 30,
+		loadDistance = 41,
 	},
 	threat = {
 		enable = true,
