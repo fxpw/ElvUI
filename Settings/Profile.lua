@@ -355,7 +355,7 @@ local NP_Health = {
 	useClassColor = true,
 	text = {
 		enable = true,
-		format = '[health:percent]',
+		format = '[health:current]',
 		position = 'CENTER',
 		parent = 'Nameplate',
 		xOffset = 0,
@@ -703,7 +703,7 @@ P.nameplates = {
 for unit, data in next, P.nameplates.units do
 	if unit ~= 'TARGET' then
 		data.enable = true
-		data.nameOnly = (unit == 'FRIENDLY_NPC')
+		data.nameOnly = false
 		data.smartAuraPosition = 'DISABLED'
 		data.buffs = CopyTable(NP_Auras)
 		data.castbar = CopyTable(NP_Castbar)

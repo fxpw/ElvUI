@@ -59,6 +59,39 @@ function NP:SetCVar(cvar, value)
 	end
 end
 
+-- Debug: /elvnpdbg — dumps state of every visible nameplate to chat
+SLASH_ELVNPDBG1 = '/elvnpdbg'
+SlashCmdList.ELVNPDBG = function()
+	local count = 0
+	for plate in pairs(NP.Plates) do
+		count = count + 1
+		local h = plate.Health
+		local n = plate.unitName or (plate.unit and UnitName(plate.unit)) or '?'
+		local hw, hh, mn, mx, val
+		if h then hw, hh = h:GetSize(); mn, mx = h:GetMinMaxValues(); val = h:GetValue() end
+		print(string.format('|cff33ff99[NP]|r %s ft=%s unit=%s shown=%s sz=%dx%d Health shown=%s sz=%sx%s val=%s min=%s max=%s',
+			tostring(plate:GetName()), tostring(plate.frameType), tostring(plate.unit),
+			tostring(plate:IsShown()), plate:GetWidth() or 0, plate:GetHeight() or 0,
+			tostring(h and h:IsShown()), tostring(hw), tostring(hh),
+			tostring(val), tostring(mn), tostring(mx)))
+	end
+	if count == 0 then print('|cff33ff99[NP]|r no plates registered') end
+end
+
+SLASH_ELVNPDBG2 = '/elvnpdbg2'
+SlashCmdList.ELVNPDBG2 = function()
+	for _, ft in ipairs({'PLAYER','FRIENDLY_PLAYER','ENEMY_PLAYER','FRIENDLY_NPC','ENEMY_NPC'}) do
+		local d = NP.db.units and NP.db.units[ft]
+		print(string.format('|cff33ff99[NP]|r %s: enable=%s nameOnly=%s health=%s health.enable=%s health.height=%s castbar=%s power=%s',
+			ft, tostring(d and d.enable), tostring(d and d.nameOnly),
+			tostring(d and d.health and 'tbl' or 'nil'),
+			tostring(d and d.health and d.health.enable),
+			tostring(d and d.health and d.health.height),
+			tostring(d and d.castbar and 'tbl' or 'nil'),
+			tostring(d and d.power and 'tbl' or 'nil')))
+	end
+end
+
 function NP:UpdateCVars()
 	NP:SetCVar('ShowClassColorInNameplate', '1')
 	NP:SetCVar('showVKeyCastbar', '1')

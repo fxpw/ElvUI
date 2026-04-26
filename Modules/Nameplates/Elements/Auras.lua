@@ -60,9 +60,11 @@ local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, dura
 	button.priority    = 0
 
 	local noDuration    = (not duration or duration == 0)
+	local maxDuration   = db.maxDuration or 0
+	local minDuration   = db.minDuration or 0
 	local allowDuration = noDuration or (duration and duration > 0
-		and (db.maxDuration == 0 or duration <= db.maxDuration)
-		and (db.minDuration == 0 or duration >= db.minDuration))
+		and (maxDuration == 0 or duration <= maxDuration)
+		and (minDuration == 0 or duration >= minDuration))
 
 	if db.priority and db.priority ~= '' then
 		local isUnit     = unit and caster and UnitIsUnit(unit, caster)

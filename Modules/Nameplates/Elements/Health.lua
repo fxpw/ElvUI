@@ -47,6 +47,12 @@ function NP:Health_UpdateColor(_, unit)
 		r, g, b = sf.HealthColor.r, sf.HealthColor.g, sf.HealthColor.b
 	end
 
+	-- Fallback: ensure the bar always has a visible color even if every branch above missed
+	-- (e.g. UnitReaction returned nil for a brand-new nameplate unit).
+	if not b then
+		r, g, b = 0.7, 0.7, 0.7
+	end
+
 	if b then
 		element:SetStatusBarColor(r, g, b)
 
@@ -66,6 +72,10 @@ function NP:Construct_Health(nameplate)
 	Health:SetFrameLevel(5)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 	Health:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
+	-- Defaults so the bar is visible before oUF's first Update fills MinMax/Value/Color.
+	Health:SetMinMaxValues(0, 1)
+	Health:SetValue(1)
+	Health:SetStatusBarColor(0.7, 0.7, 0.7)
 	Health.colorReaction = true   -- WotLK: always use reaction color
 	Health.colorSelection = false -- WotLK: no selection color system
 	Health.UpdateColor = NP.Health_UpdateColor
@@ -105,6 +115,12 @@ end
 
 function NP:Update_Health(nameplate, skipUpdate)
 	local db = NP:PlateDB(nameplate)
+
+	-- Defensive: old saved profiles may be missing the per-unit health subtable entirely.
+	-- Without this guard db.health.enable nils out and the bar is permanently disabled.
+	if not db.health then
+		db.health = { enable = true, height = 10, useClassColor = true }
+	end
 
 	NP:Health_SetColors(nameplate)
 
