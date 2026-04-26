@@ -23,7 +23,11 @@ function NP:Health_UpdateColor(_, unit)
 		t = NP.db.colors.tapped
 	elseif (element.colorClass and self.isPlayer) or (element.colorClassNPC and not self.isPlayer) or (element.colorClassPet and UnitPlayerControlled(unit) and not self.isPlayer) then
 		local _, class = UnitClass(unit)
-		t = self.colors.class[class]
+		local cc = class and self.colors.class[class]
+		if cc then
+			r, g, b = cc[1] or cc.r, cc[2] or cc.g, cc[3] or cc.b
+			element.r, element.g, element.b = r, g, b
+		end
 	elseif element.colorReaction and UnitReaction(unit, 'player') then
 		local reaction = UnitReaction(unit, 'player')
 		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
@@ -67,6 +71,14 @@ function NP:Construct_Health(nameplate)
 	Health.UpdateColor = NP.Health_UpdateColor
 
 	NP.StatusBars[Health] = true
+
+	-- Background texture for the unfilled portion of the bar.
+	-- Color is set in Health_UpdateColor as (r,g,b) * NP.multiplier so it tints with the bar.
+	local bg = Health:CreateTexture(nameplate:GetName()..'HealthBG', 'BORDER')
+	bg:SetAllPoints(Health)
+	bg:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
+	bg:SetVertexColor(0, 0, 0, 1)
+	Health.bg = bg
 
 	local healthFlashTexture = Health:CreateTexture(nameplate:GetName()..'FlashTexture', 'OVERLAY')
 	healthFlashTexture:SetTexture(LSM:Fetch('background', 'ElvUI Blank'))

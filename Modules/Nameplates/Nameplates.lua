@@ -599,6 +599,19 @@ function NP:StyleFilterChanges(frame)
 	return (frame and frame.StyleFilterChanges) or {}
 end
 
+-- Thin alias around the global UnitExists; used by retail-derived StyleFilter helpers.
+function NP:UnitExists(unit)
+	return unit and UnitExists(unit) or nil
+end
+
+-- Hook for StyleFilter NameOnly transitions; ClassPower/ClassBar isn't ported on WotLK,
+-- so this currently just refreshes the TargetIndicator if present. Safe no-op otherwise.
+function NP:SetupTarget(nameplate, _)
+	if nameplate and nameplate.TargetIndicator and nameplate:IsElementEnabled('TargetIndicator') then
+		nameplate.TargetIndicator:ForceUpdate()
+	end
+end
+
 -- Scale a nameplate by a given multiplier (called from Threat element)
 function NP:ScalePlate(nameplate, scale)
 	if nameplate.isTarget and NP.db.useTargetScale then
@@ -726,7 +739,7 @@ function NP:Initialize()
 	NP.PlateGUID  = {}
 	NP.StatusBars = {}
 	NP.GroupRoles = {}
-	NP.multiplier = 0.35
+	NP.multiplier = (NP.db.colors and NP.db.colors.healthBgMultiplier) or 0.35
 
 	NP:StyleFilterInitialize()
 	NP:StyleFilterConfigure()

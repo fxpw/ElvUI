@@ -72,6 +72,13 @@ function NP:Construct_Power(nameplate)
 
 	NP.StatusBars[Power] = true
 
+	-- Background texture for the unfilled portion of the bar (matches Health.bg pattern).
+	local bg = Power:CreateTexture(nameplate:GetName()..'PowerBG', 'BORDER')
+	bg:SetAllPoints(Power)
+	bg:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
+	bg:SetVertexColor(0, 0, 0, 1)
+	Power.bg = bg
+
 	Power.frequentUpdates = true
 	Power.colorTapping = false
 	Power.colorClass = false

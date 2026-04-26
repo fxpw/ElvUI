@@ -172,7 +172,9 @@ castbar.castTimeFormat = db.castTimeFormat
 castbar.channelTimeFormat = db.channelTimeFormat
 
 castbar:Size(db.width, db.height)
-castbar:Point('CENTER', nameplate, 'CENTER', db.xOffset, db.yOffset)
+		castbar:ClearAllPoints()
+		-- Anchor below the Health bar by default. xOffset/yOffset still nudges it.
+		castbar:Point('TOP', nameplate.Health, 'BOTTOM', db.xOffset, db.yOffset)
 
 if db.showIcon then
 castbar.Button:ClearAllPoints()
