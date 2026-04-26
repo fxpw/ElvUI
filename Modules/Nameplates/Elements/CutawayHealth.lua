@@ -7,7 +7,7 @@ local NP = E:GetModule("NamePlates")
 function NP:UpdateElement_CutawayHealthFadeOut(frame)
 	local cutawayHealth = frame.CutawayHealth
 	cutawayHealth.fading = true
-	E:UIFrameFadeOut(cutawayHealth, self.db.cutawayHealthFadeOutTime, cutawayHealth:GetAlpha(), 0)
+	E:UIFrameFadeOut(cutawayHealth, self.db.cutaway.health.fadeOutTime, cutawayHealth:GetAlpha(), 0)
 	cutawayHealth.isPlaying = nil
 end
 
@@ -16,7 +16,7 @@ local function CutawayHealthClosure(frame)
 end
 
 function NP:CutawayHealthValueChangeCallback(frame, health, maxHealth)
-	if self.db.cutawayHealth then
+	if self.db.cutaway.health.enabled then
 		frame.CutawayHealth:SetMinMaxValues(0, maxHealth)
 		local oldValue = frame.Health:GetValue()
 		local change = oldValue - health
@@ -29,7 +29,7 @@ function NP:CutawayHealthValueChangeCallback(frame, health, maxHealth)
 			cutawayHealth:SetValue(oldValue)
 			cutawayHealth:SetAlpha(1)
 
-			E:Delay(self.db.cutawayHealthLength, CutawayHealthClosure, frame)
+			E:Delay(self.db.cutaway.health.lengthBeforeFade, CutawayHealthClosure, frame)
 
 			cutawayHealth.isPlaying = true
 			cutawayHealth:Show()

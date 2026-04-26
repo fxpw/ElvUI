@@ -4,6 +4,7 @@ local UF = E:GetModule('UnitFrames')
 local LSM = E.Libs.LSM
 
 local unpack = unpack
+local tinsert = tinsert
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitIsTapDenied = UnitIsTapDenied
 local UnitClass = UnitClass
@@ -114,4 +115,17 @@ function NP:Update_Health(nameplate, skipUpdate)
 	nameplate.Health.width = db.health.width
 	nameplate.Health.height = db.health.height
 	nameplate.Health:Height(db.health.height)
+end
+
+-- Registers value/color change callbacks on a nameplate health bar (used by CutawayHealth)
+function NP:RegisterHealthBarCallbacks(frame, valueChangeCB, colorChangeCB)
+	if valueChangeCB then
+		frame.HealthValueChangeCallbacks = frame.HealthValueChangeCallbacks or {}
+		tinsert(frame.HealthValueChangeCallbacks, valueChangeCB)
+	end
+
+	if colorChangeCB then
+		frame.HealthColorChangeCallbacks = frame.HealthColorChangeCallbacks or {}
+		tinsert(frame.HealthColorChangeCallbacks, colorChangeCB)
+	end
 end

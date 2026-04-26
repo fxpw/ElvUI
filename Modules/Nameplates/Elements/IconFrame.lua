@@ -20,7 +20,7 @@ function NP:Update_IconFrame(frame)
 			frame.IconFrame.texture:SetTexture(icon)
 			frame.IconFrame:Show()
 
-			self:StyleFrameColor(frame.IconFrame, frame.oldHealthBar:GetStatusBarColor())
+			self:StyleFrameColor(frame.IconFrame, frame.Health:GetStatusBarColor())
 		else
 			frame.IconFrame:Hide()
 		end

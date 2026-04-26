@@ -14,13 +14,6 @@ local LSM = E.Libs.LSM
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UNKNOWN = UNKNOWN
 
-function NP:UpdateAllNames(unit,tag)
-	for frame in pairs(NP.VisiblePlates) do
-		if frame.UnitType == unit then
-			frame.Name:SetText(NP:SetNPText(frame, tag))
-		end
-	end
-end
 function NP:Update_Name(frame, triggered)
 	if not triggered then
 		if not self.db.units[frame.UnitType].name.enable then return end
@@ -28,9 +21,7 @@ function NP:Update_Name(frame, triggered)
 
 	local name = frame.Name
 	local nameText = frame.UnitName or UNKNOWN
-	-- local nametr:SetText(NP.db.units[frame.UnitType].name.textFormat)
-	name:SetText(NP:SetNPText(frame,NP.db.units[frame.UnitType].name.textFormat) or nameText)
-	-- frame:Tag(name, self.db.units[frame.UnitType].name.textFormat)
+	name:SetText(nameText)
 
 	if not triggered then
 		name:ClearAllPoints()

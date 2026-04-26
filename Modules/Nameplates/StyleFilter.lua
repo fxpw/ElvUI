@@ -373,7 +373,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 	if NameColorChanged then
 		frame.StyleChanged = true
 		frame.NameColorChanged = true
-		local nameText = frame.oldName:GetText()
+		local nameText = frame.Name and frame.Name:GetText()
 		if nameText and nameText ~= "" then
 			frame.Name:SetTextColor(actions.color.nameColor.r, actions.color.nameColor.g, actions.color.nameColor.b, actions.color.nameColor.a)
 			if mod.db.nameColoredGlow then
@@ -572,8 +572,8 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 	-- Health
 	if trigger.healthThreshold then
-		local health = (trigger.healthUsePlayer and UnitHealth("player")) or frame.oldHealthBar:GetValue() or 0
-		local maxHealth = (trigger.healthUsePlayer and UnitHealthMax("player")) or select(2, frame.oldHealthBar:GetMinMaxValues()) or 0
+		local health = (trigger.healthUsePlayer and UnitHealth("player")) or frame.Health:GetValue() or 0
+		local maxHealth = (trigger.healthUsePlayer and UnitHealthMax("player")) or select(2, frame.Health:GetMinMaxValues()) or 0
 		local percHealth = (maxHealth and (maxHealth > 0) and health/maxHealth) or 0
 		local underHealthThreshold = trigger.underHealthThreshold and (trigger.underHealthThreshold ~= 0) and (trigger.underHealthThreshold > percHealth)
 		local overHealthThreshold = trigger.overHealthThreshold and (trigger.overHealthThreshold ~= 0) and (trigger.overHealthThreshold < percHealth)

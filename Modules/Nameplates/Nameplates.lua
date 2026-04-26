@@ -30,6 +30,7 @@ local UnitGUID = UnitGUID
 local UnitIsFriend = UnitIsFriend
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
+local UnitLevel = UnitLevel
 local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
@@ -158,8 +159,8 @@ function NP:StylePlate(nameplate)
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.RaisedElement)
 
-	nameplate.Name  = NP:Construct_TagText(nameplate.RaisedElement)
-	nameplate.Level = NP:Construct_TagText(nameplate.RaisedElement)
+	nameplate.Name  = NP:Construct_Name(nameplate.RaisedElement)
+	nameplate.Level = NP:Construct_Level(nameplate.RaisedElement)
 
 	nameplate.ClassificationIndicator = NP:Construct_ClassificationIndicator(nameplate.RaisedElement)
 	nameplate.Castbar             = NP:Construct_Castbar(nameplate)
@@ -169,6 +170,8 @@ function NP:StylePlate(nameplate)
 	nameplate.ThreatIndicator     = NP:Construct_ThreatIndicator(nameplate.RaisedElement)
 	nameplate.Highlight           = NP:Construct_Highlight(nameplate)
 	nameplate.ClassPower          = NP:Construct_ClassPower(nameplate)
+	nameplate.IconFrame           = NP:Construct_IconFrame(nameplate)
+	nameplate.CutawayHealth       = NP:ConstructElement_CutawayHealth(nameplate)
 
 	NP:Construct_Auras(nameplate)
 	NP:StyleFilterEvents(nameplate)
@@ -558,6 +561,25 @@ function NP:ScalePlate(nameplate, scale)
 		scale = scale * NP.db.targetScale
 	end
 	nameplate:SetScale(scale * (E.uiscale or 1))
+end
+
+-- Alias used by StyleFilter and HealthBar
+function NP:SetFrameScale(frame, scale)
+	NP:ScalePlate(frame, scale)
+end
+
+-- Returns level text + r,g,b; used by Level.lua and StyleFilter
+function NP:UnitLevel(frame)
+	if not frame.unit then return '??', 1, 1, 1 end
+	local level = UnitLevel(frame.unit)
+	if level == -1 then
+		return '??', 0.8, 0.05, 0.05
+	end
+	local color = GetQuestDifficultyColor and GetQuestDifficultyColor(level)
+	if color then
+		return level, color.r, color.g, color.b
+	end
+	return level, 1, 1, 1
 end
 
 function NP:StyleFilterEvents(nameplate)

@@ -10,6 +10,13 @@
 	<Script file="Elements\Portraits.lua"/>
 	<Script file="Elements\RaidTargetIndicator.lua"/>
 	<Script file="Elements\Threat.lua"/>
+	<Script file="Elements\Name.lua"/>
+	<Script file="Elements\Level.lua"/>
+	<Script file="Elements\Glow.lua"/>
+	<Script file="Elements\IconFrame.lua"/>
+	<Script file="Elements\RaidIcon.lua"/>
+	<Script file="Elements\CutawayHealth.lua"/>
+	<Script file="Elements\ComboPoints.lua"/>
 	<Script file="Plugins\ClassificationIndicator.lua"/>
 	<Script file="Plugins\Highlight.lua"/>
 	<Script file="Plugins\TargetIndicator.lua"/>
