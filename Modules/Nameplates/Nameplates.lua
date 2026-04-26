@@ -151,6 +151,8 @@ function NP:Construct_RaisedElement(nameplate)
 	local strata = nameplate:GetFrameStrata()
 	if strata ~= 'UNKNOWN' then
 		frame:SetFrameStrata(strata)
+	else
+		frame:SetFrameStrata('MEDIUM')
 	end
 	frame:SetFrameLevel(10)
 	frame:SetAllPoints()
@@ -167,7 +169,6 @@ function NP:StylePlate(nameplate)
 
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.Health.Text = NP:Construct_TagText(nameplate.RaisedElement)
-	nameplate.Health.Text.frequentUpdates = 0.1
 
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.RaisedElement)
@@ -339,9 +340,10 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		NP:StyleFilterEventWatch(nameplate, true)
 		NP:StyleFilterClearVariables(nameplate)
 
-		nameplate.Health.cur = nil
-		nameplate.Power.cur  = nil
-		nameplate.npcID      = nil
+		nameplate.Health.cur  = nil
+		nameplate.Power.cur   = nil
+		nameplate.npcID       = nil
+		nameplate.previousType = nil  -- force full re-init on next UNIT_ADDED (same frame, new unit)
 	end
 end
 
