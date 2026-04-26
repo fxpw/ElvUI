@@ -7,6 +7,11 @@ local _G = _G
 local wipe = wipe
 local unpack = unpack
 local CreateFrame = CreateFrame
+local strsplit = strsplit
+local UnitIsFriend = UnitIsFriend
+local UnitCanAttack = UnitCanAttack
+local UnitIsUnit = UnitIsUnit
+local ceil, min = math.ceil, math.min
 
 -- Local MatchGrowthX/Y tables (retail UF doesn't exist in WotLK)
 local MatchGrowthX = {
@@ -31,6 +36,100 @@ TOP         = 'DOWN',
 BOTTOM      = 'UP',
 }
 
+-- Custom AuraFilter for nameplates — reads self.db (the aura frame's db) directly,
+-- because UF:AuraFilter reads parent.db which is not set on nameplate frames.
+local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, duration, expiration, caster, isStealable, _, spellID)
+	if not name then return end
+
+	local db = self.db
+	if not db then return true end
+
+	local isPlayer = (caster == 'player' or caster == 'vehicle')
+	local isFriend = unit and UnitIsFriend('player', unit) and not UnitCanAttack('player', unit)
+
+	button.isPlayer    = isPlayer
+	button.isFriend    = isFriend
+	button.isStealable = isStealable
+	button.dtype       = debuffType
+	button.duration    = duration
+	button.expiration  = expiration
+	button.name        = name
+	button.spellID     = spellID
+	button.owner       = caster
+	button.spell       = name
+	button.priority    = 0
+
+	local noDuration    = (not duration or duration == 0)
+	local allowDuration = noDuration or (duration and duration > 0
+		and (db.maxDuration == 0 or duration <= db.maxDuration)
+		and (db.minDuration == 0 or duration >= db.minDuration))
+
+	if db.priority and db.priority ~= '' then
+		local isUnit     = unit and caster and UnitIsUnit(unit, caster)
+		local canDispell = (self.type == 'buffs' and isStealable)
+			or (self.type == 'debuffs' and debuffType and E:IsDispellableByMe(debuffType))
+		local filterCheck, spellPriority = UF:CheckFilter(name, caster, spellID, isFriend, isPlayer,
+			isUnit, allowDuration, noDuration, canDispell, strsplit(',', db.priority))
+		if spellPriority then button.priority = spellPriority end
+		return filterCheck
+	end
+
+	return allowDuration and true
+end
+
+-- Smart aura position: fluid PostUpdate callbacks (NP-specific, since UF's use db.perrow/numrows).
+-- Non-fluid modes reuse UF.UpdateBuffsHeaderPosition / UF.UpdateDebuffsHeaderPosition directly
+-- because those only do position math with no db field lookups.
+local function NP_UpdateBuffsHeight(self)
+	local n = self.visibleBuffs or 0
+	if n > 0 then
+		self:Height(self.size * min(ceil(n / (self.numAuras or 5)), self.numRows or 1))
+	else
+		self:Height(self.size)
+	end
+end
+
+local function NP_UpdateDebuffsHeight(self)
+	local n = self.visibleDebuffs or 0
+	if n > 0 then
+		self:Height(self.size * min(ceil(n / (self.numAuras or 5)), self.numRows or 1))
+	else
+		self:Height(self.size)
+	end
+end
+
+-- FLUID_BUFFS_ON_DEBUFFS: PostUpdate on Debuffs — adjust debuff height, reposition Buffs
+local function NP_UpdateBuffsPositionAndDebuffHeight(self)
+	local nameplate = self:GetParent()
+	local Buffs = nameplate.Buffs
+	if Buffs then
+		if (self.visibleDebuffs or 0) == 0 then
+			Buffs:ClearAllPoints()
+			Buffs:Point(self.point, self.attachTo, self.anchorPoint, self.xOffset, self.yOffset)
+		else
+			Buffs:ClearAllPoints()
+			Buffs:Point(Buffs.point, Buffs.attachTo, Buffs.anchorPoint, Buffs.xOffset, Buffs.yOffset)
+		end
+	end
+	NP_UpdateDebuffsHeight(self)
+end
+
+-- FLUID_DEBUFFS_ON_BUFFS: PostUpdate on Buffs — adjust buff height, reposition Debuffs
+local function NP_UpdateDebuffsPositionAndBuffHeight(self)
+	local nameplate = self:GetParent()
+	local Debuffs = nameplate.Debuffs
+	if Debuffs then
+		if (self.visibleBuffs or 0) == 0 then
+			Debuffs:ClearAllPoints()
+			Debuffs:Point(self.point, self.attachTo, self.anchorPoint, self.xOffset, self.yOffset)
+		else
+			Debuffs:ClearAllPoints()
+			Debuffs:Point(Debuffs.point, Debuffs.attachTo, Debuffs.anchorPoint, Debuffs.xOffset, Debuffs.yOffset)
+		end
+	end
+	NP_UpdateBuffsHeight(self)
+end
+
 -- Local ConvertFilters: split priority string into filterList table
 local function ConvertFilters(auras, priority)
 local filterList = {}
@@ -50,7 +149,7 @@ function NP:Construct_Auras(nameplate)
 local frameName = nameplate:GetName()
 
 local Buffs = CreateFrame('Frame', frameName..'Buffs', nameplate)
-Buffs:SetFrameStrata(nameplate:GetFrameStrata())
+do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Buffs:SetFrameStrata(s) end end
 Buffs:SetFrameLevel(5)
 Buffs:Size(1, 1)
 Buffs.size = 27
@@ -69,7 +168,7 @@ Buffs.stacks = {}
 Buffs.rows = {}
 
 local Debuffs = CreateFrame('Frame', frameName..'Debuffs', nameplate)
-Debuffs:SetFrameStrata(nameplate:GetFrameStrata())
+do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Debuffs:SetFrameStrata(s) end end
 Debuffs:SetFrameLevel(5)
 Debuffs:Size(1, 1)
 Debuffs.size = 27
@@ -91,12 +190,12 @@ Debuffs.rows = {}
 Buffs.PreSetPosition = UF.SortAuras
 Buffs.PostCreateIcon = NP.Construct_AuraIcon
 Buffs.PostUpdateIcon = UF.PostUpdateAura
-Buffs.CustomFilter = UF.AuraFilter
+Buffs.CustomFilter = NP_AuraFilter
 
 Debuffs.PreSetPosition = UF.SortAuras
 Debuffs.PostCreateIcon = NP.Construct_AuraIcon
 Debuffs.PostUpdateIcon = UF.PostUpdateAura
-Debuffs.CustomFilter = UF.AuraFilter
+Debuffs.CustomFilter = NP_AuraFilter
 
 nameplate.Buffs_, nameplate.Debuffs_ = Buffs, Debuffs
 nameplate.Buffs, nameplate.Debuffs = Buffs, Debuffs
@@ -145,6 +244,10 @@ button.count:Point(point, db.countXOffset, db.countYOffset)
 button.count:FontTemplate(LSM:Fetch('font', db.countFont), db.countFontSize, db.countFontOutline)
 end
 
+if button.icon then
+button.icon:SetTexCoord(unpack(E.TexCoords))
+end
+
 if button.auraInfo then
 wipe(button.auraInfo)
 else
@@ -171,9 +274,10 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras.yOffset = db.yOffset
 	auras.anchorPoint = db.anchorPoint
 	auras.initialAnchor = E.InversePoints[db.anchorPoint]
+	auras.point = auras.initialAnchor  -- needed by SmartAuraPosition PostUpdate callbacks
 	ConvertFilters(auras, priority)
-	auras.smartPosition, auras.smartFluid = nil, nil -- no smart position in WotLK
-	auras.attachTo = UF:GetAuraAnchorFrame(nameplate, db.attachTo) -- keep below SetSmartPosition
+	auras.PostUpdate = nil  -- cleared here; SetSmartAuraPosition may re-assign after Configure
+	auras.attachTo = UF:GetAuraAnchorFrame(nameplate, db.attachTo)
 	auras.num = numAuras * numRows
 	auras.db = db
 
@@ -193,6 +297,43 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras:Size(numAuras * db.size + ((numAuras - 1) * db.spacing), 1)
 end
 
+-- Apply smart aura position: re-anchor buffs/debuffs relative to each other and set PostUpdate.
+-- Must be called AFTER both Configure_Auras calls so that .point/.attachTo etc. are all set.
+function NP:SetSmartAuraPosition(nameplate, db)
+	local Buffs   = nameplate.Buffs
+	local Debuffs = nameplate.Debuffs
+	local position = db.smartAuraPosition
+
+	if position == 'BUFFS_ON_DEBUFFS' and Buffs and Debuffs then
+		Buffs.attachTo = Debuffs
+		Buffs:ClearAllPoints()
+		Buffs:Point(Buffs.point, Buffs.attachTo, Buffs.anchorPoint, Buffs.xOffset, Buffs.yOffset)
+		Buffs.PostUpdate  = nil
+		Debuffs.PostUpdate = UF.UpdateBuffsHeaderPosition
+	elseif position == 'DEBUFFS_ON_BUFFS' and Buffs and Debuffs then
+		Debuffs.attachTo = Buffs
+		Debuffs:ClearAllPoints()
+		Debuffs:Point(Debuffs.point, Debuffs.attachTo, Debuffs.anchorPoint, Debuffs.xOffset, Debuffs.yOffset)
+		Buffs.PostUpdate  = UF.UpdateDebuffsHeaderPosition
+		Debuffs.PostUpdate = nil
+	elseif position == 'FLUID_BUFFS_ON_DEBUFFS' and Buffs and Debuffs then
+		Buffs.attachTo = Debuffs
+		Buffs:ClearAllPoints()
+		Buffs:Point(Buffs.point, Buffs.attachTo, Buffs.anchorPoint, Buffs.xOffset, Buffs.yOffset)
+		Buffs.PostUpdate  = NP_UpdateBuffsHeight
+		Debuffs.PostUpdate = NP_UpdateBuffsPositionAndDebuffHeight
+	elseif position == 'FLUID_DEBUFFS_ON_BUFFS' and Buffs and Debuffs then
+		Debuffs.attachTo = Buffs
+		Debuffs:ClearAllPoints()
+		Debuffs:Point(Debuffs.point, Debuffs.attachTo, Debuffs.anchorPoint, Debuffs.xOffset, Debuffs.yOffset)
+		Buffs.PostUpdate  = NP_UpdateDebuffsPositionAndBuffHeight
+		Debuffs.PostUpdate = NP_UpdateDebuffsHeight
+	else
+		if Buffs  then Buffs.PostUpdate  = nil end
+		if Debuffs then Debuffs.PostUpdate = nil end
+	end
+end
+
 function NP:Update_Auras(nameplate)
 local db = NP:PlateDB(nameplate)
 
@@ -208,7 +349,6 @@ if db.debuffs.enable then
 nameplate.Debuffs = nameplate.Debuffs_
 NP:Configure_Auras(nameplate, nameplate.Debuffs, db.debuffs)
 nameplate.Debuffs:Show()
-nameplate.Debuffs:ForceUpdate()
 elseif nameplate.Debuffs then
 nameplate.Debuffs:Hide()
 nameplate.Debuffs = nil
@@ -218,11 +358,15 @@ if db.buffs.enable then
 nameplate.Buffs = nameplate.Buffs_
 NP:Configure_Auras(nameplate, nameplate.Buffs, db.buffs)
 nameplate.Buffs:Show()
-nameplate.Buffs:ForceUpdate()
 elseif nameplate.Buffs then
 nameplate.Buffs:Hide()
 nameplate.Buffs = nil
 end
+
+		NP:SetSmartAuraPosition(nameplate, db)
+
+		if nameplate.Debuffs then nameplate.Debuffs:ForceUpdate() end
+		if nameplate.Buffs   then nameplate.Buffs:ForceUpdate()   end
 elseif nameplate:IsElementEnabled('Auras') then
 nameplate:DisableElement('Auras')
 end

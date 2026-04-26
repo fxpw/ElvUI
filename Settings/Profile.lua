@@ -666,6 +666,7 @@ P.nameplates = {
 				yOffset = 0,
 			},
 		},
+		PLAYER = {},
 		FRIENDLY_PLAYER = {
 			markHealers = false,
 			markTanks = false,
@@ -703,6 +704,10 @@ for unit, data in next, P.nameplates.units do
 end
 
 -- Per-unit overrides
+P.nameplates.units.PLAYER.nameOnly = false
+P.nameplates.units.PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal'
+P.nameplates.units.PLAYER.debuffs.priority = 'Blacklist,blockNoDuration,Personal'
+
 P.nameplates.units.FRIENDLY_PLAYER.health.enable = false
 P.nameplates.units.FRIENDLY_PLAYER.level.enable = false
 P.nameplates.units.FRIENDLY_PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal,TurtleBuffs'

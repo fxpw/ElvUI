@@ -4,7 +4,7 @@ local LSM = E.Libs.LSM
 
 local unpack = unpack
 local UnitPlayerControlled = UnitPlayerControlled
-local UnitIsTapDenied = UnitIsTapDenied
+local UnitIsTapped = UnitIsTapped
 local UnitClass = UnitClass
 local UnitReaction = UnitReaction
 local UnitIsConnected = UnitIsConnected
@@ -24,7 +24,7 @@ function NP:Power_UpdateColor(_, unit)
 	local r, g, b, t
 	if element.colorDisconnected and not UnitIsConnected(unit) then
 		t = self.colors.disconnected
-	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
 		t = self.colors.tapped
 	elseif element.colorPower then
 		t = NP.db.colors.power and NP.db.colors.power[ptoken or ptype]
@@ -66,7 +66,7 @@ end
 
 function NP:Construct_Power(nameplate)
 	local Power = CreateFrame('StatusBar', nameplate:GetName()..'Power', nameplate)
-	Power:SetFrameStrata(nameplate:GetFrameStrata())
+	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Power:SetFrameStrata(s) end end
 	Power:SetFrameLevel(5)
 	Power:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 

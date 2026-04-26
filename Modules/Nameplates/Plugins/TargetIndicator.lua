@@ -153,35 +153,36 @@ ElvUF:AddElement('TargetIndicator', Path, Enable, Disable)
 local CreateFrame = CreateFrame
 
 function NP:Construct_TargetIndicator(nameplate)
+	local health = nameplate.Health
 	local TI = CreateFrame('Frame', nil, nameplate)
-	TI:SetAllPoints(nameplate)
+	TI:SetAllPoints(health)
 
 	-- Top arrow indicator
 	TI.TopIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
-	TI.TopIndicator:SetSize(12, 12)
-	TI.TopIndicator:SetPoint('BOTTOM', nameplate, 'TOP', 0, 2)
+	TI.TopIndicator:SetSize(20, 20)
+	TI.TopIndicator:SetPoint('BOTTOM', health, 'TOP', 0, 2)
 	TI.TopIndicator:Hide()
 
 	-- Left/right arrow indicators
 	TI.LeftIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
-	TI.LeftIndicator:SetSize(12, 12)
-	TI.LeftIndicator:SetPoint('RIGHT', nameplate, 'LEFT', -2, 0)
+	TI.LeftIndicator:SetSize(20, 20)
+	TI.LeftIndicator:SetPoint('RIGHT', health, 'LEFT', -2, 0)
 	TI.LeftIndicator:Hide()
 
 	TI.RightIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
-	TI.RightIndicator:SetSize(12, 12)
-	TI.RightIndicator:SetPoint('LEFT', nameplate, 'RIGHT', 2, 0)
+	TI.RightIndicator:SetSize(20, 20)
+	TI.RightIndicator:SetPoint('LEFT', health, 'RIGHT', 2, 0)
 	TI.RightIndicator:Hide()
 
-	-- Shadow (border glow) — extends 5px outside nameplate
+	-- Shadow (border glow) — extends 5px outside Health bar
 	TI.Shadow = CreateFrame('Frame', nil, nameplate)
-	TI.Shadow:SetPoint('TOPLEFT', nameplate, 'TOPLEFT', -5, 5)
-	TI.Shadow:SetPoint('BOTTOMRIGHT', nameplate, 'BOTTOMRIGHT', 5, -5)
+	TI.Shadow:SetPoint('TOPLEFT', health, 'TOPLEFT', -5, 5)
+	TI.Shadow:SetPoint('BOTTOMRIGHT', health, 'BOTTOMRIGHT', 5, -5)
 	TI.Shadow:Hide()
 
 	-- Spark (background glow)
 	TI.Spark = TI:CreateTexture(nil, 'BORDER', nil, -1)
-	TI.Spark:SetAllPoints(nameplate)
+	TI.Spark:SetAllPoints(health)
 	TI.Spark:Hide()
 
 	return TI

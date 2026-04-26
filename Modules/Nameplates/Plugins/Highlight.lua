@@ -79,11 +79,17 @@ oUF:AddElement('Highlight', Path, Enable, Disable)
 local NP = E:GetModule('NamePlates')
 
 function NP:Construct_Highlight(nameplate)
-	local Highlight = nameplate.Health:CreateTexture(nil, 'OVERLAY', nil, 7)
+	local Highlight = CreateFrame('Frame', nil, nameplate.Health)
 	Highlight:SetAllPoints(nameplate.Health)
-	Highlight:SetBlendMode('ADD')
-	Highlight:SetVertexColor(1, 1, 1, 0.3)
+	Highlight:SetFrameLevel(nameplate.Health:GetFrameLevel() + 5)
 	Highlight:Hide()
+
+	local tex = Highlight:CreateTexture(nil, 'OVERLAY', nil, 7)
+	tex:SetAllPoints(Highlight)
+	tex:SetBlendMode('ADD')
+	tex:SetVertexColor(1, 1, 1, 0.3)
+	Highlight.texture = tex
+
 	return Highlight
 end
 

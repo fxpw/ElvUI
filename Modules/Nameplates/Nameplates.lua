@@ -80,6 +80,16 @@ function NP:UpdatePlateType(nameplate)
 	local unit = nameplate.unit
 	if not unit then return end
 
+	if UnitIsUnit(unit, 'player') then
+		nameplate.frameType = 'PLAYER'
+		nameplate.isPlayer  = true
+		nameplate.classFile = select(2, UnitClass('player'))
+		nameplate.UnitType     = 'PLAYER'
+		nameplate.UnitName     = nameplate.unitName
+		nameplate.UnitReaction = nameplate.reaction
+		return
+	end
+
 	local isPlayer = UnitIsPlayer(unit)
 	local reaction = UnitReaction('player', unit)
 	local isFriendly = reaction and reaction >= 5
@@ -121,7 +131,7 @@ end
 function NP:UpdatePlateSize(nameplate)
 	if not InCombatLockdown() then
 		local ft = nameplate.frameType
-		if ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
+		if ft == 'PLAYER' or ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
 			nameplate:SetSize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
 		else
 			nameplate:SetSize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
@@ -138,7 +148,10 @@ end
 function NP:Construct_RaisedElement(nameplate)
 	local name = nameplate:GetName()
 	local frame = CreateFrame('Frame', name and (name .. 'Raised') or nil, nameplate)
-	frame:SetFrameStrata(nameplate:GetFrameStrata())
+	local strata = nameplate:GetFrameStrata()
+	if strata ~= 'UNKNOWN' then
+		frame:SetFrameStrata(strata)
+	end
 	frame:SetFrameLevel(10)
 	frame:SetAllPoints()
 	frame:EnableMouse(false)
@@ -296,6 +309,26 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 
 		if NP.db.fadeIn then
 			NP:PlateFade(nameplate, 1, 0, 1)
+		end
+
+		-- Hide Sirus's default nameplate UnitFrame so it doesn't overlap ElvUI's
+		local baseFrame = nameplate:GetParent()
+		if baseFrame and baseFrame.UnitFrame then
+			if not baseFrame.UnitFrame._elvHooked then
+				baseFrame.UnitFrame:HookScript('OnShow', function(self) self:Hide() end)
+				baseFrame.UnitFrame._elvHooked = true
+			end
+			baseFrame.UnitFrame:Hide()
+		end
+
+		-- Hide Blizzard mana/power bar on personal nameplate (it's parented to the nameplate, not UnitFrame)
+		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame then
+			local manaBar = NamePlateDriverFrame:GetClassNameplateManaBar()
+			if manaBar and not manaBar._elvHooked then
+				manaBar:HookScript('OnShow', function(self) self:Hide() end)
+				manaBar._elvHooked = true
+			end
+			if manaBar then manaBar:Hide() end
 		end
 
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then

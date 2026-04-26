@@ -6,7 +6,7 @@ local LSM = E.Libs.LSM
 local unpack = unpack
 local tinsert = tinsert
 local UnitPlayerControlled = UnitPlayerControlled
-local UnitIsTapDenied = UnitIsTapDenied
+local UnitIsTapped = UnitIsTapped
 local UnitClass = UnitClass
 local UnitReaction = UnitReaction
 local UnitIsConnected = UnitIsConnected
@@ -19,7 +19,7 @@ function NP:Health_UpdateColor(_, unit)
 	local r, g, b, t
 	if element.colorDisconnected and not UnitIsConnected(unit) then
 		t = self.colors.disconnected
-	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
 		t = NP.db.colors.tapped
 	elseif (element.colorClass and self.isPlayer) or (element.colorClassNPC and not self.isPlayer) or (element.colorClassPet and UnitPlayerControlled(unit) and not self.isPlayer) then
 		local _, class = UnitClass(unit)
@@ -58,7 +58,7 @@ end
 
 function NP:Construct_Health(nameplate)
 	local Health = CreateFrame('StatusBar', nameplate:GetName()..'Health', nameplate)
-	Health:SetFrameStrata(nameplate:GetFrameStrata())
+	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) end end
 	Health:SetFrameLevel(5)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 	Health:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))

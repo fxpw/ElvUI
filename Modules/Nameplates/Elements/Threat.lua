@@ -4,7 +4,7 @@ local NP = E:GetModule('NamePlates')
 local UnitName = UnitName
 local UnitExists = UnitExists
 local UnitIsUnit = UnitIsUnit
-local UnitIsTapDenied = UnitIsTapDenied
+local UnitIsTapped = UnitIsTapped
 local GetPartyAssignment = GetPartyAssignment
 
 -- WotLK: no E.myrole, use GetPartyAssignment instead
@@ -38,7 +38,7 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 	if not status and not sf.Scale then
 		nameplate.ThreatScale = 1
 		NP:ScalePlate(nameplate, 1)
-	elseif status and db.enable and db.useThreatColor and not UnitIsTapDenied(unit) then
+	elseif status and db.enable and db.useThreatColor and not UnitIsTapped(unit) then
 		NP:Health_SetColors(nameplate, true)
 		nameplate.ThreatStatus = status
 

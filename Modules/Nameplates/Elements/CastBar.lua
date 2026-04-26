@@ -94,7 +94,7 @@ function NP:Castbar_PostCastStop() end
 
 function NP:Construct_Castbar(nameplate)
 local castbar = CreateFrame('StatusBar', nameplate:GetName()..'Castbar', nameplate)
-castbar:SetFrameStrata(nameplate:GetFrameStrata())
+do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then castbar:SetFrameStrata(s) end end
 castbar:SetFrameLevel(5)
 castbar:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 castbar:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))

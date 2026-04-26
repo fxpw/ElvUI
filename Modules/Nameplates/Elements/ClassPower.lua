@@ -66,7 +66,7 @@ function NP:Construct_ClassPower(nameplate)
 	local ClassPower = CreateFrame('Frame', frameName..'ClassPower', nameplate)
 	ClassPower:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 	ClassPower:Hide()
-	ClassPower:SetFrameStrata(nameplate:GetFrameStrata())
+	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then ClassPower:SetFrameStrata(s) end end
 	ClassPower:SetFrameLevel(5)
 
 	local texture = LSM:Fetch('statusbar', NP.db.statusbar)
@@ -75,7 +75,7 @@ function NP:Construct_ClassPower(nameplate)
 	for i = 1, total do
 		local bar = CreateFrame('StatusBar', frameName..'ClassPower'..i, ClassPower)
 		bar:SetStatusBarTexture(texture)
-		bar:SetFrameStrata(nameplate:GetFrameStrata())
+		do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then bar:SetFrameStrata(s) end end
 		bar:SetFrameLevel(6)
 		NP.StatusBars[bar] = true
 
