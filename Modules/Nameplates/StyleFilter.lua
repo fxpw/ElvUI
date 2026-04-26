@@ -52,6 +52,9 @@ mod.TriggerConditions = {
 	uniqueUnits = {}
 }
 
+mod.UniqueUnits = {}
+mod.Totems = {}
+
 local totemTypes = {
 	air = { -- Air Totems
 		[8177] = "a1",	-- Grounding Totem
@@ -664,6 +667,7 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	-- Casting
 	if trigger.casting then
 		local b, c = frame.CastBar, trigger.casting
+		if not b then return end -- castbar not yet constructed
 
 		-- Spell
 		if b.spellName then
