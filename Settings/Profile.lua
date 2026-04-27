@@ -725,6 +725,13 @@ end
 P.nameplates.units.PLAYER.nameOnly = false
 P.nameplates.units.PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal'
 P.nameplates.units.PLAYER.debuffs.priority = 'Blacklist,blockNoDuration,Personal'
+P.nameplates.units.PLAYER.classpower = {
+	enable = false,
+	height = 7,
+	width = 125,
+	xOffset = 0,
+	yOffset = -30,
+}
 
 P.nameplates.units.FRIENDLY_PLAYER.health.enable = true
 P.nameplates.units.FRIENDLY_PLAYER.level.enable = true

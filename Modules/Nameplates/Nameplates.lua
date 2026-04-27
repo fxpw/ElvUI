@@ -785,6 +785,14 @@ function NP:Initialize()
 	NP:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 	NP:RegisterEvent('GROUP_ROSTER_UPDATE')
 
+	-- Class resources on nameplates
+	if E.myclass == 'ROGUE' or E.myclass == 'DRUID' then
+		NP:RegisterEvent('UNIT_COMBO_POINTS', 'ClassPower_UNIT_COMBO_POINTS')
+	elseif E.myclass == 'DEATHKNIGHT' then
+		NP:RegisterEvent('RUNE_POWER_UPDATE', 'ClassPower_RUNE_POWER_UPDATE')
+		NP:RegisterEvent('RUNE_TYPE_UPDATE',  'ClassPower_RUNE_TYPE_UPDATE')
+	end
+
 	NP:GROUP_ROSTER_UPDATE()
 	NP:UpdateCVars()
 

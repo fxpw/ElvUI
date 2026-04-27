@@ -861,13 +861,13 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 	-- Unit Faction (Alliance / Horde / Neutral / Renegade)
 	-- frame.faction = UnitFactionGroup(unit): "Alliance", "Horde", "" (no faction)
-	if trigger.faction and next(trigger.faction) then
-		local fac = frame.faction or ""
+	if trigger.faction and (trigger.faction.Alliance or trigger.faction.Horde or trigger.faction.Neutral or trigger.faction.Renegade) then
+		local fac = frame.faction or (frame.unit and UnitFactionGroup(frame.unit)) or ""
 		local ok
 		if fac == "Alliance" and trigger.faction.Alliance then ok = true
 		elseif fac == "Horde" and trigger.faction.Horde then ok = true
-		elseif fac == "Neutral" and trigger.faction.Neutral then ok = true
-		elseif (fac == "" or fac == "Renegade") and trigger.faction.Renegade then ok = true
+		elseif (fac == "Neutral" or fac == "") and trigger.faction.Neutral then ok = true
+		elseif fac == "Renegade" and trigger.faction.Renegade then ok = true
 		end
 		if ok then passed = true else return end
 	end
@@ -881,7 +881,7 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	end
 
 	-- Casting
-	if trigger.casting then
+	if trigger.casting and (trigger.casting.isCasting or trigger.casting.isChanneling or trigger.casting.notCasting or trigger.casting.notChanneling or trigger.casting.interruptible or trigger.casting.notInterruptible or (trigger.casting.spells and next(trigger.casting.spells))) then
 		local b, c = frame.Castbar, trigger.casting
 		if not b then return end -- castbar not yet constructed
 
