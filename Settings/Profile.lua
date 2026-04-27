@@ -668,6 +668,7 @@ P.nameplates = {
 			arrowYOffset = 0,
 			classpower = {
 				enable = false,
+				onlyInCombat = false,
 				classColor = false,
 				height = 7,
 				sortDirection = 'NONE',
@@ -684,7 +685,16 @@ P.nameplates = {
 				yOffset = 0,
 			},
 		},
-		PLAYER = {},
+		PLAYER = {
+			classpower = {
+				enable = false,
+				onlyInCombat = false,
+				height = 7,
+				width = 125,
+				xOffset = 0,
+				yOffset = -20,
+			},
+		},
 		FRIENDLY_PLAYER = {
 			markHealers = false,
 			markTanks = false,

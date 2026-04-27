@@ -787,10 +787,19 @@ function NP:Initialize()
 
 	-- Class resources on nameplates
 	if E.myclass == 'ROGUE' or E.myclass == 'DRUID' then
-		NP:RegisterEvent('UNIT_COMBO_POINTS', 'ClassPower_UNIT_COMBO_POINTS')
+		NP:RegisterEvent('UNIT_COMBO_POINTS',     'ClassPower_UNIT_COMBO_POINTS')
+		NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'ClassPower_PLAYER_TARGET_CHANGED')
+		NP:RegisterEvent('PLAYER_REGEN_ENABLED',  'ClassPower_PLAYER_REGEN')
+		NP:RegisterEvent('PLAYER_REGEN_DISABLED', 'ClassPower_PLAYER_REGEN')
+		NP:ClassPower_HookBlizzardBars()
+		NP:ClassPower_UpdateRuneFrameVisibility()
 	elseif E.myclass == 'DEATHKNIGHT' then
-		NP:RegisterEvent('RUNE_POWER_UPDATE', 'ClassPower_RUNE_POWER_UPDATE')
-		NP:RegisterEvent('RUNE_TYPE_UPDATE',  'ClassPower_RUNE_TYPE_UPDATE')
+		NP:RegisterEvent('RUNE_POWER_UPDATE',     'ClassPower_RUNE_POWER_UPDATE')
+		NP:RegisterEvent('RUNE_TYPE_UPDATE',      'ClassPower_RUNE_TYPE_UPDATE')
+		NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'ClassPower_PLAYER_TARGET_CHANGED')
+		NP:RegisterEvent('PLAYER_REGEN_ENABLED',  'ClassPower_PLAYER_REGEN')
+		NP:RegisterEvent('PLAYER_REGEN_DISABLED', 'ClassPower_PLAYER_REGEN')
+		NP:ClassPower_HookBlizzardBars()
 		NP:ClassPower_UpdateRuneFrameVisibility()
 	end
 
