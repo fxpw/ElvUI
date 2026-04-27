@@ -13,7 +13,7 @@ local GetTime = GetTime
 local UnitHasVehicleUI = UnitHasVehicleUI
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
--- Classes that display combo points on the target nameplate
+-- Classes that display resources on the TARGET nameplate
 local COMBO_CLASS = { ROGUE = true, DRUID = true }
 local RUNE_CLASS  = 'DEATHKNIGHT'
 
@@ -23,6 +23,21 @@ local MAX_POINTS = {
 	ROGUE       = max(5, MAX_COMBO_POINTS),
 	DRUID       = max(5, MAX_COMBO_POINTS),
 }
+
+-- Hide Blizzard RuneFrame if custom DK rune display is enabled
+function NP:ClassPower_UpdateRuneFrameVisibility()
+	if E.myclass ~= RUNE_CLASS then return end
+	local rf = _G.RuneFrame
+	if not rf then return end
+	local targetDB = NP.db.units.TARGET
+	if targetDB and targetDB.classpower and targetDB.classpower.enable then
+		rf:Hide()
+		rf.Show = E.noop
+	else
+		rf.Show = nil
+		rf:Show()
+	end
+end
 
 -- Rune slot -> display position map (matches oUF runes.lua)
 local runemap = {1, 2, 5, 6, 3, 4}
@@ -197,40 +212,28 @@ function NP:Update_ClassPower(nameplate)
 	end
 
 	local isTarget = nameplate.isTarget
-	local isPlayer = nameplate.frameType == 'PLAYER'
 
-	-- Pick the right settings table
-	local db
-	if isTarget then
-		db = NP.db.units.TARGET
-	else
-		db = NP:PlateDB(nameplate)
+	-- Only show on the targeted nameplate
+	if not isTarget then
+		frame:Hide()
+		return
 	end
 
-	-- Gate: setting must be enabled, and class must match purpose
+	-- Gate by class
+	if not COMBO_CLASS[E.myclass] and E.myclass ~= RUNE_CLASS then
+		frame:Hide()
+		return
+	end
+
+	local db = NP.db.units.TARGET
 	if not db or not db.classpower or not db.classpower.enable then
 		frame:Hide()
 		return
 	end
 
-	if isTarget and not COMBO_CLASS[E.myclass] then
-		frame:Hide()
-		return
-	end
-
-	if isPlayer and E.myclass ~= RUNE_CLASS then
-		frame:Hide()
-		return
-	end
-
-	if not isTarget and not isPlayer then
-		frame:Hide()
-		return
-	end
-
 	-- Layout: position and size the container
-	local cpDB      = db.classpower
-	local maxButtons = isPlayer and 6 or MAX_COMBO_POINTS
+	local cpDB       = db.classpower
+	local maxButtons = (E.myclass == RUNE_CLASS) and 6 or MAX_COMBO_POINTS
 	if maxButtons > #frame then maxButtons = #frame end
 
 	frame:ClearAllPoints()
@@ -262,10 +265,10 @@ function NP:Update_ClassPower(nameplate)
 	end
 
 	-- Populate values
-	if isTarget then
-		NP:ClassPower_UpdateComboPoints(nameplate)
-	elseif isPlayer then
+	if E.myclass == RUNE_CLASS then
 		NP:ClassPower_UpdateAllRunes(nameplate)
+	else
+		NP:ClassPower_UpdateComboPoints(nameplate)
 	end
 end
 
@@ -285,13 +288,12 @@ end
 
 function NP:ClassPower_RUNE_POWER_UPDATE(_, runeID)
 	if E.myclass ~= RUNE_CLASS or not NP.Plates then return end
+	local targetDB = NP.db.units.TARGET
+	if not targetDB or not targetDB.classpower or not targetDB.classpower.enable then return end
 
 	for plate in pairs(NP.Plates) do
-		if plate.frameType == 'PLAYER' and plate.ClassPower then
-			local db = NP:PlateDB(plate)
-			if db and db.classpower and db.classpower.enable then
-				NP:ClassPower_UpdateRune(plate, runeID)
-			end
+		if plate.isTarget and plate.ClassPower then
+			NP:ClassPower_UpdateRune(plate, runeID)
 		end
 	end
 end

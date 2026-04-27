@@ -791,6 +791,7 @@ function NP:Initialize()
 	elseif E.myclass == 'DEATHKNIGHT' then
 		NP:RegisterEvent('RUNE_POWER_UPDATE', 'ClassPower_RUNE_POWER_UPDATE')
 		NP:RegisterEvent('RUNE_TYPE_UPDATE',  'ClassPower_RUNE_TYPE_UPDATE')
+		NP:ClassPower_UpdateRuneFrameVisibility()
 	end
 
 	NP:GROUP_ROSTER_UPDATE()
