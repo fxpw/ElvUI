@@ -365,7 +365,7 @@ local NP_Health = {
 		fontSize = 11,
 	},
 	healPrediction = {
-		enable = false,
+		enable = true,
 		absorbStyle = 'REVERSED',
 		anchorPoint = 'BOTTOM',
 		absorbTexture = 'ElvUI Norm',
@@ -374,9 +374,9 @@ local NP_Health = {
 		colors = {
 			myBar = {r = 0, g = 1, b = 0.5, a = 0.25},
 			otherBar = {r = 0, g = 1, b = 0, a = 0.25},
-			absorbs = {r = 1, g = 1, b = 0, a = 0.25},
+			absorbs = {r = 0, g = 1, b = 1, a = 0.25},
 			healAbsorbs = {r = 1, g = 0, b = 0, a = 0.25},
-			overabsorbs = {r = 1, g = 1, b = 0, a = 1},
+			overabsorbs = {r = 0, g = 1, b = 1, a = 1},
 			overhealabsorbs = {r = 1, g = 0, b = 0, a = 1},
 		},
 	},
@@ -726,8 +726,8 @@ P.nameplates.units.PLAYER.nameOnly = false
 P.nameplates.units.PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal'
 P.nameplates.units.PLAYER.debuffs.priority = 'Blacklist,blockNoDuration,Personal'
 
-P.nameplates.units.FRIENDLY_PLAYER.health.enable = false
-P.nameplates.units.FRIENDLY_PLAYER.level.enable = false
+P.nameplates.units.FRIENDLY_PLAYER.health.enable = true
+P.nameplates.units.FRIENDLY_PLAYER.level.enable = true
 P.nameplates.units.FRIENDLY_PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal,TurtleBuffs'
 P.nameplates.units.FRIENDLY_PLAYER.debuffs.anchorPoint = 'TOPRIGHT'
 P.nameplates.units.FRIENDLY_PLAYER.debuffs.growthX = 'LEFT'
@@ -738,7 +738,7 @@ P.nameplates.units.ENEMY_PLAYER.debuffs.anchorPoint = 'TOPRIGHT'
 P.nameplates.units.ENEMY_PLAYER.debuffs.growthX = 'LEFT'
 P.nameplates.units.ENEMY_PLAYER.debuffs.priority = 'Blacklist,blockNoDuration,Personal,CCDebuffs,RaidDebuffs'
 
-P.nameplates.units.FRIENDLY_NPC.health.enable = false
+P.nameplates.units.FRIENDLY_NPC.health.enable = true
 P.nameplates.units.FRIENDLY_NPC.debuffs.priority = 'Blacklist,CCDebuffs,RaidDebuffs'
 
 P.nameplates.units.ENEMY_NPC.buffs.priority = 'Blacklist,blockNoDuration,PlayerBuffs,TurtleBuffs'

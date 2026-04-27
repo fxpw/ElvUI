@@ -210,6 +210,8 @@ function NP:StylePlate(nameplate)
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.Health.Text = NP:Construct_TagText(nameplate.RaisedElement)
 
+	NP:Construct_HealPrediction(nameplate)
+
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.RaisedElement)
 
@@ -258,6 +260,7 @@ function NP:UpdatePlate(nameplate, updateBase)
 	elseif updateBase then
 		NP:Update_Tags(nameplate)
 		NP:Update_Health(nameplate)
+		NP:Update_HealPrediction(nameplate)
 		NP:Update_Highlight(nameplate)
 		NP:Update_Power(nameplate)
 		NP:Update_Castbar(nameplate)
@@ -273,6 +276,7 @@ end
 
 NP.DisableElements = {
 	'Health',
+	'HealthPrediction',
 	'Power',
 	'ClassificationIndicator',
 	'Castbar',

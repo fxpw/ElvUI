@@ -42,8 +42,14 @@ function UF:Construct_HealComm(frame)
 	local otherBar = StatusBarPrototype(nil, parent)
 	local absorbBar = StatusBarPrototype(nil, parent)
 	local healAbsorbBar = StatusBarPrototype(nil, parent)
-	local overAbsorb = parent:CreateTexture(nil, "OVERLAY")
-	local overHealAbsorb = parent:CreateTexture(nil, "OVERLAY")
+
+	-- Sparks/over-absorb shields must render ABOVE the absorb bars (which sit at frame level 12),
+	-- so they live on a dedicated overlay frame with a higher level.
+	local overlay = CreateFrame("Frame", nil, parent)
+	overlay:SetAllPoints(parent)
+	overlay:SetFrameLevel(13)
+	local overAbsorb = overlay:CreateTexture(nil, "OVERLAY")
+	local overHealAbsorb = overlay:CreateTexture(nil, "OVERLAY")
 
 	local prediction = {
 		myBar = myBar,

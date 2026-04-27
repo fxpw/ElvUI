@@ -96,6 +96,9 @@ function NP:Construct_Health(nameplate)
 	healthFlashTexture:Point('TOPRIGHT', Health:GetStatusBarTexture(), 'TOPRIGHT')
 	healthFlashTexture:Hide()
 	nameplate.HealthFlashTexture = healthFlashTexture
+	-- StyleFilter looks up frame.FlashTexture (see StyleFilterPass / StyleFilterSetChanges).
+	-- Keep both names so legacy code paths and the StyleFilter flash action both work.
+	nameplate.FlashTexture = healthFlashTexture
 
 	return Health
 end
@@ -131,13 +134,22 @@ function NP:Update_Health(nameplate, skipUpdate)
 			nameplate:EnableElement('Health')
 		end
 
+		nameplate.Health:Show()
+		if nameplate.Health.backdrop then nameplate.Health.backdrop:Show() end
+
 		nameplate.Health:Point('CENTER')
 		nameplate.Health:Point('LEFT')
 		nameplate.Health:Point('RIGHT')
 
 		E:SetSmoothing(nameplate.Health, NP.db.smoothbars)
-	elseif nameplate:IsElementEnabled('Health') then
-		nameplate:DisableElement('Health')
+	else
+		if nameplate:IsElementEnabled('Health') then
+			nameplate:DisableElement('Health')
+		end
+
+		-- Hide bar + its backdrop/border so disabling Health visually removes everything attached to it.
+		nameplate.Health:Hide()
+		if nameplate.Health.backdrop then nameplate.Health.backdrop:Hide() end
 	end
 
 	nameplate.Health.width = db.health.width

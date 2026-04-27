@@ -1264,6 +1264,10 @@ function UF:MergeUnitSettings(fromUnit, toUnit, isGroupUnit)
 end
 
 function UF:UpdateBackdropTextureColor(r, g, b)
+	-- Defensive: GetStatusBarColor() can return nil for bars whose color hasn't been set yet
+	-- (e.g. AuraBars freshly shown before any PostUpdate/colors hook fires).
+	if not (r and g and b) then return end
+
 	local m = 0.35
 	local n = self.isTransparent and (m * 2) or m
 

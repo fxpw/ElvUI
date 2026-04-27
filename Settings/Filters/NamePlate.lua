@@ -26,20 +26,40 @@ E.StyleFilterDefaults = {
 		priority = 1,
 		isTarget = false,
 		notTarget = false,
+		requireTarget = false,
+		noTarget = false,
 		level = false,
+		mylevel = false,
+		negativeMatch = false,
 		casting = {
 			isCasting = false,
 			isChanneling = false,
 			notCasting = false,
 			notChanneling = false,
 			interruptible = false,
+			notInterruptible = false,
 			notSpell = false,
 			spells = {}
+		},
+		class = {}, -- per-class subtable: { WARRIOR = { enabled = true } }
+		faction = {
+			Alliance = false,
+			Horde = false,
+			Neutral = false
 		},
 		role = {
 			tank = false,
 			healer = false,
 			damager = false
+		},
+		classification = {
+			worldboss = false,
+			rareelite = false,
+			elite = false,
+			rare = false,
+			normal = false,
+			trivial = false,
+			minus = false
 		},
 		raidTarget = {
 			star = false,
@@ -59,6 +79,7 @@ E.StyleFilterDefaults = {
 		underHealthThreshold = 0,
 		overHealthThreshold = 0,
 		powerThreshold = false,
+		powerUsePlayer = false,
 		underPowerThreshold = 0,
 		overPowerThreshold = 0,
 		names = {},
@@ -70,7 +91,7 @@ E.StyleFilterDefaults = {
 			enemyNPC = false
 		},
 		reactionType = {
-			enabled = false,
+			enable = false,
 			hostile = false,
 			neutral = false,
 			friendly = false
@@ -102,24 +123,42 @@ E.StyleFilterDefaults = {
 			missing = false,
 			names = {},
 			minTimeLeft = 0,
-			maxTimeLeft = 0
+			maxTimeLeft = 0,
+			fromMe = false,
+			fromPet = false,
+			onMe = false,
+			onPet = false
 		},
 		debuffs = {
 			mustHaveAll = false,
 			missing = false,
 			names = {},
 			minTimeLeft = 0,
-			maxTimeLeft = 0
+			maxTimeLeft = 0,
+			fromMe = false,
+			fromPet = false,
+			onMe = false,
+			onPet = false
 		},
 		inCombat = false,
 		outOfCombat = false,
-		isResting = false
+		inCombatUnit = false,
+		outOfCombatUnit = false,
+		inVehicle = false,
+		outOfVehicle = false,
+		inVehicleUnit = false,
+		outOfVehicleUnit = false,
+		isResting = false,
+		notResting = false
 	},
 	actions = {
 		color = {
 			health = false,
 			border = false,
 			name = false,
+			healthClass = false,
+			borderClass = false,
+			nameClass = false,
 			healthColor = {r = 1, g = 1, b = 1, a = 1},
 			borderColor = {r = 1, g = 1, b = 1, a = 1},
 			nameColor = {r = 1, g = 1, b = 1, a = 1}
@@ -136,7 +175,8 @@ E.StyleFilterDefaults = {
 		hide = false,
 		nameOnly = false,
 		scale = 1.0,
-		alpha = -1
+		alpha = -1,
+		frameLevel = 0
 	}
 }
 
