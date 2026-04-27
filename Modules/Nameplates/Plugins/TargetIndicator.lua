@@ -59,6 +59,14 @@ local function Update(self)
 
 	HideIndicators(element)
 
+	local sf = NP:StyleFilterChanges(self)
+	if not sf.ShowTargetIndicator then return end
+
+	-- Always sync style/thresholds from sf so stale element.style never persists
+	element.style              = sf.TargetIndicatorStyle or 'style4'
+	element.preferGlowColor    = (NP.db.colors and NP.db.colors.preferGlowColor) ~= false
+	element.lowHealthThreshold = NP.db.lowHealthThreshold or 0
+
 	if element.style ~= 'none' then
 		local isTarget = UnitIsUnit(self.unit, 'target')
 		local lowHealth = element.lowHealthThreshold > 0
@@ -186,17 +194,12 @@ function NP:Construct_TargetIndicator(nameplate)
 end
 
 function NP:Update_TargetIndicator(nameplate)
-	local db = NP.db.targetIndicator
-	local frameDB = NP:PlateDB(nameplate)
-
-	if db and db.enable and not frameDB.nameOnly then
+	local sf = NP:StyleFilterChanges(nameplate)
+	if sf.ShowTargetIndicator then
 		if not nameplate:IsElementEnabled('TargetIndicator') then
 			nameplate:EnableElement('TargetIndicator')
 		end
-		local el = nameplate.TargetIndicator
-		el.style               = db.style or 'style1'
-		el.preferGlowColor     = (NP.db.colors and NP.db.colors.preferGlowColor) ~= false
-		el.lowHealthThreshold  = NP.db.lowHealthThreshold or 0
+		nameplate.TargetIndicator:ForceUpdate()
 	elseif nameplate:IsElementEnabled('TargetIndicator') then
 		nameplate:DisableElement('TargetIndicator')
 	end

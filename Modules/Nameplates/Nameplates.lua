@@ -736,6 +736,8 @@ function NP:ConfigurePlates()
 			nameplate.previousType = nil
 			NP:NamePlateCallBack(nameplate, 'NAME_PLATE_UNIT_ADDED')
 
+			NP:StyleFilterUpdate(nameplate, 'PoolerUpdate') -- re-evaluate filter conditions after reconfigure
+
 			nameplate.StyleFilterBaseAlreadyUpdated = nil
 			nameplate:UpdateAllElements('ForceUpdate')
 		end

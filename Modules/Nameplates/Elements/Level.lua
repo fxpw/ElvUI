@@ -37,5 +37,7 @@ function NP:Configure_Level(frame)
 end
 
 function NP:Construct_Level(frame)
-	return frame:CreateFontString(nil, "OVERLAY")
+	local fs = frame:CreateFontString(nil, "OVERLAY")
+	fs:FontTemplate()
+	return fs
 end

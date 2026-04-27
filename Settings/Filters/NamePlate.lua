@@ -175,6 +175,9 @@ E.StyleFilterDefaults = {
 		},
 		hide = false,
 		nameOnly = false,
+		showHealth = false,
+		showTargetIndicator = false,
+		targetIndicatorStyle = 'style4',
 		scale = 1.0,
 		alpha = -1,
 		frameLevel = 0

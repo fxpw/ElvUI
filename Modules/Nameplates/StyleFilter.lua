@@ -431,7 +431,7 @@ function mod:StyleFilterBaseUpdate(frame, state)
 			end
 		end
 
-		if frame.isTarget and frame.frameType ~= 'PLAYER' and mod.db.units.TARGET and mod.db.units.TARGET.glowStyle ~= 'none' and frame.TargetIndicator and frame.TargetIndicator.ForceUpdate then
+		if frame.isTarget and frame.frameType ~= 'PLAYER' and frame:IsElementEnabled('TargetIndicator') then
 			frame.TargetIndicator:ForceUpdate() -- so the target indicator reappears
 		end
 	end
@@ -500,7 +500,7 @@ function mod:StyleFilterDefaultTag(frame, kind)
 	return STYLEFILTER_DEFAULT_TAGS[kind] or ''
 end
 
-function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged)
+function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, TargetIndicatorChanged)
 	if VisibilityChanged then
 		frame.StyleChanged = true
 		frame.VisibilityChanged = true
@@ -619,6 +619,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		if not NameColorChanged then
 			mod:Update_Name(frame, true)
 		end
+		mod:Update_TargetIndicator(frame)
 	end
 	if ShowHealthChanged then
 		frame.StyleChanged = true
@@ -630,9 +631,16 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		end
 		mod:UpdatePlate(frame, true)
 	end
+	if TargetIndicatorChanged then
+		frame.StyleChanged = true
+		frame.TargetIndicatorChanged = true
+		frame.StyleFilterChanges.ShowTargetIndicator = true
+		frame.StyleFilterChanges.TargetIndicatorStyle = actions.targetIndicatorStyle or 'style4'
+		mod:Update_TargetIndicator(frame)
+	end
 end
 
-function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged)
+function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, TargetIndicatorChanged)
 	frame.StyleChanged = nil
 	if VisibilityChanged then
 		frame.VisibilityChanged = nil
@@ -710,12 +718,19 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		if mod.db.units[frame.UnitType].level.enable then
 			mod:Update_Level(frame)
 		end
+		mod:Update_TargetIndicator(frame)
 	end
 	if ShowHealthChanged then
 		frame.ShowHealthChanged = nil
 		frame.StyleFilterChanges.ShowHealth = nil
 		frame.plateDBOverride = nil
 		mod:UpdatePlate(frame, true)
+	end
+	if TargetIndicatorChanged then
+		frame.TargetIndicatorChanged = nil
+		frame.StyleFilterChanges.ShowTargetIndicator = nil
+		frame.StyleFilterChanges.TargetIndicatorStyle = nil
+		mod:Update_TargetIndicator(frame)
 	end
 end
 
@@ -985,7 +1000,8 @@ end
 
 function mod:StyleFilterPass(frame, actions)
 	local healthBarEnabled = (frame.UnitType and mod.db.units[frame.UnitType].health.enable) or (frame.isTarget and mod.db.alwaysShowTargetHealth)
-	local healthBarShown = healthBarEnabled and frame.Health:IsShown()
+	-- When showHealth is active the health bar will be shown by ShowHealthChanged even if currently hidden
+	local healthBarShown = healthBarEnabled and (frame.Health:IsShown() or actions.showHealth)
 
 	mod:StyleFilterSetChanges(frame, actions,
 		(healthBarShown and actions.color and actions.color.health), --HealthColorChanged
@@ -996,15 +1012,16 @@ function mod:StyleFilterPass(frame, actions)
 		(actions.frameLevel and actions.frameLevel ~= 0), --FrameLevelChanged
 		(actions.alpha and actions.alpha ~= -1), --AlphaChanged
 		(actions.color and actions.color.name), --NameColorChanged
-		(actions.nameOnly), --NameOnlyChanged
+		(actions.nameOnly and not actions.showHealth), --NameOnlyChanged
 		(actions.hide), --VisibilityChanged
-		(actions.showHealth) --ShowHealthChanged
+		(actions.showHealth), --ShowHealthChanged
+		(actions.showTargetIndicator) --TargetIndicatorChanged
 	)
 end
 
 function mod:StyleFilterClear(frame)
 	if frame and frame.StyleChanged then
-		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged)
+		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged, frame.TargetIndicatorChanged)
 	end
 end
 
@@ -1427,10 +1444,10 @@ end
 local function copyDefaults(dest, src)
 	for k, v in pairs(src) do
 		if type(v) == "table" then
-			if not rawget(dest, k) then rawset(dest, k, {}) end
+			if dest[k] == nil then dest[k] = {} end
 			if type(dest[k]) == "table" then copyDefaults(dest[k], v) end
-		elseif rawget(dest, k) == nil then
-			rawset(dest, k, v)
+		elseif dest[k] == nil then
+			dest[k] = v
 		end
 	end
 end
