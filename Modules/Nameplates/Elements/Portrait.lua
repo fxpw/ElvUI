@@ -50,6 +50,7 @@ function NP:Update_Portrait(nameplate)
 	if sf.Portrait or (db.portrait and db.portrait.enable) then
 		if not nameplate:IsElementEnabled('Portrait') then
 			nameplate:EnableElement('Portrait')
+			nameplate.Portrait:ForceUpdate()
 		end
 
 		if db.portrait then
@@ -61,8 +62,6 @@ function NP:Update_Portrait(nameplate)
 				nameplate.Portrait:Point(E.InversePoints[db.portrait.position], nameplate, db.portrait.position, db.portrait.xOffset, db.portrait.yOffset)
 			end
 		end
-
-		nameplate.Portrait:ForceUpdate()
 	elseif nameplate:IsElementEnabled('Portrait') then
 		nameplate:DisableElement('Portrait')
 	end

@@ -143,10 +143,6 @@ function NP:Update_Health(nameplate, skipUpdate)
 	nameplate.Health.width = db.health.width
 	nameplate.Health.height = db.health.height
 	nameplate.Health:Height(db.health.height)
-
-	if NP.Configure_HealComm then
-		NP:Configure_HealComm(nameplate)
-	end
 end
 
 -- Registers value/color change callbacks on a nameplate health bar (used by CutawayHealth)

@@ -45,7 +45,7 @@ function NP:Update_Glow(frame)
 	local healthIsShown = frame.Health:IsShown()
 	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
 
-	if not healthIsShown and not frame.IconOnlyChanged and nameExists then
+	if not healthIsShown and nameExists then
 		if glowStyle == "style1" then
 			glowStyle = "none"
 		elseif glowStyle == "style5" then
@@ -76,13 +76,13 @@ function NP:Update_Glow(frame)
 			ti.LeftIndicator:Hide()
 			ti.RightIndicator:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged or nameExists then
+			if healthIsShown or nameExists then
 				ti.TopIndicator:Show()
 			end
 		elseif glowStyle == "style4" or glowStyle == "style7" or glowStyle == "style8" then
 			ti.TopIndicator:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged or nameExists then
+			if healthIsShown or nameExists then
 				ti.LeftIndicator:Show()
 				ti.RightIndicator:Show()
 			end
@@ -95,13 +95,13 @@ function NP:Update_Glow(frame)
 		if glowStyle == "style1" or glowStyle == "style5" or glowStyle == "style7" then
 			ti.Spark:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged then
+			if healthIsShown then
 				ti.Shadow:Show()
 			end
 		elseif glowStyle == "style2" or glowStyle == "style6" or glowStyle == "style8" then
 			ti.Shadow:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged or nameExists then
+			if healthIsShown or nameExists then
 				ti.Spark:Show()
 			end
 		elseif glowStyle == "style3" or glowStyle == "style4" then
@@ -125,7 +125,7 @@ function NP:Configure_Glow(frame)
 	local healthIsShown = frame.Health:IsShown()
 	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
 
-	if not healthIsShown and not frame.IconOnlyChanged and nameExists then
+	if not healthIsShown and nameExists then
 		if glowStyle == "style1" then
 			glowStyle = "none"
 		elseif glowStyle == "style5" then
@@ -159,27 +159,18 @@ function NP:Configure_Glow(frame)
 		ti.RightIndicator:ClearAllPoints()
 
 		if glowStyle == "style3" or glowStyle == "style5" or glowStyle == "style6" then
-			if frame.IconOnlyChanged then
-				ti.TopIndicator:SetPoint("BOTTOM", frame.IconFrame, "TOP", arrowXOffset, arrowYOffset)
+			if healthIsShown then
+				ti.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", arrowXOffset, arrowYOffset)
 			else
-				if healthIsShown then
-					ti.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", arrowXOffset, arrowYOffset)
-				else
-					ti.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", arrowXOffset, arrowYOffset)
-				end
+				ti.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", arrowXOffset, arrowYOffset)
 			end
 		elseif glowStyle == "style4" or glowStyle == "style7" or glowStyle == "style8" then
-			if frame.IconOnlyChanged then
-				ti.LeftIndicator:SetPoint("LEFT", frame.IconFrame, "RIGHT", arrowXOffset, arrowYOffset)
-				ti.RightIndicator:SetPoint("RIGHT", frame.IconFrame, "LEFT", -arrowXOffset, arrowYOffset)
+			if healthIsShown then
+				ti.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", arrowXOffset, arrowYOffset)
+				ti.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", -arrowXOffset, arrowYOffset)
 			else
-				if healthIsShown then
-					ti.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", arrowXOffset, arrowYOffset)
-					ti.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", -arrowXOffset, arrowYOffset)
-				else
-					ti.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", arrowXOffset, arrowYOffset)
-					ti.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -arrowXOffset, arrowYOffset)
-				end
+				ti.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", arrowXOffset, arrowYOffset)
+				ti.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -arrowXOffset, arrowYOffset)
 			end
 		end
 
@@ -191,15 +182,15 @@ function NP:Configure_Glow(frame)
 		ti.Spark:ClearAllPoints()
 
 		if glowStyle == "style1" or glowStyle == "style5" or glowStyle == "style7" then
-			ti.Shadow:SetOutside(frame.IconOnlyChanged and frame.IconFrame or frame.Health, E:Scale(E.PixelMode and 6 or 8), E:Scale(E.PixelMode and 6 or 8))
+			ti.Shadow:SetOutside(frame.Health, E:Scale(E.PixelMode and 6 or 8), E:Scale(E.PixelMode and 6 or 8))
 		elseif glowStyle == "style2" or glowStyle == "style6" or glowStyle == "style8" then
 			if healthIsShown then
 				local size = E.Border + 14
 				ti.Spark:SetPoint("TOPLEFT", frame.Health, -(size * 2), size)
 				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Health, (size * 2), -size)
 			else
-				ti.Spark:SetPoint("TOPLEFT", frame.IconOnlyChanged and frame.IconFrame or frame.Name, -20, 8)
-				ti.Spark:SetPoint("BOTTOMRIGHT", frame.IconOnlyChanged and frame.IconFrame or frame.Name, 20, -8)
+				ti.Spark:SetPoint("TOPLEFT", frame.Name, -20, 8)
+				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Name, 20, -8)
 			end
 		end
 	end

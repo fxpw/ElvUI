@@ -210,8 +210,6 @@ function NP:StylePlate(nameplate)
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.Health.Text = NP:Construct_TagText(nameplate.RaisedElement)
 
-	nameplate.HealCommBar = NP:Construct_HealComm(nameplate)
-
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.RaisedElement)
 
@@ -221,13 +219,14 @@ function NP:StylePlate(nameplate)
 	nameplate.ClassificationIndicator = NP:Construct_ClassificationIndicator(nameplate.RaisedElement)
 	nameplate.Castbar             = NP:Construct_Castbar(nameplate)
 	nameplate.Portrait            = NP:Construct_Portrait(nameplate.RaisedElement)
+	nameplate.PvPIndicator        = NP:Construct_PvPIndicator(nameplate.RaisedElement)
 	nameplate.RaidTargetIndicator = NP:Construct_RaidTargetIndicator(nameplate.RaisedElement)
 	nameplate.TargetIndicator     = NP:Construct_TargetIndicator(nameplate)
 	nameplate.ThreatIndicator     = NP:Construct_ThreatIndicator(nameplate.RaisedElement)
 	nameplate.Highlight           = NP:Construct_Highlight(nameplate)
 	nameplate.ClassPower          = NP:Construct_ClassPower(nameplate)
-	nameplate.IconFrame           = NP:Construct_IconFrame(nameplate)
-	nameplate.CutawayHealth       = NP:ConstructElement_CutawayHealth(nameplate)
+	nameplate.Cutaway             = NP:Construct_Cutaway(nameplate)
+	nameplate.CutawayHealth       = nameplate.Cutaway.Health -- legacy alias
 
 	NP:Construct_Auras(nameplate)
 	NP:StyleFilterEvents(nameplate)
@@ -247,6 +246,7 @@ end
 function NP:UpdatePlate(nameplate, updateBase)
 	NP:Update_RaidTargetIndicator(nameplate)
 	NP:Update_Portrait(nameplate)
+	NP:Update_PvPIndicator(nameplate)
 
 	local db = NP:PlateDB(nameplate)
 	if not db.enable then
@@ -280,6 +280,7 @@ NP.DisableElements = {
 	'TargetIndicator',
 	'ClassPower',
 	'Auras',
+	'PvPIndicator',
 }
 
 function NP:DisablePlate(nameplate)
@@ -672,18 +673,8 @@ function NP:UnitLevel(frame)
 	return level, 1, 1, 1
 end
 
-function NP:StyleFilterEvents(nameplate)
-	if not nameplate.StyleFilterChanges then
-		nameplate.StyleFilterChanges = {}
-	end
-end
-
-function NP:StyleFilterEventWatch(nameplate, disable)
-end
-
-function NP:StyleFilterSetVariables(nameplate)
-	nameplate.isTarget = nameplate.unit and UnitIsUnit(nameplate.unit, 'target') or nil
-end
+-- StyleFilterEvents / StyleFilterEventWatch / StyleFilterSetVariables / StyleFilterClearVariables
+-- now defined in StyleFilter.lua (retail-faithful pooler + fake-register pattern).
 
 -- UpdateLibAuraInfoInfo: initialises LibAuraInfo integration for aura tracking
 function NP:UpdateLibAuraInfoInfo()

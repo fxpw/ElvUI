@@ -1210,7 +1210,11 @@ do
 		return id, name, "NaN", icon, background, role
 	end
 
-	local LT = LibStub("LibBabble-TalentTree-3.0"):GetLookupTable()
+	local LT
+	do
+		local LBT = LibStub("LibBabble-TalentTree-3.0", true)
+		LT = LBT and LBT:GetLookupTable() or setmetatable({}, {__index = function(_, k) return k end})
+	end
 	local function GetSpecializationInfoByID(id)
 		local name, icon, class
 		local role = "DAMAGER"

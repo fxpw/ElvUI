@@ -173,3 +173,54 @@
 | 5. ConditionCheck (faithful + Sirus merge) | ⬜ |
 | 6. Events / pooler / SetVariables / Watch / Register | ⬜ |
 | 7. Pass / Clear / Defaults / Profile + Options | ⬜ |
+
+
+
+---
+
+# v2.1 — РАСШИРЕННЫЙ СКОУП (full retail-like rewrite)
+
+> Выбор пользователя 27.04.2026: «плейты на сирусе можно переписать полностью под retail like».
+> Substages 1–3 закрыты (см. §7). Substage 4 пересматривается — старая модель Sirus-плейтов с `frame.StyleChanged`+`bordertop/bottom/left/right`+`CutawayHealth`+`IconFrame` заменяется retail-моделью.
+
+## 8) Решения скоупа v2.1
+
+| # | Решение |
+|---|---|
+| 1 | Бордеры Health/Power → `backdrop` + `SetBackdropBorderColor` (retail-style); удалить `bordertop/bottom/left/right` |
+| 2 | `CutawayHealth` → объединённый `frame.Cutaway = { Health=…, Power=… }` |
+| 3 | Tag-движок: `frame:Tag(text, format)` + `text:UpdateTag()` (обёртка над текущим Sirus tag-движком) |
+| 4 | Добавить `frame.Power.token` |
+| 5 | Удалить Sirus-only элементы: `HealComm.lua`, `HealerIcon.lua`, `ComboPoints.lua` (есть `ClassPower`), `Elite.lua`, `Highlight.lua`, `RaidIcon.lua` (есть `RaidTargetIndicator`), `IconFrame.lua` |
+| 6 | Удалить из StyleFilter ветки `IconChanged` / `IconOnlyChanged` и `mod.Totems` / `mod.UniqueUnits` / `totemTypes` / `uniqueUnitTypes` / `ScaleIconFrame` / тотем-ID-листы |
+| 7 | Добавить новые элементы: `Portrait.lua` (полноценный oUF Portrait, заменить текущий `Portraits.lua`), `PvP.lua` (PvP flag) |
+| 8 | НЕ включаем: `BossMods.lua` (DBM/BigWigs), `Plugins.lua` |
+| 9 | StyleFilter Set/ClearChanges → retail-сигнатура (HealthColor, PowerColor, Borders, HealthFlash, HealthTexture, HealthGlow, Scale, Alpha, NameTag/PowerTag/HealthTag/TitleTag/LevelTag, Portrait, NameOnly, Visibility) с таблицей `frame.StyleFilterChanges` |
+| 10 | Удалить из Profile/OptionsUI устаревшие ключи (HealComm/HealerIcon/IconFrame/ComboPoints/Elite/Highlight/RaidIcon секции) |
+
+## 9) Подстадии v2.1
+
+| # | Подстадия | Содержание | Статус |
+|---|---|---|---|
+| 4a | StyleFilter helper-шимы | `StyleFilterChanges`, `StyleFilterHiddenState`, `StyleFilterBorderLock`, `StyleFilterFinishedFlash`, `StyleFilterSetupFlash`, `StyleFilterClearVisibility`, `StyleFilterBaseUpdate`, `StyleFilterThreatUpdate`. **Не трогает Set/ClearChanges.** Создаёт фундамент. | ⬜ NEXT |
+| 4b | Element refactor: Cutaway | Объединить `CutawayHealth.lua` → `Cutaway.lua` с `.Health` + `.Power`. Update Power.lua/Health.lua call-sites. | ⬜ |
+| 4c | Element refactor: Health backdrop | Переписать `Health.lua` + `HealthBar.lua` под retail backdrop+bordercolor; убрать 4 `border*` текстуры; обновить `Construct` + `Configure`. Сохранить визуал. | ⬜ |
+| 4d | Element refactor: Power backdrop + token | То же для `Power.lua`; добавить `frame.Power.token` (обновлять в `UNIT_DISPLAYPOWER`). | ⬜ |
+| 4e | Tag wrapper | Подключить `frame:Tag(text, format)` + `text:UpdateTag()` в `Tags.lua` / `Construct`. | ⬜ |
+| 4f | StyleFilter Set/ClearChanges retail-style | Полностью переписать обе функции под retail-сигнатуру, заменить `frame.HealthColorChanged`-флаги на `frame.StyleFilterChanges`-таблицу. Поправить call-сайты в ConditionCheck. | ⬜ |
+| 4g | Удаление Sirus-only элементов | Снести `HealComm.lua`, `HealerIcon.lua`, `ComboPoints.lua`, `Elite.lua`, `Highlight.lua`, `RaidIcon.lua`, `IconFrame.lua`. Поправить `Load_Nameplates.xml`, `Nameplates.lua` `Construct`/`Style`/`Update`. Чистка StyleFilter от тотем/uniqueUnit логики (~250 строк). | ⬜ |
+| 5 | ConditionCheck (faithful + retail-only под `if E.Retail then`) | Полный retail-список триггеров. | ⬜ |
+| 6 | Events / pooler / SetVariables / Watch / Register | Полный retail event-pipeline. | ⬜ |
+| 7 | Pass / Clear / Defaults / Profile + OptionsUI cleanup | Удалить устаревшие ключи в Profile/Options; добавить новые секции (cutaway, glow, portrait, tags, healthFlash). | ⬜ |
+| 8a | Element: Portrait (full oUF) | Заменить `Portraits.lua` retail-вариантом. | ⬜ |
+| 8b | Element: PvP flag | Портировать `PvP.lua`. | ⬜ |
+
+## 10) Definition of Done v2.1
+
+1. `Modules/Nameplates/StyleFilter.lua` функционально эквивалентен retail (без BossMods/Plugins ветвей).
+2. `Modules/Nameplates/Elements/` содержит ТОЛЬКО: `Auras`, `CastBar`, `ClassPower`, `Cutaway`, `Glow`, `Health`, `HealthBar`, `Level`, `Name`, `Portrait`, `Power`, `PvP`, `RaidTargetIndicator`, `Tags`, `Threat`.
+3. Удалённые элементы (HealComm, HealerIcon, ComboPoints, Elite, Highlight, RaidIcon, IconFrame, Portraits) больше не загружаются.
+4. Профили мигрируются: устаревшие ключи игнорируются, новые получают defaults.
+5. Нет lua-ошибок при `/elvui` и переключении target/focus/combat/instance.
+6. OptionsUI не содержит мёртвых секций для удалённых элементов.
+

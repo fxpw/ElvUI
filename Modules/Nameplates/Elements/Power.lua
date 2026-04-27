@@ -3,6 +3,8 @@ local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
 local unpack = unpack
+local ipairs = ipairs
+local tinsert = tinsert
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitIsTapped = UnitIsTapped
 local UnitClass = UnitClass
@@ -51,16 +53,45 @@ function NP:Power_UpdateColor(_, unit)
 	if element.PostUpdateColor then
 		element:PostUpdateColor(unit, r, g, b)
 	end
+
+	-- Mirror Health's color callbacks (used by CutawayPower).
+	local frame = self
+	if frame.PowerColorChangeCallbacks and b then
+		for _, cb in ipairs(frame.PowerColorChangeCallbacks) do
+			cb(NP, frame, r, g, b)
+		end
+	end
 end
 
-function NP:Power_PostUpdate(_, cur)
-	local db = NP:PlateDB(self.__owner)
+function NP:Power_PostUpdate(unit, cur, _, max)
+	local frame = self.__owner
+	local db = NP:PlateDB(frame)
 	if not db.enable then return end
 
 	if db.power and db.power.enable and db.power.hideWhenEmpty and (cur == 0) then
 		self:Hide()
 	else
 		self:Show()
+	end
+
+	-- Mirror Health's value callbacks (used by CutawayPower).
+	if frame.PowerValueChangeCallbacks then
+		for _, cb in ipairs(frame.PowerValueChangeCallbacks) do
+			cb(NP, frame, cur or 0, max or 0)
+		end
+	end
+end
+
+-- Symmetric to NP:RegisterHealthBarCallbacks; consumed by Cutaway.lua.
+function NP:RegisterPowerBarCallbacks(frame, valueChangeCB, colorChangeCB)
+	if valueChangeCB then
+		frame.PowerValueChangeCallbacks = frame.PowerValueChangeCallbacks or {}
+		tinsert(frame.PowerValueChangeCallbacks, valueChangeCB)
+	end
+
+	if colorChangeCB then
+		frame.PowerColorChangeCallbacks = frame.PowerColorChangeCallbacks or {}
+		tinsert(frame.PowerColorChangeCallbacks, colorChangeCB)
 	end
 end
 

@@ -92,8 +92,8 @@ end
 function NP:Configure_NameOnlyGlow(frame)
 	local name = frame.Name
 	name.NameOnlyGlow:ClearAllPoints()
-	name.NameOnlyGlow:SetPoint("TOPLEFT", frame.IconOnlyChanged and frame.IconFrame or name, -20, 8)
-	name.NameOnlyGlow:SetPoint("BOTTOMRIGHT", frame.IconOnlyChanged and frame.IconFrame or name, 20, -8)
+	name.NameOnlyGlow:SetPoint("TOPLEFT", name, -20, 8)
+	name.NameOnlyGlow:SetPoint("BOTTOMRIGHT", name, 20, -8)
 end
 
 function NP:Construct_Name(frame)
