@@ -49,6 +49,9 @@ NP.StyleFilterEventFunctions = {}
 do
 	local empty = {}
 	function NP:PlateDB(nameplate)
+		if nameplate and nameplate.plateDBOverride then
+			return nameplate.plateDBOverride
+		end
 		return (nameplate and NP.db.units and NP.db.units[nameplate.frameType]) or empty
 	end
 end

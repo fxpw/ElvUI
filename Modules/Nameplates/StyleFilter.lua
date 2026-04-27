@@ -500,7 +500,7 @@ function mod:StyleFilterDefaultTag(frame, kind)
 	return STYLEFILTER_DEFAULT_TAGS[kind] or ''
 end
 
-function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged)
+function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged)
 	if VisibilityChanged then
 		frame.StyleChanged = true
 		frame.VisibilityChanged = true
@@ -620,9 +620,19 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			mod:Update_Name(frame, true)
 		end
 	end
+	if ShowHealthChanged then
+		frame.StyleChanged = true
+		frame.ShowHealthChanged = true
+		frame.StyleFilterChanges.ShowHealth = true
+		local base = mod.db.units and mod.db.units[frame.UnitType]
+		if base then
+			frame.plateDBOverride = setmetatable({nameOnly = false}, {__index = base})
+		end
+		mod:UpdatePlate(frame, true)
+	end
 end
 
-function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged)
+function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged)
 	frame.StyleChanged = nil
 	if VisibilityChanged then
 		frame.VisibilityChanged = nil
@@ -700,6 +710,12 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		if mod.db.units[frame.UnitType].level.enable then
 			mod:Update_Level(frame)
 		end
+	end
+	if ShowHealthChanged then
+		frame.ShowHealthChanged = nil
+		frame.StyleFilterChanges.ShowHealth = nil
+		frame.plateDBOverride = nil
+		mod:UpdatePlate(frame, true)
 	end
 end
 
@@ -981,13 +997,14 @@ function mod:StyleFilterPass(frame, actions)
 		(actions.alpha and actions.alpha ~= -1), --AlphaChanged
 		(actions.color and actions.color.name), --NameColorChanged
 		(actions.nameOnly), --NameOnlyChanged
-		(actions.hide) --VisibilityChanged
+		(actions.hide), --VisibilityChanged
+		(actions.showHealth) --ShowHealthChanged
 	)
 end
 
 function mod:StyleFilterClear(frame)
 	if frame and frame.StyleChanged then
-		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged)
+		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged)
 	end
 end
 
