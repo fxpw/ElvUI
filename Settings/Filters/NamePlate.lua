@@ -45,7 +45,8 @@ E.StyleFilterDefaults = {
 		faction = {
 			Alliance = false,
 			Horde = false,
-			Neutral = false
+			Neutral = false,
+			Renegade = false,
 		},
 		role = {
 			tank = false,
@@ -159,9 +160,9 @@ E.StyleFilterDefaults = {
 			healthClass = false,
 			borderClass = false,
 			nameClass = false,
-			healthColor = {r = 1, g = 1, b = 1, a = 1},
-			borderColor = {r = 1, g = 1, b = 1, a = 1},
-			nameColor = {r = 1, g = 1, b = 1, a = 1}
+			healthColor = { r = 1, g = 1, b = 1, a = 1 },
+			borderColor = { r = 1, g = 1, b = 1, a = 1 },
+			nameColor = { r = 1, g = 1, b = 1, a = 1 }
 		},
 		texture = {
 			enable = false,
@@ -169,7 +170,7 @@ E.StyleFilterDefaults = {
 		},
 		flash = {
 			enable = false,
-			color = {r = 1, g = 1, b = 1, a = 1},
+			color = { r = 1, g = 1, b = 1, a = 1 },
 			speed = 4
 		},
 		hide = false,

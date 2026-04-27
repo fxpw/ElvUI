@@ -36,14 +36,15 @@ end
 
 mod.TriggerConditions = {
 	raidTargets = {
-		STAR = "star",
-		CIRCLE = "circle",
-		DIAMOND = "diamond",
-		TRIANGLE = "triangle",
-		MOON = "moon",
-		SQUARE = "square",
-		CROSS = "cross",
-		SKULL = "skull",
+		-- GetRaidTargetIndex() returns 1..8; map to the action subkey used in DB.
+		[1] = "star",
+		[2] = "circle",
+		[3] = "diamond",
+		[4] = "triangle",
+		[5] = "moon",
+		[6] = "square",
+		[7] = "cross",
+		[8] = "skull",
 	},
 	frameTypes = {
 		["FRIENDLY_PLAYER"] = "friendlyPlayer",
@@ -515,17 +516,29 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 	if HealthColorChanged then
 		frame.StyleChanged = true
 		frame.HealthColorChanged = true
-		frame.StyleFilterChanges.HealthColor = actions.color.healthColor
-		frame.Health:SetStatusBarColor(actions.color.healthColor.r, actions.color.healthColor.g, actions.color.healthColor.b, actions.color.healthColor.a)
+		local hc = actions.color.healthColor
+		local hr, hg, hb, ha = hc.r, hc.g, hc.b, hc.a
+		if actions.color.healthClass then
+			local classColor = frame.classFile and ((CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[frame.classFile]) or RAID_CLASS_COLORS[frame.classFile])
+			if classColor then hr, hg, hb = classColor.r, classColor.g, classColor.b end
+		end
+		frame.StyleFilterChanges.HealthColor = {r = hr, g = hg, b = hb, a = ha}
+		frame.Health:SetStatusBarColor(hr, hg, hb, ha)
 		local cutawayHealth = (frame.Cutaway and frame.Cutaway.Health) or frame.CutawayHealth
 		if cutawayHealth then
-			cutawayHealth:SetStatusBarColor(actions.color.healthColor.r * 1.5, actions.color.healthColor.g * 1.5, actions.color.healthColor.b * 1.5, actions.color.healthColor.a)
+			cutawayHealth:SetStatusBarColor(hr * 1.5, hg * 1.5, hb * 1.5, ha)
 		end
 	end
 	if BorderChanged then --Lets lock this to the values we want (needed for when the media border color changes)
 		frame.StyleChanged = true
 		frame.BorderChanged = true
-		mod:StyleFilterBorderLock(frame.Health.backdrop, actions.color.borderColor.r, actions.color.borderColor.g, actions.color.borderColor.b, actions.color.borderColor.a)
+		local bc = actions.color.borderColor
+		local br, bg, bb, ba = bc.r, bc.g, bc.b, bc.a
+		if actions.color.borderClass then
+			local classColor = frame.classFile and ((CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[frame.classFile]) or RAID_CLASS_COLORS[frame.classFile])
+			if classColor then br, bg, bb = classColor.r, classColor.g, classColor.b end
+		end
+		mod:StyleFilterBorderLock(frame.Health.backdrop, br, bg, bb, ba)
 	end
 	if FlashingHealth then
 		frame.StyleChanged = true
@@ -542,7 +555,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleChanged = true
 		frame.TextureChanged = true
 		local tex = LSM:Fetch("statusbar", actions.texture.texture)
-		frame.Health.Highlight:SetTexture(tex)
+		if frame.Health.Highlight then frame.Health.Highlight:SetTexture(tex) end
 		frame.Health:SetStatusBarTexture(tex)
 		if FlashingHealth then
 			frame.FlashTexture:SetTexture(tex)
@@ -569,9 +582,15 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.NameColorChanged = true
 		local nameText = frame.Name and frame.Name:GetText()
 		if nameText and nameText ~= "" then
-			frame.Name:SetTextColor(actions.color.nameColor.r, actions.color.nameColor.g, actions.color.nameColor.b, actions.color.nameColor.a)
+			local nc = actions.color.nameColor
+			local nr, ng, nb, na = nc.r, nc.g, nc.b, nc.a
+			if actions.color.nameClass then
+				local classColor = frame.classFile and ((CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[frame.classFile]) or RAID_CLASS_COLORS[frame.classFile])
+				if classColor then nr, ng, nb = classColor.r, classColor.g, classColor.b end
+			end
+			frame.Name:SetTextColor(nr, ng, nb, na)
 			if mod.db.nameColoredGlow then
-				frame.Name.NameOnlyGlow:SetVertexColor(actions.color.nameColor.r - 0.1, actions.color.nameColor.g - 0.1, actions.color.nameColor.b - 0.1, 1)
+				frame.Name.NameOnlyGlow:SetVertexColor(nr - 0.1, ng - 0.1, nb - 0.1, 1)
 			end
 		end
 	end
@@ -636,7 +655,7 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 	if TextureChanged then
 		frame.TextureChanged = nil
 		local tex = LSM:Fetch("statusbar", mod.db.statusbar)
-		frame.Health.Highlight:SetTexture(tex)
+		if frame.Health.Highlight then frame.Health.Highlight:SetTexture(tex) end
 		frame.Health:SetStatusBarTexture(tex)
 	end
 	if ScaleChanged then
@@ -655,7 +674,10 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 	end
 	if NameColorChanged then
 		frame.NameColorChanged = nil
-		frame.Name:SetTextColor(frame.Name.r, frame.Name.g, frame.Name.b)
+		-- Names on this engine are driven by oUF tags (no Update_Name pre-pass),
+		-- so frame.Name.r/g/b can be nil. Falling back to nil tints the text black.
+		local nr, ng, nb = frame.Name.r or 1, frame.Name.g or 1, frame.Name.b or 1
+		frame.Name:SetTextColor(nr, ng, nb)
 	end
 	if NameOnlyChanged then
 		frame.NameOnlyChanged = nil
@@ -670,7 +692,8 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		frame.Level:ClearAllPoints()
 		if mod.db.units[frame.UnitType].name.enable then
 			mod:Update_Name(frame)
-			frame.Name:SetTextColor(frame.Name.r, frame.Name.g, frame.Name.b)
+			local nr, ng, nb = frame.Name.r or 1, frame.Name.g or 1, frame.Name.b or 1
+			frame.Name:SetTextColor(nr, ng, nb)
 		else
 			frame.Name:SetText()
 		end
@@ -683,10 +706,11 @@ end
 function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	local passed -- skip StyleFilterPass when triggers are empty
 
-	-- Class
+	-- Class (matches against the UNIT'S class on the nameplate, not the player's class).
+	-- Non-player units (NPCs, pets without classFile) never pass this trigger.
 	if trigger.class and next(trigger.class) then
-		local Class = trigger.class[E.myclass]
-		if not Class then
+		local unitClass = frame.classFile or frame.UnitClass
+		if not (unitClass and trigger.class[unitClass]) then
 			return
 		else
 			passed = true
@@ -835,9 +859,25 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 		if ((reaction == 1 or reaction == 2 or reaction == 3) and trigger.reactionType.hostile) or (reaction == 4 and trigger.reactionType.neutral) or (reaction == 5 and trigger.reactionType.friendly) then passed = true else return end
 	end
 
+	-- Unit Faction (Alliance / Horde / Neutral / Renegade)
+	-- frame.faction = UnitFactionGroup(unit): "Alliance", "Horde", "" (no faction)
+	if trigger.faction and next(trigger.faction) then
+		local fac = frame.faction or ""
+		local ok
+		if fac == "Alliance" and trigger.faction.Alliance then ok = true
+		elseif fac == "Horde" and trigger.faction.Horde then ok = true
+		elseif fac == "Neutral" and trigger.faction.Neutral then ok = true
+		elseif (fac == "" or fac == "Renegade") and trigger.faction.Renegade then ok = true
+		end
+		if ok then passed = true else return end
+	end
+
 	-- Raid Target
 	if trigger.raidTarget and (trigger.raidTarget.star or trigger.raidTarget.circle or trigger.raidTarget.diamond or trigger.raidTarget.triangle or trigger.raidTarget.moon or trigger.raidTarget.square or trigger.raidTarget.cross or trigger.raidTarget.skull) then
-		if trigger.raidTarget[mod.TriggerConditions.raidTargets[frame.RaidIconType]] then passed = true else return end
+		-- frame.RaidTargetIndex is refreshed by RAID_TARGET_UPDATE / StyleFilterEventFunctions; fall back to a live lookup just in case.
+		local idx = frame.RaidTargetIndex or (frame.unit and GetRaidTargetIndex(frame.unit))
+		local markName = idx and mod.TriggerConditions.raidTargets[idx]
+		if markName and trigger.raidTarget[markName] then passed = true else return end
 	end
 
 	-- Casting
@@ -1083,7 +1123,15 @@ function mod:StyleFilterConfigure()
 	if mod.db and mod.db.filters then
 		for filterName, filter in pairs(E.global.nameplates.filters) do
 			local t = filter.triggers
-			if t and mod.db.filters[filterName] and mod.db.filters[filterName].triggers and mod.db.filters[filterName].triggers.enable then
+			-- "enable" lives on the GLOBAL filter (UI writes it via GetFilter -> E.global).
+			-- Per-profile mod.db.filters[name] is treated as an OPTIONAL disable-override only:
+			-- if the profile entry explicitly sets triggers.enable = false, the filter is skipped
+			-- for that profile; a missing entry just means "use global state".
+			local profileEntry = mod.db.filters[filterName]
+			local profileTriggers = profileEntry and profileEntry.triggers
+			local profileDisabled = profileTriggers and profileTriggers.enable == false
+
+			if t and t.enable and not profileDisabled then
 				tinsert(list, {filterName, t.priority or 1})
 
 				-- NOTE: -1 internal, 0 fake, 1 real
