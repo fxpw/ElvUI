@@ -129,7 +129,7 @@ function NP:Update_Health(nameplate, skipUpdate)
 
 	if skipUpdate then return end
 
-	if db.health.enable then
+	if db.health.enable and not db.nameOnly then
 		if not nameplate:IsElementEnabled('Health') then
 			nameplate:EnableElement('Health')
 		end

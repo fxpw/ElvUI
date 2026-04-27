@@ -607,13 +607,13 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		--position the name and update its color
 		frame.Name:ClearAllPoints()
 		frame.Name:SetJustifyH("CENTER")
-		frame.Name:SetPoint("TOP", frame)
-		frame.Name:SetParent(frame)
+		frame.Name:SetPoint("CENTER", frame.RaisedElement or frame)
+		frame.Name:SetParent(frame.RaisedElement or frame)
 		if mod.db.units[frame.UnitType].level.enable then
 			frame.Level:ClearAllPoints()
 			frame.Level:SetPoint("LEFT", frame.Name, "RIGHT")
 			frame.Level:SetJustifyH("LEFT")
-			frame.Level:SetParent(frame)
+			frame.Level:SetParent(frame.RaisedElement or frame)
 			frame.Level:SetFormattedText(" [%s]", mod:UnitLevel(frame))
 		end
 		if not NameColorChanged then

@@ -339,7 +339,7 @@ end
 function NP:Update_Auras(nameplate)
 local db = NP:PlateDB(nameplate)
 
-if db.debuffs.enable or db.buffs.enable then
+if (db.debuffs.enable or db.buffs.enable) and not db.nameOnly then
 if not nameplate:IsElementEnabled('Auras') then
 nameplate:EnableElement('Auras')
 end

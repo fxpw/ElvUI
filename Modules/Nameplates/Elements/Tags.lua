@@ -35,6 +35,13 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 
 	-- Name uses oUF tag system (textFormat = '[name:long]' etc.)
 	NP:Update_TagText(nameplate, nameplate.Name, db.name)
+	-- nameOnly: center the name in the plate regardless of db.name.parent/position settings
+	if db.nameOnly then
+		nameplate.Name:ClearAllPoints()
+		nameplate.Name:SetJustifyH('CENTER')
+		nameplate.Name:SetPoint('CENTER', nameplate.RaisedElement or nameplate)
+		nameplate.Name:SetParent(nameplate.RaisedElement or nameplate)
+	end
 
 	-- Level uses smartlevel oUF tag
 	if db.level and db.level.enable and not hide then

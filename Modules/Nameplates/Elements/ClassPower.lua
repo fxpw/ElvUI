@@ -282,6 +282,13 @@ function NP:Update_ClassPower(nameplate)
 		return
 	end
 
+	-- Hide when nameOnly is enabled for this plate type
+	local plateDB = NP:PlateDB(nameplate)
+	if plateDB.nameOnly then
+		frame:Hide()
+		return
+	end
+
 	local isPlayer = nameplate.frameType == 'PLAYER'
 	local isTarget = nameplate.isTarget
 

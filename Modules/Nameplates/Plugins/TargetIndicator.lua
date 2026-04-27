@@ -187,8 +187,9 @@ end
 
 function NP:Update_TargetIndicator(nameplate)
 	local db = NP.db.targetIndicator
+	local frameDB = NP:PlateDB(nameplate)
 
-	if db and db.enable then
+	if db and db.enable and not frameDB.nameOnly then
 		if not nameplate:IsElementEnabled('TargetIndicator') then
 			nameplate:EnableElement('TargetIndicator')
 		end

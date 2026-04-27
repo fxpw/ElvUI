@@ -124,7 +124,7 @@ end
 function NP:Update_Power(nameplate)
 	local db = NP:PlateDB(nameplate)
 
-	if db.power and db.power.enable then
+	if db.power and db.power.enable and not db.nameOnly then
 		if not nameplate:IsElementEnabled('Power') then
 			nameplate:EnableElement('Power')
 		end

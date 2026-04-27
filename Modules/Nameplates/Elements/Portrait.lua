@@ -47,7 +47,7 @@ function NP:Update_Portrait(nameplate)
 	local db = NP:PlateDB(nameplate)
 	local sf = NP:StyleFilterChanges(nameplate)
 
-	if sf.Portrait or (db.portrait and db.portrait.enable) then
+	if (sf.Portrait or (db.portrait and db.portrait.enable)) and not db.nameOnly then
 		if not nameplate:IsElementEnabled('Portrait') then
 			nameplate:EnableElement('Portrait')
 			nameplate.Portrait:ForceUpdate()

@@ -168,7 +168,7 @@ function NP:Update_Castbar(nameplate)
 		castbar:SetAlpha((not frameDB.nameOnly and db.enable) and 1 or 0)
 	end
 
-	if db.enable then
+	if db.enable and not frameDB.nameOnly then
 		if not nameplate:IsElementEnabled('Castbar') then
 			nameplate:EnableElement('Castbar')
 		end
