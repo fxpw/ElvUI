@@ -535,8 +535,6 @@ P.nameplates = {
 	targetIndicator = {
 		enable = true,
 		style = 'style1',
-		preferGlowColor = true,
-		lowHealthThreshold = 0,
 	},
 	visibility = {
 		showAll = true,

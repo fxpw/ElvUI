@@ -29,15 +29,12 @@ local function ShowIndicators(element, isTarget, color)
 	if isTarget then
 		if element.TopIndicator and (element.style == 'style3' or element.style == 'style5' or element.style == 'style6') then
 			element.TopIndicator:SetVertexColor(color.r, color.g, color.b)
-			element.TopIndicator:SetTexture(element.arrow)
 			element.TopIndicator:Show()
 		end
 
 		if element.LeftIndicator and element.RightIndicator and (element.style == 'style4' or element.style == 'style7' or element.style == 'style8') then
 			element.LeftIndicator:SetVertexColor(color.r, color.g, color.b)
 			element.RightIndicator:SetVertexColor(color.r, color.g, color.b)
-			element.LeftIndicator:SetTexture(element.arrow)
-			element.RightIndicator:SetTexture(element.arrow)
 			element.RightIndicator:Show()
 			element.LeftIndicator:Show()
 		end
@@ -120,12 +117,12 @@ local function Enable(self)
 
 		if element.LeftIndicator and element.LeftIndicator:IsObjectType('Texture') and not element.LeftIndicator:GetTexture() then
 			element.LeftIndicator:SetTexture(E.Media.Arrows.ArrowUp)
-			element.LeftIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
+			element.LeftIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0)
 		end
 
 		if element.RightIndicator and element.RightIndicator:IsObjectType('Texture') and not element.RightIndicator:GetTexture() then
 			element.RightIndicator:SetTexture(E.Media.Arrows.ArrowUp)
-			element.RightIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0)
+			element.RightIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
 		end
 
 		-- WotLK: use UNIT_HEALTH (not UNIT_HEALTH_FREQUENT which is E.Classic)
@@ -197,8 +194,8 @@ function NP:Update_TargetIndicator(nameplate)
 		end
 		local el = nameplate.TargetIndicator
 		el.style               = db.style or 'style1'
-		el.preferGlowColor     = db.preferGlowColor ~= false
-		el.lowHealthThreshold  = db.lowHealthThreshold or 0
+		el.preferGlowColor     = (NP.db.colors and NP.db.colors.preferGlowColor) ~= false
+		el.lowHealthThreshold  = NP.db.lowHealthThreshold or 0
 	elseif nameplate:IsElementEnabled('TargetIndicator') then
 		nameplate:DisableElement('TargetIndicator')
 	end
