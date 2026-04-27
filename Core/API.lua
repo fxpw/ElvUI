@@ -146,6 +146,13 @@ function E:CheckRole(event)
 end
 
 function E:IsDispellableByMe(debuffType)
+	-- Prefer LibDispel if available (dynamic, talent-aware)
+	local Dispel = self.Libs and self.Libs.Dispel
+	if Dispel and Dispel.DispelList then
+		if Dispel.DispelList[debuffType] then return true end
+		return
+	end
+
 	if not self.DispelClasses[self.myclass] then return end
 
 	if self.DispelClasses[self.myclass][debuffType] then return true end

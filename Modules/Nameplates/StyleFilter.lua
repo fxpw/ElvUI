@@ -1,11 +1,13 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local mod = E:GetModule("NamePlates")
 local LSM = E.Libs.LSM
+local LibDispel = E.Libs.Dispel
+local BleedList = LibDispel and LibDispel.BleedList or {}
 
 --Lua functions
 local ipairs, next, pairs, rawget, rawset, select, setmetatable, tonumber, type, unpack, tostring = ipairs, next, pairs, rawget, rawset, select, setmetatable, tonumber, type, unpack, tostring
-local tinsert, sort, twipe = table.insert, table.sort, table.wipe
-local match = string.match
+local tinsert, sort, twipe, wipe = table.insert, table.sort, table.wipe, (wipe or table.wipe)
+local match, strmatch = string.match, string.match
 --WoW API / Variables
 local GetInstanceInfo = GetInstanceInfo
 local GetSpellCooldown = GetSpellCooldown
@@ -13,10 +15,18 @@ local GetSpellInfo = GetSpellInfo
 local GetTime = GetTime
 local IsResting = IsResting
 local UnitAffectingCombat = UnitAffectingCombat
+local UnitAura = UnitAura
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
+
+mod.StyleFilterStackPattern = '([^\n:]+):?(%d*)$'
+
+-- Sirus 3.3.5a: native C_Timer with colon syntax. Returned object supports :Cancel().
+local function C_Timer_NewTimer(delay, cb)
+	return C_Timer:NewTimer(delay, cb)
+end
 
 mod.TriggerConditions = {
 	raidTargets = {
@@ -264,45 +274,168 @@ local function ScaleIconFrame(frame, scale)
 	end
 end
 
-function mod:StyleFilterAuraCheck(frame, names, icons, mustHaveAll, missing, minTimeLeft, maxTimeLeft, fromMe, onMe)
-	if onMe and frame.UnitType ~= 'PLAYER' then return false end
-	local total, count = 0, 0
-	for name, value in pairs(names) do
-		if value == true then --only if they are turned on
-			total = total + 1 --keep track of the names
+function mod:StyleFilterTickerCallback(frame, ticker, timer)
+	if frame and frame:IsShown() then
+		mod:StyleFilterUpdate(frame, 'FAKE_AuraWaitTimer')
+	end
+
+	if ticker[timer] then
+		ticker[timer]:Cancel()
+		ticker[timer] = nil
+	end
+end
+
+function mod:StyleFilterTickerCreate(delay, frame, ticker, timer)
+	return C_Timer_NewTimer(delay, function() mod:StyleFilterTickerCallback(frame, ticker, timer) end)
+end
+
+function mod:StyleFilterAuraWait(frame, ticker, timer, timeLeft, mTimeLeft)
+	if not ticker[timer] then
+		local updateIn = timeLeft - mTimeLeft
+		if updateIn > 0 then -- add a tenth of a second to prevent firing on the same second
+			ticker[timer] = mod:StyleFilterTickerCreate(updateIn + 0.1, frame, ticker, timer)
 		end
-		for _, icon in ipairs(icons) do
-			if icon:IsShown() and (value == true) and ((icon.name and icon.name == name) or (icon.spellID and icon.spellID == tonumber(name)))
-				and (not minTimeLeft or (minTimeLeft == 0 or (icon.expirationTime and (icon.expirationTime - GetTime()) > minTimeLeft))) and (not maxTimeLeft or (maxTimeLeft == 0 or (icon.expirationTime and (icon.expirationTime - GetTime()) < maxTimeLeft)))
-				and (not fromMe or icon.isPlayer) then
-				count = count + 1 --keep track of how many matches we have
+	end
+end
+
+function mod:StyleFilterDispelCheck(frame, filter)
+	-- 3.3.5a UnitAura returns: name, rank, icon, count, dispelType, duration, expirationTime, source, isStealable, shouldConsolidate, spellID
+	local index = 1
+	local name, _, _, _, auraType, _, _, _, isStealable, _, spellID = UnitAura(frame.unit, index, filter)
+	while name do
+		if filter == 'HELPFUL' then
+			if isStealable then
+				return true
+			end
+		elseif auraType and E:IsDispellableByMe(auraType) then
+			return true
+		elseif not auraType and BleedList[spellID] and E:IsDispellableByMe('Bleed') then
+			return true
+		end
+
+		index = index + 1
+		name, _, _, _, auraType, _, _, _, isStealable, _, spellID = UnitAura(frame.unit, index, filter)
+	end
+end
+
+function mod:StyleFilterAuraData(frame, filter, unit)
+	local temp = {}
+
+	if unit then
+		-- 3.3.5a positions: 1 name, 4 count, 7 expirationTime, 8 source, 11 spellID
+		local index = 1
+		local name, _, _, count, _, _, expiration, source, _, _, spellID = UnitAura(unit, index, filter)
+		while name do
+			local info = temp[name] or temp[spellID]
+			if not info then info = {} end
+
+			temp[name] = info
+			temp[spellID] = info
+
+			info[index] = { count = count, expiration = expiration, source = source, modRate = 1 }
+
+			index = index + 1
+			name, _, _, count, _, _, expiration, source, _, _, spellID = UnitAura(unit, index, filter)
+		end
+	end
+
+	return temp
+end
+
+function mod:StyleFilterAuraCheck(frame, names, tickers, filter, mustHaveAll, missing, minTimeLeft, maxTimeLeft, fromMe, fromPet, onMe, onPet)
+	-- Backwards-compat: if `tickers` is actually the old icons array (has integer indices but no .hasMinTimer/etc fields)
+	-- callers were passing frame.Buffs / frame.Debuffs. Detect by checking if it looks like an oUF aura header (has .createdIcons or such),
+	-- and in that case treat it as the per-frame ticker bucket on the element.
+	if tickers and type(tickers) == 'table' and tickers.tickers then
+		tickers = tickers.tickers
+	elseif type(tickers) ~= 'table' then
+		tickers = {}
+	end
+
+	-- Default filter to HARMFUL if not provided (matches old behavior context: debuffs)
+	if not filter then filter = 'HELPFUL' end
+
+	local total, matches, now = 0, 0, GetTime()
+	local temp -- data of current auras
+
+	for key, value in pairs(names) do
+		if value then -- only if they are turned on
+			total = total + 1
+
+			if not temp then
+				temp = mod:StyleFilterAuraData(frame, filter, (onMe and 'player') or (onPet and 'pet') or frame.unit)
+			end
+
+			local spell, count = strmatch(key, mod.StyleFilterStackPattern)
+			local info = temp[spell] or temp[tonumber(spell)]
+
+			if info then
+				local stacks = tonumber(count)
+				local hasMinTime = minTimeLeft and minTimeLeft ~= 0
+				local hasMaxTime = maxTimeLeft and maxTimeLeft ~= 0
+
+				for _, data in pairs(info) do
+					if not stacks or (data.count and data.count >= stacks) then
+						local isMe, isPet = data.source == 'player' or data.source == 'vehicle', data.source == 'pet'
+						if (fromMe and fromPet and (isMe or isPet)) or (fromMe and isMe) or (fromPet and isPet) or (not fromMe and not fromPet) then
+							local timeLeft = (hasMinTime or hasMaxTime) and data.expiration and ((data.expiration - now) / (data.modRate or 1))
+							local minTimeAllow = not hasMinTime or (timeLeft and timeLeft > minTimeLeft)
+							local maxTimeAllow = not hasMaxTime or (timeLeft and timeLeft < maxTimeLeft)
+
+							if minTimeAllow and maxTimeAllow then
+								matches = matches + 1
+							end
+
+							if timeLeft then
+								if not tickers[matches] then tickers[matches] = {} end
+								if hasMinTime then mod:StyleFilterAuraWait(frame, tickers[matches], 'hasMinTimer', timeLeft, minTimeLeft) end
+								if hasMaxTime then mod:StyleFilterAuraWait(frame, tickers[matches], 'hasMaxTimer', timeLeft, maxTimeLeft) end
+							end
+						end
+					end
+				end
+			end
+
+			local stale = matches + 1
+			local ticker = tickers[stale]
+			while ticker and (ticker.hasMinTimer or ticker.hasMaxTimer) do -- cancel stale timers
+				if ticker.hasMinTimer then ticker.hasMinTimer:Cancel() ticker.hasMinTimer = nil end
+				if ticker.hasMaxTimer then ticker.hasMaxTimer:Cancel() ticker.hasMaxTimer = nil end
+
+				stale = stale + 1
+				ticker = tickers[stale]
 			end
 		end
 	end
 
+	if temp then
+		wipe(temp)
+	end
+
 	if total == 0 then
-		return nil --If no auras are checked just pass nil, we dont need to run the filter here.
+		return nil
 	else
-		return ((mustHaveAll and not missing) and total == count)	-- [x] Check for all [ ] Missing: total needs to match count
-		or ((not mustHaveAll and not missing) and count > 0)		-- [ ] Check for all [ ] Missing: count needs to be greater than zero
-		or ((not mustHaveAll and missing) and count == 0)			-- [ ] Check for all [x] Missing: count needs to be zero
-		or ((mustHaveAll and missing) and total ~= count)			-- [x] Check for all [x] Missing: count must not match total
+		return ((mustHaveAll and not missing) and total == matches)
+			or ((not mustHaveAll and not missing) and matches > 0)
+			or ((not mustHaveAll and missing) and matches == 0)
+			or ((mustHaveAll and missing) and total ~= matches)
 	end
 end
 
 function mod:StyleFilterCooldownCheck(names, mustHaveAll)
-	local total, count = 0, 0
 	local _, gcd = GetSpellCooldown(61304)
+	local total, count = 0, 0
 
 	for name, value in pairs(names) do
-		if value == "ONCD" or value == "OFFCD" then --only if they are turned on
-			total = total + 1 --keep track of the names
+		if GetSpellInfo(name) then -- only valid spells
+			if value == "ONCD" or value == "OFFCD" then
+				total = total + 1
+				local _, duration = GetSpellCooldown(name)
 
-			local _, duration = GetSpellCooldown(name)
-			if (duration > gcd and value == "ONCD")
-			or (duration <= gcd and value == "OFFCD") then
-				count = count + 1
-				--print(((duration > gcd and value == "ONCD") and name.."passes because it is on cd.") or ((duration <= gcd and value == "OFFCD") and name.." passes because it is off cd."))
+				if (duration > gcd and value == "ONCD")
+				or (duration <= gcd and value == "OFFCD") then
+					count = count + 1
+				end
 			end
 		end
 	end
@@ -707,16 +840,20 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	end
 
 	-- Buffs
-	if frame.Buffs and trigger.buffs and trigger.buffs.names and next(trigger.buffs.names) then
-		local buff = mod:StyleFilterAuraCheck(frame, trigger.buffs.names, frame.Buffs, trigger.buffs.mustHaveAll, trigger.buffs.missing, trigger.buffs.minTimeLeft, trigger.buffs.maxTimeLeft, trigger.buffs.fromMe, trigger.buffs.onMe)
+	if trigger.buffs and trigger.buffs.names and next(trigger.buffs.names) then
+		local buffsEl = frame.Buffs_ or frame.Buffs
+		local buffTickers = (buffsEl and buffsEl.tickers) or {}
+		local buff = mod:StyleFilterAuraCheck(frame, trigger.buffs.names, buffTickers, 'HELPFUL', trigger.buffs.mustHaveAll, trigger.buffs.missing, trigger.buffs.minTimeLeft, trigger.buffs.maxTimeLeft, trigger.buffs.fromMe, trigger.buffs.fromPet, trigger.buffs.onMe, trigger.buffs.onPet)
 		if buff ~= nil then -- ignore if none are selected
 			if buff then passed = true else return end
 		end
 	end
 
 	-- Debuffs
-	if frame.Debuffs and trigger.debuffs and trigger.debuffs.names and next(trigger.debuffs.names) then
-		local debuff = mod:StyleFilterAuraCheck(frame, trigger.debuffs.names, frame.Debuffs, trigger.debuffs.mustHaveAll, trigger.debuffs.missing, trigger.debuffs.minTimeLeft, trigger.debuffs.maxTimeLeft, trigger.debuffs.fromMe, trigger.debuffs.onMe)
+	if trigger.debuffs and trigger.debuffs.names and next(trigger.debuffs.names) then
+		local debuffsEl = frame.Debuffs_ or frame.Debuffs
+		local debuffTickers = (debuffsEl and debuffsEl.tickers) or {}
+		local debuff = mod:StyleFilterAuraCheck(frame, trigger.debuffs.names, debuffTickers, 'HARMFUL', trigger.debuffs.mustHaveAll, trigger.debuffs.missing, trigger.debuffs.minTimeLeft, trigger.debuffs.maxTimeLeft, trigger.debuffs.fromMe, trigger.debuffs.fromPet, trigger.debuffs.onMe, trigger.debuffs.onPet)
 		if debuff ~= nil then -- ignore if none are selected
 			if debuff then passed = true else return end
 		end
