@@ -909,6 +909,6 @@ ElvUF.Tags.Methods["onslaught"] = function(unit)
 		return GetOnslaughtRating()
 	end
 end
-E:AddTagInfo("onslaught", "Miscellaneous", "Показывать сколько натиска")
+E:AddTagInfo("onslaught", "Разное", "Показывать сколько натиска")
 
 RefreshNewTags = true
