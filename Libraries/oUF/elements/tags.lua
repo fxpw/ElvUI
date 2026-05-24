@@ -387,8 +387,8 @@ local tagStrings = {
 		local pType, pToken, altR, altG, altB = UnitPowerType(u)
 		local t = _COLORS.power[pToken]
 
-		if not t then		
-			return Hex(altR, altG, altB)	
+		if not t then
+			return Hex(altR, altG, altB)
 		end
 
 		return Hex(t)
@@ -535,7 +535,7 @@ Used to update all tags on a frame.
 --]]
 local function Update(self)
 	if(self.__tags) then
-		for fs in next, self.__tags do
+		for _, fs in ipairs(self.__tags) do
 			fs:UpdateTag()
 		end
 	end

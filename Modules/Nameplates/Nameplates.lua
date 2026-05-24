@@ -33,6 +33,8 @@ local UnitIsUnit = UnitIsUnit
 local UnitLevel = UnitLevel
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
 local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
@@ -50,6 +52,7 @@ NP.StyleFilterEventFunctions = {}
 
 -- Single OnUpdate frame to poll UnitHealth for all nameplate units.
 -- UNIT_HEALTH only fires for player/target in WotLK; this covers non-targeted units.
+-- Only values are updated here — color is intentionally left to events/StyleFilter.
 do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
@@ -58,9 +61,29 @@ do
 		if elapsed < 0.2 then return end
 		elapsed = 0
 		for plate in pairs(NP.Plates) do
-			if plate.unit then
-				plate:UpdateElement('Health')
-				plate:UpdateElement('Power')
+			local u = plate.unit
+			if u then
+				-- Update health value only (no color recalc)
+				local h = plate.Health
+				if h then
+					local cur = UnitHealth(u)
+					local max = UnitHealthMax(u)
+					if max and max > 0 then
+						h:SetMinMaxValues(0, max)
+						h:SetValue(cur)
+					end
+				end
+				-- Update power value only
+				local pw = plate.Power
+				if pw then
+					local cur = UnitPower(u)
+					local max = UnitPowerMax(u)
+					if max and max > 0 then
+						pw:SetMinMaxValues(0, max)
+						pw:SetValue(cur)
+					end
+				end
+				-- Update tag texts
 				plate:UpdateTags()
 			end
 		end
