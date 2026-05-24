@@ -29,11 +29,9 @@ function NP:Update_Name(frame, triggered)
 		if not unitDB.nameOnly and (unitDB.health.enable or (self.db.alwaysShowTargetHealth and frame.isTarget)) then
 			name:SetJustifyH("LEFT")
 			name:SetPoint(E.InversePoints[unitDB.name.position], frame.Health or frame, unitDB.name.position, unitDB.name.xOffset, unitDB.name.yOffset)
-			name:SetParent(frame.Health or frame)
 		else
 			name:SetJustifyH("CENTER")
-			name:SetPoint("CENTER", frame.RaisedElement or frame)
-			name:SetParent(frame.RaisedElement or frame)
+			name:SetPoint("CENTER", frame.Health or frame)
 		end
 	end
 

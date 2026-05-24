@@ -82,6 +82,29 @@ function NP:Health_UpdateColor(_, unit)
 	end
 end
 
+-- nameOnly visual toggle: keep the Health frame Shown so children (Name/Level) keep
+-- inheriting its framelevel/strata across plate recycling and engine target switches,
+-- but make the bar visually disappear (texture/bg/backdrop).
+function NP:Health_SetTransparent(nameplate, transparent)
+	local Health = nameplate and nameplate.Health
+	if not Health then return end
+	local a = transparent and 0 or 1
+	local tex = Health:GetStatusBarTexture()
+	if tex then tex:SetAlpha(a) end
+	if Health.bg then Health.bg:SetAlpha(a) end
+	if Health.backdrop then
+		if transparent then Health.backdrop:Hide() else Health.backdrop:Show() end
+	end
+	Health._isTransparent = transparent or nil
+end
+
+-- Returns true when the Health bar is visually visible (not Hidden, not transparent).
+function NP:Health_IsVisible(nameplate)
+	local Health = nameplate and nameplate.Health
+	if not Health or not Health:IsShown() then return false end
+	return not Health._isTransparent
+end
+
 function NP:Construct_Health(nameplate)
 	local Health = CreateFrame('StatusBar', nameplate:GetName()..'Health', nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
@@ -151,7 +174,7 @@ function NP:Update_Health(nameplate, skipUpdate)
 		end
 
 		nameplate.Health:Show()
-		if nameplate.Health.backdrop then nameplate.Health.backdrop:Show() end
+		NP:Health_SetTransparent(nameplate, false)
 
 		nameplate.Health:Point('CENTER')
 		nameplate.Health:Point('LEFT')
@@ -163,9 +186,10 @@ function NP:Update_Health(nameplate, skipUpdate)
 			nameplate:DisableElement('Health')
 		end
 
-		-- Hide bar + its backdrop/border so disabling Health visually removes everything attached to it.
-		nameplate.Health:Hide()
-		if nameplate.Health.backdrop then nameplate.Health.backdrop:Hide() end
+		-- nameOnly: keep Health frame Shown (so children Name/Level inherit its framelevel and stay visible),
+		-- just hide the visual textures + backdrop.
+		nameplate.Health:Show()
+		NP:Health_SetTransparent(nameplate, true)
 	end
 
 	nameplate.Health.width = db.health.width

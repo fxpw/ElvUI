@@ -610,22 +610,20 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleChanged = true
 		frame.NameOnlyChanged = true
 		frame.StyleFilterChanges.NameOnly = true
-		--hide the bars
+		--hide the bars (Health stays Shown but visually transparent so children keep framelevel)
 		if frame.Castbar and frame.Castbar:IsShown() then frame.Castbar:Hide() end
-		if frame.Health:IsShown() then frame.Health:Hide() end
+		mod:Health_SetTransparent(frame, true)
 		--hide the target indicator
 		mod:Configure_Glow(frame)
 		mod:Update_Glow(frame)
 		--position the name and update its color
 		frame.Name:ClearAllPoints()
 		frame.Name:SetJustifyH("CENTER")
-		frame.Name:SetPoint("CENTER", frame.RaisedElement or frame)
-		frame.Name:SetParent(frame.RaisedElement or frame)
+		frame.Name:SetPoint("CENTER", frame.Health or frame)
 		if mod.db.units[frame.UnitType].level.enable then
 			frame.Level:ClearAllPoints()
 			frame.Level:SetPoint("LEFT", frame.Name, "RIGHT")
 			frame.Level:SetJustifyH("LEFT")
-			frame.Level:SetParent(frame.RaisedElement or frame)
 			frame.Level:SetFormattedText(" [%s]", mod:UnitLevel(frame))
 		end
 		if not NameColorChanged then
@@ -715,7 +713,7 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		frame.StyleFilterChanges.NameOnly = nil
 		frame.TopLevelFrame = nil --We can safely clear this here because it is set upon `UpdateElement_Auras` if needed
 		if mod.db.units[frame.UnitType].health.enable or (frame.isTarget and mod.db.alwaysShowTargetHealth) then
-			frame.Health:Show()
+			mod:Health_SetTransparent(frame, false)
 			mod:Configure_Glow(frame)
 			mod:Update_Glow(frame)
 		end
@@ -1014,7 +1012,7 @@ end
 function mod:StyleFilterPass(frame, actions)
 	local healthBarEnabled = (frame.UnitType and mod.db.units[frame.UnitType].health.enable) or (frame.isTarget and mod.db.alwaysShowTargetHealth)
 	-- When showHealth is active the health bar will be shown by ShowHealthChanged even if currently hidden
-	local healthBarShown = healthBarEnabled and (frame.Health:IsShown() or actions.showHealth)
+	local healthBarShown = healthBarEnabled and (mod:Health_IsVisible(frame) or actions.showHealth)
 
 	mod:StyleFilterSetChanges(frame, actions,
 		(healthBarShown and actions.color and actions.color.health), --HealthColorChanged

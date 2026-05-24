@@ -36,7 +36,7 @@ function NP:Update_Glow(frame)
 	end
 
 	local glowStyle = self.db.units.TARGET.glowStyle
-	local healthIsShown = frame.Health:IsShown()
+	local healthIsShown = NP:Health_IsVisible(frame)
 	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
 
 	if not healthIsShown and nameExists then
@@ -116,7 +116,7 @@ function NP:Configure_Glow(frame)
 	if not ti then return end
 
 	local glowStyle = self.db.units.TARGET.glowStyle
-	local healthIsShown = frame.Health:IsShown()
+	local healthIsShown = NP:Health_IsVisible(frame)
 	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
 
 	if not healthIsShown and nameExists then

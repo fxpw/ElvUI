@@ -13,10 +13,9 @@ function NP:Update_Level(frame)
 	local level = frame.Level
 	level:ClearAllPoints()
 
-	if frame.Health:IsShown() then
+	if NP:Health_IsVisible(frame) then
 		level:SetJustifyH("RIGHT")
 		level:SetPoint(E.InversePoints[self.db.units[frame.UnitType].level.position], frame.Health or frame, self.db.units[frame.UnitType].level.position, self.db.units[frame.UnitType].level.xOffset, self.db.units[frame.UnitType].level.yOffset)
-		level:SetParent(frame.Health or frame)
 		level:SetText(levelText)
 	else
 		if self.db.units[frame.UnitType].name.enable then
@@ -24,7 +23,6 @@ function NP:Update_Level(frame)
 		else
 			level:SetPoint("TOPLEFT", frame, "TOPRIGHT", -38, 0)
 		end
-		level:SetParent(frame.RaisedElement or frame)
 		level:SetJustifyH("LEFT")
 		level:SetFormattedText(" [%s]", levelText)
 	end
