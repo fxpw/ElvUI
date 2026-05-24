@@ -1,11 +1,5 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local NP = E:GetModule("NamePlates")
-local LSM = E.Libs.LSM
-
---Lua functions
-local ipairs = ipairs
---WoW API / Variables
-local CreateFrame = CreateFrame
 
 --[[
 Target Glow Style Option Variables
@@ -20,14 +14,17 @@ Target Glow Style Option Variables
 ]]
 
 function NP:Update_Glow(frame)
+	local ti = frame.TargetIndicator
+	if not ti then return end
+
 	local showIndicator
 
 	if frame.isTarget then
 		showIndicator = 1
 	elseif self.db.lowHealthThreshold > 0 then
-		local health = frame.oldHealthBar:GetValue()
-		local _, maxHealth = frame.oldHealthBar:GetMinMaxValues()
-		local perc = health / maxHealth
+		local health = frame.Health:GetValue()
+		local _, maxHealth = frame.Health:GetMinMaxValues()
+		local perc = maxHealth > 0 and (health / maxHealth) or 0
 
 		if health > 1 and perc <= self.db.lowHealthThreshold then
 			if perc <= self.db.lowHealthThreshold / 2 then
@@ -42,7 +39,7 @@ function NP:Update_Glow(frame)
 	local healthIsShown = frame.Health:IsShown()
 	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
 
-	if not healthIsShown and not frame.IconOnlyChanged and nameExists then
+	if not healthIsShown and nameExists then
 		if glowStyle == "style1" then
 			glowStyle = "none"
 		elseif glowStyle == "style5" then
@@ -65,61 +62,64 @@ function NP:Update_Glow(frame)
 		end
 
 		-- Indicators
-		frame.TopIndicator:SetVertexColor(r, g, b)
-		frame.LeftIndicator:SetVertexColor(r, g, b)
-		frame.RightIndicator:SetVertexColor(r, g, b)
+		ti.TopIndicator:SetVertexColor(r, g, b)
+		ti.LeftIndicator:SetVertexColor(r, g, b)
+		ti.RightIndicator:SetVertexColor(r, g, b)
 
 		if glowStyle == "style3" or glowStyle == "style5" or glowStyle == "style6" then
-			frame.LeftIndicator:Hide()
-			frame.RightIndicator:Hide()
+			ti.LeftIndicator:Hide()
+			ti.RightIndicator:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged or nameExists then
-				frame.TopIndicator:Show()
+			if healthIsShown or nameExists then
+				ti.TopIndicator:Show()
 			end
 		elseif glowStyle == "style4" or glowStyle == "style7" or glowStyle == "style8" then
-			frame.TopIndicator:Hide()
+			ti.TopIndicator:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged or nameExists then
-				frame.LeftIndicator:Show()
-				frame.RightIndicator:Show()
+			if healthIsShown or nameExists then
+				ti.LeftIndicator:Show()
+				ti.RightIndicator:Show()
 			end
 		end
 
 		-- Spark / Shadow
-		frame.Shadow:SetBackdropBorderColor(r, g, b)
-		frame.Spark:SetVertexColor(r, g, b)
+		ti.Shadow:SetBackdropBorderColor(r, g, b)
+		ti.Spark:SetVertexColor(r, g, b)
 
 		if glowStyle == "style1" or glowStyle == "style5" or glowStyle == "style7" then
-			frame.Spark:Hide()
+			ti.Spark:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged then
-				frame.Shadow:Show()
+			if healthIsShown then
+				ti.Shadow:Show()
 			end
 		elseif glowStyle == "style2" or glowStyle == "style6" or glowStyle == "style8" then
-			frame.Shadow:Hide()
+			ti.Shadow:Hide()
 
-			if healthIsShown or frame.IconOnlyChanged or nameExists then
-				frame.Spark:Show()
+			if healthIsShown or nameExists then
+				ti.Spark:Show()
 			end
 		elseif glowStyle == "style3" or glowStyle == "style4" then
-			frame.Shadow:Hide()
-			frame.Spark:Hide()
+			ti.Shadow:Hide()
+			ti.Spark:Hide()
 		end
 	else
-		frame.TopIndicator:Hide()
-		frame.LeftIndicator:Hide()
-		frame.RightIndicator:Hide()
-		frame.Shadow:Hide()
-		frame.Spark:Hide()
+		ti.TopIndicator:Hide()
+		ti.LeftIndicator:Hide()
+		ti.RightIndicator:Hide()
+		ti.Shadow:Hide()
+		ti.Spark:Hide()
 	end
 end
 
 function NP:Configure_Glow(frame)
+	local ti = frame.TargetIndicator
+	if not ti then return end
+
 	local glowStyle = self.db.units.TARGET.glowStyle
 	local healthIsShown = frame.Health:IsShown()
 	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
 
-	if not healthIsShown and not frame.IconOnlyChanged and nameExists then
+	if not healthIsShown and nameExists then
 		if glowStyle == "style1" then
 			glowStyle = "none"
 		elseif glowStyle == "style5" then
@@ -136,87 +136,59 @@ function NP:Configure_Glow(frame)
 		local r, g, b, a = color.r, color.g, color.b, color.a
 
 		-- Indicators
-		frame.LeftIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
-		frame.LeftIndicator:SetVertexColor(r, g, b)
-		frame.LeftIndicator:SetSize(arrowSize, arrowSize)
+		ti.LeftIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+		ti.LeftIndicator:SetVertexColor(r, g, b)
+		ti.LeftIndicator:SetSize(arrowSize, arrowSize)
 
-		frame.RightIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
-		frame.RightIndicator:SetVertexColor(r, g, b)
-		frame.RightIndicator:SetSize(arrowSize, arrowSize)
+		ti.RightIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+		ti.RightIndicator:SetVertexColor(r, g, b)
+		ti.RightIndicator:SetSize(arrowSize, arrowSize)
 
-		frame.TopIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
-		frame.TopIndicator:SetVertexColor(r, g, b)
-		frame.TopIndicator:SetSize(arrowSize, arrowSize)
+		ti.TopIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+		ti.TopIndicator:SetVertexColor(r, g, b)
+		ti.TopIndicator:SetSize(arrowSize, arrowSize)
 
-		frame.TopIndicator:ClearAllPoints()
-		frame.LeftIndicator:ClearAllPoints()
-		frame.RightIndicator:ClearAllPoints()
+		ti.TopIndicator:ClearAllPoints()
+		ti.LeftIndicator:ClearAllPoints()
+		ti.RightIndicator:ClearAllPoints()
 
 		if glowStyle == "style3" or glowStyle == "style5" or glowStyle == "style6" then
-			if frame.IconOnlyChanged then
-				frame.TopIndicator:SetPoint("BOTTOM", frame.IconFrame, "TOP", arrowXOffset, arrowYOffset)
+			if healthIsShown then
+				ti.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", arrowXOffset, arrowYOffset)
 			else
-				if healthIsShown then
-					frame.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", arrowXOffset, arrowYOffset)
-				else
-					frame.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", arrowXOffset, arrowYOffset)
-				end
+				ti.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", arrowXOffset, arrowYOffset)
 			end
 		elseif glowStyle == "style4" or glowStyle == "style7" or glowStyle == "style8" then
-			if frame.IconOnlyChanged then
-				frame.LeftIndicator:SetPoint("LEFT", frame.IconFrame, "RIGHT", arrowXOffset, arrowYOffset)
-				frame.RightIndicator:SetPoint("RIGHT", frame.IconFrame, "LEFT", -arrowXOffset, arrowYOffset)
+			if healthIsShown then
+				ti.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", arrowXOffset, arrowYOffset)
+				ti.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", -arrowXOffset, arrowYOffset)
 			else
-				if healthIsShown then
-					frame.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", arrowXOffset, arrowYOffset)
-					frame.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", -arrowXOffset, arrowYOffset)
-				else
-					frame.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", arrowXOffset, arrowYOffset)
-					frame.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -arrowXOffset, arrowYOffset)
-				end
+				ti.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", arrowXOffset, arrowYOffset)
+				ti.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -arrowXOffset, arrowYOffset)
 			end
 		end
 
 		-- Spark / Shadow
-		frame.Shadow:SetBackdropBorderColor(r, g, b)
-		frame.Shadow:SetAlpha(a)
+		ti.Shadow:SetBackdropBorderColor(r, g, b)
+		ti.Shadow:SetAlpha(a)
 
-		frame.Spark:SetVertexColor(r, g, b, a)
-		frame.Spark:ClearAllPoints()
+		ti.Spark:SetVertexColor(r, g, b, a)
+		ti.Spark:ClearAllPoints()
 
 		if glowStyle == "style1" or glowStyle == "style5" or glowStyle == "style7" then
-			frame.Shadow:SetOutside(frame.IconOnlyChanged and frame.IconFrame or frame.Health, E:Scale(E.PixelMode and 6 or 8), E:Scale(E.PixelMode and 6 or 8))
+			ti.Shadow:SetOutside(frame.Health, E:Scale(E.PixelMode and 6 or 8), E:Scale(E.PixelMode and 6 or 8))
 		elseif glowStyle == "style2" or glowStyle == "style6" or glowStyle == "style8" then
 			if healthIsShown then
 				local size = E.Border + 14
-				frame.Spark:SetPoint("TOPLEFT", frame.Health, -(size * 2), size)
-				frame.Spark:SetPoint("BOTTOMRIGHT", frame.Health, (size * 2), -size)
+				ti.Spark:SetPoint("TOPLEFT", frame.Health, -(size * 2), size)
+				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Health, (size * 2), -size)
 			else
-				frame.Spark:SetPoint("TOPLEFT", frame.IconOnlyChanged and frame.IconFrame or frame.Name, -20, 8)
-				frame.Spark:SetPoint("BOTTOMRIGHT", frame.IconOnlyChanged and frame.IconFrame or frame.Name, 20, -8)
+				ti.Spark:SetPoint("TOPLEFT", frame.Name, -20, 8)
+				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Name, 20, -8)
 			end
 		end
 	end
 end
 
-local Textures = {"Spark", "TopIndicator", "LeftIndicator", "RightIndicator"}
-
-function NP:Construct_Glow(frame)
-	frame.Shadow = CreateFrame("Frame", "$parentGlow", frame)
-	frame.Shadow:SetFrameLevel(frame.Health:GetFrameLevel() - 1)
-	frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorder"), edgeSize = E:Scale(6)})
-	frame.Shadow:Hide()
-
-	for _, object in ipairs(Textures) do
-		frame[object] = frame:CreateTexture(nil, "BACKGROUND")
-		frame[object]:Hide()
-	end
-
-	frame.Spark:SetTexture(E.Media.Textures.Spark)
-	frame.TopIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
-	frame.TopIndicator:SetTexCoord(1, 1, 1, 0, 0, 1, 0, 0) -- Rotates texture 180 degress (Up arrow to face down)
-	frame.LeftIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
-	frame.LeftIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1) -- Rotates texture 90 degrees clockwise (Up arrow to face right)
-	frame.RightIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
-	frame.RightIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0) -- Flips texture horizontally (Right facing arrow to face left)
-end
+-- Construct_Glow is a no-op: TargetIndicator.lua creates Shadow/Spark/Indicators under frame.TargetIndicator
+function NP:Construct_Glow(frame) end

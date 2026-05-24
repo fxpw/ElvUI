@@ -14,13 +14,6 @@ local LSM = E.Libs.LSM
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UNKNOWN = UNKNOWN
 
-function NP:UpdateAllNames(unit,tag)
-	for frame in pairs(NP.VisiblePlates) do
-		if frame.UnitType == unit then
-			frame.Name:SetText(NP:SetNPText(frame, tag))
-		end
-	end
-end
 function NP:Update_Name(frame, triggered)
 	if not triggered then
 		if not self.db.units[frame.UnitType].name.enable then return end
@@ -28,20 +21,19 @@ function NP:Update_Name(frame, triggered)
 
 	local name = frame.Name
 	local nameText = frame.UnitName or UNKNOWN
-	-- local nametr:SetText(NP.db.units[frame.UnitType].name.textFormat)
-	name:SetText(NP:SetNPText(frame,NP.db.units[frame.UnitType].name.textFormat) or nameText)
-	-- frame:Tag(name, self.db.units[frame.UnitType].name.textFormat)
+	name:SetText(nameText)
 
 	if not triggered then
 		name:ClearAllPoints()
-		if self.db.units[frame.UnitType].health.enable or (self.db.alwaysShowTargetHealth and frame.isTarget) then
+		local unitDB = self.db.units[frame.UnitType]
+		if not unitDB.nameOnly and (unitDB.health.enable or (self.db.alwaysShowTargetHealth and frame.isTarget)) then
 			name:SetJustifyH("LEFT")
-			name:SetPoint(E.InversePoints[self.db.units[frame.UnitType].name.position], self.db.units[frame.UnitType].name.parent == "Nameplate" and frame or frame[self.db.units[frame.UnitType].name.parent], self.db.units[frame.UnitType].name.position, self.db.units[frame.UnitType].name.xOffset, self.db.units[frame.UnitType].name.yOffset)
+			name:SetPoint(E.InversePoints[unitDB.name.position], unitDB.name.parent == "Nameplate" and frame or frame[unitDB.name.parent], unitDB.name.position, unitDB.name.xOffset, unitDB.name.yOffset)
 			name:SetParent(frame.Health)
 		else
 			name:SetJustifyH("CENTER")
-			name:SetPoint("TOP", frame)
-			name:SetParent(frame)
+			name:SetPoint("CENTER", frame.RaisedElement or frame)
+			name:SetParent(frame.RaisedElement or frame)
 		end
 	end
 
@@ -56,7 +48,7 @@ function NP:Update_Name(frame, triggered)
 
 	if useClassColor and (frame.UnitType == "FRIENDLY_PLAYER" or frame.UnitType == "ENEMY_PLAYER") then
 		r, g, b = classColor.r, classColor.g, classColor.b
-	elseif triggered or (not self.db.units[frame.UnitType].health.enable and not frame.isTarget) then
+	elseif triggered or (self.db.units[frame.UnitType].nameOnly) or (not self.db.units[frame.UnitType].health.enable and not frame.isTarget) then
 		local reactionType = frame.UnitReaction
 		if reactionType then
 			local db = self.db.colors
@@ -101,8 +93,8 @@ end
 function NP:Configure_NameOnlyGlow(frame)
 	local name = frame.Name
 	name.NameOnlyGlow:ClearAllPoints()
-	name.NameOnlyGlow:SetPoint("TOPLEFT", frame.IconOnlyChanged and frame.IconFrame or name, -20, 8)
-	name.NameOnlyGlow:SetPoint("BOTTOMRIGHT", frame.IconOnlyChanged and frame.IconFrame or name, 20, -8)
+	name.NameOnlyGlow:SetPoint("TOPLEFT", name, -20, 8)
+	name.NameOnlyGlow:SetPoint("BOTTOMRIGHT", name, 20, -8)
 end
 
 function NP:Construct_Name(frame)

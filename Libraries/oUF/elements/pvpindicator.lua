@@ -31,6 +31,7 @@ local UnitIsPVPFreeForAll = UnitIsPVPFreeForAll
 
 local FFA_ICON = [[Interface\TargetingFrame\UI-PVP-FFA]]
 local FACTION_ICON = [[Interface\TargetingFrame\UI-PVP-]]
+local RENEGADE_ICON = [[Interface\AddOns\ElvUI\Media\Textures\Renegade-Logo]]
 
 local function Update(self, event, unit)
 	if(unit ~= self.unit) then return end
@@ -50,11 +51,15 @@ local function Update(self, event, unit)
 	local status
 	local factionGroup = UnitFactionGroup(unit)
 
-	if(UnitIsPVPFreeForAll(unit)) then
+	if(factionGroup == 'Renegade') then
+		element:SetTexture(RENEGADE_ICON)
+		element:SetTexCoord(0, 1, 0, 1)
+		status = 'Renegade'
+	elseif(UnitIsPVPFreeForAll(unit)) then
 		element:SetTexture(FFA_ICON)
 		element:SetTexCoord(0, 0.65625, 0, 0.65625)
 		status = 'ffa'
-	elseif(factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
+	elseif(factionGroup == 'Alliance' or factionGroup == 'Horde') then
 		element:SetTexture(FACTION_ICON .. factionGroup)
 		element:SetTexCoord(0, 0.65625, 0, 0.65625)
 		status = factionGroup

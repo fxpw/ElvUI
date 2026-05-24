@@ -9,8 +9,8 @@ local _G = _G
 local tinsert = tinsert
 --WoW API / Variables
 local CreateFrame = CreateFrame
-local CastingBarFrame_OnLoad = CastingBarFrame_OnLoad
-local CastingBarFrame_SetUnit = CastingBarFrame_SetUnit
+-- local CastingBarFrame_OnLoad = CastingBarFrame_OnLoad
+-- local CastingBarFrame_SetUnit = CastingBarFrame_SetUnit
 
 local CAN_HAVE_CLASSBAR = (E.myclass == "DRUID" or E.myclass == "DEATHKNIGHT")
 

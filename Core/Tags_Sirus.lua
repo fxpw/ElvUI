@@ -2,8 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local ElvUF = E.oUF
 -- local LSM = E.Libs.LSM
 local addon = E:GetModule("Sirus")
-local Translit = E.Libs.Translit
-local translitMark = "!"
 --Lua functions
 local ipairs = ipairs
 local tonumber = tonumber
@@ -373,24 +371,24 @@ end
 -----------------------------------
 -----------------------------------
 
-for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 20}) do
-	ElvUF.Tags.Events[format('namenp:%s', textFormat)] = "UNIT_NAME_UPDATE"
-	ElvUF.Tags.Methods[format('namenp:%s', textFormat)] = function(name)
-		return E:ShortenString(name, length) or ""
-	end
+-- for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 20}) do
+-- 	ElvUF.Tags.Events[format('namenp:%s', textFormat)] = "UNIT_NAME_UPDATE"
+-- 	ElvUF.Tags.Methods[format('namenp:%s', textFormat)] = function(name)
+-- 		return E:ShortenString(name, length) or ""
+-- 	end
 
-	ElvUF.Tags.Events[format("namenp:abbrev:%s", textFormat)] = "UNIT_NAME_UPDATE"
-	ElvUF.Tags.Methods[format("namenp:abbrev:%s", textFormat)] = function(name)
-		name = abbrev(name)
-		return E:ShortenString(name, length) or ""
-	end
+-- 	ElvUF.Tags.Events[format("namenp:abbrev:%s", textFormat)] = "UNIT_NAME_UPDATE"
+-- 	ElvUF.Tags.Methods[format("namenp:abbrev:%s", textFormat)] = function(name)
+-- 		name = abbrev(name)
+-- 		return E:ShortenString(name, length) or ""
+-- 	end
 
-	ElvUF.Tags.Events[format("namenp:%s:translit", textFormat)] = "UNIT_NAME_UPDATE"
-	ElvUF.Tags.Methods[format("namenp:%s:translit", textFormat)] = function(name)
-		name = Translit:Transliterate(name, translitMark)
-		return E:ShortenString(name, length) or ""
-	end
-end
+-- 	ElvUF.Tags.Events[format("namenp:%s:translit", textFormat)] = "UNIT_NAME_UPDATE"
+-- 	ElvUF.Tags.Methods[format("namenp:%s:translit", textFormat)] = function(name)
+-- 		name = Translit:Transliterate(name, translitMark)
+-- 		return E:ShortenString(name, length) or ""
+-- 	end
+-- end
 
 local color
 local hex
@@ -432,11 +430,11 @@ E:AddTagInfo("happiness:icon", "Sirus", "Счастье питомца в ико
 E:AddTagInfo("ilvl", "Sirus", "Показывает уровень предметов")
 
 
-for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 20}) do
-	E:AddTagInfo(format("namenp:%s", textFormat), "NamePlate", "Отображает имя юнита (ограничено "..length..".. букв)")
-	E:AddTagInfo(format("namenp:abbrev:%s", textFormat), "NamePlate", "Отображает имя юнита с сокращением (ограничено "..length.." букв)")
-	E:AddTagInfo(format("namenp:%s:translit", textFormat), "NamePlate", "Отображает имя юнита с транслитерацией для кириллических букв (ограничено "..length.." букв)")
-end
+-- for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 20}) do
+-- 	E:AddTagInfo(format("namenp:%s", textFormat), "NamePlate", "Отображает имя юнита (ограничено "..length..".. букв)")
+-- 	E:AddTagInfo(format("namenp:abbrev:%s", textFormat), "NamePlate", "Отображает имя юнита с сокращением (ограничено "..length.." букв)")
+-- 	E:AddTagInfo(format("namenp:%s:translit", textFormat), "NamePlate", "Отображает имя юнита с транслитерацией для кириллических букв (ограничено "..length.." букв)")
+-- end
 
 ElvUF.Tags.Events["zodiac:name"] = "UNIT_AURA"
 ElvUF.Tags.Methods["zodiac:name"] = function(unit)

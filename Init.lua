@@ -73,6 +73,8 @@ do
 	AddOn:AddLib('Deflate', 'LibDeflate')
 	AddOn:AddLib("Base64", "LibBase64-1.0-ElvUI")
 	AddOn:AddLib("Translit", "LibTranslit-1.0")
+	AddOn:AddLib("CustomGlow", "LibCustomGlow-1.0-ElvUI", true)
+	AddOn:AddLib("Dispel", "LibDispel-1.0", true)
 	-- added on ElvUI_OptionsUI load: AceGUI, AceConfig, AceConfigDialog, AceConfigRegistry, AceDBOptions
 
 	-- backwards compatible for plugins

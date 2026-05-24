@@ -146,6 +146,13 @@ function E:CheckRole(event)
 end
 
 function E:IsDispellableByMe(debuffType)
+	-- Prefer LibDispel if available (dynamic, talent-aware)
+	local Dispel = self.Libs and self.Libs.Dispel
+	if Dispel and Dispel.DispelList then
+		if Dispel.DispelList[debuffType] then return true end
+		return
+	end
+
 	if not self.DispelClasses[self.myclass] then return end
 
 	if self.DispelClasses[self.myclass][debuffType] then return true end
@@ -438,4 +445,22 @@ function E:LoadAPI()
 			end
 		end
 	end
+end
+-- Ported from retail ElvUI (Game/Shared/General/API.lua)
+function E:ClassColor(class, usePriestColor)
+	if not class then return end
+
+	local custom = _G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]
+	local color = custom or _G.RAID_CLASS_COLORS[class]
+	if type(color) ~= 'table' then return end
+
+	if not color.colorStr then
+		color.colorStr = format('%02x%02x%02x', color.r*255, color.g*255, color.b*255)
+	end
+
+	if usePriestColor and class == 'PRIEST' and E.PriestColors then
+		return E.PriestColors
+	end
+
+	return color
 end

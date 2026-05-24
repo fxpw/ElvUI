@@ -118,7 +118,12 @@ end
 
 local function Health_PostUpdateColor(self, _, _, _, _)
 	local r, g, b = self:GetStatusBarColor()
-	self.__owner.Cutaway.Health:SetVertexColor(r * 1.5, g * 1.5, b * 1.5)
+	local el = self.__owner.Cutaway.Health
+	if el.SetStatusBarColor then
+		el:SetStatusBarColor(r * 1.5, g * 1.5, b * 1.5)
+	elseif el.SetVertexColor then
+		el:SetVertexColor(r * 1.5, g * 1.5, b * 1.5)
+	end
 end
 
 local function Power_PreUpdate(self, unit)
@@ -150,7 +155,12 @@ end
 
 local function Power_PostUpdateColor(self, _, _, _, _)
 	local r, g, b = self:GetStatusBarColor()
-	self.__owner.Cutaway.Power:SetVertexColor(r * 1.5, g * 1.5, b * 1.5)
+	local el = self.__owner.Cutaway.Power
+	if el.SetStatusBarColor then
+		el:SetStatusBarColor(r * 1.5, g * 1.5, b * 1.5)
+	elseif el.SetVertexColor then
+		el:SetVertexColor(r * 1.5, g * 1.5, b * 1.5)
+	end
 end
 
 local defaults = {

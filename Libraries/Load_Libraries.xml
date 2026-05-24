@@ -34,4 +34,7 @@
 	<Include file="LibAuraInfo-1.0\lib.xml"/>
 	<Script file="LibTranslit-1.0\LibTranslit-1.0.lua"/>
 	<Script file="LibDualSpec-1.0.sirus\LibDualSpec-1.0.lua"/>
+	<Script file="LibCompat-1.0\LibCompat-1.0.lua"/>
+	<Script file="LibCustomGlow-1.0\LibCustomGlow-1.0.lua"/>
+	<Script file="LibDispel\LibDispel.lua"/>
 </Ui>
