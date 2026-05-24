@@ -106,53 +106,59 @@ do
 						end
 					end
 				end
-				-- Update tag texts: only on slower cadence or when values changed
-				if doTags or changed then
+				-- Update tag texts only on the slower cadence; the bar already reflects current value.
+				if doTags then
 					plate:UpdateTags()
 				end
 
 				-- Sync frame levels to engine plate: engine can reassign plate levels
 				-- dynamically (stacking, targeting). Skip if StyleFilter boost is active.
 				if not plate.appliedFrameLevelBoost then
-					local engineParent = plate:GetParent()
+					local engineParent = plate._engineParent or plate:GetParent()
+					plate._engineParent = engineParent
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
 					if engineLevel and plate._npBase ~= engineLevel then
 						plate._npBase = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
-						if plate.Power then plate.Power:SetFrameLevel(engineLevel + 1) end
-						if plate.Castbar then plate.Castbar:SetFrameLevel(engineLevel + 2) end
-					if plate.Buffs then
-						plate.Buffs:SetFrameLevel(engineLevel + 2)
-						for i = 1, #plate.Buffs do
-							local btn = plate.Buffs[i]
-							if btn then
-								btn:SetFrameLevel(engineLevel + 3)
-								if btn.cd then
-									btn.cd:SetFrameLevel(engineLevel + 4)
-									if btn.cd.timer then btn.cd.timer:SetFrameLevel(engineLevel + 5) end
+						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
+						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
+						local Buffs = plate.Buffs
+						if Buffs and Buffs:IsShown() then
+							Buffs:SetFrameLevel(engineLevel + 2)
+							local n = Buffs.visibleAuras or Buffs.visibleBuffs or #Buffs
+							for i = 1, n do
+								local btn = Buffs[i]
+								if btn and btn:IsShown() then
+									btn:SetFrameLevel(engineLevel + 3)
+									local cd = btn.cd
+									if cd then
+										cd:SetFrameLevel(engineLevel + 4)
+										if cd.timer then cd.timer:SetFrameLevel(engineLevel + 5) end
+									end
 								end
 							end
 						end
-					end
-					if plate.Debuffs then
-						plate.Debuffs:SetFrameLevel(engineLevel + 2)
-						for i = 1, #plate.Debuffs do
-							local btn = plate.Debuffs[i]
-							if btn then
-								btn:SetFrameLevel(engineLevel + 3)
-								if btn.cd then
-									btn.cd:SetFrameLevel(engineLevel + 4)
-									if btn.cd.timer then btn.cd.timer:SetFrameLevel(engineLevel + 5) end
+						local Debuffs = plate.Debuffs
+						if Debuffs and Debuffs:IsShown() then
+							Debuffs:SetFrameLevel(engineLevel + 2)
+							local n = Debuffs.visibleAuras or Debuffs.visibleDebuffs or #Debuffs
+							for i = 1, n do
+								local btn = Debuffs[i]
+								if btn and btn:IsShown() then
+									btn:SetFrameLevel(engineLevel + 3)
+									local cd = btn.cd
+									if cd then
+										cd:SetFrameLevel(engineLevel + 4)
+										if cd.timer then cd.timer:SetFrameLevel(engineLevel + 5) end
+									end
 								end
 							end
 						end
-					end
-						if plate.ClassPower then
+						if plate.ClassPower and plate.ClassPower:IsShown() then
 							plate.ClassPower:SetFrameLevel(engineLevel + 2)
 							for i = 1, #plate.ClassPower do
-								if plate.ClassPower[i] then
-									plate.ClassPower[i]:SetFrameLevel(engineLevel + 3)
-								end
+								local cp = plate.ClassPower[i]
+								if cp then cp:SetFrameLevel(engineLevel + 3) end
 							end
 						end
 					end
@@ -291,6 +297,7 @@ function NP:StylePlate(nameplate)
 	nameplate:SetScale(E.uiscale or 1)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
+	nameplate:SetFrameStrata('BACKGROUND') -- keep plates under Minimap/UI frames
 	nameplate._npBase = nameplate:GetFrameLevel()
 
 	nameplate.Health = NP:Construct_Health(nameplate)

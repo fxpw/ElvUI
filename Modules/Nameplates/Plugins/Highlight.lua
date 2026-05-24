@@ -16,6 +16,7 @@ local function OnUpdate(self, elapsed)
 	if self.elapsed and self.elapsed > 0.1 then
 		if not MouseOnUnit(self) then
 			self:Hide()
+			self:SetScript('OnUpdate', nil) -- stop polling until next mouseover
 			self:ForceUpdate()
 		end
 
@@ -34,8 +35,13 @@ local function Update(self)
 
 	if MouseOnUnit(self) then
 		element:Show()
+		if not element:GetScript('OnUpdate') then
+			element.elapsed = 0
+			element:SetScript('OnUpdate', OnUpdate)
+		end
 	else
 		element:Hide()
+		element:SetScript('OnUpdate', nil)
 	end
 
 	if element.PostUpdate then
@@ -56,7 +62,6 @@ local function Enable(self)
 	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
-		element:SetScript('OnUpdate', OnUpdate)
 
 		self:RegisterEvent('UPDATE_MOUSEOVER_UNIT', Path, true)
 
