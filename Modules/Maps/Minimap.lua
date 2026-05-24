@@ -137,7 +137,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Spellbook-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Spellbook-Up]])..SPELLBOOK_ABILITIES_BUTTON,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Spellbook-Up]]) .. SPELLBOOK_ABILITIES_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(SpellBookFrame)
@@ -146,13 +146,13 @@ local menuList = {
 	{
 		-- text = "|cffADFF2F"..TALENTS_BUTTON,
 		icon = [[Interface\Buttons\UI-MicroButton-Talents-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Talents-Up]])..TALENTS_BUTTON,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Talents-Up]]) .. TALENTS_BUTTON,
 		notCheckable = 1,
 		func = ToggleTalentFrame
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Achievement-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Achievement-Up]])..ACHIEVEMENT_BUTTON,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Achievement-Up]]) .. ACHIEVEMENT_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleAchievementFrame()
@@ -161,7 +161,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..QUESTLOG_BUTTON,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]) .. QUESTLOG_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(QuestLogFrame)
@@ -169,7 +169,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Socials-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Socials-Up]])..SOCIAL_BUTTON,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Socials-Up]]) .. SOCIAL_BUTTON,
 		notCheckable = 1,
 		func = function()
 			ToggleFriendsFrame(1)
@@ -177,7 +177,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Icons\INV_Misc_Note_05]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]).."Боевой пропуск",
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]) .. "Боевой пропуск",
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(BattlePassFrame)
@@ -185,7 +185,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..LFG_TITLE,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]]) .. LFG_TITLE,
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(LFDParentFrame)
@@ -193,14 +193,14 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..PLAYER_V_PLAYER,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]]) .. PLAYER_V_PLAYER,
 		notCheckable = 1,
 		func = TogglePVPUIFrame
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-LFG-Up]],
 
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]])..LOOKING_FOR_RAID,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-LFG-Up]]) .. LOOKING_FOR_RAID,
 		notCheckable = 1,
 		func = function()
 			SlashCmdList["RAIDBROWSER"]()
@@ -208,7 +208,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Mounts-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Mounts-Up]])..L["Collections"],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Mounts-Up]]) .. L["Collections"],
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(CollectionsJournal)
@@ -216,7 +216,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-EJ-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-EJ-Up]])..L["EncounterJ"],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-EJ-Up]]) .. L["EncounterJ"],
 		notCheckable = 1,
 		func = function()
 			ToggleFrame(EncounterJournal)
@@ -224,7 +224,7 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..L["Calendar"],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]) .. L["Calendar"],
 		notCheckable = 1,
 		func = function()
 			GameTimeFrame:Click()
@@ -232,30 +232,31 @@ local menuList = {
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..L["Farm Mode"],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]) .. L["Farm Mode"],
 		notCheckable = 1,
 		func = FarmMode
 	},
 	{
 		icon = [[Interface\Buttons\UI-MicroButton-Quest-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]])..BATTLEFIELD_MINIMAP,
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Quest-Up]]) .. BATTLEFIELD_MINIMAP,
 		notCheckable = 1,
 		func = ToggleBattlefieldMinimap
 	},
 	{
-		text = TIMEMANAGER_TITLE,
+		icon = [[Interface\Icons\INV_Misc_PocketWatch_01]],
+		text = CreateTextureString([[Interface\Icons\INV_Misc_PocketWatch_01]]) .. TIMEMANAGER_TITLE,
 		notCheckable = 1,
 		func = ToggleTimeManager
 	},
 	{
-		icon = [[Interface\common\help-i]],
-		text = CreateTextureString([[Interface\common\help-i]])..HELP_BUTTON,
+		icon = [[Interface\Buttons\UI-MicroButton-Help-Up]],
+		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-Help-Up]]) .. HELP_BUTTON,
 		notCheckable = 1,
 		func = ToggleHelpFrame
 	},
 	{
-		icon = [[Interface\Buttons\UI-MicroButton-BStore-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-BStore-Up]]).."|cffFFD700МаГаЗиН|r",
+		icon = [[Interface\Icons\INV_Misc_Coin_01]],
+		text = CreateTextureString([[Interface\Icons\INV_Misc_Coin_01]]) .. "|cffFFD700МаГаЗиН|r",
 		notCheckable = 1,
 		func = function()
 			if StoreFrame:IsShown() then
@@ -266,8 +267,8 @@ local menuList = {
 		end
 	},
 	{
-		icon = [[Interface\Buttons\UI-MicroButton-MainMenu-Up]],
-		text = CreateTextureString([[Interface\Buttons\UI-MicroButton-MainMenu-Up]])..MAINMENU_BUTTON,
+		icon = [[Interface\Icons\INV_Misc_Gear_01]],
+		text = CreateTextureString([[Interface\Icons\INV_Misc_Gear_01]]) .. MAINMENU_BUTTON,
 		notCheckable = 1,
 		func = function()
 			if GameMenuFrame:IsShown() then
@@ -328,13 +329,13 @@ function M:Minimap_OnMouseUp(btn)
 		else
 			EasyMenu(menuList, menuFrame, "cursor", -160, 0, "MENU", 2)
 		end
-		for i = 1,18 do
-			if i ~= 16 then
-				_G["DropDownList1Button"..i].Icon:SetTexCoord(0.17, 0.87, 0.5, 0.908)
-			else
-				_G["DropDownList1Button"..i].Icon:SetTexCoord(0, 1, 0, 1)
-			end
+		for i = 1, 19 do
+			-- if i == 16 or i == 18 then
+			-- _G["DropDownList1Button"..i].Icon:SetTexCoord(0, 1, 0, 1)
+			-- else
+			_G["DropDownList1Button" .. i].Icon:SetTexCoord(0.17, 0.87, 0.5, 0.908)
 		end
+		-- end
 	elseif btn == "RightButton" then
 		ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "cursor")
 	else
@@ -354,9 +355,10 @@ end
 
 function M:Update_ZoneText()
 	if E.db.general.minimap.locationText == "HIDE" or not E.private.general.minimap.enable then return end
-	Minimap.location:SetText(utf8sub(GetMinimapZoneText(),1,46))
+	Minimap.location:SetText(utf8sub(GetMinimapZoneText(), 1, 46))
 	Minimap.location:SetTextColor(self:GetLocTextColor())
-	Minimap.location:FontTemplate(E.Libs.LSM:Fetch("font", E.db.general.minimap.locationFont), E.db.general.minimap.locationFontSize, E.db.general.minimap.locationFontOutline)
+	Minimap.location:FontTemplate(E.Libs.LSM:Fetch("font", E.db.general.minimap.locationFont),
+		E.db.general.minimap.locationFontSize, E.db.general.minimap.locationFontOutline)
 end
 
 function M:PLAYER_REGEN_ENABLED()
@@ -612,7 +614,7 @@ local function FadeIn(self)
 	end
 end
 
-local frames ={
+local frames = {
 	"Minimap",
 	"MiniMapMailFrame",
 	"MiniMapLFGFrame",
@@ -624,11 +626,11 @@ local frames ={
 
 
 local function HookFadeMinimap()
-	for _,v in pairs(frames) do
+	for _, v in pairs(frames) do
 		local frame = _G[v]
 		if frame then
-			frame:HookScript("OnEnter",FadeIn)
-			frame:HookScript("OnLeave",FadeOut)
+			frame:HookScript("OnEnter", FadeIn)
+			frame:HookScript("OnLeave", FadeOut)
 		end
 	end
 end
@@ -642,7 +644,7 @@ function M:UpdateSettings()
 	E.MinimapWidth, E.MinimapHeight = E.MinimapSize, E.MinimapSize
 
 	if E.db.general.reminder.enable then
-		E.RBRWidth = (E.MinimapHeight + ((E.Border - E.Spacing*3) * 5) + E.Border*2) / 7
+		E.RBRWidth = (E.MinimapHeight + ((E.Border - E.Spacing * 3) * 5) + E.Border * 2) / 7
 	else
 		E.RBRWidth = 0
 	end
@@ -710,12 +712,13 @@ function M:UpdateSettings()
 	end
 
 	if MMHolder then
-		MMHolder:Width((Minimap:GetWidth() + E.Border*2 + E.Spacing*3) + E.RBRWidth)
+		MMHolder:Width((Minimap:GetWidth() + E.Border * 2 + E.Spacing * 3) + E.RBRWidth)
 
 		if E.db.datatexts.minimapPanels then
-			MMHolder:Height(Minimap:GetHeight() + (LeftMiniPanel and (LeftMiniPanel:GetHeight() + E.Border) or 24) + E.Spacing*3)
+			MMHolder:Height(Minimap:GetHeight() + (LeftMiniPanel and (LeftMiniPanel:GetHeight() + E.Border) or 24) +
+			E.Spacing * 3)
 		else
-			MMHolder:Height(Minimap:GetHeight() + E.Border + E.Spacing*3)
+			MMHolder:Height(Minimap:GetHeight() + E.Border + E.Spacing * 3)
 		end
 	end
 
@@ -740,7 +743,8 @@ function M:UpdateSettings()
 			local pos = E.db.general.minimap.icons.calendar.position or "TOPRIGHT"
 			local scale = E.db.general.minimap.icons.calendar.scale or 1
 			GameTimeFrame:ClearAllPoints()
-			GameTimeFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.calendar.xOffset or 0, E.db.general.minimap.icons.calendar.yOffset or 0)
+			GameTimeFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.calendar.xOffset or 0,
+				E.db.general.minimap.icons.calendar.yOffset or 0)
 			GameTimeFrame:SetScale(scale)
 			GameTimeFrame:Show()
 		end
@@ -750,7 +754,8 @@ function M:UpdateSettings()
 		local pos = E.db.general.minimap.icons.mail.position or "TOPRIGHT"
 		local scale = E.db.general.minimap.icons.mail.scale or 1
 		MiniMapMailFrame:ClearAllPoints()
-		MiniMapMailFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.mail.xOffset or 3, E.db.general.minimap.icons.mail.yOffset or 4)
+		MiniMapMailFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.mail.xOffset or 3,
+			E.db.general.minimap.icons.mail.yOffset or 4)
 		MiniMapMailFrame:SetScale(scale)
 	end
 
@@ -758,7 +763,8 @@ function M:UpdateSettings()
 		local pos = E.db.general.minimap.icons.lfgEye.position or "BOTTOMRIGHT"
 		local scale = E.db.general.minimap.icons.lfgEye.scale or 1
 		MiniMapLFGFrame:ClearAllPoints()
-		MiniMapLFGFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.lfgEye.xOffset or 3, E.db.general.minimap.icons.lfgEye.yOffset or 0)
+		MiniMapLFGFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.lfgEye.xOffset or 3,
+			E.db.general.minimap.icons.lfgEye.yOffset or 0)
 		MiniMapLFGFrame:SetScale(scale)
 		LFDSearchStatus:SetScale(scale)
 	end
@@ -767,7 +773,8 @@ function M:UpdateSettings()
 		local pos = E.db.general.minimap.icons.battlefield.position or "BOTTOMRIGHT"
 		local scale = E.db.general.minimap.icons.battlefield.scale or 1
 		QueueStatusMinimapButton:ClearAllPoints()
-		QueueStatusMinimapButton:Point(pos, Minimap, pos, E.db.general.minimap.icons.battlefield.xOffset or 3, E.db.general.minimap.icons.battlefield.yOffset or 0)
+		QueueStatusMinimapButton:Point(pos, Minimap, pos, E.db.general.minimap.icons.battlefield.xOffset or 3,
+			E.db.general.minimap.icons.battlefield.yOffset or 0)
 		QueueStatusMinimapButton:SetScale(scale)
 		QueueStatusFrame:SetScale(scale)
 	end
@@ -776,7 +783,8 @@ function M:UpdateSettings()
 		local pos = E.db.general.minimap.icons.battlefield.position or "BOTTOMRIGHT"
 		local scale = E.db.general.minimap.icons.battlefield.scale or 1
 		MiniMapBattlefieldFrame:ClearAllPoints()
-		MiniMapBattlefieldFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.battlefield.xOffset or 3, E.db.general.minimap.icons.battlefield.yOffset or 0)
+		MiniMapBattlefieldFrame:Point(pos, Minimap, pos, E.db.general.minimap.icons.battlefield.xOffset or 3,
+			E.db.general.minimap.icons.battlefield.yOffset or 0)
 		MiniMapBattlefieldFrame:SetScale(scale)
 	end
 
@@ -843,14 +851,11 @@ function M:Initialize()
 	Minimap:HookScript("OnEnter", function(self)
 		if E.db.general.minimap.locationText ~= "MOUSEOVER" or not E.private.general.minimap.enable then return end
 		self.location:Show()
-
 	end)
 
 	Minimap:HookScript("OnLeave", function(self)
 		if E.db.general.minimap.locationText ~= "MOUSEOVER" or not E.private.general.minimap.enable then return end
 		self.location:Hide()
-
-
 	end)
 
 	Minimap.location = Minimap:CreateFontString(nil, "OVERLAY")
