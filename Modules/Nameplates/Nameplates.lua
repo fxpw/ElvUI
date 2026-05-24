@@ -114,14 +114,21 @@ function NP:UpdateCVars()
 		if NP.db.plateSize.loadDistance then
 			NP:SetCVar('nameplateMaxDistance', NP.db.plateSize.loadDistance)
 		end
-		C_NamePlate.SetNamePlateFriendlySize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
-		C_NamePlate.SetNamePlateEnemySize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
-		C_NamePlate.SetNamePlateSelfSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
+		-- TODO uncomment in next update
+		-- local ps = NP.db.plateSize
+		-- C_Timer:After(0, function()
+		-- 	C_NamePlate.SetNamePlateFriendlySize(ps.friendlyWidth, ps.friendlyHeight)
+		-- 	C_NamePlate.SetNamePlateEnemySize(ps.enemyWidth, ps.enemyHeight)
+		-- 	C_NamePlate.SetNamePlateSelfSize(ps.personalWidth, ps.personalHeight)
+		-- end)
 	end
-	if NP.db.clickThrough then
-		C_NamePlate.SetNamePlateFriendlyClickThrough(NP.db.clickThrough.friendly and 1 or nil)
-		C_NamePlate.SetNamePlateEnemyClickThrough(NP.db.clickThrough.enemy and 1 or nil)
-	end
+	-- if NP.db.clickThrough then
+	-- 	local ct = NP.db.clickThrough
+	-- 	C_Timer:After(0, function()
+	-- 		C_NamePlate.SetNamePlateFriendlyClickThrough(ct.friendly and 1 or nil)
+	-- 		C_NamePlate.SetNamePlateEnemyClickThrough(ct.enemy and 1 or nil)
+	-- 	end)
+	-- end
 end
 
 function NP:UnitNPCID(unit)

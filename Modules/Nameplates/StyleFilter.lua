@@ -511,7 +511,19 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 	end
 	if FrameLevelChanged then
 		frame.StyleChanged = true
-		frame.FrameLevelChanged = actions.frameLevel -- we pass this to `ResetNameplateFrameLevel`
+		frame.FrameLevelChanged = actions.frameLevel
+		frame.pendingFrameLevelReset = nil -- cancel deferred reset
+		local boost = actions.frameLevel * 100
+		if frame.appliedFrameLevelBoost ~= boost then
+			frame.appliedFrameLevelBoost = boost
+			frame.Health:SetFrameLevel(5 + boost)
+			frame.RaisedElement:SetFrameLevel(10 + boost)
+			if frame.Castbar then frame.Castbar:SetFrameLevel(5 + boost) end
+			if frame.Auras then
+				if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(5 + boost)  end
+				if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(5 + boost) end
+			end
+		end
 	end
 	if HealthColorChanged then
 		frame.StyleChanged = true
@@ -651,6 +663,7 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 	end
 	if FrameLevelChanged then
 		frame.FrameLevelChanged = nil
+		frame.pendingFrameLevelReset = true -- deferred: applied at end of StyleFilterUpdate
 	end
 	if HealthColorChanged then
 		frame.HealthColorChanged = nil
@@ -1296,6 +1309,19 @@ function mod:StyleFilterUpdate(frame, event)
 		local filter = E.global.nameplates.filters[mod.StyleFilterTriggerList[filterNum][1]]
 		if filter and filter.triggers then
 			mod:StyleFilterConditionCheck(frame, filter, filter.triggers)
+		end
+	end
+
+	-- Apply deferred frame level reset only if no filter re-claimed the boost this update
+	if frame.pendingFrameLevelReset then
+		frame.pendingFrameLevelReset = nil
+		frame.appliedFrameLevelBoost = nil
+		frame.Health:SetFrameLevel(5)
+		frame.RaisedElement:SetFrameLevel(10)
+		if frame.Castbar then frame.Castbar:SetFrameLevel(5) end
+		if frame.Auras then
+			if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(5)  end
+			if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(5) end
 		end
 	end
 
