@@ -121,8 +121,32 @@ do
 						plate.Health:SetFrameLevel(engineLevel + 1)
 						if plate.Power then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar then plate.Castbar:SetFrameLevel(engineLevel + 2) end
-						if plate.Buffs   then plate.Buffs:SetFrameLevel(engineLevel + 2)   end
-						if plate.Debuffs then plate.Debuffs:SetFrameLevel(engineLevel + 2) end
+					if plate.Buffs then
+						plate.Buffs:SetFrameLevel(engineLevel + 2)
+						for i = 1, #plate.Buffs do
+							local btn = plate.Buffs[i]
+							if btn then
+								btn:SetFrameLevel(engineLevel + 3)
+								if btn.cd then
+									btn.cd:SetFrameLevel(engineLevel + 4)
+									if btn.cd.timer then btn.cd.timer:SetFrameLevel(engineLevel + 5) end
+								end
+							end
+						end
+					end
+					if plate.Debuffs then
+						plate.Debuffs:SetFrameLevel(engineLevel + 2)
+						for i = 1, #plate.Debuffs do
+							local btn = plate.Debuffs[i]
+							if btn then
+								btn:SetFrameLevel(engineLevel + 3)
+								if btn.cd then
+									btn.cd:SetFrameLevel(engineLevel + 4)
+									if btn.cd.timer then btn.cd.timer:SetFrameLevel(engineLevel + 5) end
+								end
+							end
+						end
+					end
 						if plate.ClassPower then
 							plate.ClassPower:SetFrameLevel(engineLevel + 2)
 							for i = 1, #plate.ClassPower do
