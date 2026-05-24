@@ -223,6 +223,7 @@ globals = {
 	"CreateAnimationGroup",
 	"Hex",
 	"LibStub",
+	"NamePlateDriverFrame",
 	"_TAGS",
 	"oUF_RaidDebuffs",
 
@@ -4935,6 +4936,7 @@ globals = {
 	"UnitIsPartyLeader",
 	"UnitIsPlayer",
 	"UnitIsPossessed",
+	"UnitIsQuestBoss",
 	"UnitIsRaidOfficer",
 	"UnitIsSameServer",
 	"UnitIsSilenced",
