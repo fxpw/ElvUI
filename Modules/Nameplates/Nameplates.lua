@@ -69,7 +69,7 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u then
-				local changed = false
+				-- local changed = false
 				-- Update health value only when changed (avoids unnecessary StatusBar redraws)
 				local h = plate.Health
 				if h then
@@ -79,12 +79,12 @@ do
 						if h._np_max ~= max then
 							h._np_max = max
 							h:SetMinMaxValues(0, max)
-							changed = true
+							-- changed = true
 						end
 						if h._np_cur ~= cur then
 							h._np_cur = cur
 							h:SetValue(cur)
-							changed = true
+							-- changed = true
 						end
 					end
 				end
@@ -97,12 +97,12 @@ do
 						if pw._np_max ~= max then
 							pw._np_max = max
 							pw:SetMinMaxValues(0, max)
-							changed = true
+							-- changed = true
 						end
 						if pw._np_cur ~= cur then
 							pw._np_cur = cur
 							pw:SetValue(cur)
-							changed = true
+							-- changed = true
 						end
 					end
 				end
