@@ -36,6 +36,7 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 	local nameplate, colors, db = self.__owner, NP.db.colors.threat, NP.db.threat
 	local sf = NP:StyleFilterChanges(nameplate)
 	if not status and not sf.Scale then
+		nameplate.ThreatStatus = nil -- clear so Health_UpdateColor runs normally next cycle
 		nameplate.ThreatScale = 1
 		NP:ScalePlate(nameplate, 1)
 	elseif status and db.enable and db.useThreatColor and not UnitIsTapped(unit) then

@@ -375,15 +375,6 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 
 		NP:UpdatePlateBase(nameplate)
 
-		-- Register unit-specific events for player/target (engine fires UNIT_HEALTH for these)
-		if nameplate.RegisterUnitEvent then
-			nameplate:RegisterUnitEvent('UNIT_HEALTH',        unit)
-			nameplate:RegisterUnitEvent('UNIT_MAXHEALTH',     unit)
-			nameplate:RegisterUnitEvent('UNIT_POWER_UPDATE',  unit)
-			nameplate:RegisterUnitEvent('UNIT_MAXPOWER',      unit)
-			nameplate:RegisterUnitEvent('UNIT_DISPLAYPOWER',  unit)
-		end
-
 		NP:StyleFilterEventWatch(nameplate)
 		NP:StyleFilterSetVariables(nameplate)
 

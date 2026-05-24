@@ -13,12 +13,24 @@ local CreateFrame = CreateFrame
 
 function NP:Health_UpdateColor(_, unit)
 	if not unit or self.unit ~= unit then return end
+
+	-- ThreatIndicator_PostUpdate manages the bar color directly via SetStatusBarColor.
+	-- While ThreatStatus is set (threat active + useThreatColor), skip all standard color
+	-- logic to avoid overwriting the threat color on every UNIT_THREAT_LIST_UPDATE.
+	if self.ThreatStatus
+		and NP.db.threat
+		and NP.db.threat.enable
+		and NP.db.threat.useThreatColor
+	then
+		return
+	end
+
 	local element = self.Health
 
 	local r, g, b, t
 	if element.colorDisconnected and not UnitIsConnected(unit) then
 		t = self.colors.disconnected
-	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
+	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
 		t = NP.db.colors.tapped
 	elseif (element.colorClass and self.isPlayer) or (element.colorClassNPC and not self.isPlayer) or (element.colorClassPet and UnitPlayerControlled(unit) and not self.isPlayer) then
 		local _, class = UnitClass(unit)
@@ -46,10 +58,15 @@ function NP:Health_UpdateColor(_, unit)
 		r, g, b = sf.HealthColor.r, sf.HealthColor.g, sf.HealthColor.b
 	end
 
-	-- Fallback: ensure the bar always has a visible color even if every branch above missed
-	-- (e.g. UnitReaction returned nil for a brand-new nameplate unit).
 	if not b then
-		r, g, b = 0.7, 0.7, 0.7
+		-- UnitReaction returned nil (race with UNIT_FACTION) — use cached reaction.
+		local reaction = self.reaction
+		local t2 = reaction and NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
+		if t2 then
+			r, g, b = t2.r, t2.g, t2.b
+		else
+			r, g, b = 0.8, 0.1, 0.1 -- ultimate fallback: hostile red
+		end
 	end
 
 	if b then
@@ -109,7 +126,7 @@ function NP:Health_SetColors(nameplate, threatColors)
 		nameplate.Health.colorClass = nil
 	else
 		local db = NP:PlateDB(nameplate)
-		nameplate.Health:SetColorTapping(true)
+		nameplate.Health:SetColorTapping(false) -- disabled: UnitIsTapped fires for player-owned tags too on Sirus
 		nameplate.Health.colorReaction = true  -- WotLK: not E.Retail
 		nameplate.Health.colorClass = db.health and db.health.useClassColor
 	end
