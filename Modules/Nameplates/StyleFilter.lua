@@ -516,12 +516,13 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		local boost = actions.frameLevel * 100
 		if frame.appliedFrameLevelBoost ~= boost then
 			frame.appliedFrameLevelBoost = boost
-			frame.Health:SetFrameLevel(5 + boost)
-			frame.RaisedElement:SetFrameLevel(10 + boost)
-			if frame.Castbar then frame.Castbar:SetFrameLevel(5 + boost) end
+			local base = frame._npBase or frame:GetFrameLevel()
+			frame.Health:SetFrameLevel(base + 1 + boost)
+			frame.RaisedElement:SetFrameLevel(base + 4 + boost)
+			if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2 + boost) end
 			if frame.Auras then
-				if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(5 + boost)  end
-				if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(5 + boost) end
+				if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2 + boost)  end
+				if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(base + 2 + boost) end
 			end
 		end
 	end
@@ -1301,6 +1302,9 @@ end
 function mod:StyleFilterUpdate(frame, event)
 	if frame == _G.ElvNP_Test or not frame.StyleFilterChanges or not mod.StyleFilterTriggerEvents[event] then return end
 
+	-- If no filters are active and this frame has no pending style, nothing to do
+	if not frame.StyleChanged and not frame.pendingFrameLevelReset and not next(mod.StyleFilterTriggerList) then return end
+
 	local state = mod:StyleFilterHiddenState(frame.StyleFilterChanges)
 
 	mod:StyleFilterClear(frame)
@@ -1316,12 +1320,13 @@ function mod:StyleFilterUpdate(frame, event)
 	if frame.pendingFrameLevelReset then
 		frame.pendingFrameLevelReset = nil
 		frame.appliedFrameLevelBoost = nil
-		frame.Health:SetFrameLevel(5)
-		frame.RaisedElement:SetFrameLevel(10)
-		if frame.Castbar then frame.Castbar:SetFrameLevel(5) end
+		local base = frame._npBase or frame:GetFrameLevel()
+		frame.Health:SetFrameLevel(base + 1)
+		frame.RaisedElement:SetFrameLevel(base + 4)
+		if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2) end
 		if frame.Auras then
-			if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(5)  end
-			if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(5) end
+			if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2)  end
+			if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(base + 2) end
 		end
 	end
 
@@ -1331,7 +1336,7 @@ end
 do -- oUF style filter inject watch functions without actually registering any extra C events
 	local pooler = CreateFrame('Frame')
 	pooler.frames = {}
-	pooler.delay = 0.1 -- update check rate
+	pooler.delay = 0.2 -- update check rate (was 0.1; increased to reduce per-frame cost)
 
 	pooler.update = function()
 		for frame in pairs(pooler.frames) do

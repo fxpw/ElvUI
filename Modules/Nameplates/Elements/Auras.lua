@@ -152,7 +152,7 @@ local frameName = nameplate:GetName()
 
 local Buffs = CreateFrame('Frame', frameName..'Buffs', nameplate)
 do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Buffs:SetFrameStrata(s) else Buffs:SetFrameStrata('MEDIUM') end end
-Buffs:SetFrameLevel(5)
+Buffs:SetFrameLevel(nameplate:GetFrameLevel() + 2)
 Buffs:Size(1, 1)
 Buffs.size = 27
 Buffs.num = 4
@@ -171,7 +171,7 @@ Buffs.rows = {}
 
 local Debuffs = CreateFrame('Frame', frameName..'Debuffs', nameplate)
 do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Debuffs:SetFrameStrata(s) else Debuffs:SetFrameStrata('MEDIUM') end end
-Debuffs:SetFrameLevel(5)
+Debuffs:SetFrameLevel(nameplate:GetFrameLevel() + 2)
 Debuffs:Size(1, 1)
 Debuffs.size = 27
 Debuffs.num = 4

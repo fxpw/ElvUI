@@ -56,35 +56,86 @@ NP.StyleFilterEventFunctions = {}
 do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
+	local tagsElapsed = 0
+	local HEALTH_INTERVAL = 0.2  -- health/power bar value update rate
+	local TAGS_INTERVAL   = 0.5  -- tag text update rate (name, %, etc. — less critical)
 	f:SetScript('OnUpdate', function(_, dt)
-		elapsed = elapsed + dt
-		if elapsed < 0.2 then return end
+		elapsed     = elapsed     + dt
+		tagsElapsed = tagsElapsed + dt
+		if elapsed < HEALTH_INTERVAL then return end
+		local doTags = tagsElapsed >= TAGS_INTERVAL
 		elapsed = 0
+		if doTags then tagsElapsed = 0 end
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u then
-				-- Update health value only (no color recalc)
+				local changed = false
+				-- Update health value only when changed (avoids unnecessary StatusBar redraws)
 				local h = plate.Health
 				if h then
 					local cur = UnitHealth(u)
 					local max = UnitHealthMax(u)
 					if max and max > 0 then
-						h:SetMinMaxValues(0, max)
-						h:SetValue(cur)
+						if h._np_max ~= max then
+							h._np_max = max
+							h:SetMinMaxValues(0, max)
+							changed = true
+						end
+						if h._np_cur ~= cur then
+							h._np_cur = cur
+							h:SetValue(cur)
+							changed = true
+						end
 					end
 				end
-				-- Update power value only
+				-- Update power value only when changed
 				local pw = plate.Power
-				if pw then
+				if pw and pw:IsShown() then
 					local cur = UnitPower(u)
 					local max = UnitPowerMax(u)
 					if max and max > 0 then
-						pw:SetMinMaxValues(0, max)
-						pw:SetValue(cur)
+						if pw._np_max ~= max then
+							pw._np_max = max
+							pw:SetMinMaxValues(0, max)
+							changed = true
+						end
+						if pw._np_cur ~= cur then
+							pw._np_cur = cur
+							pw:SetValue(cur)
+							changed = true
+						end
 					end
 				end
-				-- Update tag texts
-				plate:UpdateTags()
+				-- Update tag texts: only on slower cadence or when values changed
+				if doTags or changed then
+					plate:UpdateTags()
+				end
+
+				-- Sync frame levels to engine plate: engine can reassign plate levels
+				-- dynamically (stacking, targeting). Skip if StyleFilter boost is active.
+				if not plate.appliedFrameLevelBoost then
+					local engineParent = plate:GetParent()
+					local engineLevel = engineParent and engineParent:GetFrameLevel()
+					if engineLevel and plate._npBase ~= engineLevel then
+						plate._npBase = engineLevel
+						plate.Health:SetFrameLevel(engineLevel + 1)
+						if plate.Power then plate.Power:SetFrameLevel(engineLevel + 1) end
+						plate.RaisedElement:SetFrameLevel(engineLevel + 4)
+						if plate.Castbar then plate.Castbar:SetFrameLevel(engineLevel + 2) end
+						if plate.Auras then
+							if plate.Auras.Buffs   then plate.Auras.Buffs:SetFrameLevel(engineLevel + 2)   end
+							if plate.Auras.Debuffs then plate.Auras.Debuffs:SetFrameLevel(engineLevel + 2) end
+						end
+						if plate.ClassPower then
+							plate.ClassPower:SetFrameLevel(engineLevel + 2)
+							for i = 1, #plate.ClassPower do
+								if plate.ClassPower[i] then
+									plate.ClassPower[i]:SetFrameLevel(engineLevel + 3)
+								end
+							end
+						end
+					end
+				end
 			end
 		end
 	end)
@@ -224,7 +275,7 @@ function NP:Construct_RaisedElement(nameplate)
 	else
 		frame:SetFrameStrata('MEDIUM')
 	end
-	frame:SetFrameLevel(10)
+	frame:SetFrameLevel(nameplate:GetFrameLevel() + 4)
 	frame:SetAllPoints()
 	frame:EnableMouse(false)
 	return frame
@@ -234,6 +285,7 @@ function NP:StylePlate(nameplate)
 	nameplate:SetScale(E.uiscale or 1)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
+	nameplate._npBase = nameplate:GetFrameLevel()
 
 	nameplate.RaisedElement = NP:Construct_RaisedElement(nameplate)
 
@@ -418,7 +470,11 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		NP:StyleFilterClearVariables(nameplate)
 
 		nameplate.Health.cur  = nil
+		nameplate.Health._np_cur = nil
+		nameplate.Health._np_max = nil
 		nameplate.Power.cur   = nil
+		nameplate.Power._np_cur  = nil
+		nameplate.Power._np_max  = nil
 		nameplate.npcID       = nil
 		nameplate.previousType = nil  -- force full re-init on next UNIT_ADDED (same frame, new unit)
 	end

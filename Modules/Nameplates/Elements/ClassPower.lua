@@ -192,8 +192,8 @@ function NP:Construct_ClassPower(nameplate)
 	local ClassPower = CreateFrame('Frame', frameName..'ClassPower', nameplate)
 	ClassPower:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 	ClassPower:Hide()
-	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then ClassPower:SetFrameStrata(s) end end
-	ClassPower:SetFrameLevel(5)
+	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then ClassPower:SetFrameStrata(s) else ClassPower:SetFrameStrata('MEDIUM') end end
+	ClassPower:SetFrameLevel(nameplate:GetFrameLevel() + 2)
 
 	local texture = LSM:Fetch('statusbar', NP.db.statusbar)
 	local total   = MAX_POINTS[E.myclass] or 0
@@ -201,8 +201,8 @@ function NP:Construct_ClassPower(nameplate)
 	for i = 1, total do
 		local bar = CreateFrame('StatusBar', frameName..'ClassPower'..i, ClassPower)
 		bar:SetStatusBarTexture(texture)
-		do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then bar:SetFrameStrata(s) end end
-		bar:SetFrameLevel(6)
+		do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then bar:SetFrameStrata(s) else bar:SetFrameStrata('MEDIUM') end end
+		bar:SetFrameLevel(nameplate:GetFrameLevel() + 3)
 		NP.StatusBars[bar] = true
 
 		-- bg texture anchored to bar (sized per-bar later)

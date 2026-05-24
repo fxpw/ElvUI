@@ -224,15 +224,15 @@ do
 		end
 	end
 
-	-- replace the global function
-	_G.tContains = function(tbl, item)
-		for _, v in pairs(tbl) do
-			if item == v then
-				return true
-			end
-		end
-		return false
-	end
+	-- -- replace the global function
+	-- _G.tContains = function(tbl, item)
+	-- 	for _, v in pairs(tbl) do
+	-- 		if item == v then
+	-- 			return true
+	-- 		end
+	-- 	end
+	-- 	return false
+	-- end
 
 	local function tAppendAll(tbl, elems)
 		for _, elem in ipairs(elems) do

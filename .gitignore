@@ -1,4 +1,5 @@
 .luacheckcache
 .github/workflows/LuaTest.yml
 .vscode
+.sirus.interface/**
 

@@ -84,8 +84,8 @@ end
 
 function NP:Construct_Health(nameplate)
 	local Health = CreateFrame('StatusBar', nameplate:GetName()..'Health', nameplate)
-	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) end end
-	Health:SetFrameLevel(5)
+	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
+	Health:SetFrameLevel(nameplate:GetFrameLevel() + 1)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 	Health:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
 	-- Defaults so the bar is visible before oUF's first Update fills MinMax/Value/Color.

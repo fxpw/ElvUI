@@ -81,7 +81,7 @@ local NP = E:GetModule('NamePlates')
 function NP:Construct_Highlight(nameplate)
 	local Highlight = CreateFrame('Frame', nil, nameplate.Health)
 	Highlight:SetAllPoints(nameplate.Health)
-	Highlight:SetFrameLevel(nameplate.Health:GetFrameLevel() + 5)
+	Highlight:SetFrameLevel(nameplate.Health:GetFrameLevel() + 2)
 	Highlight:Hide()
 
 	local tex = Highlight:CreateTexture(nil, 'OVERLAY', nil, 7)
