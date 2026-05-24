@@ -2,7 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
-local unpack = unpack
 local ipairs = ipairs
 local tinsert = tinsert
 local UnitPlayerControlled = UnitPlayerControlled

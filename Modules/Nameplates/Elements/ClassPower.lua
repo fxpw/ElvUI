@@ -3,7 +3,7 @@ local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
 local _G = _G
-local max, ipairs, pairs = max, ipairs, pairs
+local max, pairs = max, pairs
 
 local CreateFrame = CreateFrame
 local GetComboPoints = GetComboPoints

@@ -5,9 +5,9 @@ local LibDispel = E.Libs.Dispel
 local BleedList = LibDispel and LibDispel.BleedList or {}
 
 --Lua functions
-local ipairs, next, pairs, rawget, rawset, select, setmetatable, tonumber, type, unpack, tostring = ipairs, next, pairs, rawget, rawset, select, setmetatable, tonumber, type, unpack, tostring
-local tinsert, tremove, sort, twipe, wipe = table.insert, table.remove, table.sort, table.wipe, (wipe or table.wipe)
-local match, strmatch = string.match, string.match
+local ipairs, next, pairs, select, setmetatable, tonumber, type, unpack, tostring = ipairs, next, pairs, select, setmetatable, tonumber, type, unpack, tostring
+local tinsert, tremove, sort, wipe = table.insert, table.remove, table.sort, (wipe or table.wipe)
+local strmatch = string.match
 --WoW API / Variables
 local CreateFrame = CreateFrame
 local GetInstanceInfo = GetInstanceInfo

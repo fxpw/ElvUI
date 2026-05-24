@@ -2,8 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local ElvUF = E.oUF
 -- local LSM = E.Libs.LSM
 local addon = E:GetModule("Sirus")
-local Translit = E.Libs.Translit
-local translitMark = "!"
 --Lua functions
 local ipairs = ipairs
 local tonumber = tonumber

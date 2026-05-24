@@ -5,8 +5,8 @@ local ElvUF = E.oUF
 assert(ElvUF, 'ElvUI was unable to locate oUF.')
 
 local _G = _G
-local pairs, ipairs, wipe, tinsert = pairs, ipairs, wipe, tinsert
-local select, unpack, next, type = select, unpack, next, type
+local pairs, ipairs, wipe = pairs, ipairs, wipe
+local select, unpack, type = select, unpack, type
 local match = string.match
 local strsplit = strsplit
 
@@ -69,7 +69,6 @@ SlashCmdList.ELVNPDBG = function()
 	for plate in pairs(NP.Plates) do
 		count = count + 1
 		local h = plate.Health
-		local n = plate.unitName or (plate.unit and UnitName(plate.unit)) or '?'
 		local hw, hh, mn, mx, val
 		if h then hw, hh = h:GetSize(); mn, mx = h:GetMinMaxValues(); val = h:GetValue() end
 		print(string.format('|cff33ff99[NP]|r %s ft=%s unit=%s shown=%s sz=%dx%d Health shown=%s sz=%sx%s val=%s min=%s max=%s',

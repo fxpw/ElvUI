@@ -1,6 +1,5 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
-local UF = E:GetModule('UnitFrames')
 local LSM = E.Libs.LSM
 
 local unpack = unpack
