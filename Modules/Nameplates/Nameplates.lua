@@ -121,10 +121,8 @@ do
 						plate.Health:SetFrameLevel(engineLevel + 1)
 						if plate.Power then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar then plate.Castbar:SetFrameLevel(engineLevel + 2) end
-						if plate.Auras then
-							if plate.Auras.Buffs   then plate.Auras.Buffs:SetFrameLevel(engineLevel + 2)   end
-							if plate.Auras.Debuffs then plate.Auras.Debuffs:SetFrameLevel(engineLevel + 2) end
-						end
+						if plate.Buffs   then plate.Buffs:SetFrameLevel(engineLevel + 2)   end
+						if plate.Debuffs then plate.Debuffs:SetFrameLevel(engineLevel + 2) end
 						if plate.ClassPower then
 							plate.ClassPower:SetFrameLevel(engineLevel + 2)
 							for i = 1, #plate.ClassPower do
