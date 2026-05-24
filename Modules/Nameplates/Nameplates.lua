@@ -31,6 +31,8 @@ local UnitIsFriend = UnitIsFriend
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
 local UnitLevel = UnitLevel
+local UnitHealth = UnitHealth
+local UnitHealthMax = UnitHealthMax
 local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
@@ -46,6 +48,25 @@ NP.IsInGroup  = false
 
 NP.StyleFilterEventFunctions = {}
 
+-- Single OnUpdate frame to poll UnitHealth for all nameplate units.
+-- UNIT_HEALTH only fires for player/target in WotLK; this covers non-targeted units.
+do
+	local f = CreateFrame('Frame')
+	local elapsed = 0
+	f:SetScript('OnUpdate', function(_, dt)
+		elapsed = elapsed + dt
+		if elapsed < 0.2 then return end
+		elapsed = 0
+		for plate in pairs(NP.Plates) do
+			if plate.unit then
+				plate:UpdateElement('Health')
+				plate:UpdateElement('Power')
+				plate:UpdateTags()
+			end
+		end
+	end)
+end
+
 do
 	local empty = {}
 	function NP:PlateDB(nameplate)
@@ -59,38 +80,6 @@ end
 function NP:SetCVar(cvar, value)
 	if GetCVar(cvar) ~= tostring(value) then
 		SetCVar(cvar, value)
-	end
-end
-
--- Debug: /elvnpdbg — dumps state of every visible nameplate to chat
-SLASH_ELVNPDBG1 = '/elvnpdbg'
-SlashCmdList.ELVNPDBG = function()
-	local count = 0
-	for plate in pairs(NP.Plates) do
-		count = count + 1
-		local h = plate.Health
-		local hw, hh, mn, mx, val
-		if h then hw, hh = h:GetSize(); mn, mx = h:GetMinMaxValues(); val = h:GetValue() end
-		print(string.format('|cff33ff99[NP]|r %s ft=%s unit=%s shown=%s sz=%dx%d Health shown=%s sz=%sx%s val=%s min=%s max=%s',
-			tostring(plate:GetName()), tostring(plate.frameType), tostring(plate.unit),
-			tostring(plate:IsShown()), plate:GetWidth() or 0, plate:GetHeight() or 0,
-			tostring(h and h:IsShown()), tostring(hw), tostring(hh),
-			tostring(val), tostring(mn), tostring(mx)))
-	end
-	if count == 0 then print('|cff33ff99[NP]|r no plates registered') end
-end
-
-SLASH_ELVNPDBG2 = '/elvnpdbg2'
-SlashCmdList.ELVNPDBG2 = function()
-	for _, ft in ipairs({'PLAYER','FRIENDLY_PLAYER','ENEMY_PLAYER','FRIENDLY_NPC','ENEMY_NPC'}) do
-		local d = NP.db.units and NP.db.units[ft]
-		print(string.format('|cff33ff99[NP]|r %s: enable=%s nameOnly=%s health=%s health.enable=%s health.height=%s castbar=%s power=%s',
-			ft, tostring(d and d.enable), tostring(d and d.nameOnly),
-			tostring(d and d.health and 'tbl' or 'nil'),
-			tostring(d and d.health and d.health.enable),
-			tostring(d and d.health and d.health.height),
-			tostring(d and d.castbar and 'tbl' or 'nil'),
-			tostring(d and d.power and 'tbl' or 'nil')))
 	end
 end
 
@@ -362,6 +351,15 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 		NP:UpdatePlateBase(nameplate)
+
+		-- Register unit-specific events for player/target (engine fires UNIT_HEALTH for these)
+		if nameplate.RegisterUnitEvent then
+			nameplate:RegisterUnitEvent('UNIT_HEALTH',        unit)
+			nameplate:RegisterUnitEvent('UNIT_MAXHEALTH',     unit)
+			nameplate:RegisterUnitEvent('UNIT_POWER_UPDATE',  unit)
+			nameplate:RegisterUnitEvent('UNIT_MAXPOWER',      unit)
+			nameplate:RegisterUnitEvent('UNIT_DISPLAYPOWER',  unit)
+		end
 
 		NP:StyleFilterEventWatch(nameplate)
 		NP:StyleFilterSetVariables(nameplate)
