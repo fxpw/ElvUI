@@ -120,7 +120,6 @@ do
 						plate._npBase = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
 						if plate.Power then plate.Power:SetFrameLevel(engineLevel + 1) end
-						plate.RaisedElement:SetFrameLevel(engineLevel + 4)
 						if plate.Castbar then plate.Castbar:SetFrameLevel(engineLevel + 2) end
 						if plate.Auras then
 							if plate.Auras.Buffs   then plate.Auras.Buffs:SetFrameLevel(engineLevel + 2)   end
@@ -266,39 +265,23 @@ function NP:Style(unit)
 	return self
 end
 
-function NP:Construct_RaisedElement(nameplate)
-	local name = nameplate:GetName()
-	local frame = CreateFrame('Frame', name and (name .. 'Raised') or nil, nameplate)
-	local strata = nameplate:GetFrameStrata()
-	if strata ~= 'UNKNOWN' then
-		frame:SetFrameStrata(strata)
-	else
-		frame:SetFrameStrata('MEDIUM')
-	end
-	frame:SetFrameLevel(nameplate:GetFrameLevel() + 4)
-	frame:SetAllPoints()
-	frame:EnableMouse(false)
-	return frame
-end
-
 function NP:StylePlate(nameplate)
 	nameplate:SetScale(E.uiscale or 1)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate._npBase = nameplate:GetFrameLevel()
 
-	nameplate.RaisedElement = NP:Construct_RaisedElement(nameplate)
-
 	nameplate.Health = NP:Construct_Health(nameplate)
-	nameplate.Health.Text = NP:Construct_TagText(nameplate.RaisedElement)
+	nameplate.Health.Text = NP:Construct_TagText(nameplate.Health)
+	nameplate.RaisedElement = nameplate.Health -- legacy alias: all overlay elements share Health's framelevel
 
 	NP:Construct_HealPrediction(nameplate)
 
 	nameplate.Power = NP:Construct_Power(nameplate)
-	nameplate.Power.Text = NP:Construct_TagText(nameplate.RaisedElement)
+	nameplate.Power.Text = NP:Construct_TagText(nameplate.Power)
 
-	nameplate.Name  = NP:Construct_Name(nameplate.RaisedElement)
-	nameplate.Level = NP:Construct_Level(nameplate.RaisedElement)
+	nameplate.Name  = NP:Construct_Name(nameplate.Health)
+	nameplate.Level = NP:Construct_Level(nameplate.Health)
 
 	nameplate.ClassificationIndicator = NP:Construct_ClassificationIndicator(nameplate.RaisedElement)
 	nameplate.Castbar             = NP:Construct_Castbar(nameplate)

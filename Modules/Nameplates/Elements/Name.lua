@@ -28,8 +28,8 @@ function NP:Update_Name(frame, triggered)
 		local unitDB = self.db.units[frame.UnitType]
 		if not unitDB.nameOnly and (unitDB.health.enable or (self.db.alwaysShowTargetHealth and frame.isTarget)) then
 			name:SetJustifyH("LEFT")
-			name:SetPoint(E.InversePoints[unitDB.name.position], unitDB.name.parent == "Nameplate" and frame or frame[unitDB.name.parent], unitDB.name.position, unitDB.name.xOffset, unitDB.name.yOffset)
-			name:SetParent(frame.Health)
+			name:SetPoint(E.InversePoints[unitDB.name.position], frame.Health or frame, unitDB.name.position, unitDB.name.xOffset, unitDB.name.yOffset)
+			name:SetParent(frame.Health or frame)
 		else
 			name:SetJustifyH("CENTER")
 			name:SetPoint("CENTER", frame.RaisedElement or frame)

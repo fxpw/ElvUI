@@ -518,7 +518,6 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			frame.appliedFrameLevelBoost = boost
 			local base = frame._npBase or frame:GetFrameLevel()
 			frame.Health:SetFrameLevel(base + 1 + boost)
-			frame.RaisedElement:SetFrameLevel(base + 4 + boost)
 			if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2 + boost) end
 			if frame.Auras then
 				if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2 + boost)  end
@@ -1322,7 +1321,6 @@ function mod:StyleFilterUpdate(frame, event)
 		frame.appliedFrameLevelBoost = nil
 		local base = frame._npBase or frame:GetFrameLevel()
 		frame.Health:SetFrameLevel(base + 1)
-		frame.RaisedElement:SetFrameLevel(base + 4)
 		if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2) end
 		if frame.Auras then
 			if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2)  end

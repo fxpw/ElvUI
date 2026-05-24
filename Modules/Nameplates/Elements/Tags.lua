@@ -9,7 +9,7 @@ function NP:Construct_TagText(nameplate)
 	return Text
 end
 
-function NP:Update_TagText(nameplate, element, db, hide)
+function NP:Update_TagText(nameplate, element, db, hide, anchor)
 	if not db then return end
 
 	-- textFormat (new oUF style: '[name:long]') takes precedence over format (old style)
@@ -21,7 +21,7 @@ function NP:Update_TagText(nameplate, element, db, hide)
 		element:UpdateTag()
 
 		element:ClearAllPoints()
-		element:Point(E.InversePoints[db.position], db.parent == 'Nameplate' and nameplate or nameplate[db.parent], db.position, db.xOffset, db.yOffset)
+		element:Point(E.InversePoints[db.position], anchor or nameplate.Health or nameplate, db.position, db.xOffset, db.yOffset)
 		element:Show()
 	else
 		nameplate:Untag(element)
@@ -34,8 +34,8 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 	local hide = db.nameOnly or nameOnlySF
 
 	-- Name uses oUF tag system (textFormat = '[name:long]' etc.)
-	NP:Update_TagText(nameplate, nameplate.Name, db.name)
-	-- nameOnly: center the name in the plate regardless of db.name.parent/position settings
+	NP:Update_TagText(nameplate, nameplate.Name, db.name, nil, nameplate.Health)
+	-- nameOnly: center the name in the plate regardless of db.name.position settings
 	if db.nameOnly then
 		nameplate.Name:ClearAllPoints()
 		nameplate.Name:SetJustifyH('CENTER')
@@ -52,7 +52,7 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 		nameplate.Level:ClearAllPoints()
 		nameplate.Level:Point(
 			E.InversePoints[db.level.position],
-			db.level.parent == 'Nameplate' and nameplate or nameplate[db.level.parent],
+			nameplate.Health or nameplate,
 			db.level.position,
 			db.level.xOffset,
 			db.level.yOffset
@@ -65,9 +65,9 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 
 	-- Health/Power text: use E:GetFormattedText via a direct tag if configured
 	if db.health and db.health.text then
-		NP:Update_TagText(nameplate, nameplate.Health.Text, db.health.text, hide)
+		NP:Update_TagText(nameplate, nameplate.Health.Text, db.health.text, hide, nameplate.Health)
 	end
 	if db.power and db.power.text then
-		NP:Update_TagText(nameplate, nameplate.Power.Text, db.power.text, hide)
+		NP:Update_TagText(nameplate, nameplate.Power.Text, db.power.text, hide, nameplate.Power)
 	end
 end
