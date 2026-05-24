@@ -99,9 +99,13 @@ function NP:UpdateCVars()
 	NP:SetCVar('ShowClassColorInFriendlyNameplate', '1')
 	NP:SetCVar('showVKeyCastbar', '1')
 	NP:SetCVar('nameplateAllowOverlap', NP.db.motionType == 'STACKED' and '0' or '1')
-	if NP.db.plateSize and NP.db.plateSize.loadDistance then
-		NP:SetCVar('nameplateMaxDistance', NP.db.plateSize.loadDistance)
-		-- print(NP.db.plateSize.loadDistance);
+	if NP.db.plateSize then
+		if NP.db.plateSize.loadDistance then
+			NP:SetCVar('nameplateMaxDistance', NP.db.plateSize.loadDistance)
+		end
+		C_NamePlate.SetNamePlateFriendlySize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
+		C_NamePlate.SetNamePlateEnemySize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
+		C_NamePlate.SetNamePlateSelfSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
 	end
 	if NP.db.clickThrough then
 		C_NamePlate.SetNamePlateFriendlyClickThrough(NP.db.clickThrough.friendly and 1 or nil)
@@ -458,33 +462,9 @@ function NP:PLAYER_ENTERING_WORLD()
 	NP:ConfigureAll(true)
 end
 
-function NP:PLAYER_REGEN_DISABLED()
-	if self.db.showFriendlyCombat == 'TOGGLE_ON' then
-		SetCVar('nameplateShowFriends', 1)
-	elseif self.db.showFriendlyCombat == 'TOGGLE_OFF' then
-		SetCVar('nameplateShowFriends', 0)
-	end
+function NP:PLAYER_REGEN_DISABLED() end
 
-	if self.db.showEnemyCombat == 'TOGGLE_ON' then
-		SetCVar('nameplateShowEnemies', 1)
-	elseif self.db.showEnemyCombat == 'TOGGLE_OFF' then
-		SetCVar('nameplateShowEnemies', 0)
-	end
-end
-
-function NP:PLAYER_REGEN_ENABLED()
-	if self.db.showFriendlyCombat == 'TOGGLE_ON' then
-		SetCVar('nameplateShowFriends', 0)
-	elseif self.db.showFriendlyCombat == 'TOGGLE_OFF' then
-		SetCVar('nameplateShowFriends', 1)
-	end
-
-	if self.db.showEnemyCombat == 'TOGGLE_ON' then
-		SetCVar('nameplateShowEnemies', 0)
-	elseif self.db.showEnemyCombat == 'TOGGLE_OFF' then
-		SetCVar('nameplateShowEnemies', 1)
-	end
-end
+function NP:PLAYER_REGEN_ENABLED() end
 
 function NP:CheckBGHealers()
 	local name, _, classToken, damageDone, healingDone
@@ -754,6 +734,7 @@ end
 function NP:ConfigureAll(init)
 	if not E.private.nameplates.enable then return end
 
+	NP:UpdateCVars()
 	NP:StyleFilterConfigure()
 	NP:PLAYER_REGEN_ENABLED()
 	NP:Update_StatusBars()
