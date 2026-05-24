@@ -943,9 +943,11 @@ local function Untag(self, fs)
 		end
 	end
 
-	for i, fontstr in next, self.__tags do
-		if(fontstr == fs) then
-			tremove(self.__tags, i)
+	if(self.__tags) then
+		for i, fontstr in next, self.__tags do
+			if(fontstr == fs) then
+				tremove(self.__tags, i)
+			end
 		end
 	end
 
