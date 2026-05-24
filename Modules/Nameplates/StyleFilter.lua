@@ -426,7 +426,7 @@ function mod:StyleFilterBaseUpdate(frame, state)
 		if db.castbar and db.castbar.enable and frame.Castbar and frame.Castbar.ForceUpdate then frame.Castbar:ForceUpdate() end
 
 		if mod.db.threat and mod.db.threat.enable and mod.db.threat.useThreatColor and frame.ThreatIndicator and frame.ThreatIndicator.ForceUpdate then
-			if not (UnitIsTapDenied and UnitIsTapDenied(frame.unit)) then
+			if not UnitIsTapDenied(frame.unit) then
 				frame.ThreatIndicator:ForceUpdate() -- accounts for threat health colour
 			end
 		end

@@ -2,9 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local ElvUF = E.oUF
 
-local UnitHealth = UnitHealth
 local UnitIsUnit = UnitIsUnit
-local UnitHealthMax = UnitHealthMax
 
 --[[ Target Glow Style Option Variables
 	style1:'Border',
@@ -62,28 +60,11 @@ local function Update(self)
 	local sf = NP:StyleFilterChanges(self)
 	if not sf.ShowTargetIndicator then return end
 
-	-- Always sync style/thresholds from sf so stale element.style never persists
-	element.style              = sf.TargetIndicatorStyle or 'style4'
-	element.preferGlowColor    = (NP.db.colors and NP.db.colors.preferGlowColor) ~= false
-	element.lowHealthThreshold = NP.db.lowHealthThreshold or 0
+	element.style = sf.TargetIndicatorStyle or 'style4'
 
 	if element.style ~= 'none' then
 		local isTarget = UnitIsUnit(self.unit, 'target')
-		local lowHealth = element.lowHealthThreshold > 0
-		if isTarget and (element.preferGlowColor or not lowHealth) then
-			ShowIndicators(element, isTarget, NP.db.colors.glowColor)
-		elseif lowHealth then
-			local health, maxHealth = UnitHealth(self.unit), UnitHealthMax(self.unit)
-			local perc = (maxHealth > 0 and health/maxHealth) or 0
-
-			if perc <= element.lowHealthThreshold * 0.5 then
-				ShowIndicators(element, isTarget, NP.db.colors.lowHealthHalf or NP.db.colors.glowColor)
-			elseif perc <= element.lowHealthThreshold then
-				ShowIndicators(element, isTarget, NP.db.colors.lowHealthColor or NP.db.colors.glowColor)
-			elseif isTarget then
-				ShowIndicators(element, isTarget, NP.db.colors.glowColor)
-			end
-		end
+		ShowIndicators(element, isTarget, NP.db.colors.glowColor)
 	end
 
 	if element.PostUpdate then
@@ -106,8 +87,6 @@ local function Enable(self)
 		element.ForceUpdate = ForceUpdate
 
 		if not element.style then element.style = 'style1' end
-		if not element.preferGlowColor then element.preferGlowColor = true end
-		if not element.lowHealthThreshold then element.lowHealthThreshold = .4 end
 
 		if element.Shadow and element.Shadow:IsObjectType('Frame') and not element.Shadow:GetBackdrop() then
 			element.Shadow:SetBackdrop({edgeFile = E.Media.Textures.GlowTex, edgeSize = 5})
@@ -133,9 +112,6 @@ local function Enable(self)
 			element.RightIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
 		end
 
-		-- WotLK: use UNIT_HEALTH (not UNIT_HEALTH_FREQUENT which is E.Classic)
-		self:RegisterEvent('UNIT_HEALTH', Path)
-		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 		self:RegisterEvent('PLAYER_TARGET_CHANGED', Path, true)
 
 		return true
@@ -147,8 +123,6 @@ local function Disable(self)
 	if element then
 		HideIndicators(element)
 
-		self:UnregisterEvent('UNIT_HEALTH', Path)
-		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Path)
 	end
 end

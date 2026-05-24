@@ -14,7 +14,7 @@ end
 
 function NP:ThreatIndicator_PreUpdate(unit, pass)
 	local nameplate, db, unitTarget = self.__owner, NP.db.threat, unit..'target'
-	local imTank = IsTank('player') or NP.GroupRoles[E.myname] == 'TANK'
+	local imTank = IsTank('player')
 	local unitRole = NP.IsInGroup and (UnitExists(unitTarget) and not UnitIsUnit(unitTarget, 'player')) and NP.GroupRoles[UnitName(unitTarget)] or 'NONE'
 	local unitTank = unitRole == 'TANK'
 	local isTank = unitTank or imTank
@@ -79,6 +79,7 @@ function NP:Construct_ThreatIndicator(nameplate)
 	ThreatIndicator:Size(16, 16)
 	ThreatIndicator:Hide()
 	ThreatIndicator:Point('CENTER', nameplate, 'TOPRIGHT')
+	ThreatIndicator:SetTexture(E.Media.Textures.SkullIcon)
 
 	ThreatIndicator.PreUpdate = NP.ThreatIndicator_PreUpdate
 	ThreatIndicator.PostUpdate = NP.ThreatIndicator_PostUpdate

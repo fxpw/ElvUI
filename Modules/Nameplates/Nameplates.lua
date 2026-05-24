@@ -96,11 +96,16 @@ SlashCmdList.ELVNPDBG2 = function()
 end
 
 function NP:UpdateCVars()
-	NP:SetCVar('ShowClassColorInNameplate', '1')
+	NP:SetCVar('ShowClassColorInFriendlyNameplate', '1')
 	NP:SetCVar('showVKeyCastbar', '1')
 	NP:SetCVar('nameplateAllowOverlap', NP.db.motionType == 'STACKED' and '0' or '1')
 	if NP.db.plateSize and NP.db.plateSize.loadDistance then
 		NP:SetCVar('nameplateMaxDistance', NP.db.plateSize.loadDistance)
+		-- print(NP.db.plateSize.loadDistance);
+	end
+	if NP.db.clickThrough then
+		C_NamePlate.SetNamePlateFriendlyClickThrough(NP.db.clickThrough.friendly and 1 or nil)
+		C_NamePlate.SetNamePlateEnemyClickThrough(NP.db.clickThrough.enemy and 1 or nil)
 	end
 end
 
