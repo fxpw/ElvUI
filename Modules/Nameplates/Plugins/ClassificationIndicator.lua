@@ -1,11 +1,9 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local oUF = E.oUF
 
--- WotLK: no SetAtlas, use texture coords instead
--- Texture: Interface\TARGETINGFRAME\Nameplates contains elite/rare icons
--- TexCoords for gold elite star: approximate values
-local EliteTexCoords      = {0, 0.5, 0, 0.5}  -- gold star (elite/worldboss)
-local RareTexCoords       = {0.5, 1, 0, 0.5}  -- silver star (rare/rareelite)
+-- WotLK: no SetAtlas, use texture coords from ElvUI's nameplate texture.
+local EliteTexCoords = {0, 0.15, 0.35, 0.63}
+local BossTexCoords  = {0, 0.15, 0.62, 0.94}
 
 local function Update(self)
 	local element = self.ClassificationIndicator
@@ -15,11 +13,11 @@ local function Update(self)
 	end
 
 	local classification = self.classification
-	if classification == 'elite' or classification == 'worldboss' then
-		element:SetTexCoord(unpack(EliteTexCoords))
+	if classification == 'worldboss' then
+		element:SetTexCoord(unpack(BossTexCoords))
 		element:Show()
-	elseif classification == 'rareelite' or classification == 'rare' then
-		element:SetTexCoord(unpack(RareTexCoords))
+	elseif classification == 'elite' or classification == 'rareelite' or classification == 'rare' then
+		element:SetTexCoord(unpack(EliteTexCoords))
 		element:Show()
 	else
 		element:Hide()
@@ -45,7 +43,7 @@ local function Enable(self)
 		element.ForceUpdate = ForceUpdate
 
 		if element:IsObjectType('Texture') and not element:GetTexture() then
-			element:SetTexture([[Interface\TARGETINGFRAME\Nameplates]])
+			element:SetTexture(E.Media.Textures.Nameplates)
 		end
 
 		self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
