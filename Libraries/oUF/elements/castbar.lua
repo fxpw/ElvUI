@@ -344,6 +344,7 @@ local function CastInterruptible(self, event, unit)
 	end
 end
 
+local CASTBAR_TEXT_INTERVAL = 0.1 -- text refresh cadence; bar still updates every frame
 local function onUpdate(self, elapsed)
 	if(self.casting or self.channeling) then
 		local isCasting = self.casting
@@ -376,17 +377,21 @@ local function onUpdate(self, elapsed)
 		end
 
 		if(self.Time) then
-			if(self.delay ~= 0) then
-				if(self.CustomDelayText) then
-					self:CustomDelayText(self.duration)
+			self._textElapsed = (self._textElapsed or 0) + elapsed
+			if self._textElapsed >= CASTBAR_TEXT_INTERVAL or self.delay ~= 0 then
+				self._textElapsed = 0
+				if(self.delay ~= 0) then
+					if(self.CustomDelayText) then
+						self:CustomDelayText(self.duration)
+					else
+						self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', self.duration, isCasting and '+' or '-', self.delay)
+					end
 				else
-					self.Time:SetFormattedText('%.1f|cffff0000%s%.2f|r', self.duration, isCasting and '+' or '-', self.delay)
-				end
-			else
-				if(self.CustomTimeText) then
-					self:CustomTimeText(self.duration)
-				else
-					self.Time:SetFormattedText('%.1f', self.duration)
+					if(self.CustomTimeText) then
+						self:CustomTimeText(self.duration)
+					else
+						self.Time:SetFormattedText('%.1f', self.duration)
+					end
 				end
 			end
 		end

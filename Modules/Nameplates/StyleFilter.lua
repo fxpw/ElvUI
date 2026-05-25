@@ -232,8 +232,32 @@ function mod:StyleFilterDispelCheck(frame, filter)
 	end
 end
 
+-- Reusable scratch buckets to avoid per-call table allocations on hot path.
+local styleFilterTempPool = {}
+local styleFilterInfoPool = {}
+local styleFilterInfoInUse = {}
+
+local function acquireInfoTable()
+	local t = tremove(styleFilterInfoPool) or {}
+	styleFilterInfoInUse[#styleFilterInfoInUse + 1] = t
+	return t
+end
+
+function mod:StyleFilterReleaseAuraData(temp)
+	if not temp then return end
+	wipe(temp)
+	styleFilterTempPool[#styleFilterTempPool + 1] = temp
+	for i = #styleFilterInfoInUse, 1, -1 do
+		local info = styleFilterInfoInUse[i]
+		wipe(info)
+		styleFilterInfoPool[#styleFilterInfoPool + 1] = info
+		styleFilterInfoInUse[i] = nil
+	end
+end
+
 function mod:StyleFilterAuraData(frame, filter, unit)
-	local temp = {}
+	local temp = tremove(styleFilterTempPool) or {}
+	wipe(temp)
 
 	if unit then
 		-- 3.3.5a positions: 1 name, 4 count, 7 expirationTime, 8 source, 11 spellID
@@ -241,7 +265,7 @@ function mod:StyleFilterAuraData(frame, filter, unit)
 		local name, _, _, count, _, _, expiration, source, _, _, spellID = UnitAura(unit, index, filter)
 		while name do
 			local info = temp[name] or temp[spellID]
-			if not info then info = {} end
+			if not info then info = acquireInfoTable() end
 
 			temp[name] = info
 			temp[spellID] = info
@@ -323,7 +347,7 @@ function mod:StyleFilterAuraCheck(frame, names, tickers, filter, mustHaveAll, mi
 	end
 
 	if temp then
-		wipe(temp)
+		mod:StyleFilterReleaseAuraData(temp)
 	end
 
 	if total == 0 then

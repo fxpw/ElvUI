@@ -79,10 +79,14 @@ end
 -- Rune slot -> display position map (matches oUF runes.lua)
 local runemap = {1, 2, 5, 6, 3, 4}
 
--- Smooth rune cooldown fill
+-- Smooth rune cooldown fill: throttle SetValue so we don't spam StatusBar every frame.
+local RUNE_STEP = 0.05
 local function RuneOnUpdate(self, elapsed)
 	self.duration = self.duration + elapsed
-	self:SetValue(self.duration)
+	if (self.duration - (self._lastApplied or -1)) >= RUNE_STEP then
+		self._lastApplied = self.duration
+		self:SetValue(self.duration)
+	end
 end
 
 -- ─── Color helpers ──────────────────────────────────────────────────────────
@@ -167,9 +171,11 @@ function NP:ClassPower_UpdateRune(nameplate, runeID)
 	if runeReady then
 		rune:SetMinMaxValues(0, 1)
 		rune:SetValue(1)
+		rune._lastApplied = nil
 		rune:SetScript('OnUpdate', nil)
 	else
 		rune.duration = GetTime() - start
+		rune._lastApplied = nil
 		rune:SetMinMaxValues(0, duration)
 		rune:SetValue(0)
 		rune:SetScript('OnUpdate', RuneOnUpdate)

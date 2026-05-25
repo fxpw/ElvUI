@@ -109,7 +109,7 @@ function NP:Construct_Power(nameplate)
 	bg:SetVertexColor(0, 0, 0, 1)
 	Power.bg = bg
 
-	Power.frequentUpdates = true
+	Power.frequentUpdates = false -- UNIT_POWER events are sufficient for plates; saves a per-frame OnUpdate
 	Power.colorTapping = false
 	Power.colorClass = false
 	Power.colorPower = true
