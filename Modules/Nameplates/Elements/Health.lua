@@ -168,6 +168,10 @@ function NP:Update_Health(nameplate, skipUpdate)
 
 	if skipUpdate then return end
 
+	nameplate.Health:Point('CENTER')
+	nameplate.Health:Point('LEFT')
+	nameplate.Health:Point('RIGHT')
+
 	if db.health.enable and not db.nameOnly then
 		if not nameplate:IsElementEnabled('Health') then
 			nameplate:EnableElement('Health')
@@ -175,10 +179,6 @@ function NP:Update_Health(nameplate, skipUpdate)
 
 		nameplate.Health:Show()
 		NP:Health_SetTransparent(nameplate, false)
-
-		nameplate.Health:Point('CENTER')
-		nameplate.Health:Point('LEFT')
-		nameplate.Health:Point('RIGHT')
 
 		E:SetSmoothing(nameplate.Health, NP.db.smoothbars)
 	else
