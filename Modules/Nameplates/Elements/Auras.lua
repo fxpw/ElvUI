@@ -311,12 +311,15 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras.numRows = numRows
 	auras.onlyShowPlayer = false
 	auras.spacing = db.spacing
-	auras.growthY = MatchGrowthY[db.anchorPoint] or db.growthY
-	auras.growthX = MatchGrowthX[db.anchorPoint] or db.growthX
+	local anchorPoint = db.anchorPoint
+	-- Respect manual growth choice on pure side anchors (LEFT/RIGHT for X, TOP/BOTTOM for Y).
+	-- Corner anchors still derive growth from anchor point to keep legacy behavior.
+	auras.growthY = ((anchorPoint == 'TOP' or anchorPoint == 'BOTTOM') and db.growthY) or MatchGrowthY[anchorPoint] or db.growthY
+	auras.growthX = ((anchorPoint == 'LEFT' or anchorPoint == 'RIGHT') and db.growthX) or MatchGrowthX[anchorPoint] or db.growthX
 	auras.xOffset = db.xOffset
 	auras.yOffset = db.yOffset
-	auras.anchorPoint = db.anchorPoint
-	auras.initialAnchor = E.InversePoints[db.anchorPoint]
+	auras.anchorPoint = anchorPoint
+	auras.initialAnchor = E.InversePoints[anchorPoint]
 	auras.point = auras.initialAnchor -- needed by SmartAuraPosition PostUpdate callbacks
 	ConvertFilters(auras, priority)
 	auras.PostUpdate = nil         -- cleared here; SetSmartAuraPosition may re-assign after Configure
