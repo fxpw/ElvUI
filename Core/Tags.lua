@@ -768,6 +768,7 @@ E.TagInfo = {
 	["healthcolor"] = {category = L["Colors"], description = L["Changes color of health text, depending on the unit's current health"]},
 	["threatcolor"] = {category = L["Colors"], description = L["Changes color of health, depending on the unit's threat situation"]},
 	["classificationcolor"] = {category = L["Colors"], description = L["Changes color of health, depending on the unit's classification"]},
+	["manacolor"] = {category = L["Colors"], description = L["Colors the power text based on the mana color"]},
 	--Classification
 	["Classification"] = {category = L["Classification"], description = L["Displays the unit's classification (e.g. 'ELITE' and 'RARE')"]},
 	["shortclassification"] = {category = L["Classification"], description = L["Displays the unit's classification in short form (e.g. '+' for ELITE and 'R' for RARE)"]},
@@ -802,6 +803,10 @@ E.TagInfo = {
 	["health:percent"] = {category = L["Health"], description = L["Displays the current health of the unit as a percentage"]},
 	["health:percent-nostatus"] = {category = L["Health"], description = L["Displays the unit's current health as a percentage, without status"]},
 	["missinghp"] = {category = L["Health"], description = L["Displays the missing health of the unit in whole numbers, when not at full health"]},
+	["health:percent-nosign"] = {category = L["Health"], description = L[""]},
+	["health:nosign"] = {category = L["Health"], description = L[""]},
+	["health:nosign-nostatus"] = {category = L["Health"], description = L[""]},
+	["health:percent-nosign-nostatus"] = {category = L["Health"], description = L[""]},
 	--Level
 	["smartlevel"] = {category = L["Level"], description = L["Only display the unit's level if it is not the same as yours"]},
 	["level"] = {category = L["Level"], description = L["Displays the level of the unit"]},
@@ -815,6 +820,8 @@ E.TagInfo = {
 	["mana:deficit"] = {category = L["Mana"], description = L["Displays the mana deficit (Total Mana - Current Mana = -Deficit)"]},
 	["curmana"] = {category = L["Mana"], description = L["Displays the current mana without decimals"]},
 	["maxmana"] = {category = L["Mana"], description = L["Displays the max amount of mana the unit can have"]},
+	["mana:percent-nosign"] = {category = L["Mana"], description = L[""]},
+	["mana:nosign"] = {category = L["Mana"], description = L[""]},
 	--Names
 	["name"] = {category = L["Names"], description = L["Displays the full name of the unit without any letter limitation"]},
 	["name:veryshort"] = {category = L["Names"], description = L["Displays the name of the unit (limited to 5 letters)"]},
@@ -851,6 +858,8 @@ E.TagInfo = {
 	["perpp"] = {category = L["Power"], description = L["Displays the unit's percentage power without decimals "]},
 	["maxpp"] = {category = L["Power"], description = L["Displays the max amount of power of the unit in whole numbers without decimals"]},
 	["missingpp"] = {category = L["Power"], description = L["Displays the missing power of the unit in whole numbers when not at full power"]},
+	["power:percent-nosign"] = {category = L["Power"], description = L[""]},
+	["power:nosign"] = {category = L["Power"], description = L[""]},
 	--Realm
 	["realm"] = {category = L["Realm"], description = L["Displays the server name"]},
 	["realm:translit"] = {category = L["Realm"], description = L["Displays the server name with transliteration for cyrillic letters"]},
@@ -865,6 +874,7 @@ E.TagInfo = {
 	["pvp"] = {category = L["Status"], description = L["Displays 'PvP' if the unit is pvp flagged"]},
 	['ElvUI-Users'] = { category = L["Status"], description = "Displays current ElvUI users" },
 	["offline"] = {category = L["Status"], description = L["Displays 'OFFLINE' if the unit is disconnected"]},
+	["pvptimer"] = {category = L["Status"], description = L[""]},
 	--Target
 	["target"] = {category = L["Target"], description = L["Displays the current target of the unit"]},
 	["target:veryshort"] = {category = L["Target"], description = L["Displays the current target of the unit (limited to 5 letters)"]},
@@ -889,6 +899,15 @@ E.TagInfo = {
 	["faction:icon"] = {category = L["Miscellaneous"], description = L["Displays faction icon"]},
 	["plus"] = {category = L["Miscellaneous"], description = L["Displays the character '+' if the unit is an elite or rare-elite"]},
 	["arena:number"] = {category = L["Miscellaneous"], description = L["Displays the arena number 1-5"]},
+	--Speed
+	["speed:yardspersec"] = {category = L["Speed"], description = L[""]},
+	["speed:percent-raw"] = {category = L["Speed"], description = L[""]},
+	["speed:percent"] = {category = L["Speed"], description = L[""]},
+	["speed:yardspersec-moving"] = {category = L["Speed"], description = L[""]},
+	["speed:yardspersec-raw"] = {category = L["Speed"], description = L[""]},
+	["speed:percent-moving-raw"] = {category = L["Speed"], description = L[""]},
+	["speed:yardspersec-moving-raw"] = {category = L["Speed"], description = L[""]},
+	["speed:percent-moving"] = {category = L["Speed"], description = L[""]},
 }
 
 function E:AddTagInfo(tagName, category, description, order, hidden)
