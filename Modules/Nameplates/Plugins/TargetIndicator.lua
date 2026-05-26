@@ -2,8 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local ElvUF = E.oUF
 
-local UnitIsUnit = UnitIsUnit
-
 --[[ Target Glow Style Option Variables
 	style1:'Border',
 	style2:'Background',
@@ -61,19 +59,17 @@ local function ConfigureStyleFilterIndicators(owner, element)
 	end
 end
 
-local function ShowIndicators(element, isTarget, color)
-	if isTarget then
-		if element.TopIndicator and (element.style == 'style3' or element.style == 'style5' or element.style == 'style6') then
-			element.TopIndicator:SetVertexColor(color.r, color.g, color.b)
-			element.TopIndicator:Show()
-		end
+local function ShowIndicators(element, color)
+	if element.TopIndicator and (element.style == 'style3' or element.style == 'style5' or element.style == 'style6') then
+		element.TopIndicator:SetVertexColor(color.r, color.g, color.b)
+		element.TopIndicator:Show()
+	end
 
-		if element.LeftIndicator and element.RightIndicator and (element.style == 'style4' or element.style == 'style7' or element.style == 'style8') then
-			element.LeftIndicator:SetVertexColor(color.r, color.g, color.b)
-			element.RightIndicator:SetVertexColor(color.r, color.g, color.b)
-			element.RightIndicator:Show()
-			element.LeftIndicator:Show()
-		end
+	if element.LeftIndicator and element.RightIndicator and (element.style == 'style4' or element.style == 'style7' or element.style == 'style8') then
+		element.LeftIndicator:SetVertexColor(color.r, color.g, color.b)
+		element.RightIndicator:SetVertexColor(color.r, color.g, color.b)
+		element.RightIndicator:Show()
+		element.LeftIndicator:Show()
 	end
 
 	if element.Shadow and (element.style == 'style1' or element.style == 'style5' or element.style == 'style7') then
@@ -102,8 +98,7 @@ local function Update(self)
 	ConfigureStyleFilterIndicators(self, element)
 
 	if element.style ~= 'none' then
-		local isTarget = UnitIsUnit(self.unit, 'target')
-		ShowIndicators(element, isTarget, NP.db.colors.glowColor)
+		ShowIndicators(element, NP.db.colors.glowColor)
 	end
 
 	if element.PostUpdate then
