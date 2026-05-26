@@ -829,7 +829,6 @@ E.TagInfo = {
 	["health:percent:hidefull"] = {category = L["Health"], description = L[""]},
 	["health:current:hidefull"] = {category = L["Health"], description = L[""]},
 	["health:current-percent:hidefull"] = {category = L["Health"], description = L[""]},
-	["health:percent:hidefull"] = {category = L["Health"], description = L[""]},
 	["deficit:name:colors"] = {category = L["Health"], description = L[""]},
 	--Level
 	["smartlevel"] = {category = L["Level"], description = L["Only display the unit's level if it is not the same as yours"]},
