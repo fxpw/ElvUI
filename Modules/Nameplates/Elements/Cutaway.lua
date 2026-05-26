@@ -31,6 +31,14 @@ end
 function NP:CutawayHealthValueChangeCallback(frame, health, maxHealth)
 	local cutawayHealth = frame.Cutaway and frame.Cutaway.Health or frame.CutawayHealth
 	if not cutawayHealth then return end
+	if not NP:Health_IsVisible(frame) then
+		if cutawayHealth.isPlaying then
+			cutawayHealth.isPlaying = nil
+			cutawayHealth:SetScript("OnUpdate", nil)
+		end
+		cutawayHealth:Hide()
+		return
+	end
 
 	if self.db.cutaway.health.enabled then
 		cutawayHealth:SetMinMaxValues(0, maxHealth)

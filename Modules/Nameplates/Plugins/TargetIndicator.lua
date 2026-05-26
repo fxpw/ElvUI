@@ -23,6 +23,44 @@ local function HideIndicators(element)
 	if element.Spark then element.Spark:Hide() end
 end
 
+local function ConfigureStyleFilterIndicators(owner, element)
+	local health = owner and owner.Health
+	if not health then return end
+
+	local targetDB = NP.db and NP.db.units and NP.db.units.TARGET or {}
+	local arrowKey = targetDB.arrow or 'ArrowUp'
+	local arrowTex = (E.Media.Arrows and E.Media.Arrows[arrowKey]) or (E.Media.Arrows and E.Media.Arrows.ArrowUp)
+	local arrowSize = targetDB.arrowSize or 20
+	local xOff = targetDB.arrowXOffset or 0
+	local yOff = targetDB.arrowYOffset or 0
+
+	if element.TopIndicator then
+		element.TopIndicator:SetTexture(arrowTex)
+		element.TopIndicator:SetTexCoord(1, 1, 1, 0, 0, 1, 0, 0)
+		element.TopIndicator:SetSize(arrowSize, arrowSize)
+		element.TopIndicator:ClearAllPoints()
+		element.TopIndicator:SetPoint('BOTTOM', health, 'TOP', xOff, yOff)
+	end
+
+	if element.LeftIndicator then
+		element.LeftIndicator:SetTexture(arrowTex)
+		-- right-side arrow must point inward (to the left)
+		element.LeftIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
+		element.LeftIndicator:SetSize(arrowSize, arrowSize)
+		element.LeftIndicator:ClearAllPoints()
+		element.LeftIndicator:SetPoint('LEFT', health, 'RIGHT', xOff, yOff)
+	end
+
+	if element.RightIndicator then
+		element.RightIndicator:SetTexture(arrowTex)
+		-- left-side arrow must point inward (to the right)
+		element.RightIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0)
+		element.RightIndicator:SetSize(arrowSize, arrowSize)
+		element.RightIndicator:ClearAllPoints()
+		element.RightIndicator:SetPoint('RIGHT', health, 'LEFT', -xOff, yOff)
+	end
+end
+
 local function ShowIndicators(element, isTarget, color)
 	if isTarget then
 		if element.TopIndicator and (element.style == 'style3' or element.style == 'style5' or element.style == 'style6') then
@@ -61,6 +99,7 @@ local function Update(self)
 	if not sf.ShowTargetIndicator then return end
 
 	element.style = sf.TargetIndicatorStyle or 'style4'
+	ConfigureStyleFilterIndicators(self, element)
 
 	if element.style ~= 'none' then
 		local isTarget = UnitIsUnit(self.unit, 'target')

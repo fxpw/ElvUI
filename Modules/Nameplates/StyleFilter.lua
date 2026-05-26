@@ -34,6 +34,23 @@ local function C_Timer_NewTimer(delay, cb)
 	return C_Timer:NewTimer(delay, cb)
 end
 
+local function StyleFilterGetColor(color, fallback)
+	if type(color) == 'table' then
+		return color.r or fallback.r, color.g or fallback.g, color.b or fallback.b, color.a or fallback.a
+	end
+	return fallback.r, fallback.g, fallback.b, fallback.a
+end
+
+local function StyleFilterHideTargetVisuals(frame)
+	local ti = frame and frame.TargetIndicator
+	if not ti then return end
+	if ti.TopIndicator then ti.TopIndicator:Hide() end
+	if ti.LeftIndicator then ti.LeftIndicator:Hide() end
+	if ti.RightIndicator then ti.RightIndicator:Hide() end
+	if ti.Shadow then ti.Shadow:Hide() end
+	if ti.Spark then ti.Spark:Hide() end
+end
+
 mod.TriggerConditions = {
 	raidTargets = {
 		-- GetRaidTargetIndex() returns 1..8; map to the action subkey used in DB.
@@ -553,7 +570,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleChanged = true
 		frame.HealthColorChanged = true
 		local hc = actions.color.healthColor
-		local hr, hg, hb, ha = hc.r, hc.g, hc.b, hc.a
+		local hr, hg, hb, ha = StyleFilterGetColor(hc, { r = 1, g = 1, b = 1, a = 1 })
 		if actions.color.healthClass then
 			local classColor = frame.classFile and ((CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[frame.classFile]) or RAID_CLASS_COLORS[frame.classFile])
 			if classColor then hr, hg, hb = classColor.r, classColor.g, classColor.b end
@@ -569,7 +586,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleChanged = true
 		frame.BorderChanged = true
 		local bc = actions.color.borderColor
-		local br, bg, bb, ba = bc.r, bc.g, bc.b, bc.a
+		local br, bg, bb, ba = StyleFilterGetColor(bc, { r = 1, g = 1, b = 1, a = 1 })
 		if actions.color.borderClass then
 			local classColor = frame.classFile and ((CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[frame.classFile]) or RAID_CLASS_COLORS[frame.classFile])
 			if classColor then br, bg, bb = classColor.r, classColor.g, classColor.b end
@@ -619,7 +636,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		local nameText = frame.Name and frame.Name:GetText()
 		if nameText and nameText ~= "" then
 			local nc = actions.color.nameColor
-			local nr, ng, nb, na = nc.r, nc.g, nc.b, nc.a
+			local nr, ng, nb, na = StyleFilterGetColor(nc, { r = 1, g = 1, b = 1, a = 1 })
 			if actions.color.nameClass then
 				local classColor = frame.classFile and ((CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[frame.classFile]) or RAID_CLASS_COLORS[frame.classFile])
 				if classColor then nr, ng, nb = classColor.r, classColor.g, classColor.b end
@@ -635,24 +652,36 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.NameOnlyChanged = true
 		frame.StyleFilterChanges.NameOnly = true
 		--hide the bars (Health stays Shown but visually transparent so children keep framelevel)
-		if frame.Castbar and frame.Castbar:IsShown() then frame.Castbar:Hide() end
+		if frame:IsElementEnabled('Castbar') then
+			frame.StyleFilterChanges.CastbarByNameOnly = true
+			frame:DisableElement('Castbar')
+		end
+		if frame.Castbar then
+			frame.Castbar:Hide()
+		end
 		mod:Health_SetTransparent(frame, true)
-		--hide the target indicator
-		mod:Configure_Glow(frame)
-		mod:Update_Glow(frame)
-		--position the name and update its color
-		frame.Name:ClearAllPoints()
-		frame.Name:SetJustifyH("CENTER")
-		frame.Name:SetPoint("CENTER", frame.Health or frame)
-		if mod.db.units[frame.UnitType].level.enable then
-			frame.Level:ClearAllPoints()
-			frame.Level:SetPoint("LEFT", frame.Name, "RIGHT")
-			frame.Level:SetJustifyH("LEFT")
-			frame.Level:SetFormattedText(" [%s]", mod:UnitLevel(frame))
+		if frame:IsElementEnabled('Power') then
+			frame.StyleFilterChanges.PowerByNameOnly = true
+			frame:DisableElement('Power')
 		end
-		if not NameColorChanged then
-			mod:Update_Name(frame, true)
+		if frame.Power then
+			frame.Power:Hide()
 		end
+		if frame.Cutaway and frame.Cutaway.Health then
+			frame.Cutaway.Health:Hide()
+		elseif frame.CutawayHealth then
+			frame.CutawayHealth:Hide()
+		end
+		if frame.FlashTexture then
+			E:StopFlash(frame.FlashTexture)
+			frame.FlashTexture:Hide()
+		end
+		-- hide any target arrows/glow unless explicitly enabled by style-filter action
+		StyleFilterHideTargetVisuals(frame)
+
+		-- StyleFilter NameOnly should match regular NameOnly visuals: keep only name text.
+		mod:Update_Tags(frame, true)
+		mod:Update_PvPIndicator(frame)
 		mod:Update_TargetIndicator(frame)
 	end
 	if ShowHealthChanged then
@@ -734,7 +763,11 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 	end
 	if NameOnlyChanged then
 		frame.NameOnlyChanged = nil
+		local hadPowerByNameOnly = frame.StyleFilterChanges.PowerByNameOnly
+		local hadCastbarByNameOnly = frame.StyleFilterChanges.CastbarByNameOnly
 		frame.StyleFilterChanges.NameOnly = nil
+		frame.StyleFilterChanges.PowerByNameOnly = nil
+		frame.StyleFilterChanges.CastbarByNameOnly = nil
 		frame.TopLevelFrame = nil --We can safely clear this here because it is set upon `UpdateElement_Auras` if needed
 		if mod.db.units[frame.UnitType].health.enable or (frame.isTarget and mod.db.alwaysShowTargetHealth) then
 			mod:Health_SetTransparent(frame, false)
@@ -753,6 +786,14 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		if mod.db.units[frame.UnitType].level.enable then
 			mod:Update_Level(frame)
 		end
+		mod:Update_Tags(frame)
+		if hadPowerByNameOnly then
+			mod:Update_Power(frame)
+		end
+		if hadCastbarByNameOnly then
+			mod:Update_Castbar(frame)
+		end
+		mod:Update_PvPIndicator(frame)
 		mod:Update_TargetIndicator(frame)
 	end
 	if ShowHealthChanged then
@@ -1335,6 +1376,11 @@ function mod:StyleFilterUpdate(frame, event)
 		if filter and filter.triggers then
 			mod:StyleFilterConditionCheck(frame, filter, filter.triggers)
 		end
+	end
+
+	-- Final guard: NameOnly must always keep health visuals hidden.
+	if frame.StyleFilterChanges.NameOnly then
+		mod:Health_SetTransparent(frame, true)
 	end
 
 	-- Apply deferred frame level reset only if no filter re-claimed the boost this update

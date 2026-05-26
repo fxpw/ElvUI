@@ -368,6 +368,7 @@ end
 
 function M:CreateFarmModeMap()
 	local fm = CreateFrame("Minimap", "FarmModeMap", E.UIParent)
+	fm:SetFrameStrata("MEDIUM")
 	fm:Size(E.db.farmSize)
 	fm:Point("TOP", 0, -120)
 	fm:SetClampedToScreen(true)
@@ -848,6 +849,8 @@ function M:Initialize()
 	Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
 	Minimap:CreateBackdrop()
 	Minimap:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+	Minimap:SetFrameStrata("MEDIUM")
+	MinimapCluster:SetFrameStrata("MEDIUM")
 	Minimap:HookScript("OnEnter", function(self)
 		if E.db.general.minimap.locationText ~= "MOUSEOVER" or not E.private.general.minimap.enable then return end
 		self.location:Show()

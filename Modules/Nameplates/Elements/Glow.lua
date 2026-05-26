@@ -16,6 +16,15 @@ Target Glow Style Option Variables
 function NP:Update_Glow(frame)
 	local ti = frame.TargetIndicator
 	if not ti then return end
+	local sf = NP:StyleFilterChanges(frame)
+	if sf.NameOnly and not sf.ShowTargetIndicator then
+		ti.TopIndicator:Hide()
+		ti.LeftIndicator:Hide()
+		ti.RightIndicator:Hide()
+		ti.Shadow:Hide()
+		ti.Spark:Hide()
+		return
+	end
 
 	local showIndicator
 
@@ -114,6 +123,15 @@ end
 function NP:Configure_Glow(frame)
 	local ti = frame.TargetIndicator
 	if not ti then return end
+	local sf = NP:StyleFilterChanges(frame)
+	if sf.NameOnly and not sf.ShowTargetIndicator then
+		ti.TopIndicator:Hide()
+		ti.LeftIndicator:Hide()
+		ti.RightIndicator:Hide()
+		ti.Shadow:Hide()
+		ti.Spark:Hide()
+		return
+	end
 
 	local glowStyle = self.db.units.TARGET.glowStyle
 	local healthIsShown = NP:Health_IsVisible(frame)

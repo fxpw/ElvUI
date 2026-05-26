@@ -80,6 +80,12 @@ function NP:Health_UpdateColor(_, unit)
 	if element.PostUpdateColor then
 		element:PostUpdateColor(unit, r, g, b)
 	end
+
+	-- Some paths re-assign statusbar textures/colors after NameOnly is applied.
+	-- Re-assert transparency so the health fill cannot visually reappear.
+	if element._isTransparent then
+		NP:Health_SetTransparent(self, true)
+	end
 end
 
 -- nameOnly visual toggle: keep the Health frame Shown so children (Name/Level) keep
@@ -92,6 +98,18 @@ function NP:Health_SetTransparent(nameplate, transparent)
 	local tex = Health:GetStatusBarTexture()
 	if tex then tex:SetAlpha(a) end
 	if Health.bg then Health.bg:SetAlpha(a) end
+	if nameplate.Highlight then
+		nameplate.Highlight:SetAlpha(a)
+		if transparent then
+			nameplate.Highlight:Hide()
+		end
+	end
+	if nameplate.HealthFlashTexture then
+		nameplate.HealthFlashTexture:SetAlpha(a)
+		if transparent then
+			nameplate.HealthFlashTexture:Hide()
+		end
+	end
 	if Health.backdrop then
 		if transparent then Health.backdrop:Hide() else Health.backdrop:Show() end
 	end

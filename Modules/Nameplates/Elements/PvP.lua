@@ -8,8 +8,9 @@ end
 
 function NP:Update_PvPIndicator(nameplate)
 	local db = NP:PlateDB(nameplate)
+	local sf = NP:StyleFilterChanges(nameplate)
 
-	if db.pvpindicator and db.pvpindicator.enable and not db.nameOnly then
+	if db.pvpindicator and db.pvpindicator.enable and not (db.nameOnly or sf.NameOnly) then
 		if not nameplate:IsElementEnabled('PvPIndicator') then
 			nameplate:EnableElement('PvPIndicator')
 		end

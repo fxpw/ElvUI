@@ -33,6 +33,11 @@ local function HealPrediction_SetTransparent(element, transparent)
 	element._isTransparent = transparent or nil
 end
 
+local function HealPrediction_ShouldHide(nameplate, plateDB)
+	local sf = NP:StyleFilterChanges(nameplate)
+	return (plateDB and plateDB.nameOnly) or sf.NameOnly or not NP:Health_IsVisible(nameplate)
+end
+
 -- PostUpdate runs after the oUF_HealthPrediction plugin updates the bars.
 -- Adjusts absorb / heal-absorb bar values according to the configured absorbStyle.
 local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomingHeal, absorb, healAbsorb, hasOverAbsorb, hasOverHealAbsorb, health, maxHealth)
@@ -41,7 +46,7 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 	if not db or not db.enable or not health then return end
 
 	local plateDB = NP:PlateDB(nameplate)
-	if plateDB.nameOnly then
+	if HealPrediction_ShouldHide(nameplate, plateDB) then
 		if not element._isTransparent then
 			HealPrediction_SetTransparent(element, true)
 		end
@@ -263,7 +268,7 @@ function NP:Configure_HealPrediction(nameplate)
 	element.overHealAbsorb:SetPoint('RIGHT', health, 'LEFT', 4, 0)
 
 	element.maxOverflow = 1 + (db.maxOverflow or 0)
-	HealPrediction_SetTransparent(element, plateDB.nameOnly)
+	HealPrediction_SetTransparent(element, HealPrediction_ShouldHide(nameplate, plateDB))
 
 	if not nameplate:IsElementEnabled('HealthPrediction') then
 		nameplate:EnableElement('HealthPrediction')
