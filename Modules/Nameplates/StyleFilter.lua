@@ -541,7 +541,18 @@ function mod:StyleFilterDefaultTag(frame, kind)
 	return STYLEFILTER_DEFAULT_TAGS[kind] or ''
 end
 
-function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, TargetIndicatorChanged)
+local function StyleFilterSetTag(frame, fontString, tagFormat)
+	if not (frame and fontString) then return end
+	if tagFormat and tagFormat ~= '' then
+		frame:Tag(fontString, tagFormat)
+		fontString:Show()
+	else
+		frame:Untag(fontString)
+		fontString:Hide()
+	end
+end
+
+function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, NameTagChanged, LevelTagChanged, PowerTagChanged, TargetIndicatorChanged)
 	if VisibilityChanged then
 		frame.StyleChanged = true
 		frame.VisibilityChanged = true
@@ -647,6 +658,24 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			end
 		end
 	end
+	if NameTagChanged then
+		frame.StyleChanged = true
+		frame.NameTagChanged = true
+		frame.StyleFilterChanges.NameTag = actions.text.nameTag
+		StyleFilterSetTag(frame, frame.Name, actions.text.nameTag)
+	end
+	if LevelTagChanged then
+		frame.StyleChanged = true
+		frame.LevelTagChanged = true
+		frame.StyleFilterChanges.LevelTag = actions.text.levelTag
+		StyleFilterSetTag(frame, frame.Level, actions.text.levelTag)
+	end
+	if PowerTagChanged and frame.Power and frame.Power.Text then
+		frame.StyleChanged = true
+		frame.PowerTagChanged = true
+		frame.StyleFilterChanges.PowerTag = actions.text.powerTag
+		StyleFilterSetTag(frame, frame.Power.Text, actions.text.powerTag)
+	end
 	if NameOnlyChanged then
 		frame.StyleChanged = true
 		frame.NameOnlyChanged = true
@@ -703,7 +732,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 	end
 end
 
-function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, TargetIndicatorChanged)
+function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, NameTagChanged, LevelTagChanged, PowerTagChanged, TargetIndicatorChanged)
 	frame.StyleChanged = nil
 	if VisibilityChanged then
 		frame.VisibilityChanged = nil
@@ -1078,6 +1107,7 @@ function mod:StyleFilterPass(frame, actions)
 	local healthBarEnabled = (frame.UnitType and mod.db.units[frame.UnitType].health.enable) or (frame.isTarget and mod.db.alwaysShowTargetHealth)
 	-- When showHealth is active the health bar will be shown by ShowHealthChanged even if currently hidden
 	local healthBarShown = healthBarEnabled and (mod:Health_IsVisible(frame) or actions.showHealth)
+	local textActions = actions.text
 
 	mod:StyleFilterSetChanges(frame, actions,
 		(healthBarShown and actions.color and actions.color.health), --HealthColorChanged
@@ -1091,13 +1121,16 @@ function mod:StyleFilterPass(frame, actions)
 		(actions.nameOnly and not actions.showHealth), --NameOnlyChanged
 		(actions.hide), --VisibilityChanged
 		(actions.showHealth), --ShowHealthChanged
+		(textActions and textActions.enableName and textActions.nameTag and textActions.nameTag ~= ''), --NameTagChanged
+		(textActions and textActions.enableLevel and textActions.levelTag and textActions.levelTag ~= ''), --LevelTagChanged
+		(textActions and textActions.enablePower and textActions.powerTag and textActions.powerTag ~= ''), --PowerTagChanged
 		(actions.showTargetIndicator) --TargetIndicatorChanged
 	)
 end
 
 function mod:StyleFilterClear(frame)
 	if frame and frame.StyleChanged then
-		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged, frame.TargetIndicatorChanged)
+		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged, frame.NameTagChanged, frame.LevelTagChanged, frame.PowerTagChanged, frame.TargetIndicatorChanged)
 	end
 end
 
@@ -1367,7 +1400,13 @@ function mod:StyleFilterUpdate(frame, event)
 	-- If no filters are active and this frame has no pending style, nothing to do
 	if not frame.StyleChanged and not frame.pendingFrameLevelReset and not next(mod.StyleFilterTriggerList) then return end
 
+	local hadNameTag = frame.NameTagChanged
+	local hadLevelTag = frame.LevelTagChanged
+	local hadPowerTag = frame.PowerTagChanged
 	local state = mod:StyleFilterHiddenState(frame.StyleFilterChanges)
+	frame.StyleFilterChanges.NameTag = nil
+	frame.StyleFilterChanges.LevelTag = nil
+	frame.StyleFilterChanges.PowerTag = nil
 
 	mod:StyleFilterClear(frame)
 
@@ -1381,6 +1420,20 @@ function mod:StyleFilterUpdate(frame, event)
 	-- Final guard: NameOnly must always keep health visuals hidden.
 	if frame.StyleFilterChanges.NameOnly then
 		mod:Health_SetTransparent(frame, true)
+	end
+
+	-- Restore default tags only when an override is no longer active.
+	if hadNameTag and not frame.StyleFilterChanges.NameTag then
+		frame.NameTagChanged = nil
+		StyleFilterSetTag(frame, frame.Name, mod:StyleFilterDefaultTag(frame, 'name'))
+	end
+	if hadLevelTag and not frame.StyleFilterChanges.LevelTag then
+		frame.LevelTagChanged = nil
+		StyleFilterSetTag(frame, frame.Level, mod:StyleFilterDefaultTag(frame, 'level'))
+	end
+	if hadPowerTag and not frame.StyleFilterChanges.PowerTag and frame.Power and frame.Power.Text then
+		frame.PowerTagChanged = nil
+		StyleFilterSetTag(frame, frame.Power.Text, mod:StyleFilterDefaultTag(frame, 'power'))
 	end
 
 	-- Apply deferred frame level reset only if no filter re-claimed the boost this update
@@ -1403,6 +1456,12 @@ do -- oUF style filter inject watch functions without actually registering any e
 	local pooler = CreateFrame('Frame')
 	pooler.frames = {}
 	pooler.delay = 0.2 -- update check rate (was 0.1; increased to reduce per-frame cost)
+	local immediateEvents = {
+		PLAYER_TARGET_CHANGED = true,
+		PLAYER_FOCUS_CHANGED = true,
+		RAID_TARGET_UPDATE = true,
+		NAME_PLATE_UNIT_ADDED = true,
+	}
 
 	pooler.update = function()
 		for frame in pairs(pooler.frames) do
@@ -1431,7 +1490,11 @@ do -- oUF style filter inject watch functions without actually registering any e
 
 		-- Trigger Event and (unitless OR verifiedUnit)
 		if mod.StyleFilterTriggerEvents[event] and (mod.StyleFilterDefaultEvents[event] or (arg1 and arg1 == frame.unit)) then
-			pooler.frames[frame] = true
+			if immediateEvents[event] then
+				mod:StyleFilterUpdate(frame, event)
+			else
+				pooler.frames[frame] = true
+			end
 		end
 	end
 

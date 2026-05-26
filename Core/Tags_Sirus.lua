@@ -19,6 +19,12 @@ local GetUnitRatedBattlegroundRankInfo = GetUnitRatedBattlegroundRankInfo
 local UnitAura = UnitAura
 local UnitGUID = UnitGUID
 local UnitIsPlayer = UnitIsPlayer
+local UnitExists = UnitExists
+local CheckInteractDistance = CheckInteractDistance
+local floor = math.floor
+local LibStub = LibStub
+
+local LRC = LibStub and LibStub("LibRangeCheck-2.0", true)
 
 local CategoriesIDs = {
 	90001, 90002,
@@ -428,6 +434,70 @@ E:AddTagInfo("race:abbrev", "Sirus", "Показывает расу юнита �
 E:AddTagInfo("happiness", "Sirus", "Счастье питомца строка")
 E:AddTagInfo("happiness:icon", "Sirus", "Счастье питомца в иконке")
 E:AddTagInfo("ilvl", "Sirus", "Показывает уровень предметов")
+
+local function DistanceCheck_GetRanges(unit)
+	if not unit or not UnitExists(unit) then return nil, nil end
+
+	-- Prefer LibRangeCheck (spell/item driven) when available.
+	if not LRC and LibStub then
+		LRC = LibStub("LibRangeCheck-2.0", true)
+	end
+
+	if LRC then
+		return LRC:GetRange(unit)
+	end
+end
+
+ElvUF.Tags.OnUpdateThrottle["distance:check"] = 0.2
+ElvUF.Tags.Methods["distance:check"] = function(unit)
+	local minRange, maxRange = DistanceCheck_GetRanges(unit)
+	if minRange and maxRange then
+		return format("%d-%d", floor(minRange), floor(maxRange))
+	elseif minRange then
+		return format(">%d", floor(minRange))
+	elseif maxRange then
+		return format("<%d", floor(maxRange))
+	end
+
+	-- Approximate fallback by interaction range checks (3.3.5a-safe).
+	if CheckInteractDistance(unit, 3) then
+		return "0-10"
+	elseif CheckInteractDistance(unit, 2) then
+		return "10-11"
+	elseif CheckInteractDistance(unit, 1) then
+		return "11-28"
+	else
+		return ">28"
+	end
+end
+
+ElvUF.Tags.OnUpdateThrottle["distance:check:compare"] = 0.2
+ElvUF.Tags.Methods["distance:check:compare"] = function(unit)
+	local minRange, maxRange = DistanceCheck_GetRanges(unit)
+	if minRange and maxRange then
+		return format(">%d <%d", floor(minRange), floor(maxRange))
+	elseif minRange then
+		return format(">%d", floor(minRange))
+	elseif maxRange then
+		return format("<%d", floor(maxRange))
+	end
+
+	if not unit or not UnitExists(unit) then return nil end
+
+	-- Approximate fallback by interaction range checks (3.3.5a-safe).
+	if CheckInteractDistance(unit, 3) then
+		return "<10"
+	elseif CheckInteractDistance(unit, 2) then
+		return "<11"
+	elseif CheckInteractDistance(unit, 1) then
+		return "<28"
+	else
+		return ">28"
+	end
+end
+
+E:AddTagInfo("distance:check", "Sirus", "Дистанция до юнита в формате диапазона: 20-25 (или fallback 0-10/10-11/11-28/>28)")
+E:AddTagInfo("distance:check:compare", "Sirus", "Дистанция до юнита в формате сравнений: >20 <25 (или fallback <10/<11/<28/>28)")
 
 
 -- for textFormat, length in pairs({veryshort = 5, short = 10, medium = 15, long = 20}) do

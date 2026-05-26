@@ -1,6 +1,11 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
+local pairs = pairs
+
+local function CustomTextAnchor(nameplate)
+	return (nameplate and nameplate.Health) or nameplate
+end
 
 function NP:Construct_TagText(nameplate)
 	local Text = nameplate:CreateFontString(nil, 'OVERLAY')
@@ -68,5 +73,59 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 	end
 	if db.power and db.power.text then
 		NP:Update_TagText(nameplate, nameplate.Power.Text, db.power.text, hide, nameplate.Power)
+	end
+end
+
+function NP:Update_CustomTexts(nameplate)
+	local db = NP:PlateDB(nameplate)
+	local customDB = db and db.customTexts
+	nameplate.customTexts = nameplate.customTexts or {}
+
+	-- Hide stale texts that were removed from profile.
+	for objectName, object in pairs(nameplate.customTexts) do
+		if not (customDB and customDB[objectName]) then
+			nameplate:Untag(object)
+			object:Hide()
+			nameplate.customTexts[objectName] = nil
+		end
+	end
+
+	if not customDB then return end
+
+	for objectName, objectDB in pairs(customDB) do
+		local object = nameplate.customTexts[objectName]
+		if not object then
+			local parent = nameplate.RaisedElement or nameplate
+			object = parent:CreateFontString(nil, 'OVERLAY')
+			nameplate.customTexts[objectName] = object
+		end
+
+		if objectDB.enable == nil then
+			objectDB.enable = true
+		end
+		objectDB.attachTextTo = 'Health'
+
+		object:FontTemplate(
+			LSM:Fetch('font', objectDB.font or NP.db.font),
+			objectDB.size or NP.db.fontSize,
+			objectDB.fontOutline or NP.db.fontOutline
+		)
+		object:SetJustifyH(objectDB.justifyH or 'CENTER')
+		object:ClearAllPoints()
+		object:Point(
+			objectDB.justifyH or 'CENTER',
+			CustomTextAnchor(nameplate),
+			objectDB.justifyH or 'CENTER',
+			objectDB.xOffset or 0,
+			objectDB.yOffset or 0
+		)
+
+		if objectDB.enable then
+			nameplate:Tag(object, objectDB.text_format or '')
+			object:Show()
+		else
+			nameplate:Untag(object)
+			object:Hide()
+		end
 	end
 end

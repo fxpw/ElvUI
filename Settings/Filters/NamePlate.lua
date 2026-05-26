@@ -173,6 +173,14 @@ E.StyleFilterDefaults = {
 			color = { r = 1, g = 1, b = 1, a = 1 },
 			speed = 4
 		},
+		text = {
+			enableName = false,
+			nameTag = '[name:long]',
+			enableLevel = false,
+			levelTag = '[smartlevel]',
+			enablePower = false,
+			powerTag = '',
+		},
 		hide = false,
 		nameOnly = false,
 		showHealth = false,

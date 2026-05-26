@@ -353,6 +353,7 @@ function NP:UpdatePlate(nameplate, updateBase)
 		end
 	elseif updateBase then
 		NP:Update_Tags(nameplate)
+		NP:Update_CustomTexts(nameplate)
 		NP:Update_Health(nameplate)
 		NP:Update_HealPrediction(nameplate)
 		NP:Update_Highlight(nameplate)
@@ -385,6 +386,13 @@ function NP:DisablePlate(nameplate)
 	for _, element in ipairs(NP.DisableElements) do
 		if nameplate:IsElementEnabled(element) then
 			nameplate:DisableElement(element)
+		end
+	end
+
+	if nameplate.customTexts then
+		for _, object in pairs(nameplate.customTexts) do
+			nameplate:Untag(object)
+			object:Hide()
 		end
 	end
 end
