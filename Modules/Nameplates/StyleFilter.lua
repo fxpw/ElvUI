@@ -935,9 +935,18 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 		if (trigger.isTarget and frame.isTarget) or (trigger.notTarget and not frame.isTarget) then passed = true else return end
 	end
 
-	-- Unit Target (Retail only)
-	if E.Retail and (trigger.targetMe or trigger.notTargetMe) then
-		if (trigger.targetMe and frame.isTargetingMe) or (trigger.notTargetMe and not frame.isTargetingMe) then passed = true else return end
+	-- Unit Target (3.3.5a/Retail)
+	if trigger.targetMe or trigger.notTargetMe or trigger.targetPet or trigger.notTargetPet then
+		local targetsMe = frame.isTargetingMe
+		local targetsPet = frame.isTargetingPet
+		if (trigger.targetMe and targetsMe)
+		or (trigger.notTargetMe and not targetsMe)
+		or (trigger.targetPet and targetsPet)
+		or (trigger.notTargetPet and not targetsPet) then
+			passed = true
+		else
+			return
+		end
 	end
 
 	-- Unit Focus (Retail only)
@@ -1148,6 +1157,7 @@ end
 function mod:StyleFilterTargetFunction(_, unit)
 	unit = unit or self.unit
 	self.isTargetingMe = unit and UnitIsUnit(unit..'target', 'player') or nil
+	self.isTargetingPet = unit and UnitIsUnit(unit..'target', 'pet') or nil
 end
 
 mod.StyleFilterEventFunctions = { -- a prefunction to the injected oUF watch
@@ -1190,6 +1200,7 @@ function mod:StyleFilterClearVariables(nameplate)
 	nameplate.isFocused = nil
 	nameplate.inVehicle = nil
 	nameplate.isTargetingMe = nil
+	nameplate.isTargetingPet = nil
 	nameplate.RaidTargetIndex = nil
 	nameplate.ActionScale = nil
 	nameplate.ThreatScale = nil
@@ -1306,7 +1317,7 @@ function mod:StyleFilterConfigure()
 				if t.isResting or t.notResting then		events.PLAYER_UPDATE_RESTING = 1 end
 				if t.isPet or t.isNotPet then			events.UNIT_PET = 1 end
 
-				if t.targetMe or t.notTargetMe then
+				if t.targetMe or t.notTargetMe or t.targetPet or t.notTargetPet then
 					events.UNIT_THREAT_LIST_UPDATE = 1
 					events.UNIT_TARGET = 1
 				end
