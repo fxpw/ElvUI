@@ -116,6 +116,7 @@ local millableHerbs = {
 	[3821] = true, -- Goldthorn
 	[3358] = true, -- Khadgar's Whisker
 	[3819] = true, -- Dragon's Teeth (Wintersbite)
+	[8831] = true, -- Purple Lotus
 	[8836] = true, -- Arthas' Tears
 	[8838] = true, -- Sungrass
 	[8839] = true, -- Blindweed
