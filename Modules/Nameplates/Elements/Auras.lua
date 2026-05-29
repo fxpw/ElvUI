@@ -401,8 +401,8 @@ function NP:Construct_Auras(nameplate)
 	Buffs.disableMouse = true
 	Buffs.isNameplate = true
 	Buffs.initialAnchor = 'BOTTOMLEFT'
-	Buffs.growthX = 'RIGHT'
-	Buffs.growthY = 'UP'
+	Buffs['growth-x'] = 'RIGHT'
+	Buffs['growth-y'] = 'UP'
 	Buffs.type = 'buffs'
 	Buffs.forceShow = nameplate == _G.ElvNP_Test
 	Buffs.tickers = {}
@@ -423,8 +423,8 @@ function NP:Construct_Auras(nameplate)
 	Debuffs.disableMouse = true
 	Debuffs.isNameplate = true
 	Debuffs.initialAnchor = 'BOTTOMLEFT'
-	Debuffs.growthX = 'RIGHT'
-	Debuffs.growthY = 'UP'
+	Debuffs['growth-x'] = 'RIGHT'
+	Debuffs['growth-y'] = 'UP'
 	Debuffs.type = 'debuffs'
 	Debuffs.forceShow = nameplate == _G.ElvNP_Test
 	Debuffs.tickers = {}
@@ -532,10 +532,8 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras.onlyShowPlayer = false
 	auras.spacing = db.spacing
 	local anchorPoint = db.anchorPoint
-	-- Respect manual growth choice on pure side anchors (LEFT/RIGHT for X, TOP/BOTTOM for Y).
-	-- Corner anchors still derive growth from anchor point to keep legacy behavior.
-	auras.growthY = ((anchorPoint == 'TOP' or anchorPoint == 'BOTTOM') and db.growthY) or MatchGrowthY[anchorPoint] or db.growthY
-	auras.growthX = ((anchorPoint == 'LEFT' or anchorPoint == 'RIGHT') and db.growthX) or MatchGrowthX[anchorPoint] or db.growthX
+	auras['growth-y'] = db.growthY or MatchGrowthY[anchorPoint] or 'UP'
+	auras['growth-x'] = db.growthX or MatchGrowthX[anchorPoint] or 'RIGHT'
 	auras.xOffset = db.xOffset
 	auras.yOffset = db.yOffset
 	auras.anchorPoint = anchorPoint
