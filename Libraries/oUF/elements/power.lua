@@ -369,22 +369,25 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_HAPPINESS', ColorPath)
 		end
 
-		if(element.frequentUpdates and (unit == 'player' or unit == 'pet')) then
-			element:SetScript('OnUpdate', onPowerUpdate)
-		else
-			self:RegisterEvent('UNIT_MANA', Path)
-			self:RegisterEvent('UNIT_RAGE', Path)
-			self:RegisterEvent('UNIT_FOCUS', Path)
-			self:RegisterEvent('UNIT_ENERGY', Path)
-			self:RegisterEvent('UNIT_RUNIC_POWER', Path)
-		end
+		local isNameplate = self.Buffs and self.Buffs.isNameplate
+		if not isNameplate then
+			if(element.frequentUpdates and (unit == 'player' or unit == 'pet')) then
+				element:SetScript('OnUpdate', onPowerUpdate)
+			else
+				self:RegisterEvent('UNIT_MANA', Path)
+				self:RegisterEvent('UNIT_RAGE', Path)
+				self:RegisterEvent('UNIT_FOCUS', Path)
+				self:RegisterEvent('UNIT_ENERGY', Path)
+				self:RegisterEvent('UNIT_RUNIC_POWER', Path)
+			end
 
-		self:RegisterEvent('UNIT_MAXMANA', Path)
-		self:RegisterEvent('UNIT_MAXRAGE', Path)
-		self:RegisterEvent('UNIT_MAXFOCUS', Path)
-		self:RegisterEvent('UNIT_MAXENERGY', Path)
-		self:RegisterEvent('UNIT_MAXRUNIC_POWER', Path)
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
+			self:RegisterEvent('UNIT_MAXMANA', Path)
+			self:RegisterEvent('UNIT_MAXRAGE', Path)
+			self:RegisterEvent('UNIT_MAXFOCUS', Path)
+			self:RegisterEvent('UNIT_MAXENERGY', Path)
+			self:RegisterEvent('UNIT_MAXRUNIC_POWER', Path)
+			self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
+		end
 
 		if(element:IsObjectType('StatusBar')) then
 			element.texture = element:GetStatusBarTexture() and element:GetStatusBarTexture():GetTexture() or [[Interface\TargetingFrame\UI-StatusBar]]
@@ -402,22 +405,25 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
-		if(element:GetScript('OnUpdate')) then
-			element:SetScript('OnUpdate', nil)
-		else
-			self:UnregisterEvent('UNIT_MANA', Path)
-			self:UnregisterEvent('UNIT_RAGE', Path)
-			self:UnregisterEvent('UNIT_FOCUS', Path)
-			self:UnregisterEvent('UNIT_ENERGY', Path)
-			self:UnregisterEvent('UNIT_RUNIC_POWER', Path)
-		end
+		local isNameplate = self.Buffs and self.Buffs.isNameplate
+		if not isNameplate then
+			if(element:GetScript('OnUpdate')) then
+				element:SetScript('OnUpdate', nil)
+			else
+				self:UnregisterEvent('UNIT_MANA', Path)
+				self:UnregisterEvent('UNIT_RAGE', Path)
+				self:UnregisterEvent('UNIT_FOCUS', Path)
+				self:UnregisterEvent('UNIT_ENERGY', Path)
+				self:UnregisterEvent('UNIT_RUNIC_POWER', Path)
+			end
 
-		self:UnregisterEvent('UNIT_MAXMANA', Path)
-		self:UnregisterEvent('UNIT_MAXRAGE', Path)
-		self:UnregisterEvent('UNIT_MAXFOCUS', Path)
-		self:UnregisterEvent('UNIT_MAXENERGY', Path)
-		self:UnregisterEvent('UNIT_MAXRUNIC_POWER', Path)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
+			self:UnregisterEvent('UNIT_MAXMANA', Path)
+			self:UnregisterEvent('UNIT_MAXRAGE', Path)
+			self:UnregisterEvent('UNIT_MAXFOCUS', Path)
+			self:UnregisterEvent('UNIT_MAXENERGY', Path)
+			self:UnregisterEvent('UNIT_MAXRUNIC_POWER', Path)
+			self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
+		end
 
 		self:UnregisterEvent('UNIT_CONNECTION', ColorPath)
 		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)

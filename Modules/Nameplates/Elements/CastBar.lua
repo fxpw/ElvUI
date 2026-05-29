@@ -95,6 +95,37 @@ end
 
 function NP:Castbar_PostCastStop() end
 
+local function PositionCastbarText(castbar, db)
+	castbar.Time:ClearAllPoints()
+	castbar.Text:ClearAllPoints()
+
+	if db.textPosition == 'BELOW' then
+		castbar.Time:Point('TOPRIGHT', castbar, 'BOTTOMRIGHT')
+		castbar.Text:Point('TOPLEFT', castbar, 'BOTTOMLEFT')
+		if db.hideTime then
+			castbar.Text:Point('TOPRIGHT', castbar, 'BOTTOMRIGHT')
+		else
+			castbar.Text:Point('TOPRIGHT', castbar.Time, 'TOPLEFT', -2, 0)
+		end
+	elseif db.textPosition == 'ABOVE' then
+		castbar.Time:Point('BOTTOMRIGHT', castbar, 'TOPRIGHT')
+		castbar.Text:Point('BOTTOMLEFT', castbar, 'TOPLEFT')
+		if db.hideTime then
+			castbar.Text:Point('BOTTOMRIGHT', castbar, 'TOPRIGHT')
+		else
+			castbar.Text:Point('BOTTOMRIGHT', castbar.Time, 'BOTTOMLEFT', -2, 0)
+		end
+	else
+		castbar.Time:Point('RIGHT', castbar, 'RIGHT', -4, 0)
+		castbar.Text:Point('LEFT', castbar, 'LEFT', 4, 0)
+		if db.hideTime then
+			castbar.Text:Point('RIGHT', castbar, 'RIGHT', -4, 0)
+		else
+			castbar.Text:Point('RIGHT', castbar.Time, 'LEFT', -2, 0)
+		end
+	end
+end
+
 function NP:Construct_Castbar(nameplate)
 	local castbar = CreateFrame('StatusBar', nameplate:GetName() .. 'Castbar', nameplate)
 	do
@@ -192,19 +223,7 @@ function NP:Update_Castbar(nameplate)
 			castbar.Button:Hide()
 		end
 
-		castbar.Time:ClearAllPoints()
-		castbar.Text:ClearAllPoints()
-
-		if db.textPosition == 'BELOW' then
-			castbar.Time:Point('TOPRIGHT', castbar, 'BOTTOMRIGHT')
-			castbar.Text:Point('TOPLEFT', castbar, 'BOTTOMLEFT')
-		elseif db.textPosition == 'ABOVE' then
-			castbar.Time:Point('BOTTOMRIGHT', castbar, 'TOPRIGHT')
-			castbar.Text:Point('BOTTOMLEFT', castbar, 'TOPLEFT')
-		else
-			castbar.Time:Point('RIGHT', castbar, 'RIGHT', -4, 0)
-			castbar.Text:Point('LEFT', castbar, 'LEFT', 4, 0)
-		end
+		PositionCastbarText(castbar, db)
 
 		if db.hideTime then
 			castbar.Time:Hide()

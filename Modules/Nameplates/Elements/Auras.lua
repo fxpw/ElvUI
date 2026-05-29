@@ -11,6 +11,7 @@ local strsplit = strsplit
 local UnitIsFriend = UnitIsFriend
 local UnitCanAttack = UnitCanAttack
 local UnitIsUnit = UnitIsUnit
+local UnitName = UnitName
 local ceil, min = math.ceil, math.min
 
 -- Local MatchGrowthX/Y tables (retail UF doesn't exist in WotLK)
@@ -35,6 +36,202 @@ local MatchGrowthY = {
 	TOP         = 'DOWN',
 	BOTTOM      = 'UP',
 }
+
+function NP:GetAuraIconSize(db)
+	if not db then return 27, 27 end
+
+	local width = db.size or 27
+	if db.keepSizeRatio ~= false then
+		return width, width
+	end
+
+	return width, db.height or width
+end
+
+function NP:SetAuraIconTexCoords(texture, frame)
+	if texture and frame then
+		texture:SetTexCoord(E:CropRatio(frame))
+	end
+end
+
+local NP_PLATE_POWER_EVENTS = {
+	'UNIT_MANA',
+	'UNIT_RAGE',
+	'UNIT_FOCUS',
+	'UNIT_ENERGY',
+	'UNIT_RUNIC_POWER',
+	'UNIT_MAXMANA',
+	'UNIT_MAXRAGE',
+	'UNIT_MAXFOCUS',
+	'UNIT_MAXENERGY',
+	'UNIT_MAXRUNIC_POWER',
+	'UNIT_DISPLAYPOWER',
+}
+
+local NP_PLATE_POWER_EVENT_SET = {}
+for i = 1, #NP_PLATE_POWER_EVENTS do
+	NP_PLATE_POWER_EVENT_SET[NP_PLATE_POWER_EVENTS[i]] = true
+end
+
+local function NP_ShouldTrackAuras(nameplate)
+	if not nameplate then return false end
+	local db = NP:PlateDB(nameplate)
+	return db and not db.nameOnly and (db.buffs.enable or db.debuffs.enable)
+end
+
+local function NP_FormatUsesPowerTag(fmt)
+	if not fmt or fmt == '' then return false end
+	local lower = fmt:lower()
+	return lower:find('pp', 1, true) or lower:find('mana', 1, true) or lower:find('energy', 1, true)
+		or lower:find('rage', 1, true) or lower:find('runic', 1, true) or lower:find('focus', 1, true)
+end
+
+local function NP_ShouldTrackPower(nameplate)
+	if not nameplate then return false end
+	local db = NP:PlateDB(nameplate)
+	if not db or db.nameOnly then return false end
+	if db.power and db.power.enable then return true end
+
+	local hText = db.health and db.health.text
+	if hText and hText.enable and NP_FormatUsesPowerTag(hText.textFormat or hText.format) then
+		return true
+	end
+
+	local pText = db.power and db.power.text
+	if pText and pText.enable and NP_FormatUsesPowerTag(pText.textFormat or pText.format) then
+		return true
+	end
+
+	return false
+end
+
+local function NP_ShouldTrackName(nameplate)
+	if not nameplate then return false end
+	local db = NP:PlateDB(nameplate)
+	if not db or db.nameOnly then return false end
+	local nameDB = db.name
+	return nameDB and nameDB.enable and nameDB.textFormat and nameDB.textFormat ~= ''
+end
+
+function NP:UpdatePlateName(nameplate)
+	if not nameplate or not nameplate.unit then return end
+
+	nameplate.unitName, nameplate.unitRealm = UnitName(nameplate.unit)
+
+	if nameplate.Name and nameplate.Name.UpdateTag then
+		nameplate.Name:UpdateTag()
+	end
+end
+
+function NP:UpdatePlatePower(nameplate)
+	if not nameplate or not nameplate.unit then return end
+
+	if nameplate.Power and nameplate.Power.ForceUpdate and nameplate:IsElementEnabled('Power') then
+		nameplate.Power:ForceUpdate()
+	end
+
+	local db = NP:PlateDB(nameplate)
+	local hText = db.health and db.health.text
+	if hText and hText.enable and nameplate.Health and nameplate.Health.Text and nameplate.Health.Text.UpdateTag then
+		nameplate.Health.Text:UpdateTag()
+	end
+
+	local pText = db.power and db.power.text
+	if pText and pText.enable and nameplate.Power and nameplate.Power.Text and nameplate.Power.Text.UpdateTag then
+		nameplate.Power.Text:UpdateTag()
+	end
+end
+
+local function NP_UnregisterPlateUnitEvent(frame, event, unit)
+	if frame.UnregisterUnitEvent then
+		frame:UnregisterUnitEvent(event, unit)
+	else
+		frame:UnregisterEvent(event)
+	end
+end
+
+local function NP_RegisterPlateUnitEvent(frame, event, unit)
+	frame:RegisterUnitEvent(event, unit)
+end
+
+local function NP_UnregisterNameplatePowerEvents(nameplate)
+	for i = 1, #NP_PLATE_POWER_EVENTS do
+		nameplate:UnregisterEvent(NP_PLATE_POWER_EVENTS[i])
+	end
+end
+
+function NP.PlateUnitEvent_OnEvent(buffs, event, unit)
+	local nameplate = buffs.nameplate
+	if not nameplate or not nameplate.unit then return end
+	if unit and not UnitIsUnit(unit, nameplate.unit) then return end
+
+	if event == 'UNIT_AURA' then
+		if nameplate.Debuffs and nameplate.Debuffs.ForceUpdate then
+			nameplate.Debuffs:ForceUpdate()
+		end
+		if nameplate.Buffs and nameplate.Buffs.ForceUpdate then
+			nameplate.Buffs:ForceUpdate()
+		end
+	elseif event == 'UNIT_NAME_UPDATE' then
+		NP:UpdatePlateName(nameplate)
+	elseif NP_PLATE_POWER_EVENT_SET[event] then
+		NP:UpdatePlatePower(nameplate)
+	end
+end
+
+function NP:UnregisterAuraUnitEvents(nameplate)
+	local buffs = nameplate and nameplate.Buffs_
+	local unit = buffs and buffs._npPlateUnit
+	if not buffs or not unit then return end
+
+	NP_UnregisterPlateUnitEvent(buffs, 'UNIT_AURA', unit)
+	NP_UnregisterPlateUnitEvent(buffs, 'UNIT_NAME_UPDATE', unit)
+	for i = 1, #NP_PLATE_POWER_EVENTS do
+		NP_UnregisterPlateUnitEvent(buffs, NP_PLATE_POWER_EVENTS[i], unit)
+	end
+
+	buffs._npPlateUnit = nil
+	buffs._npAuraUnit = nil
+end
+
+function NP:RegisterAuraUnitEvents(nameplate, unit)
+	unit = unit or nameplate.unit
+	local trackAuras = NP_ShouldTrackAuras(nameplate)
+	local trackPower = NP_ShouldTrackPower(nameplate)
+	local trackName = NP_ShouldTrackName(nameplate)
+
+	if not unit or (not trackAuras and not trackPower and not trackName) then
+		NP:UnregisterAuraUnitEvents(nameplate)
+		return
+	end
+
+	local buffs = nameplate.Buffs_
+	if not buffs or not buffs.RegisterUnitEvent then return end
+
+	if buffs._npPlateUnit == unit then return end
+
+	NP:UnregisterAuraUnitEvents(nameplate)
+	nameplate:UnregisterEvent('UNIT_AURA')
+	nameplate:UnregisterEvent('UNIT_NAME_UPDATE')
+	NP_UnregisterNameplatePowerEvents(nameplate)
+
+	buffs:SetScript('OnEvent', NP.PlateUnitEvent_OnEvent)
+
+	if trackAuras then
+		NP_RegisterPlateUnitEvent(buffs, 'UNIT_AURA', unit)
+	end
+	if trackName then
+		NP_RegisterPlateUnitEvent(buffs, 'UNIT_NAME_UPDATE', unit)
+	end
+	if trackPower then
+		for i = 1, #NP_PLATE_POWER_EVENTS do
+			NP_RegisterPlateUnitEvent(buffs, NP_PLATE_POWER_EVENTS[i], unit)
+		end
+	end
+
+	buffs._npPlateUnit = unit
+	buffs._npAuraUnit = unit
+end
 
 -- Custom AuraFilter for nameplates — reads self.db (the aura frame's db) directly,
 -- because UF:AuraFilter reads parent.db which is not set on nameplate frames.
@@ -83,21 +280,27 @@ end
 -- Smart aura position: fluid PostUpdate callbacks (NP-specific, since UF's use db.perrow/numrows).
 -- Non-fluid modes reuse UF.UpdateBuffsHeaderPosition / UF.UpdateDebuffsHeaderPosition directly
 -- because those only do position math with no db field lookups.
+local function NP_GetAuraRowHeight(auras)
+	return auras.sizeHeight or auras.size or 27
+end
+
 local function NP_UpdateBuffsHeight(self)
+	local iconHeight = NP_GetAuraRowHeight(self)
 	local n = self.visibleBuffs or 0
 	if n > 0 then
-		self:Height(self.size * min(ceil(n / (self.numAuras or 5)), self.numRows or 1))
+		self:Height(iconHeight * min(ceil(n / (self.numAuras or 5)), self.numRows or 1))
 	else
-		self:Height(self.size)
+		self:Height(iconHeight)
 	end
 end
 
 local function NP_UpdateDebuffsHeight(self)
+	local iconHeight = NP_GetAuraRowHeight(self)
 	local n = self.visibleDebuffs or 0
 	if n > 0 then
-		self:Height(self.size * min(ceil(n / (self.numAuras or 5)), self.numRows or 1))
+		self:Height(iconHeight * min(ceil(n / (self.numAuras or 5)), self.numRows or 1))
 	else
-		self:Height(self.size)
+		self:Height(iconHeight)
 	end
 end
 
@@ -231,12 +434,12 @@ function NP:Construct_Auras(nameplate)
 	-- WotLK oUF: PostCreateIcon / PostUpdateIcon (not PostCreateButton / PostUpdateButton)
 	Buffs.PreSetPosition = UF.SortAuras
 	Buffs.PostCreateIcon = NP.Construct_AuraIcon
-	Buffs.PostUpdateIcon = UF.PostUpdateAura
+	Buffs.PostUpdateIcon = NP.PostUpdateAuraIcon
 	Buffs.CustomFilter = NP_AuraFilter
 
 	Debuffs.PreSetPosition = UF.SortAuras
 	Debuffs.PostCreateIcon = NP.Construct_AuraIcon
-	Debuffs.PostUpdateIcon = UF.PostUpdateAura
+	Debuffs.PostUpdateIcon = NP.PostUpdateAuraIcon
 	Debuffs.CustomFilter = NP_AuraFilter
 
 	Buffs.nameplate, Debuffs.nameplate = nameplate, nameplate
@@ -277,6 +480,18 @@ function NP:Construct_AuraIcon(button)
 	NP:UpdateAuraSettings(button)
 end
 
+function NP:PostUpdateAuraIcon(unit, button)
+	UF:PostUpdateAura(unit, button)
+
+	local auras = button and button:GetParent()
+	local db = auras and auras.db
+	if db then
+		local width, height = NP:GetAuraIconSize(db)
+		button:SetSize(width, height)
+		NP:SetAuraIconTexCoords(button.icon, button)
+	end
+end
+
 function NP:UpdateAuraSettings(button)
 	local db = button.db
 	if db then
@@ -287,8 +502,11 @@ function NP:UpdateAuraSettings(button)
 		button.count:FontTemplate(LSM:Fetch('font', db.countFont), db.countFontSize, db.countFontOutline)
 	end
 
-	if button.icon then
-		button.icon:SetTexCoord(unpack(E.TexCoords))
+	local parent = button:GetParent()
+	if parent and parent.db then
+		local width, height = NP:GetAuraIconSize(parent.db)
+		button:SetSize(width, height)
+		NP:SetAuraIconTexCoords(button.icon, button)
 	end
 
 	if button.auraInfo then
@@ -306,7 +524,9 @@ function NP:Configure_Auras(nameplate, auras, db)
 	local numRows = db.numRows or db.numrows or 1
 	local priority = db.priority or (db.filters and db.filters.priority) or ''
 
-	auras.size = db.size
+	local width, height = NP:GetAuraIconSize(db)
+	auras.size = width
+	auras.sizeHeight = height
 	auras.numAuras = numAuras
 	auras.numRows = numRows
 	auras.onlyShowPlayer = false
@@ -340,7 +560,7 @@ function NP:Configure_Auras(nameplate, auras, db)
 
 	auras:ClearAllPoints()
 	auras:Point(auras.initialAnchor, auras.attachTo, auras.anchorPoint, auras.xOffset, auras.yOffset)
-	auras:Size(numAuras * db.size + ((numAuras - 1) * db.spacing), 1)
+	auras:Size(numAuras * width + ((numAuras - 1) * db.spacing), numRows * height + ((numRows - 1) * db.spacing))
 end
 
 -- Apply smart aura position: re-anchor buffs/debuffs relative to each other and set PostUpdate.
@@ -415,5 +635,9 @@ function NP:Update_Auras(nameplate)
 		if nameplate.Buffs then nameplate.Buffs:ForceUpdate() end
 	elseif nameplate:IsElementEnabled('Auras') then
 		nameplate:DisableElement('Auras')
+	end
+
+	if nameplate.unit then
+		NP:RegisterAuraUnitEvents(nameplate, nameplate.unit)
 	end
 end

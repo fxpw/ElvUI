@@ -178,35 +178,208 @@ do
 	end
 end
 
-function NP:SetCVar(cvar, value)
-	if GetCVar(cvar) ~= tostring(value) then
-		SetCVar(cvar, value)
+local NP_ENGINE_CVARS = {
+	loadDistance = { cvar = 'nameplateMaxDistance', driver = true },
+	predictedHealthAndPower = { cvar = 'nameplatePredictedHealthAndPower', bool = true },
+	offsetY = { cvar = 'nameplateOffsetY', driver = true },
+	showOnlyNames = { cvar = 'nameplateShowOnlyNames', driver = true },
+	showClassColorFriendly = { cvar = 'ShowClassColorInFriendlyNameplate', bool = true },
+	showNameClassColorFriendly = { cvar = 'ShowNameClassColorInFriendlyNameplate', bool = true },
+	showDebuffsOnFriendly = { cvar = 'nameplateShowDebuffsOnFriendly', bool = true },
+	otherAtBase = { cvar = 'nameplateOtherAtBase', bool = true, driver = true, plates = true },
+	targetRadialPosition = { cvar = 'nameplateTargetRadialPosition', driver = true },
+	horizontalScale = { cvar = 'NamePlateHorizontalScale', driver = true },
+	verticalScale = { cvar = 'NamePlateVerticalScale', driver = true },
+	globalScale = { cvar = 'nameplateGlobalScale', driver = true },
+	selectedScale = { cvar = 'nameplateSelectedScale', driver = true },
+	occludedAlphaMult = { cvar = 'nameplateOccludedAlphaMult' },
+	selectedAlpha = { cvar = 'nameplateSelectedAlpha' },
+	notSelectedAlpha = { cvar = 'nameplateNotSelectedAlpha' },
+	showSelf = { cvar = 'nameplateShowSelf', bool = true, driver = true },
+	personalClickThrough = { cvar = 'NameplatePersonalClickThrough', bool = true },
+	selfAlpha = { cvar = 'nameplateSelfAlpha' },
+	personalShowAlways = { cvar = 'NameplatePersonalShowAlways', bool = true, driver = true },
+	personalShowInCombat = { cvar = 'NameplatePersonalShowInCombat', bool = true, driver = true },
+	personalShowWithTarget = { cvar = 'NameplatePersonalShowWithTarget', driver = true },
+	personalOffsetY = { cvar = 'NameplatePersonalOffsetY', driver = true },
+	resourceOnTarget = { cvar = 'nameplateResourceOnTarget', bool = true, driver = true },
+	classResourceTopInset = { cvar = 'nameplateClassResourceTopInset', driver = true },
+}
+
+function NP:RefreshNamePlateDriver()
+	if _G.NamePlateDriverFrame and NamePlateDriverFrame.UpdateNamePlateOptions then
+		NamePlateDriverFrame:UpdateNamePlateOptions()
 	end
 end
 
-function NP:UpdateCVars()
-	NP:SetCVar('ShowClassColorInFriendlyNameplate', '1')
-	NP:SetCVar('showVKeyCastbar', '1')
-	NP:SetCVar('nameplateAllowOverlap', NP.db.motionType == 'STACKED' and '0' or '1')
-	if NP.db.plateSize then
-		if NP.db.plateSize.loadDistance then
-			NP:SetCVar('nameplateMaxDistance', NP.db.plateSize.loadDistance)
-		end
-		-- TODO uncomment in next update
-		-- local ps = NP.db.plateSize
-		-- C_Timer:After(0, function()
-		-- 	C_NamePlate.SetNamePlateFriendlySize(ps.friendlyWidth, ps.friendlyHeight)
-		-- 	C_NamePlate.SetNamePlateEnemySize(ps.enemyWidth, ps.enemyHeight)
-		-- 	C_NamePlate.SetNamePlateSelfSize(ps.personalWidth, ps.personalHeight)
-		-- end)
+-- Sirus: plain GetCVar/SetCVar(cvar [, value]) — no extra args
+function NP:GetEngineCVar(key)
+	local db = NP.db or E.db.nameplates
+	local default = (db and db.engine and db.engine[key]) or P.nameplates.engine[key]
+
+	if key == 'dynamicScale' then
+		local v = GetCVar('nameplateMinScale')
+		return v and tonumber(v) < 1 or default
 	end
-	-- if NP.db.clickThrough then
-	-- 	local ct = NP.db.clickThrough
-	-- 	C_Timer:After(0, function()
-	-- 		C_NamePlate.SetNamePlateFriendlyClickThrough(ct.friendly and 1 or nil)
-	-- 		C_NamePlate.SetNamePlateEnemyClickThrough(ct.enemy and 1 or nil)
-	-- 	end)
-	-- end
+	if key == 'dynamicAlpha' then
+		local v = GetCVar('nameplateMinAlpha')
+		return v and tonumber(v) < 1 or default
+	end
+
+	local entry = NP_ENGINE_CVARS[key]
+	if not entry then return default end
+
+	local v = GetCVar(entry.cvar)
+	if v == nil then return default end
+	if entry.bool then
+		return v == '1'
+	end
+	return tonumber(v) or v
+end
+
+function NP:SetEngineCVar(cvar, value, isBool)
+	local strValue = isBool and (value and '1' or '0') or tostring(value)
+	if GetCVar(cvar) ~= strValue then
+		SetCVar(cvar, strValue)
+	end
+end
+
+function NP:ApplyDynamicScale(e)
+	if e.dynamicScale then
+		NP:SetEngineCVar('nameplateMinScale', '0.6')
+		NP:SetEngineCVar('nameplateMaxScale', '1')
+	else
+		NP:SetEngineCVar('nameplateMinScale', '1')
+		NP:SetEngineCVar('nameplateMaxScale', '1')
+	end
+end
+
+function NP:ApplyDynamicAlpha(e)
+	if e.dynamicAlpha then
+		NP:SetEngineCVar('nameplateMinAlpha', '0.6')
+		NP:SetEngineCVar('nameplateMaxAlpha', '1')
+	else
+		NP:SetEngineCVar('nameplateMinAlpha', '1')
+		NP:SetEngineCVar('nameplateMaxAlpha', '1')
+	end
+end
+
+function NP:ApplyEngineCVar(entry, value)
+	NP:SetEngineCVar(entry.cvar, value, entry.bool)
+end
+
+function NP:ApplyEngineOption(key)
+	NP.db = NP.db or E.db.nameplates
+	NP:EnsureEngineDB()
+	local e = NP.db.engine
+
+	if key == 'dynamicScale' then
+		NP:ApplyDynamicScale(e)
+		NP:RefreshNamePlateDriver()
+		return
+	elseif key == 'dynamicAlpha' then
+		NP:ApplyDynamicAlpha(e)
+		return
+	end
+
+	local entry = NP_ENGINE_CVARS[key]
+	if not entry then return end
+
+	if key == 'selectedScale' then
+		NP:ApplyEngineCVar(entry, NP.db.useTargetScale and NP.db.targetScale or e.selectedScale)
+	elseif key == 'notSelectedAlpha' then
+		NP:ApplyEngineCVar(entry, NP.db.nonTargetTransparency or e.notSelectedAlpha)
+	else
+		NP:ApplyEngineCVar(entry, e[key])
+	end
+
+	if entry.driver then
+		NP:RefreshNamePlateDriver()
+	end
+	if entry.plates and NP.Initialized then
+		NP:ConfigurePlates()
+	end
+end
+
+local function NP_CVarBool(cvar, default)
+	local v = GetCVar(cvar)
+	if v == nil then return default end
+	return v == '1'
+end
+
+local function NP_CVarNum(cvar, default)
+	local v = GetCVar(cvar)
+	if v == nil then return default end
+	return tonumber(v) or default
+end
+
+function NP:ImportEngineFromCVars(e)
+	e.loadDistance = NP_CVarNum('nameplateMaxDistance', e.loadDistance or P.nameplates.engine.loadDistance)
+	e.predictedHealthAndPower = NP_CVarBool('nameplatePredictedHealthAndPower', e.predictedHealthAndPower)
+	e.dynamicScale = NP_CVarNum('nameplateMinScale', 1) < 1
+	e.dynamicAlpha = NP_CVarNum('nameplateMinAlpha', 1) < 1
+	e.offsetY = NP_CVarNum('nameplateOffsetY', e.offsetY)
+	e.showOnlyNames = NP_CVarNum('nameplateShowOnlyNames', e.showOnlyNames)
+	e.showClassColorFriendly = NP_CVarBool('ShowClassColorInFriendlyNameplate', e.showClassColorFriendly)
+	e.showNameClassColorFriendly = NP_CVarBool('ShowNameClassColorInFriendlyNameplate', e.showNameClassColorFriendly)
+	e.showDebuffsOnFriendly = NP_CVarBool('nameplateShowDebuffsOnFriendly', e.showDebuffsOnFriendly)
+	e.otherAtBase = NP_CVarBool('nameplateOtherAtBase', e.otherAtBase)
+	e.targetRadialPosition = NP_CVarNum('nameplateTargetRadialPosition', e.targetRadialPosition)
+	e.horizontalScale = NP_CVarNum('NamePlateHorizontalScale', e.horizontalScale)
+	e.verticalScale = NP_CVarNum('NamePlateVerticalScale', e.verticalScale)
+	e.globalScale = NP_CVarNum('nameplateGlobalScale', e.globalScale)
+	e.selectedScale = NP_CVarNum('nameplateSelectedScale', e.selectedScale)
+	e.occludedAlphaMult = NP_CVarNum('nameplateOccludedAlphaMult', e.occludedAlphaMult)
+	e.selectedAlpha = NP_CVarNum('nameplateSelectedAlpha', e.selectedAlpha)
+	e.notSelectedAlpha = NP_CVarNum('nameplateNotSelectedAlpha', e.notSelectedAlpha)
+	e.showSelf = NP_CVarBool('nameplateShowSelf', e.showSelf)
+	e.personalClickThrough = NP_CVarBool('NameplatePersonalClickThrough', e.personalClickThrough)
+	e.selfAlpha = NP_CVarNum('nameplateSelfAlpha', e.selfAlpha)
+	e.personalShowAlways = NP_CVarBool('NameplatePersonalShowAlways', e.personalShowAlways)
+	e.personalShowInCombat = NP_CVarBool('NameplatePersonalShowInCombat', e.personalShowInCombat)
+	e.personalShowWithTarget = NP_CVarNum('NameplatePersonalShowWithTarget', e.personalShowWithTarget)
+	e.personalOffsetY = NP_CVarNum('NameplatePersonalOffsetY', e.personalOffsetY)
+	e.resourceOnTarget = NP_CVarBool('nameplateResourceOnTarget', e.resourceOnTarget)
+	e.classResourceTopInset = NP_CVarNum('nameplateClassResourceTopInset', e.classResourceTopInset)
+end
+
+function NP:EnsureEngineDB()
+	NP.db = NP.db or E.db.nameplates
+	if not NP.db.engine then
+		NP.db.engine = E:CopyTable(P.nameplates.engine)
+		NP:ImportEngineFromCVars(NP.db.engine)
+	end
+
+	local e = NP.db.engine
+	if e.loadDistance == nil then
+		local legacy = NP.db.plateSize and NP.db.plateSize.loadDistance
+		e.loadDistance = legacy or P.nameplates.engine.loadDistance
+	end
+end
+
+function NP:ResetEngineDefaults()
+	NP.db.engine = E:CopyTable(P.nameplates.engine)
+	NP:UpdateCVars()
+	NP:ConfigureAll()
+end
+
+function NP:UpdateCVars()
+	local db = NP.db
+	NP:EnsureEngineDB()
+	local e = db.engine
+
+	NP:SetEngineCVar('nameplateEnableNew', '1')
+	NP:SetEngineCVar('showVKeyCastbar', '1')
+	NP:SetEngineCVar('nameplateAllowOverlap', db.motionType == 'STACKED' and '0' or '1')
+
+	NP:ApplyDynamicScale(e)
+	NP:ApplyDynamicAlpha(e)
+
+	for key in pairs(NP_ENGINE_CVARS) do
+		NP:ApplyEngineOption(key)
+	end
+
+	NP:RefreshNamePlateDriver()
 end
 
 function NP:UnitNPCID(unit)
@@ -221,6 +394,8 @@ function NP:UpdatePlateGUID(nameplate, guid)
 end
 
 function NP:UpdatePlateType(nameplate)
+	if nameplate == NP.TestFrame then return end
+
 	local unit = nameplate.unit
 	if not unit then return end
 
@@ -294,7 +469,12 @@ function NP:Style(unit)
 end
 
 function NP:StylePlate(nameplate)
-	nameplate:SetScale(E.uiscale or 1)
+	if nameplate:GetName() == 'ElvNP_Test' then
+		NP.TestFrame = nameplate
+	end
+
+	local scale = (nameplate == NP.TestFrame) and 1 or (E.uiscale or 1)
+	nameplate:SetScale(scale)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate:SetFrameStrata('BACKGROUND') -- keep plates under Minimap/UI frames
@@ -398,6 +578,13 @@ function NP:DisablePlate(nameplate)
 end
 
 function NP:UpdatePlateBase(nameplate)
+	if nameplate == NP.TestFrame then
+		NP:UpdatePlate(nameplate, true)
+		nameplate.previousType = nameplate.frameType
+		nameplate.StyleFilterBaseAlreadyUpdated = true
+		return
+	end
+
 	local update = nameplate.frameType ~= nameplate.previousType
 	NP:UpdatePlate(nameplate, update)
 
@@ -453,12 +640,17 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 		NP:UpdatePlateBase(nameplate)
+		NP:RegisterAuraUnitEvents(nameplate, unit)
 
 		NP:StyleFilterEventWatch(nameplate)
 		NP:StyleFilterSetVariables(nameplate)
 
-		if NP.db.fadeIn then
+		if NP.db.fadeIn and nameplate ~= NP.TestFrame then
 			NP:PlateFade(nameplate, 1, 0, 1)
+		end
+
+		if nameplate == NP.TestFrame then
+			return
 		end
 
 		-- Hide Sirus's default nameplate UnitFrame so it doesn't overlap ElvUI's
@@ -482,6 +674,8 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
+		NP:UnregisterAuraUnitEvents(nameplate)
+
 		if nameplate.unitGUID then
 			NP:UpdatePlateGUID(nameplate)
 		end
@@ -767,24 +961,25 @@ function NP:UpdateLibAuraInfoInfo()
 	-- stub: LibAuraInfo callbacks can be registered here when needed
 end
 
+function NP:RefreshTestFrame()
+	local test = NP.TestFrame
+	if not test or not test:IsEnabled() then return end
+
+	NP:UpdatePlateSize(test)
+	NP:NamePlateCallBack(test, 'NAME_PLATE_UNIT_ADDED', test.unit)
+	test:UpdateAllElements('ForceUpdate')
+end
+
 -- TogleTestFrame: toggle the test nameplate frame for a given unit type (called from OptionsUI)
 function NP:TogleTestFrame(unit)
-	local test = _G.ElvNP_Test
+	local test = NP.TestFrame
 	if not test then return end
 
 	if not test:IsEnabled() or test.frameType ~= unit then
-		test.frameType  = unit
-		test.UnitType   = unit
-		test.unitName   = unit
-		test.UnitName   = unit
-		test.UnitReaction = (unit == 'ENEMY_PLAYER' or unit == 'ENEMY_NPC') and 2 or 6
-		test.isPlayer   = (unit == 'ENEMY_PLAYER' or unit == 'FRIENDLY_PLAYER')
-
-		if test.RaisedElement then test.RaisedElement:Show() end
-		NP:UpdatePlate(test, true)
+		test.frameType = unit
 		test:Enable()
 		test:Show()
-		test:UpdateAllElements('ForceUpdate')
+		NP:RefreshTestFrame()
 	else
 		NP:DisablePlate(test)
 		test:Disable()
@@ -801,13 +996,11 @@ end
 function NP:ConfigurePlates()
 	NP.SkipFading = true
 
-	-- Update test frame if visible
-	local test = _G.ElvNP_Test
-	if test and test:IsEnabled() then
-		NP:UpdatePlate(test, true)
-		test:UpdateAllElements('ForceUpdate')
+	if NP.TestFrame and NP.TestFrame:IsEnabled() then
+		NP:RefreshTestFrame()
 	end
 
+	local test = NP.TestFrame
 	for nameplate in pairs(NP.Plates) do
 		if nameplate ~= test then
 			NP:UpdatePlateSize(nameplate)
@@ -889,22 +1082,22 @@ function NP:Initialize()
 	end
 
 	NP:GROUP_ROSTER_UPDATE()
+
 	NP:UpdateCVars()
 
 	-- Create test nameplate frame for OptionsUI preview
 	ElvUF:Spawn('player', 'ElvNP_Test')
-	local test = _G.ElvNP_Test
+	local test = NP.TestFrame
 	if test then
-		test:SetScale(1)
+		UnregisterUnitWatch(test)
 		test:ClearAllPoints()
 		test:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 250)
-		test:SetSize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
 		test:SetMovable(true)
 		test:RegisterForDrag('LeftButton', 'RightButton')
 		test:SetScript('OnDragStart', function() test:StartMoving() end)
 		test:SetScript('OnDragStop', function() test:StopMovingOrSizing() end)
-		test.frameType  = 'ENEMY_NPC'
-		test.UnitType   = 'ENEMY_NPC'
+		test.frameType = 'ENEMY_NPC'
+		NP:UpdatePlateSize(test)
 		test:Disable()
 		NP:DisablePlate(test)
 	end

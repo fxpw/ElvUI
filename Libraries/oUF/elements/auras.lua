@@ -252,8 +252,9 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 			if(button.icon) then button.icon:SetTexture(texture) end
 			if(button.count) then button.count:SetText(count > 1 and count) end
 
-			local size = element.size or 16
-			button:SetSize(size, size)
+			local width = element.size or 16
+			local height = element.sizeHeight or width
+			button:SetSize(width, height)
 
 			button:EnableMouse(not element.disableMouse)
 			button:SetID(index)
@@ -279,8 +280,9 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 			return VISIBLE
 		-- ElvUI changed block
 		elseif element.forceCreate then
-			local size = element.size or 16
-			button:SetSize(size, size)
+			local width = element.size or 16
+			local height = element.sizeHeight or width
+			button:SetSize(width, height)
 			button:Hide()
 
 			if element.PostUpdateIcon then
@@ -296,8 +298,10 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 end
 
 local function SetPosition(element, from, to)
-	local sizex = (element.size or 16) + (element['spacing-x'] or element.spacing or 0)
-	local sizey = (element.size or 16) + (element['spacing-y'] or element.spacing or 0)
+	local width = element.size or 16
+	local height = element.sizeHeight or width
+	local sizex = width + (element['spacing-x'] or element.spacing or 0)
+	local sizey = height + (element['spacing-y'] or element.spacing or 0)
 	local anchor = element.initialAnchor or 'BOTTOMLEFT'
 	local growthx = (element['growth-x'] == 'LEFT' and -1) or 1
 	local growthy = (element['growth-y'] == 'DOWN' and -1) or 1
@@ -532,7 +536,10 @@ end
 
 local function Enable(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:RegisterEvent('UNIT_AURA', UpdateAuras)
+		-- Nameplates register UNIT_AURA per-unit on Buffs_ via NP:RegisterAuraUnitEvents
+		if not (self.Buffs and self.Buffs.isNameplate) then
+			self:RegisterEvent('UNIT_AURA', UpdateAuras)
+		end
 
 		local buffs = self.Buffs
 		if(buffs) then
@@ -600,7 +607,9 @@ end
 
 local function Disable(self)
 	if(self.Buffs or self.Debuffs or self.Auras) then
-		self:UnregisterEvent('UNIT_AURA', UpdateAuras)
+		if not (self.Buffs and self.Buffs.isNameplate) then
+			self:UnregisterEvent('UNIT_AURA', UpdateAuras)
+		end
 
 		if(self.Buffs) then self.Buffs:Hide() end
 		if(self.Debuffs) then self.Debuffs:Hide() end

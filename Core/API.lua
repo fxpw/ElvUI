@@ -419,6 +419,24 @@ function E:PLAYER_LEVEL_UP(_, level)
 	E.mylevel = level
 end
 
+function E:CropRatio(frame)
+	local left, right, top, bottom = unpack(E.TexCoords)
+	local width, height = frame:GetSize()
+	local ratio = width / height
+
+	if ratio > 1 then
+		local trimAmount = (1 - (1 / ratio)) * 0.5
+		top = top + trimAmount
+		bottom = bottom - trimAmount
+	else
+		local trimAmount = (1 - ratio) * 0.5
+		left = left + trimAmount
+		right = right - trimAmount
+	end
+
+	return left, right, top, bottom
+end
+
 function E:LoadAPI()
 	self:RegisterEvent("PLAYER_LEVEL_UP")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")

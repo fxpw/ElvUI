@@ -143,4 +143,8 @@ function NP:Update_Power(nameplate)
 	if db.power then
 		nameplate.Power:Size(db.power.width, db.power.height)
 	end
+
+	if nameplate.unit then
+		NP:RegisterAuraUnitEvents(nameplate, nameplate.unit)
+	end
 end

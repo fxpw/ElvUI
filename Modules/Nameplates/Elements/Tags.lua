@@ -74,6 +74,10 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 	if db.power and db.power.text then
 		NP:Update_TagText(nameplate, nameplate.Power.Text, db.power.text, hide, nameplate.Power)
 	end
+
+	if nameplate.unit then
+		NP:RegisterAuraUnitEvents(nameplate, nameplate.unit)
+	end
 end
 
 function NP:Update_CustomTexts(nameplate)
@@ -120,8 +124,9 @@ function NP:Update_CustomTexts(nameplate)
 			objectDB.yOffset or 0
 		)
 
-		if objectDB.enable then
-			nameplate:Tag(object, objectDB.text_format or '')
+		if objectDB.enable and objectDB.text_format and objectDB.text_format ~= '' then
+			nameplate:Tag(object, objectDB.text_format)
+			object:UpdateTag()
 			object:Show()
 		else
 			nameplate:Untag(object)

@@ -624,7 +624,25 @@ local function getTagFunc(tagstr)
 	return func
 end
 
+local function isNameplatePerUnitTagEvent(parent, event)
+	if not (parent and parent.Buffs_ and parent.Buffs_.isNameplate) then
+		return false
+	end
+	if event == 'UNIT_NAME_UPDATE' or event == 'UNIT_DISPLAYPOWER' then
+		return true
+	end
+	return event and event:find('UNIT_') and (
+		event:find('MANA') or event:find('ENERGY') or event:find('RAGE')
+		or event:find('FOCUS') or event:find('RUNIC')
+	)
+end
+
 local function registerEvent(fontstr, event)
+	-- Nameplates: power/name events are registered per-unit via NP:RegisterAuraUnitEvents
+	if isNameplatePerUnitTagEvent(fontstr.parent, event) then
+		return
+	end
+
 	if(not events[event]) then events[event] = {} end
 
 	frame:RegisterEvent(event)

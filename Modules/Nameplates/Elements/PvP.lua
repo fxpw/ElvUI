@@ -9,16 +9,19 @@ end
 function NP:Update_PvPIndicator(nameplate)
 	local db = NP:PlateDB(nameplate)
 	local sf = NP:StyleFilterChanges(nameplate)
+	local pvpDB = db.pvpindicator
 
-	if db.pvpindicator and db.pvpindicator.enable and not (db.nameOnly or sf.NameOnly) then
+	if pvpDB and pvpDB.enable and not (db.nameOnly or sf.NameOnly) then
 		if not nameplate:IsElementEnabled('PvPIndicator') then
 			nameplate:EnableElement('PvPIndicator')
 		end
 
-		nameplate.PvPIndicator:Size(db.pvpindicator.size, db.pvpindicator.size)
+		local size = pvpDB.size or 24
+		local position = pvpDB.position or 'RIGHT'
 
+		nameplate.PvPIndicator:Size(size, size)
 		nameplate.PvPIndicator:ClearAllPoints()
-		nameplate.PvPIndicator:Point(E.InversePoints[db.pvpindicator.position], nameplate, db.pvpindicator.position, db.pvpindicator.xOffset, db.pvpindicator.yOffset)
+		nameplate.PvPIndicator:Point(E.InversePoints[position], nameplate, position, pvpDB.xOffset or 0, pvpDB.yOffset or 0)
 	elseif nameplate:IsElementEnabled('PvPIndicator') then
 		nameplate:DisableElement('PvPIndicator')
 	end
