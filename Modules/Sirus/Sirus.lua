@@ -83,14 +83,14 @@ do -- temp fix extra ab
 	end
 end
 
-local oldIsAddOnLoaded = IsAddOnLoaded
-function IsAddOnLoaded(nameA)
-	if nameA == "Blizzard_TimeManager" then
-		return true
-	else
-		return oldIsAddOnLoaded(nameA)
-	end
-end
+-- local oldIsAddOnLoaded = IsAddOnLoaded
+-- function IsAddOnLoaded(nameA)
+-- 	if nameA == "Blizzard_TimeManager" then
+-- 		return true
+-- 	else
+-- 		return oldIsAddOnLoaded(nameA)
+-- 	end
+-- end
 
 PVPUIFrame:HookScript("OnHide", function(self)
 	if self.TitleTimer then
