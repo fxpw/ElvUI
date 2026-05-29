@@ -40,12 +40,21 @@ local MatchGrowthY = {
 function NP:GetAuraIconSize(db)
 	if not db then return 27, 27 end
 
-	local width = db.size or 27
+	local width = db.size
+	if not width or width <= 0 then
+		width = 27
+	end
+
 	if db.keepSizeRatio ~= false then
 		return width, width
 	end
 
-	return width, db.height or width
+	local height = db.height
+	if not height or height <= 0 then
+		height = width
+	end
+
+	return width, height
 end
 
 function NP:SetAuraIconTexCoords(texture, frame)
@@ -480,6 +489,12 @@ function NP:Construct_AuraIcon(button)
 	NP:UpdateAuraSettings(button)
 end
 
+local function RefreshAuraCooldownFont(button)
+	if button.cd and button.cd.timer then
+		E:Cooldown_OnSizeChanged(button.cd.timer, button:GetWidth(), true)
+	end
+end
+
 function NP:PostUpdateAuraIcon(unit, button)
 	UF:PostUpdateAura(unit, button)
 
@@ -489,6 +504,7 @@ function NP:PostUpdateAuraIcon(unit, button)
 		local width, height = NP:GetAuraIconSize(db)
 		button:SetSize(width, height)
 		NP:SetAuraIconTexCoords(button.icon, button)
+		RefreshAuraCooldownFont(button)
 	end
 end
 
@@ -499,7 +515,9 @@ function NP:UpdateAuraSettings(button)
 		button.count:ClearAllPoints()
 		button.count:SetJustifyH(point:find('RIGHT') and 'RIGHT' or 'LEFT')
 		button.count:Point(point, db.countXOffset, db.countYOffset)
-		button.count:FontTemplate(LSM:Fetch('font', db.countFont), db.countFontSize, db.countFontOutline)
+		local countSize = db.countFontSize
+		if not countSize or countSize <= 0 then countSize = 9 end
+		button.count:FontTemplate(LSM:Fetch('font', db.countFont), countSize, db.countFontOutline)
 	end
 
 	local parent = button:GetParent()
@@ -507,6 +525,7 @@ function NP:UpdateAuraSettings(button)
 		local width, height = NP:GetAuraIconSize(parent.db)
 		button:SetSize(width, height)
 		NP:SetAuraIconTexCoords(button.icon, button)
+		RefreshAuraCooldownFont(button)
 	end
 
 	if button.auraInfo then

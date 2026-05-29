@@ -228,6 +228,10 @@ local function FontTemplate(fs, font, fontSize, fontStyle)
 		fontSize, fontStyle = 10, "MONOCHROMEOUTLINE"
 	end
 
+	if type(fontSize) ~= "number" or fontSize <= 0 or fontSize ~= fontSize then
+		fontSize = E.db.general.fontSize or 12
+	end
+
 	fs:SetFont(font, fontSize, fontStyle)
 
 	if fontStyle == "NONE" then

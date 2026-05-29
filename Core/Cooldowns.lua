@@ -71,7 +71,10 @@ function E:Cooldown_OnUpdate(elapsed)
 end
 
 function E:Cooldown_OnSizeChanged(cd, width, force)
-	local scale = width and (floor(width + 0.5) / ICON_SIZE)
+	width = width and floor(width + 0.5) or 0
+	if width <= 0 then return end
+
+	local scale = width / ICON_SIZE
 
 	-- dont bother updating when the fontScale is the same, unless we are passing the force arg
 	if scale and (scale == cd.fontScale) and (force ~= true) then return end
@@ -82,10 +85,18 @@ function E:Cooldown_OnSizeChanged(cd, width, force)
 		scale = MIN_SCALE
 	end
 
+	local baseSize = FONT_SIZE
+	if cd.customFont and cd.customFontSize and cd.customFontSize > 0 then
+		baseSize = cd.customFontSize
+	end
+
+	local fontSize = floor((scale * baseSize) + 0.5)
+	if fontSize < 1 then fontSize = 1 end
+
 	if cd.customFont then -- override font
-		cd.text:FontTemplate(cd.customFont, (scale * cd.customFontSize), cd.customFontOutline)
+		cd.text:FontTemplate(cd.customFont, fontSize, cd.customFontOutline)
 	elseif scale then -- default, no override
-		cd.text:FontTemplate(nil, (scale * FONT_SIZE), "OUTLINE")
+		cd.text:FontTemplate(nil, fontSize, "OUTLINE")
 	else -- this should never happen but just incase
 		cd.text:FontTemplate()
 	end
