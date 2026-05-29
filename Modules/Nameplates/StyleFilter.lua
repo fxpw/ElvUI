@@ -710,6 +710,10 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 
 		-- StyleFilter NameOnly should match regular NameOnly visuals: keep only name text.
 		mod:Update_Tags(frame, true)
+		-- Update_Tags() reapplies default name tag, so force custom style-filter tag again.
+		if NameTagChanged then
+			StyleFilterSetTag(frame, frame.Name, actions.text.nameTag)
+		end
 		mod:Update_PvPIndicator(frame)
 		mod:Update_TargetIndicator(frame)
 	end
@@ -1115,7 +1119,9 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	if trigger.names and next(trigger.names) then
 		for _, value in pairs(trigger.names) do
 			if value then -- only run if at least one is selected
-				local name = trigger.names[frame.UnitName] or (frame.npcID and trigger.names[frame.npcID])
+				local npcID = frame.npcID
+				local name = trigger.names[frame.UnitName]
+					or (npcID and (trigger.names[npcID] or trigger.names[tonumber(npcID)] or trigger.names[tostring(npcID)]))
 				if (not trigger.negativeMatch and name) or (trigger.negativeMatch and not name) then passed = true else return end
 				break -- we can execute this once on the first enabled option then kill the loop
 			end

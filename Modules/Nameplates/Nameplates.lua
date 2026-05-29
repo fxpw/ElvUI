@@ -9,6 +9,7 @@ local pairs, ipairs, wipe = pairs, ipairs, wipe
 local select, unpack, type = select, unpack, type
 local match = string.match
 local strsplit = strsplit
+local tonumber = tonumber
 
 local CreateFrame = CreateFrame
 local GetBattlefieldScore = GetBattlefieldScore
@@ -394,8 +395,17 @@ end
 function NP:UnitNPCID(unit)
 	local guid = UnitGUID(unit)
 	if not guid then return nil, nil end
-	local parts = {strsplit('-', guid)}
-	return parts[6], guid
+
+	-- Retail-style GUID: Creature-0-...-<npcID>-...
+	if guid:find('-', 1, true) then
+		local parts = {strsplit('-', guid)}
+		return parts[6], guid
+	end
+
+	-- 3.3.5a/Sirus-style packed GUID (hex string). This matches tooltip NPC ID extraction.
+	-- Keep as string to align with style-filter name keys.
+	local id = tonumber(guid:sub(8, 12), 16)
+	return id and tostring(id) or nil, guid
 end
 
 function NP:UpdatePlateGUID(nameplate, guid)
