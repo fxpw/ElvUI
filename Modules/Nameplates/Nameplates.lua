@@ -388,6 +388,7 @@ function NP:UpdateCVars()
 	end
 
 	NP:RefreshNamePlateDriver()
+	NP:UpdateStackingState()
 end
 
 function NP:UnitNPCID(unit)
@@ -685,6 +686,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
+		NP:ClearStackingForNameplate(nameplate)
 		NP:UnregisterAuraUnitEvents(nameplate)
 
 		if nameplate.unitGUID then
@@ -1156,6 +1158,8 @@ function NP:Initialize()
 	NP:GROUP_ROSTER_UPDATE()
 
 	NP:UpdateCVars()
+	NP:UpdateStackingState()
+	NP:RegisterStackingSlash()
 
 	-- Create test nameplate frame for OptionsUI preview
 	ElvUF:Spawn('player', 'ElvNP_Test')

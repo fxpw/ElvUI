@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Nameplates.lua"/>
+	<Script file="Stacking.lua"/>
 	<Script file="StyleFilter.lua"/>
 	<Script file="Elements\Tags.lua"/>
 	<Script file="Elements\Health.lua"/>
