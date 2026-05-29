@@ -472,8 +472,8 @@ function mod:StyleFilterBaseUpdate(frame, state)
 			end
 		end
 
-		if frame.isTarget and frame.frameType ~= 'PLAYER' and frame:IsElementEnabled('TargetIndicator') then
-			frame.TargetIndicator:ForceUpdate() -- so the target indicator reappears
+		if frame:IsElementEnabled('TargetIndicator') and mod:StyleFilterChanges(frame).ShowTargetIndicator then
+			frame.TargetIndicator:ForceUpdate()
 		end
 	end
 
@@ -552,7 +552,7 @@ local function StyleFilterSetTag(frame, fontString, tagFormat)
 	end
 end
 
-function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, NameTagChanged, LevelTagChanged, PowerTagChanged, TargetIndicatorChanged)
+function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, NameTagChanged, LevelTagChanged, PowerTagChanged, TargetIndicatorChanged, MouseoverHighlightChanged)
 	if VisibilityChanged then
 		frame.StyleChanged = true
 		frame.VisibilityChanged = true
@@ -724,22 +724,29 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		mod:UpdatePlate(frame, true)
 	end
 	if TargetIndicatorChanged then
-		mod:UpdatePlateTargetState(frame)
 		frame.StyleChanged = true
 		frame.TargetIndicatorChanged = true
-		if frame.isTarget then
+		if actions.showTargetIndicator then
 			frame.StyleFilterChanges.ShowTargetIndicator = true
 			frame.StyleFilterChanges.TargetIndicatorStyle = actions.targetIndicatorStyle or 'style4'
-		else
-			frame.StyleFilterChanges.ShowTargetIndicator = nil
-			frame.StyleFilterChanges.TargetIndicatorStyle = nil
-			StyleFilterHideTargetVisuals(frame)
+			frame.StyleFilterChanges.TargetIndicatorArrow = actions.targetIndicatorArrow or 'ArrowUp'
+			frame.StyleFilterChanges.TargetIndicatorArrowSize = actions.targetIndicatorArrowSize or 20
+			frame.StyleFilterChanges.TargetIndicatorArrowXOffset = actions.targetIndicatorArrowXOffset or 0
+			frame.StyleFilterChanges.TargetIndicatorArrowYOffset = actions.targetIndicatorArrowYOffset or 0
 		end
-		mod:Update_TargetIndicator(frame)
+	end
+	if MouseoverHighlightChanged then
+		frame.StyleChanged = true
+		frame.MouseoverHighlightChanged = true
+		if frame.isMouseover then
+			frame.StyleFilterChanges.ShowMouseoverHighlight = true
+		else
+			frame.StyleFilterChanges.ShowMouseoverHighlight = nil
+		end
 	end
 end
 
-function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, NameTagChanged, LevelTagChanged, PowerTagChanged, TargetIndicatorChanged)
+function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, FlashingHealth, TextureChanged, ScaleChanged, FrameLevelChanged, AlphaChanged, NameColorChanged, NameOnlyChanged, VisibilityChanged, ShowHealthChanged, NameTagChanged, LevelTagChanged, PowerTagChanged, TargetIndicatorChanged, MouseoverHighlightChanged)
 	frame.StyleChanged = nil
 	if VisibilityChanged then
 		frame.VisibilityChanged = nil
@@ -842,7 +849,14 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		frame.TargetIndicatorChanged = nil
 		frame.StyleFilterChanges.ShowTargetIndicator = nil
 		frame.StyleFilterChanges.TargetIndicatorStyle = nil
-		mod:Update_TargetIndicator(frame)
+		frame.StyleFilterChanges.TargetIndicatorArrow = nil
+		frame.StyleFilterChanges.TargetIndicatorArrowSize = nil
+		frame.StyleFilterChanges.TargetIndicatorArrowXOffset = nil
+		frame.StyleFilterChanges.TargetIndicatorArrowYOffset = nil
+	end
+	if MouseoverHighlightChanged then
+		frame.MouseoverHighlightChanged = nil
+		frame.StyleFilterChanges.ShowMouseoverHighlight = nil
 	end
 end
 
@@ -940,6 +954,11 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	-- Player Target
 	if trigger.isTarget or trigger.notTarget then
 		if (trigger.isTarget and frame.isTarget) or (trigger.notTarget and not frame.isTarget) then passed = true else return end
+	end
+
+	-- Mouseover
+	if trigger.isMouseover or trigger.notMouseover then
+		if (trigger.isMouseover and frame.isMouseover) or (trigger.notMouseover and not frame.isMouseover) then passed = true else return end
 	end
 
 	-- Unit Target (3.3.5a/Retail)
@@ -1140,13 +1159,14 @@ function mod:StyleFilterPass(frame, actions)
 		(textActions and textActions.enableName and textActions.nameTag and textActions.nameTag ~= ''), --NameTagChanged
 		(textActions and textActions.enableLevel and textActions.levelTag and textActions.levelTag ~= ''), --LevelTagChanged
 		(textActions and textActions.enablePower and textActions.powerTag and textActions.powerTag ~= ''), --PowerTagChanged
-		(actions.showTargetIndicator) --TargetIndicatorChanged
+		(actions.showTargetIndicator), --TargetIndicatorChanged
+		(actions.showMouseoverHighlight) --MouseoverHighlightChanged
 	)
 end
 
 function mod:StyleFilterClear(frame)
 	if frame and frame.StyleChanged then
-		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged, frame.NameTagChanged, frame.LevelTagChanged, frame.PowerTagChanged, frame.TargetIndicatorChanged)
+		mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, frame.NameOnlyChanged, frame.VisibilityChanged, frame.ShowHealthChanged, frame.NameTagChanged, frame.LevelTagChanged, frame.PowerTagChanged, frame.TargetIndicatorChanged, frame.MouseoverHighlightChanged)
 	end
 end
 
@@ -1204,6 +1224,7 @@ function mod:StyleFilterClearVariables(nameplate)
 	if nameplate == _G.ElvNP_Test then return end
 
 	nameplate.isTarget = nil
+	nameplate.isMouseover = nil
 	nameplate.isFocused = nil
 	nameplate.inVehicle = nil
 	nameplate.isTargetingMe = nil
@@ -1239,6 +1260,7 @@ mod.StyleFilterDefaultEvents = { -- list of events style filter uses (true if un
 	PLAYER_REGEN_DISABLED = true,
 	PLAYER_REGEN_ENABLED = true,
 	PLAYER_TARGET_CHANGED = true,
+	UPDATE_MOUSEOVER_UNIT = true,
 	PLAYER_UPDATE_RESTING = true,
 	QUEST_LOG_UPDATE = true,
 	RAID_TARGET_UPDATE = true,
@@ -1323,6 +1345,7 @@ function mod:StyleFilterConfigure()
 				if t.isFocus or t.notFocus then			events.PLAYER_FOCUS_CHANGED = 1 end
 				if t.isResting or t.notResting then		events.PLAYER_UPDATE_RESTING = 1 end
 				if t.isPet or t.isNotPet then			events.UNIT_PET = 1 end
+				if t.isMouseover or t.notMouseover then	events.UPDATE_MOUSEOVER_UNIT = 1 end
 
 				if t.targetMe or t.notTargetMe or t.targetPet or t.notTargetPet then
 					events.UNIT_THREAT_LIST_UPDATE = 1
@@ -1396,6 +1419,8 @@ function mod:StyleFilterConfigure()
 		end
 	end
 
+	mod.watchMouseover = events.UPDATE_MOUSEOVER_UNIT and true or nil
+
 	mod:StyleFilterWatchEvents()
 
 	if next(list) then
@@ -1425,6 +1450,17 @@ function mod:StyleFilterUpdate(frame, event)
 	frame.StyleFilterChanges.NameTag = nil
 	frame.StyleFilterChanges.LevelTag = nil
 	frame.StyleFilterChanges.PowerTag = nil
+	frame.StyleFilterChanges.ShowTargetIndicator = nil
+	frame.StyleFilterChanges.TargetIndicatorStyle = nil
+	frame.StyleFilterChanges.TargetIndicatorArrow = nil
+	frame.StyleFilterChanges.TargetIndicatorArrowSize = nil
+	frame.StyleFilterChanges.TargetIndicatorArrowXOffset = nil
+	frame.StyleFilterChanges.TargetIndicatorArrowYOffset = nil
+	frame.StyleFilterChanges.ShowMouseoverHighlight = nil
+
+	-- Skip visual revert for indicators; they are re-evaluated in this same update.
+	frame.TargetIndicatorChanged = nil
+	frame.MouseoverHighlightChanged = nil
 
 	mod:StyleFilterClear(frame)
 
@@ -1467,6 +1503,9 @@ function mod:StyleFilterUpdate(frame, event)
 		end
 	end
 
+	mod:Update_TargetIndicator(frame)
+	mod:Update_Highlight(frame)
+
 	mod:StyleFilterClearVisibility(frame, state)
 end
 
@@ -1476,6 +1515,7 @@ do -- oUF style filter inject watch functions without actually registering any e
 	pooler.delay = 0.2 -- update check rate (was 0.1; increased to reduce per-frame cost)
 	local immediateEvents = {
 		PLAYER_TARGET_CHANGED = true,
+		UPDATE_MOUSEOVER_UNIT = true,
 		PLAYER_FOCUS_CHANGED = true,
 		RAID_TARGET_UPDATE = true,
 		NAME_PLATE_UNIT_ADDED = true,

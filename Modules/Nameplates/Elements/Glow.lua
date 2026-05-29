@@ -17,6 +17,9 @@ function NP:Update_Glow(frame)
 	local ti = frame.TargetIndicator
 	if not ti then return end
 	local sf = NP:StyleFilterChanges(frame)
+	if sf.ShowTargetIndicator then
+		return
+	end
 	if sf.NameOnly and not sf.ShowTargetIndicator then
 		ti.TopIndicator:Hide()
 		ti.LeftIndicator:Hide()
@@ -124,6 +127,9 @@ function NP:Configure_Glow(frame)
 	local ti = frame.TargetIndicator
 	if not ti then return end
 	local sf = NP:StyleFilterChanges(frame)
+	if sf.ShowTargetIndicator then
+		return
+	end
 	if sf.NameOnly and not sf.ShowTargetIndicator then
 		ti.TopIndicator:Hide()
 		ti.LeftIndicator:Hide()
@@ -149,20 +155,21 @@ function NP:Configure_Glow(frame)
 
 	if glowStyle ~= "none" then
 		local color = self.db.colors.glowColor
-		local arrowSize = NP.db.units.TARGET.arrowSize
-		local arrowXOffset, arrowYOffset = NP.db.units.TARGET.arrowXOffset, NP.db.units.TARGET.arrowYOffset
+		local arrowTex = E.Media.Arrows.ArrowUp
+		local arrowSize = 20
+		local arrowXOffset, arrowYOffset = 0, 0
 		local r, g, b, a = color.r, color.g, color.b, color.a
 
 		-- Indicators
-		ti.LeftIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+		ti.LeftIndicator:SetTexture(arrowTex)
 		ti.LeftIndicator:SetVertexColor(r, g, b)
 		ti.LeftIndicator:SetSize(arrowSize, arrowSize)
 
-		ti.RightIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+		ti.RightIndicator:SetTexture(arrowTex)
 		ti.RightIndicator:SetVertexColor(r, g, b)
 		ti.RightIndicator:SetSize(arrowSize, arrowSize)
 
-		ti.TopIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+		ti.TopIndicator:SetTexture(arrowTex)
 		ti.TopIndicator:SetVertexColor(r, g, b)
 		ti.TopIndicator:SetSize(arrowSize, arrowSize)
 

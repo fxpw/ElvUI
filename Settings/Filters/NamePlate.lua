@@ -18,7 +18,7 @@ G.nameplates.filters = {
 		actions = {
 			scale = 1.15
 		}
-	}
+	},
 }
 
 E.StyleFilterDefaults = {
@@ -26,6 +26,8 @@ E.StyleFilterDefaults = {
 		priority = 1,
 		isTarget = false,
 		notTarget = false,
+		isMouseover = false,
+		notMouseover = false,
 		requireTarget = false,
 		noTarget = false,
 		targetMe = false,
@@ -190,6 +192,11 @@ E.StyleFilterDefaults = {
 		showHealth = false,
 		showTargetIndicator = false,
 		targetIndicatorStyle = 'style4',
+		targetIndicatorArrow = 'ArrowUp',
+		targetIndicatorArrowSize = 20,
+		targetIndicatorArrowXOffset = 3,
+		targetIndicatorArrowYOffset = 0,
+		showMouseoverHighlight = false,
 		scale = 1.0,
 		alpha = -1,
 		frameLevel = 0

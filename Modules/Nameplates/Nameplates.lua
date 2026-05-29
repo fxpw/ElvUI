@@ -40,9 +40,10 @@ local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
 
 -- Module state tables
-NP.Plates     = {}
-NP.GroupRoles = {}
-NP.PlateGUID  = {}
+NP.Plates        = {}
+NP.GroupRoles    = {}
+NP.PlateGUID     = {}
+NP.mouseoverGUID = nil
 NP.StatusBars = {}
 NP.Healers    = {}
 NP.multiplier = 0.35
@@ -67,6 +68,12 @@ do
 		local doTags = tagsElapsed >= TAGS_INTERVAL
 		elapsed = 0
 		if doTags then tagsElapsed = 0 end
+
+		-- UPDATE_MOUSEOVER_UNIT does not fire when the cursor leaves a nameplate; poll GUID instead.
+		if NP.watchMouseover then
+			NP:RefreshPlatesOnMouseoverChanged()
+		end
+
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u then
@@ -643,6 +650,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 
 		NP:UpdatePlateBase(nameplate)
 		NP:UpdatePlateTargetState(nameplate)
+		NP:UpdatePlateMouseoverState(nameplate)
 		NP:RegisterAuraUnitEvents(nameplate, unit)
 
 		NP:StyleFilterEventWatch(nameplate)
@@ -751,6 +759,7 @@ function NP:PLAYER_ENTERING_WORLD()
 	end
 
 	NP:ConfigureAll(true)
+	NP:RefreshPlatesOnMouseoverChanged()
 end
 
 function NP:PLAYER_REGEN_DISABLED() end
@@ -925,6 +934,45 @@ function NP:UpdatePlateTargetState(nameplate)
 	nameplate.isTarget = UnitIsUnit(nameplate.unit, 'target') or nil
 end
 
+function NP:UpdatePlateMouseoverState(nameplate, mouseoverGUID)
+	if not nameplate then return end
+
+	if mouseoverGUID == nil then
+		mouseoverGUID = self.mouseoverGUID
+	end
+
+	local plateGUID = nameplate.unitGUID or (nameplate.unit and UnitGUID(nameplate.unit))
+	if not plateGUID then
+		nameplate.isMouseover = nil
+		return
+	end
+
+	nameplate.isMouseover = (mouseoverGUID and mouseoverGUID == plateGUID) or nil
+end
+
+function NP:RefreshPlatesOnMouseoverChanged()
+	local mouseoverGUID
+	if UnitExists('mouseover') then
+		mouseoverGUID = UnitGUID('mouseover')
+	end
+
+	if mouseoverGUID == self.mouseoverGUID then
+		return
+	end
+
+	self.mouseoverGUID = mouseoverGUID
+
+	for plate in pairs(self.Plates) do
+		local wasMouseover = plate.isMouseover
+		self:UpdatePlateMouseoverState(plate, mouseoverGUID)
+
+		if wasMouseover ~= plate.isMouseover then
+			self:StyleFilterUpdate(plate, 'UPDATE_MOUSEOVER_UNIT')
+			self:Update_Highlight(plate)
+		end
+	end
+end
+
 function NP:RefreshPlatesOnTargetChanged()
 	for plate in pairs(NP.Plates) do
 		NP:UpdatePlateTargetState(plate)
@@ -1087,6 +1135,7 @@ function NP:Initialize()
 	NP:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 	NP:RegisterEvent('GROUP_ROSTER_UPDATE')
 	NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'RefreshPlatesOnTargetChanged')
+	NP:RegisterEvent('UPDATE_MOUSEOVER_UNIT', 'RefreshPlatesOnMouseoverChanged')
 
 	-- Class resources on nameplates
 	if E.myclass == 'ROGUE' or E.myclass == 'DRUID' then

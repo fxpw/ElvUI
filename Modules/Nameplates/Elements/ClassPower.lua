@@ -12,7 +12,7 @@ local GetRuneType = GetRuneType
 local GetTime = GetTime
 local InCombatLockdown = InCombatLockdown
 local UnitHasVehicleUI = UnitHasVehicleUI
-local UnitIsUnit = UnitIsUnit
+-- local UnitIsUnit = UnitIsUnit
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 -- Classes that display resources

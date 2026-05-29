@@ -1,47 +1,23 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local oUF = E.oUF
-
-local UnitExists = UnitExists
-local UnitIsUnit = UnitIsUnit
-
-local function MouseOnUnit(frame)
-	if frame and frame:IsVisible() and UnitExists('mouseover') then
-		return frame.unit and UnitIsUnit('mouseover', frame.unit)
-	end
-
-	return false
-end
-
-local function OnUpdate(self, elapsed)
-	if self.elapsed and self.elapsed > 0.1 then
-		if not MouseOnUnit(self) then
-			self:Hide()
-			self:SetScript('OnUpdate', nil) -- stop polling until next mouseover
-			self:ForceUpdate()
-		end
-
-		self.elapsed = 0
-	else
-		self.elapsed = (self.elapsed or 0) + elapsed
-	end
-end
+local NP = E:GetModule('NamePlates')
+local LSM = E.Libs.LSM
 
 local function Update(self)
 	local element = self.Highlight
+	if not element then return end
 
 	if element.PreUpdate then
 		element:PreUpdate()
 	end
 
-	if MouseOnUnit(self) then
+	local sf = NP:StyleFilterChanges(self)
+	if sf.ShowMouseoverHighlight and self.isMouseover then
+		local c = NP.db.colors.mouseoverHighlight or { r = 1, g = 1, b = 1, a = 0.35 }
+		element.texture:SetVertexColor(c.r, c.g, c.b, c.a or 0.35)
 		element:Show()
-		if not element:GetScript('OnUpdate') then
-			element.elapsed = 0
-			element:SetScript('OnUpdate', OnUpdate)
-		end
 	else
 		element:Hide()
-		element:SetScript('OnUpdate', nil)
 	end
 
 	if element.PostUpdate then
@@ -62,9 +38,6 @@ local function Enable(self)
 	if element then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
-
-		self:RegisterEvent('UPDATE_MOUSEOVER_UNIT', Path, true)
-
 		return true
 	end
 end
@@ -73,15 +46,10 @@ local function Disable(self)
 	local element = self.Highlight
 	if element then
 		element:Hide()
-		element:SetScript('OnUpdate', nil)
-
-		self:UnregisterEvent('UPDATE_MOUSEOVER_UNIT', Path)
 	end
 end
 
 oUF:AddElement('Highlight', Path, Enable, Disable)
-
-local NP = E:GetModule('NamePlates')
 
 function NP:Construct_Highlight(nameplate)
 	local Highlight = CreateFrame('Frame', nil, nameplate.Health)
@@ -91,19 +59,20 @@ function NP:Construct_Highlight(nameplate)
 
 	local tex = Highlight:CreateTexture(nil, 'OVERLAY', nil, 7)
 	tex:SetAllPoints(Highlight)
+	tex:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
 	tex:SetBlendMode('ADD')
-	tex:SetVertexColor(1, 1, 1, 0.3)
+	tex:SetVertexColor(1, 1, 1, 0.35)
 	Highlight.texture = tex
 
 	return Highlight
 end
 
 function NP:Update_Highlight(nameplate)
-	if NP.db.highlight then
-		if not nameplate:IsElementEnabled('Highlight') then
-			nameplate:EnableElement('Highlight')
-		end
-	elseif nameplate:IsElementEnabled('Highlight') then
-		nameplate:DisableElement('Highlight')
+	if not nameplate then return end
+
+	if not nameplate:IsElementEnabled('Highlight') then
+		nameplate:EnableElement('Highlight')
+	elseif nameplate.Highlight then
+		nameplate.Highlight:ForceUpdate()
 	end
 end

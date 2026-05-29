@@ -1,18 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local ElvUF = E.oUF
-local UnitIsUnit = UnitIsUnit
-
---[[ Target Glow Style Option Variables
-	style1:'Border',
-	style2:'Background',
-	style3:'Top Arrow Only',
-	style4:'Side Arrows Only',
-	style5:'Border + Top Arrow',
-	style6:'Background + Top Arrow',
-	style7:'Border + Side Arrows',
-	style8:'Background + Side Arrows'
-]]
 
 local function HideIndicators(element)
 	if element.TopIndicator then element.TopIndicator:Hide() end
@@ -22,16 +10,15 @@ local function HideIndicators(element)
 	if element.Spark then element.Spark:Hide() end
 end
 
-local function ConfigureStyleFilterIndicators(owner, element)
+local function ConfigureStyleFilterIndicators(owner, element, sf)
 	local health = owner and owner.Health
 	if not health then return end
 
-	local targetDB = NP.db and NP.db.units and NP.db.units.TARGET or {}
-	local arrowKey = targetDB.arrow or 'ArrowUp'
+	local arrowKey = sf.TargetIndicatorArrow or 'ArrowUp'
 	local arrowTex = (E.Media.Arrows and E.Media.Arrows[arrowKey]) or (E.Media.Arrows and E.Media.Arrows.ArrowUp)
-	local arrowSize = targetDB.arrowSize or 20
-	local xOff = targetDB.arrowXOffset or 0
-	local yOff = targetDB.arrowYOffset or 0
+	local arrowSize = sf.TargetIndicatorArrowSize or 20
+	local xOff = sf.TargetIndicatorArrowXOffset or 0
+	local yOff = sf.TargetIndicatorArrowYOffset or 0
 
 	if element.TopIndicator then
 		element.TopIndicator:SetTexture(arrowTex)
@@ -43,7 +30,6 @@ local function ConfigureStyleFilterIndicators(owner, element)
 
 	if element.LeftIndicator then
 		element.LeftIndicator:SetTexture(arrowTex)
-		-- right-side arrow must point inward (to the left)
 		element.LeftIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
 		element.LeftIndicator:SetSize(arrowSize, arrowSize)
 		element.LeftIndicator:ClearAllPoints()
@@ -52,7 +38,6 @@ local function ConfigureStyleFilterIndicators(owner, element)
 
 	if element.RightIndicator then
 		element.RightIndicator:SetTexture(arrowTex)
-		-- left-side arrow must point inward (to the right)
 		element.RightIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0)
 		element.RightIndicator:SetSize(arrowSize, arrowSize)
 		element.RightIndicator:ClearAllPoints()
@@ -92,16 +77,13 @@ local function Update(self)
 
 	HideIndicators(element)
 
-	local unit = self.unit
-	if not unit or not UnitIsUnit(unit, 'target') then
+	local sf = NP:StyleFilterChanges(self)
+	if not sf.ShowTargetIndicator then
 		return
 	end
 
-	local sf = NP:StyleFilterChanges(self)
-	if not sf.ShowTargetIndicator then return end
-
 	element.style = sf.TargetIndicatorStyle or 'style4'
-	ConfigureStyleFilterIndicators(self, element)
+	ConfigureStyleFilterIndicators(self, element, sf)
 
 	if element.style ~= 'none' then
 		ShowIndicators(element, NP.db.colors.glowColor)
@@ -136,7 +118,6 @@ local function Enable(self)
 			element.Spark:SetTexture(E.Media.Textures.Spark)
 		end
 
-		-- WotLK: ArrowUp is under E.Media.Arrows (not E.Media.Textures)
 		if element.TopIndicator and element.TopIndicator:IsObjectType('Texture') and not element.TopIndicator:GetTexture() then
 			element.TopIndicator:SetTexture(E.Media.Arrows.ArrowUp)
 			element.TopIndicator:SetTexCoord(1, 1, 1, 0, 0, 1, 0, 0)
@@ -152,8 +133,6 @@ local function Enable(self)
 			element.RightIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
 		end
 
-		self:RegisterEvent('PLAYER_TARGET_CHANGED', Path, true)
-
 		return true
 	end
 end
@@ -162,8 +141,6 @@ local function Disable(self)
 	local element = self.TargetIndicator
 	if element then
 		HideIndicators(element)
-
-		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Path)
 	end
 end
 
@@ -176,13 +153,11 @@ function NP:Construct_TargetIndicator(nameplate)
 	local TI = CreateFrame('Frame', nil, nameplate)
 	TI:SetAllPoints(health)
 
-	-- Top arrow indicator
 	TI.TopIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
 	TI.TopIndicator:SetSize(20, 20)
 	TI.TopIndicator:SetPoint('BOTTOM', health, 'TOP', 0, 2)
 	TI.TopIndicator:Hide()
 
-	-- Left/right arrow indicators
 	TI.LeftIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
 	TI.LeftIndicator:SetSize(20, 20)
 	TI.LeftIndicator:SetPoint('RIGHT', health, 'LEFT', -2, 0)
@@ -193,13 +168,11 @@ function NP:Construct_TargetIndicator(nameplate)
 	TI.RightIndicator:SetPoint('LEFT', health, 'RIGHT', 2, 0)
 	TI.RightIndicator:Hide()
 
-	-- Shadow (border glow) — extends 5px outside Health bar
 	TI.Shadow = CreateFrame('Frame', nil, nameplate)
 	TI.Shadow:SetPoint('TOPLEFT', health, 'TOPLEFT', -5, 5)
 	TI.Shadow:SetPoint('BOTTOMRIGHT', health, 'BOTTOMRIGHT', 5, -5)
 	TI.Shadow:Hide()
 
-	-- Spark (background glow)
 	TI.Spark = TI:CreateTexture(nil, 'BORDER', nil, -1)
 	TI.Spark:SetAllPoints(health)
 	TI.Spark:Hide()
@@ -208,18 +181,14 @@ function NP:Construct_TargetIndicator(nameplate)
 end
 
 function NP:Update_TargetIndicator(nameplate)
-	NP:UpdatePlateTargetState(nameplate)
-
-	local isTarget = nameplate.unit and UnitIsUnit(nameplate.unit, 'target')
 	local sf = NP:StyleFilterChanges(nameplate)
-	if isTarget and sf.ShowTargetIndicator then
+
+	if sf.ShowTargetIndicator then
 		if not nameplate:IsElementEnabled('TargetIndicator') then
 			nameplate:EnableElement('TargetIndicator')
 		end
 		nameplate.TargetIndicator:ForceUpdate()
-	elseif nameplate.TargetIndicator and nameplate:IsElementEnabled('TargetIndicator') then
-		nameplate.TargetIndicator:ForceUpdate()
 	elseif nameplate:IsElementEnabled('TargetIndicator') then
-		nameplate:DisableElement('TargetIndicator')
+		nameplate.TargetIndicator:ForceUpdate()
 	end
 end

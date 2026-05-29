@@ -496,7 +496,6 @@ P.nameplates = {
 	font = 'PT Sans Narrow',
 	fontOutline = 'OUTLINE',
 	fontSize = 11,
-	highlight = true,
 	lowHealthThreshold = 0.4,
 	motionType = 'OVERLAP',
 	nameColoredGlow = false,
@@ -602,6 +601,7 @@ P.nameplates = {
 		preferGlowColor = true,
 		healthBgMultiplier = 0.35,
 		glowColor = {r = 1, g = 1, b = 1, a = 1},
+		mouseoverHighlight = {r = 1, g = 1, b = 1, a = 0.35},
 		lowHealthColor = {r = 1, g = 1, b = 0.3, a = 1},
 		lowHealthHalf = {r = 1, g = 0.3, b = 0.3, a = 1},
 		castColor = {r = 1, g = 0.81, b = 0},
@@ -688,12 +688,6 @@ P.nameplates = {
 	units = {
 		TARGET = {
 			glowStyle = 'style4',
-			arrow = 'ArrowUp',
-			arrowScale = 0.8,
-			arrowSpacing = 3,
-			arrowSize = 20,
-			arrowXOffset = 3,
-			arrowYOffset = 0,
 			classpower = {
 				enable = false,
 				onlyInCombat = false,
