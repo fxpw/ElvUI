@@ -47,6 +47,7 @@ NP.StatusBars = {}
 NP.Healers    = {}
 NP.multiplier = 0.35
 NP.IsInGroup  = false
+NP.TEST_FRAME_SCALE = 1.75 -- preview frame in options (larger than in-world plates)
 
 NP.StyleFilterEventFunctions = {}
 
@@ -473,7 +474,7 @@ function NP:StylePlate(nameplate)
 		NP.TestFrame = nameplate
 	end
 
-	local scale = (nameplate == NP.TestFrame) and 1 or (E.uiscale or 1)
+	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or (E.uiscale or 1)
 	nameplate:SetScale(scale)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
@@ -987,6 +988,7 @@ function NP:RefreshTestFrame()
 	local test = NP.TestFrame
 	if not test or not test:IsEnabled() then return end
 
+	test:SetScale(NP.TEST_FRAME_SCALE)
 	NP:UpdatePlateSize(test)
 	NP:NamePlateCallBack(test, 'NAME_PLATE_UNIT_ADDED', test.unit)
 	test:UpdateAllElements('ForceUpdate')
