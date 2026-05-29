@@ -353,17 +353,6 @@ end
 
 -- ─── Module-level event handlers ────────────────────────────────────────────
 
--- Target changed: recompute isTarget ourselves (StyleFilter may not have run yet)
-function NP:ClassPower_PLAYER_TARGET_CHANGED()
-	if not NP.Plates then return end
-	for plate in pairs(NP.Plates) do
-		if plate.ClassPower and plate.unit then
-			plate.isTarget = UnitIsUnit(plate.unit, 'target') or nil
-			NP:Update_ClassPower(plate)
-		end
-	end
-end
-
 -- Combo points changed (Rogue/Druid) — update player plate and target plate
 function NP:ClassPower_UNIT_COMBO_POINTS()
 	if not COMBO_CLASS[E.myclass] or not NP.Plates then return end

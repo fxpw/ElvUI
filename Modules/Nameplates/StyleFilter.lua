@@ -724,10 +724,17 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		mod:UpdatePlate(frame, true)
 	end
 	if TargetIndicatorChanged then
+		mod:UpdatePlateTargetState(frame)
 		frame.StyleChanged = true
 		frame.TargetIndicatorChanged = true
-		frame.StyleFilterChanges.ShowTargetIndicator = true
-		frame.StyleFilterChanges.TargetIndicatorStyle = actions.targetIndicatorStyle or 'style4'
+		if frame.isTarget then
+			frame.StyleFilterChanges.ShowTargetIndicator = true
+			frame.StyleFilterChanges.TargetIndicatorStyle = actions.targetIndicatorStyle or 'style4'
+		else
+			frame.StyleFilterChanges.ShowTargetIndicator = nil
+			frame.StyleFilterChanges.TargetIndicatorStyle = nil
+			StyleFilterHideTargetVisuals(frame)
+		end
 		mod:Update_TargetIndicator(frame)
 	end
 end

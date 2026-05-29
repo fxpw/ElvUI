@@ -1,6 +1,7 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local ElvUF = E.oUF
+local UnitIsUnit = UnitIsUnit
 
 --[[ Target Glow Style Option Variables
 	style1:'Border',
@@ -90,6 +91,11 @@ local function Update(self)
 	end
 
 	HideIndicators(element)
+
+	local unit = self.unit
+	if not unit or not UnitIsUnit(unit, 'target') then
+		return
+	end
 
 	local sf = NP:StyleFilterChanges(self)
 	if not sf.ShowTargetIndicator then return end
@@ -202,11 +208,16 @@ function NP:Construct_TargetIndicator(nameplate)
 end
 
 function NP:Update_TargetIndicator(nameplate)
+	NP:UpdatePlateTargetState(nameplate)
+
+	local isTarget = nameplate.unit and UnitIsUnit(nameplate.unit, 'target')
 	local sf = NP:StyleFilterChanges(nameplate)
-	if sf.ShowTargetIndicator then
+	if isTarget and sf.ShowTargetIndicator then
 		if not nameplate:IsElementEnabled('TargetIndicator') then
 			nameplate:EnableElement('TargetIndicator')
 		end
+		nameplate.TargetIndicator:ForceUpdate()
+	elseif nameplate.TargetIndicator and nameplate:IsElementEnabled('TargetIndicator') then
 		nameplate.TargetIndicator:ForceUpdate()
 	elseif nameplate:IsElementEnabled('TargetIndicator') then
 		nameplate:DisableElement('TargetIndicator')

@@ -520,6 +520,7 @@ function NP:PostUpdateAllElements(event)
 end
 
 function NP:UpdatePlate(nameplate, updateBase)
+	NP:UpdatePlateTargetState(nameplate)
 	NP:Update_RaidTargetIndicator(nameplate)
 	NP:Update_Portrait(nameplate)
 	NP:Update_PvPIndicator(nameplate)
@@ -640,6 +641,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 		NP:UpdatePlateBase(nameplate)
+		NP:UpdatePlateTargetState(nameplate)
 		NP:RegisterAuraUnitEvents(nameplate, unit)
 
 		NP:StyleFilterEventWatch(nameplate)
@@ -913,6 +915,26 @@ function NP:StyleFilterChanges(frame)
 	return (frame and frame.StyleFilterChanges) or {}
 end
 
+function NP:UpdatePlateTargetState(nameplate)
+	if not nameplate then return end
+	if not nameplate.unit then
+		nameplate.isTarget = nil
+		return
+	end
+	nameplate.isTarget = UnitIsUnit(nameplate.unit, 'target') or nil
+end
+
+function NP:RefreshPlatesOnTargetChanged()
+	for plate in pairs(NP.Plates) do
+		NP:UpdatePlateTargetState(plate)
+		NP:StyleFilterUpdate(plate, 'PLAYER_TARGET_CHANGED')
+		NP:Update_TargetIndicator(plate)
+		if plate.ClassPower then
+			NP:Update_ClassPower(plate)
+		end
+	end
+end
+
 -- Thin alias around the global UnitExists; used by retail-derived StyleFilter helpers.
 function NP:UnitExists(unit)
 	return unit and UnitExists(unit) or nil
@@ -1062,11 +1084,11 @@ function NP:Initialize()
 	NP:RegisterEvent('PLAYER_ENTERING_WORLD')
 	NP:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 	NP:RegisterEvent('GROUP_ROSTER_UPDATE')
+	NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'RefreshPlatesOnTargetChanged')
 
 	-- Class resources on nameplates
 	if E.myclass == 'ROGUE' or E.myclass == 'DRUID' then
 		NP:RegisterEvent('UNIT_COMBO_POINTS',     'ClassPower_UNIT_COMBO_POINTS')
-		NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'ClassPower_PLAYER_TARGET_CHANGED')
 		NP:RegisterEvent('PLAYER_REGEN_ENABLED',  'ClassPower_PLAYER_REGEN')
 		NP:RegisterEvent('PLAYER_REGEN_DISABLED', 'ClassPower_PLAYER_REGEN')
 		NP:ClassPower_HookBlizzardBars()
@@ -1074,7 +1096,6 @@ function NP:Initialize()
 	elseif E.myclass == 'DEATHKNIGHT' then
 		NP:RegisterEvent('RUNE_POWER_UPDATE',     'ClassPower_RUNE_POWER_UPDATE')
 		NP:RegisterEvent('RUNE_TYPE_UPDATE',      'ClassPower_RUNE_TYPE_UPDATE')
-		NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'ClassPower_PLAYER_TARGET_CHANGED')
 		NP:RegisterEvent('PLAYER_REGEN_ENABLED',  'ClassPower_PLAYER_REGEN')
 		NP:RegisterEvent('PLAYER_REGEN_DISABLED', 'ClassPower_PLAYER_REGEN')
 		NP:ClassPower_HookBlizzardBars()
