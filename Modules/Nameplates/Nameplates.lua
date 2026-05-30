@@ -215,12 +215,6 @@ local NP_ENGINE_CVARS = {
 	classResourceTopInset = { cvar = 'nameplateClassResourceTopInset', driver = true },
 }
 
-function NP:RefreshNamePlateDriver()
-	if _G.NamePlateDriverFrame and NamePlateDriverFrame.UpdateNamePlateOptions then
-		NamePlateDriverFrame:UpdateNamePlateOptions()
-	end
-end
-
 -- Sirus: plain GetCVar/SetCVar(cvar [, value]) — no extra args
 function NP:GetEngineCVar(key)
 	local db = NP.db or E.db.nameplates
@@ -284,7 +278,6 @@ function NP:ApplyEngineOption(key)
 
 	if key == 'dynamicScale' then
 		NP:ApplyDynamicScale(e)
-		NP:RefreshNamePlateDriver()
 		return
 	elseif key == 'dynamicAlpha' then
 		NP:ApplyDynamicAlpha(e)
@@ -302,9 +295,6 @@ function NP:ApplyEngineOption(key)
 		NP:ApplyEngineCVar(entry, e[key])
 	end
 
-	if entry.driver then
-		NP:RefreshNamePlateDriver()
-	end
 	if entry.plates and NP.Initialized then
 		NP:ConfigurePlates()
 	end
@@ -388,7 +378,6 @@ function NP:UpdateCVars()
 		NP:ApplyEngineOption(key)
 	end
 
-	NP:RefreshNamePlateDriver()
 	NP:UpdateStackingState()
 end
 
