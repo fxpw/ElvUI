@@ -15,8 +15,8 @@ local coords = {0.499, 0.751, 0.276, 0.484};
 -- local mapX,mapY = WorldMapButton:GetSize()
 local prefix = "ElvUI_Marker";
 local texturePath = "Interface\\AddOns\\ElvUI\\Media\\Textures\\RaidIcons";
-local SYNC_INFO = "|Hplayer:%1$s|h[%1$s]|h ставит метку на карту " ..
-	": \n|Helvm:show:%2$s:%3$s:%4$s:nil|h|cff3588ff[Показать место]|r|h  |Helvm:ignore:%1$s|h|cff3588ff[Игнорировать метки от %1$s]|r|h"
+-- local SYNC_INFO = "|Hplayer:%1$s|h[%1$s]|h ставит метку на карту " ..
+-- 	": \n|Helvm:show:%2$s:%3$s:%4$s:nil|h|cff3588ff[Показать место]|r|h  |Helvm:ignore:%1$s|h|cff3588ff[Игнорировать метки от %1$s]|r|h"
 
 function MM:SendMark(text, distribution)
 	MM:SendCommMessage(prefix, text, distribution or "RAID");
@@ -127,20 +127,30 @@ function MM:RefreshAll()
 	end
 end
 
-local function createMark(self, link)
-	local _,_, mapid, x, y = strsplit(":", link);
-	mapid = tonumber(mapid)
-	MM:CreateMark(mapid,true,x,y);
-end
-local function AddToIgnore(self,link)
-	local _,_, name = strsplit(":", link);
-	-- MM:CreateMark(mapid,true,x,y)
-	IgnoreList[name] = true;
-	print(name.." был добавлен в игнор лист меток");
-end
+-- local function createMark(self, link)
+-- 	local _,_, mapid, x, y = strsplit(":", link);
+-- 	mapid = tonumber(mapid)
+-- 	MM:CreateMark(mapid,true,x,y);
+-- end
+-- local function AddToIgnore(self,link)
+-- 	local _,_, name = strsplit(":", link);
+-- 	-- MM:CreateMark(mapid,true,x,y)
+-- 	IgnoreList[name] = true;
+-- 	print(name.." был добавлен в игнор лист меток");
+-- end
 function MM:Initialize()
 	if not E.db.general.mapMarkers.enable then return end
 
+	-- local function createMark(self, link)
+	-- 	local _,_, mapid, x, y = strsplit(":", link);
+	-- 	mapid = tonumber(mapid)
+	-- 	MM:CreateMark(mapid,true,x,y);
+	-- end
+	-- local function AddToIgnore(self,link)
+	-- 	local _,_, name = strsplit(":", link);
+	-- 	IgnoreList[name] = true;
+	-- 	print(name.." был добавлен в игнор лист меток");
+	-- end
 	-- local _SetItemRef = SetItemRef
 	-- function SetItemRef(link, textref, button, chatFrame)
 	-- 	dprint(link, textref, button, chatFrame);
@@ -152,7 +162,6 @@ function MM:Initialize()
 	-- 		_SetItemRef(link, textref, button, chatFrame);
 	-- 	end
 	-- end
-
 
 	WorldMapButton:RegisterForClicks("LeftButtonDownm", "RightButtonDown","MiddleButtonDown");
 	WorldMapButton:HookScript("OnClick",function(self,click)

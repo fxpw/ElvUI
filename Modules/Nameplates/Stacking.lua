@@ -4,7 +4,6 @@ local NP = E:GetModule('NamePlates')
 local abs, exp = math.abs, math.exp
 local format = string.format
 local pairs = pairs
-local select = select
 local strtrim = strtrim
 local wipe = wipe
 local mathMin, mathMax = math.min, math.max
