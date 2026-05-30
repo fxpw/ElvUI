@@ -1477,8 +1477,8 @@ function mod:StyleFilterUpdate(frame, event)
 		end
 	end
 
-	-- Final guard: NameOnly must always keep health visuals hidden.
-	if frame.StyleFilterChanges.NameOnly then
+	-- ShowHealth overrides NameOnly when a lower-priority filter (e.g. raid marker) runs after NonTarget.
+	if frame.StyleFilterChanges.NameOnly and not frame.StyleFilterChanges.ShowHealth then
 		mod:Health_SetTransparent(frame, true)
 	end
 
