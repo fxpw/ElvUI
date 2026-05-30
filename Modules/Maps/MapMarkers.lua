@@ -33,7 +33,7 @@ function MM:ReseiveMark(text, distribution, target)
 end
 
 function MM:PrintMarkInfo(mapid, x, y, who)
-	DEFAULT_CHAT_FRAME:AddMessage(string.format(SYNC_INFO,who,mapid,x,y), 0.41, 0.8, 0.94);
+	-- DEFAULT_CHAT_FRAME:AddMessage(string.format(SYNC_INFO,who,mapid,x,y), 0.41, 0.8, 0.94);
 end
 
 function MM:HideAll()
