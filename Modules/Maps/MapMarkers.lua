@@ -141,17 +141,17 @@ end
 function MM:Initialize()
 	if not E.db.general.mapMarkers.enable then return end
 
-	local _SetItemRef = SetItemRef
-	function SetItemRef(link, textref, button, chatFrame)
-		dprint(link, textref, button, chatFrame);
-		if link:match("elvm:show") then
-			createMark(chatFrame,link);
-		elseif link:match("elvm:ignore") then
-			AddToIgnore(chatFrame,link);
-		else
-			_SetItemRef(link, textref, button, chatFrame);
-		end
-	end
+	-- local _SetItemRef = SetItemRef
+	-- function SetItemRef(link, textref, button, chatFrame)
+	-- 	dprint(link, textref, button, chatFrame);
+	-- 	if link:match("elvm:show") then
+	-- 		createMark(chatFrame,link);
+	-- 	elseif link:match("elvm:ignore") then
+	-- 		AddToIgnore(chatFrame,link);
+	-- 	else
+	-- 		_SetItemRef(link, textref, button, chatFrame);
+	-- 	end
+	-- end
 
 
 	WorldMapButton:RegisterForClicks("LeftButtonDownm", "RightButtonDown","MiddleButtonDown");
