@@ -4,7 +4,7 @@ NP.LSM = E.Libs.LSM
 local ElvUF = E.oUF
 assert(ElvUF, 'ElvUI was unable to locate oUF.')
 
-local _G = _G
+-- local _G = _G
 local pairs, ipairs, wipe = pairs, ipairs, wipe
 local select, unpack, type = select, unpack, type
 local match = string.match
