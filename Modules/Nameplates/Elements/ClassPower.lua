@@ -2,7 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
-local _G = _G
+-- local _G = _G
 local max, pairs = max, pairs
 
 local CreateFrame = CreateFrame
