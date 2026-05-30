@@ -163,9 +163,95 @@ local function NP_RegisterPlateUnitEvent(frame, event, unit)
 	frame:RegisterUnitEvent(event, unit)
 end
 
-local function NP_UnregisterNameplatePowerEvents(nameplate)
-	for i = 1, #NP_PLATE_POWER_EVENTS do
-		nameplate:UnregisterEvent(NP_PLATE_POWER_EVENTS[i])
+local function NP_UnregisterNameplateUnitEvents(nameplate)
+	if not nameplate then return end
+
+	local defaults = NP.StyleFilterDefaultEvents
+	if defaults then
+		for event, unitless in pairs(defaults) do
+			if not unitless then
+				nameplate:UnregisterEvent(event)
+			end
+		end
+	end
+end
+
+local function NP_PlateUsesAuraTags(nameplate)
+	if not nameplate then return false end
+
+	local function usesAuraTag(fmt)
+		if not fmt or fmt == '' then return false end
+		return fmt:find('%[category:', 1, true) or fmt:find('%[vip:', 1, true)
+			or fmt:find('%[premium:', 1, true) or fmt:find('%[zodiac:', 1, true)
+	end
+
+	local db = NP:PlateDB(nameplate)
+	if db.name and usesAuraTag(db.name.textFormat or db.name.format) then return true end
+	if db.level and usesAuraTag(db.level.textFormat or db.level.format) then return true end
+	if db.health and db.health.text and usesAuraTag(db.health.text.textFormat or db.health.text.format) then return true end
+	if db.power and db.power.text and usesAuraTag(db.power.text.textFormat or db.power.text.format) then return true end
+
+	local customDB = db.customTexts
+	if customDB then
+		for _, objectDB in pairs(customDB) do
+			if usesAuraTag(objectDB.textFormat or objectDB.format) then return true end
+		end
+	end
+
+	return false
+end
+
+function NP:CollectPlateUnitEvents(nameplate)
+	local events = {}
+
+	local function add(event)
+		if event then events[event] = true end
+	end
+
+	if NP_ShouldTrackAuras(nameplate) or NP_PlateUsesAuraTags(nameplate) then
+		add('UNIT_AURA')
+	end
+	if NP_ShouldTrackName(nameplate) then
+		add('UNIT_NAME_UPDATE')
+	end
+	if NP_ShouldTrackPower(nameplate) then
+		for i = 1, #NP_PLATE_POWER_EVENTS do
+			add(NP_PLATE_POWER_EVENTS[i])
+		end
+	end
+
+	local db = NP:PlateDB(nameplate)
+	if db.eliteIcon and db.eliteIcon.enable then
+		add('UNIT_CLASSIFICATION_CHANGED')
+	end
+
+	local plateEvents = NP.StyleFilterPlateEvents
+	local defaults = NP.StyleFilterDefaultEvents
+	if plateEvents and defaults then
+		for event, active in pairs(plateEvents) do
+			if active and not defaults[event] then
+				add(event)
+			end
+		end
+	end
+
+	return events
+end
+
+function NP:UpdatePlateAuraTags(nameplate)
+	local function refresh(fs)
+		if fs and fs.UpdateTag then fs:UpdateTag() end
+	end
+
+	refresh(nameplate.Name)
+	refresh(nameplate.Level)
+	if nameplate.Health and nameplate.Health.Text then refresh(nameplate.Health.Text) end
+	if nameplate.Power and nameplate.Power.Text then refresh(nameplate.Power.Text) end
+
+	if nameplate.customTexts then
+		for _, fs in pairs(nameplate.customTexts) do
+			refresh(fs)
+		end
 	end
 end
 
@@ -181,10 +267,19 @@ function NP.PlateUnitEvent_OnEvent(buffs, event, unit)
 		if nameplate.Buffs and nameplate.Buffs.ForceUpdate then
 			nameplate.Buffs:ForceUpdate()
 		end
+		NP:UpdatePlateAuraTags(nameplate)
 	elseif event == 'UNIT_NAME_UPDATE' then
 		NP:UpdatePlateName(nameplate)
+	elseif event == 'UNIT_CLASSIFICATION_CHANGED' then
+		if nameplate.ClassificationIndicator and nameplate:IsElementEnabled('ClassificationIndicator') then
+			nameplate:UpdateAllElements('UNIT_CLASSIFICATION_CHANGED')
+		end
 	elseif NP_PLATE_POWER_EVENT_SET[event] then
 		NP:UpdatePlatePower(nameplate)
+	end
+
+	if NP.StyleFilterHandleUnitEvent then
+		NP:StyleFilterHandleUnitEvent(nameplate, event, unit)
 	end
 end
 
@@ -193,10 +288,11 @@ function NP:UnregisterAuraUnitEvents(nameplate)
 	local unit = buffs and buffs._npPlateUnit
 	if not buffs or not unit then return end
 
-	NP_UnregisterPlateUnitEvent(buffs, 'UNIT_AURA', unit)
-	NP_UnregisterPlateUnitEvent(buffs, 'UNIT_NAME_UPDATE', unit)
-	for i = 1, #NP_PLATE_POWER_EVENTS do
-		NP_UnregisterPlateUnitEvent(buffs, NP_PLATE_POWER_EVENTS[i], unit)
+	if buffs._npRegisteredUnitEvents then
+		for event in pairs(buffs._npRegisteredUnitEvents) do
+			NP_UnregisterPlateUnitEvent(buffs, event, unit)
+		end
+		wipe(buffs._npRegisteredUnitEvents)
 	end
 
 	buffs._npPlateUnit = nil
@@ -205,11 +301,9 @@ end
 
 function NP:RegisterAuraUnitEvents(nameplate, unit)
 	unit = unit or nameplate.unit
-	local trackAuras = NP_ShouldTrackAuras(nameplate)
-	local trackPower = NP_ShouldTrackPower(nameplate)
-	local trackName = NP_ShouldTrackName(nameplate)
+	local events = NP:CollectPlateUnitEvents(nameplate)
 
-	if not unit or (not trackAuras and not trackPower and not trackName) then
+	if not unit or not next(events) then
 		NP:UnregisterAuraUnitEvents(nameplate)
 		return
 	end
@@ -217,25 +311,34 @@ function NP:RegisterAuraUnitEvents(nameplate, unit)
 	local buffs = nameplate.Buffs_
 	if not buffs or not buffs.RegisterUnitEvent then return end
 
-	if buffs._npPlateUnit == unit then return end
+	if buffs._npPlateUnit == unit and buffs._npRegisteredUnitEvents then
+		local same = true
+		for event in pairs(events) do
+			if not buffs._npRegisteredUnitEvents[event] then
+				same = false
+				break
+			end
+		end
+		if same then
+			for event in pairs(buffs._npRegisteredUnitEvents) do
+				if not events[event] then
+					same = false
+					break
+				end
+			end
+		end
+		if same then return end
+	end
 
 	NP:UnregisterAuraUnitEvents(nameplate)
-	nameplate:UnregisterEvent('UNIT_AURA')
-	nameplate:UnregisterEvent('UNIT_NAME_UPDATE')
-	NP_UnregisterNameplatePowerEvents(nameplate)
+	NP_UnregisterNameplateUnitEvents(nameplate)
 
 	buffs:SetScript('OnEvent', NP.PlateUnitEvent_OnEvent)
+	buffs._npRegisteredUnitEvents = {}
 
-	if trackAuras then
-		NP_RegisterPlateUnitEvent(buffs, 'UNIT_AURA', unit)
-	end
-	if trackName then
-		NP_RegisterPlateUnitEvent(buffs, 'UNIT_NAME_UPDATE', unit)
-	end
-	if trackPower then
-		for i = 1, #NP_PLATE_POWER_EVENTS do
-			NP_RegisterPlateUnitEvent(buffs, NP_PLATE_POWER_EVENTS[i], unit)
-		end
+	for event in pairs(events) do
+		NP_RegisterPlateUnitEvent(buffs, event, unit)
+		buffs._npRegisteredUnitEvents[event] = true
 	end
 
 	buffs._npPlateUnit = unit

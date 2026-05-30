@@ -346,8 +346,20 @@ local function initObject(unit, style, styleFunc, header, ...)
 	local num = select('#', ...)
 	for i = 1, num do
 		local object = select(i, ...)
-		local objectUnit = object.guessUnit or unit
+		local objectUnit = Private.resolveFrameUnit(object, object.guessUnit or unit)
 		local suffix = object:GetAttribute('unitsuffix')
+
+		if not objectUnit and suffix then
+			local base = object.guessUnit or unit
+			if base == 'party' and suffix == '5' then
+				objectUnit = 'player'
+			elseif base and not base:match(suffix) then
+				objectUnit = base .. suffix
+				if objectUnit == 'party5' then
+					objectUnit = 'player'
+				end
+			end
+		end
 
 		object.__elements = {}
 		object.style = style
@@ -363,6 +375,9 @@ local function initObject(unit, style, styleFunc, header, ...)
 		-- oUF-initialConfigFunction.
 		if(suffix and objectUnit and not objectUnit:match(suffix)) then
 			objectUnit = objectUnit .. suffix
+			if objectUnit == 'party5' then
+				objectUnit = 'player'
+			end
 		end
 
 		if(not (suffix == 'target' or objectUnit and objectUnit:match('target'))) then
@@ -425,6 +440,22 @@ local function initObject(unit, style, styleFunc, header, ...)
 
 		for element in next, elements do
 			object:EnableElement(element, objectUnit)
+		end
+
+		-- Elements register unitEvents during EnableElement, after the first UpdateUnits call.
+		if header and not object.onlyProcessChildren then
+			updateActiveUnit(object, 'PostInit')
+
+			local unit = Private.resolveFrameUnit(object, object.unit)
+			if unit and object.unitEvents then
+				Private.RegisterFrameUnitEvents(object, unit, object.realUnit)
+				if object.unit ~= unit then
+					object.unit = unit
+					object.id = unit:match('^.-(%d+)')
+				end
+			end
+		elseif object.unitEvents and object.unit then
+			Private.RegisterFrameUnitEvents(object, object.unit, object.realUnit)
 		end
 
 		for _, func in next, callback do
@@ -650,8 +681,13 @@ do
 				if(unit and suffix) then
 					if(headerType == 'pet' and suffix == 'target') then
 						unit = unit .. headerType .. suffix
+					elseif(unit == 'party' and suffix == '5') then
+						unit = 'player'
 					else
 						unit = unit .. suffix
+						if(unit == 'party5') then
+							unit = 'player'
+						end
 					end
 				elseif(unit and headerType == 'pet') then
 					unit = unit .. headerType

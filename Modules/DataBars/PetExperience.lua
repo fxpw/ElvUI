@@ -98,10 +98,16 @@ function mod:PetExperienceBar_Toggle()
 	if E.myclass ~= "HUNTER" then return end
 
 	if self.db.petExperience.enable then
-		self.petExpBar.eventFrame:RegisterEvent("UNIT_PET")
-		self.petExpBar.eventFrame:RegisterEvent("UNIT_PET_EXPERIENCE")
-		self.petExpBar.eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-		self.petExpBar.eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		local ef = self.petExpBar.eventFrame
+		if ef.RegisterUnitEvent then
+			ef:RegisterUnitEvent('UNIT_PET', 'player')
+			ef:RegisterUnitEvent('UNIT_PET_EXPERIENCE', 'player')
+		else
+			ef:RegisterEvent('UNIT_PET')
+			ef:RegisterEvent('UNIT_PET_EXPERIENCE')
+		end
+		ef:RegisterEvent('PLAYER_REGEN_DISABLED')
+		ef:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 		self:PetExperienceBar_Update()
 		E:EnableMover(self.petExpBar.mover:GetName())

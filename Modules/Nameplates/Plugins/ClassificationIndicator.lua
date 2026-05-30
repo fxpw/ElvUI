@@ -46,7 +46,9 @@ local function Enable(self)
 			element:SetTexture(E.Media.Textures.Nameplates)
 		end
 
-		self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
+		if not self.isNamePlate then
+			self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
+		end
 
 		return true
 	end
@@ -57,7 +59,9 @@ local function Disable(self)
 	if element then
 		element:Hide()
 
-		self:UnregisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
+		if not self.isNamePlate then
+			self:UnregisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
+		end
 	end
 end
 
@@ -94,5 +98,9 @@ function NP:Update_ClassificationIndicator(nameplate)
 		end
 	elseif nameplate:IsElementEnabled('ClassificationIndicator') then
 		nameplate:DisableElement('ClassificationIndicator')
+	end
+
+	if nameplate.unit then
+		NP:RegisterAuraUnitEvents(nameplate, nameplate.unit)
 	end
 end

@@ -288,11 +288,21 @@ function AB:CreateBarPet()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "UpdatePet")
 	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdatePet")
 	self:RegisterEvent("PET_BAR_UPDATE", "UpdatePet")
-	self:RegisterEvent("UNIT_PET", "UpdatePet")
-	self:RegisterEvent("UNIT_FLAGS", "UpdatePet")
-	self:RegisterEvent("UNIT_AURA", "UpdatePet")
 	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED", "UpdatePet")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN", PetActionBar_UpdateCooldowns)
+
+	if bar.RegisterUnitEvent then
+		bar:SetScript("OnEvent", function(_, event, unit)
+			AB:UpdatePet(event, unit)
+		end)
+		bar:RegisterUnitEvent("UNIT_PET", "player")
+		bar:RegisterUnitEvent("UNIT_FLAGS", "pet")
+		bar:RegisterUnitEvent("UNIT_AURA", "pet")
+	else
+		self:RegisterEvent("UNIT_PET", "UpdatePet")
+		self:RegisterEvent("UNIT_FLAGS", "UpdatePet")
+		self:RegisterEvent("UNIT_AURA", "UpdatePet")
+	end
 
 	E:CreateMover(bar, "ElvBar_Pet", L["Pet Bar"], nil, nil, nil,"ALL,ACTIONBARS", nil, "actionbar,barPet")
 

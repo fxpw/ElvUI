@@ -1562,6 +1562,11 @@ do -- oUF style filter inject watch functions without actually registering any e
 		end
 	end
 
+	function mod:StyleFilterHandleUnitEvent(frame, event, unit, ...)
+		if frame == _G.ElvNP_Test or not unit or not frame.unit or not UnitIsUnit(unit, frame.unit) then return end
+		update(frame, event, unit, ...)
+	end
+
 	local oUF_event_metatable = {
 		__call = function(funcs, frame, ...)
 			for _, func in next, funcs do
@@ -1612,27 +1617,32 @@ do -- oUF style filter inject watch functions without actually registering any e
 	function mod:StyleFilterEventWatch(frame, disable)
 		if frame == _G.ElvNP_Test then return end
 
-		for event in pairs(mod.StyleFilterDefaultEvents) do
-			local holdsEvent = styleFilterIsWatching(frame, event)
-			if disable then
-				if holdsEvent then
+		for event, unitless in pairs(mod.StyleFilterDefaultEvents) do
+			if unitless then
+				local holdsEvent = styleFilterIsWatching(frame, event)
+				if disable then
+					if holdsEvent then
+						oUF_fake_register(frame, event, true)
+					end
+				elseif mod.StyleFilterPlateEvents[event] then
+					if not holdsEvent then
+						oUF_fake_register(frame, event)
+					end
+				elseif holdsEvent then
 					oUF_fake_register(frame, event, true)
 				end
-			elseif mod.StyleFilterPlateEvents[event] then
-				if not holdsEvent then
-					oUF_fake_register(frame, event)
-				end
-			elseif holdsEvent then
-				oUF_fake_register(frame, event, true)
 			end
+		end
+
+		if not disable and frame.unit then
+			mod:RegisterAuraUnitEvents(frame, frame.unit)
 		end
 	end
 
 	function mod:StyleFilterRegister(nameplate, event, unitless)
-		if not nameplate:IsEventRegistered(event) then
-			-- Sirus oUF RegisterEvent(event, func); ignore unitless arg
-			nameplate:RegisterEvent(event, E.noop)
-		end
+		if not unitless or nameplate:IsEventRegistered(event) then return end
+		-- Sirus oUF RegisterEvent(event, func); unit events use RegisterUnitEvent via RegisterAuraUnitEvents
+		nameplate:RegisterEvent(event, E.noop)
 	end
 end
 
@@ -1644,7 +1654,9 @@ function mod:StyleFilterEvents(nameplate)
 	nameplate.StyleFilterChanges = nameplate.StyleFilterChanges or {}
 
 	for event, unitless in pairs(mod.StyleFilterDefaultEvents) do
-		mod:StyleFilterRegister(nameplate, event, unitless)
+		if unitless then
+			mod:StyleFilterRegister(nameplate, event, unitless)
+		end
 	end
 end
 

@@ -136,17 +136,37 @@ end
 function THREAT:ToggleEnable()
 	if self.db.enable then
 		self:RegisterEvent("PLAYER_TARGET_CHANGED", "Update")
-		self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", "Update")
 		self:RegisterEvent("PARTY_MEMBERS_CHANGED", "Update")
 		self:RegisterEvent("RAID_ROSTER_UPDATE", "Update")
-		self:RegisterEvent("UNIT_PET", "Update")
+
+		if not self.unitEventFrame then
+			self.unitEventFrame = CreateFrame("Frame")
+			self.unitEventFrame:SetScript("OnEvent", function(_, event, unit)
+				THREAT:Update(event, unit)
+			end)
+		end
+
+		if self.unitEventFrame.RegisterUnitEvent then
+			self.unitEventFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
+			self.unitEventFrame:RegisterUnitEvent("UNIT_PET", "player")
+		else
+			self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", "Update")
+			self:RegisterEvent("UNIT_PET", "Update")
+		end
+
 		self:Update()
 	else
 		self.bar:Hide()
 		self:UnregisterEvent("PLAYER_TARGET_CHANGED")
-		self:UnregisterEvent("UNIT_THREAT_LIST_UPDATE")
 		self:UnregisterEvent("PARTY_MEMBERS_CHANGED")
 		self:UnregisterEvent("RAID_ROSTER_UPDATE")
+
+		if self.unitEventFrame then
+			self.unitEventFrame:UnregisterEvent("UNIT_THREAT_LIST_UPDATE")
+			self.unitEventFrame:UnregisterEvent("UNIT_PET")
+		end
+
+		self:UnregisterEvent("UNIT_THREAT_LIST_UPDATE")
 		self:UnregisterEvent("UNIT_PET")
 	end
 end

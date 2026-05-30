@@ -291,16 +291,36 @@ end
 
 function RB:EnableRB()
 	ElvUI_ReminderBuffs:Show()
-	self:RegisterEvent("UNIT_AURA", "UpdateReminder")
-	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "UpdateReminder")
-	self:RegisterEvent("CHARACTER_POINTS_CHANGED", "UpdateReminder")
-	E.RegisterCallback(self, "RoleChanged", "UpdateSettings")
+
+	if not self.unitEventFrame then
+		self.unitEventFrame = CreateFrame('Frame')
+	end
+
+	local eventFrame = self.unitEventFrame
+	eventFrame:SetScript('OnEvent', function(_, event, unit)
+		RB:UpdateReminder(event, unit)
+	end)
+
+	if eventFrame.RegisterUnitEvent then
+		eventFrame:RegisterUnitEvent('UNIT_AURA', 'player')
+	else
+		self:RegisterEvent('UNIT_AURA', 'UpdateReminder')
+	end
+
+	self:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', 'UpdateReminder')
+	self:RegisterEvent('CHARACTER_POINTS_CHANGED', 'UpdateReminder')
+	E.RegisterCallback(self, 'RoleChanged', 'UpdateSettings')
 	self:UpdateReminder()
 end
 
 function RB:DisableRB()
 	ElvUI_ReminderBuffs:Hide()
-	self:UnregisterEvent("UNIT_AURA")
+
+	if self.unitEventFrame and self.unitEventFrame.UnregisterEvent then
+		self.unitEventFrame:UnregisterEvent('UNIT_AURA')
+	end
+
+	self:UnregisterEvent('UNIT_AURA')
 	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 	self:UnregisterEvent("CHARACTER_POINTS_CHANGED")
 	E.UnregisterCallback(self, "RoleChanged", "UpdateSettings")

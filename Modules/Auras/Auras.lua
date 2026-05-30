@@ -600,12 +600,19 @@ function A:CreateAuraHeader(filter)
 	header:SetClampedToScreen(true)
 	header.filter = filter
 
-	header:RegisterEvent("UNIT_AURA")
-	header:SetScript("OnEvent", function(self, _, unit)
-		if unit ~= "player" then return end
-
-		A:UpdateHeader(self)
-	end)
+	if header.RegisterUnitEvent then
+		header:RegisterUnitEvent('UNIT_AURA', 'player')
+		header:SetScript('OnEvent', function(self, _, unit)
+			if unit ~= 'player' then return end
+			A:UpdateHeader(self)
+		end)
+	else
+		header:RegisterEvent('UNIT_AURA')
+		header:SetScript('OnEvent', function(self, _, unit)
+			if unit ~= 'player' then return end
+			A:UpdateHeader(self)
+		end)
+	end
 
 	self:UpdateHeader(header)
 
