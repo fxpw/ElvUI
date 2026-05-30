@@ -2,14 +2,22 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local next = next
+local ipairs = ipairs
+local select = select
+local tonumber = tonumber
+
 local GetTime = GetTime
 local UnitPower = UnitPower
 local UnitClass = UnitClass
-local tonumber = tonumber
+local UnitGUID = UnitGUID
+local UnitExists = UnitExists
 local UnitPowerType = UnitPowerType
 local UnitPowerMax = UnitPowerMax
+local UnitCastingInfo = UnitCastingInfo
+local UnitChannelInfo = UnitChannelInfo
 local GetSpellInfo = GetSpellInfo
 local IsCurrentSpell = IsCurrentSpell
+
 local queueableSpells
 
 local classQueueableSpells = {
@@ -70,9 +78,9 @@ for id = 1, 100000 do
 end
 
 for id = 300000, 350000 do
-	local name = GetSpellInfo(id);
+	local name, rank = GetSpellInfo(id);
 	if name then
-		spelllist[spelllist] = id
+		spelllist[name .. (rank or "")] = id
 	end
 end
 
@@ -87,13 +95,19 @@ local tableForPower = {
 
 local GetSpellPowerCost = function(powerTypeToCheck, unit)
 	local spellName, rank = UnitCastingInfo(unit)
+	if not spellName then
+		spellName, rank = UnitChannelInfo(unit)
+	end
+
 	if not spellName and (unit == "player" or UnitGUID(unit) == UnitGUID("player")) then
 		spellName = GetQueuedSpell()
+		rank = nil
 	end
+
 	if spellName then
-		if rank and spelllist[spellName .. rank] then
-			spellName = spelllist[spellName .. rank]
-			local _, _, _, powerCost, _, powerType = GetSpellInfo(spellName);
+		local spellID = spelllist[spellName .. (rank or "")] or spelllist[spellName]
+		if spellID then
+			local _, _, _, powerCost, _, powerType = GetSpellInfo(spellID);
 			if powerType and powerCost then
 				if powerType == powerTypeToCheck then
 					return powerCost;
@@ -105,6 +119,8 @@ end
 
 local Update = function(self, elapsed)
 	local element = self.PowerCostDisplay
+	if not element or not element.unit or not UnitExists(element.unit) then return end
+
 	if element.PreUpdate then
 		element:PreUpdate()
 	end
@@ -159,8 +175,8 @@ end
 
 local Disable = function(self)
 	local element = self.Power and self.PowerCostDisplay
-	element:Hide()
 	if element then
+		element:Hide()
 		element:SetScript('OnUpdate', nil)
 
 		return false
