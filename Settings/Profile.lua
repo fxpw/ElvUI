@@ -415,6 +415,7 @@ local NP_Portrait = {
 
 local NP_Name = {
 	enable = true,
+	useClassColor = false,
 	textFormat = '[name:long]',
 	position = 'TOPLEFT',
 	parent = 'Health',

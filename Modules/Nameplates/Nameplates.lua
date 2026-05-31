@@ -949,7 +949,7 @@ function NP:ConfigurePlates()
 
 	local test = NP.TestFrame
 	for nameplate in pairs(NP.Plates) do
-		if nameplate ~= test then
+		if nameplate ~= test and nameplate.unit and UnitExists(nameplate.unit) then
 			NP:UpdatePlateSize(nameplate)
 
 			nameplate.previousType = nil
