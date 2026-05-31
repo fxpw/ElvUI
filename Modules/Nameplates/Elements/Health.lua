@@ -3,6 +3,7 @@ local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
 local unpack = unpack
+local ipairs = ipairs
 local tinsert = tinsert
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitIsTapped = UnitIsTapped
@@ -44,8 +45,6 @@ function NP:Health_UpdateColor(_, unit)
 	elseif element.colorReaction and UnitReaction(unit, 'player') then
 		local reaction = UnitReaction(unit, 'player')
 		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
-	elseif element.colorSmooth then
-		r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
 	elseif element.colorHealth then
 		t = NP.db.colors.health
 	end
@@ -81,6 +80,14 @@ function NP:Health_UpdateColor(_, unit)
 
 	if element.PostUpdateColor then
 		element:PostUpdateColor(unit, r, g, b)
+	end
+
+	-- Mirror Power's color callbacks (used by CutawayHealth to sync drain-bar color).
+	local frame = self
+	if frame.HealthColorChangeCallbacks and b then
+		for _, cb in ipairs(frame.HealthColorChangeCallbacks) do
+			cb(NP, frame, r, g, b)
+		end
 	end
 
 	-- Some paths re-assign statusbar textures/colors after NameOnly is applied.
@@ -182,7 +189,38 @@ function NP:Update_Health(nameplate, skipUpdate)
 	-- Defensive: old saved profiles may be missing the per-unit health subtable entirely.
 	-- Without this guard db.health.enable nils out and the bar is permanently disabled.
 	if not db.health then
-		db.health = { enable = true, height = 10, useClassColor = true }
+		db.health = {
+			enable = true,
+			height = 10,
+			useClassColor = true,
+			text = {
+				enable = true,
+				format = '[health:current]',
+				position = 'CENTER',
+				parent = 'Nameplate',
+				xOffset = 0,
+				yOffset = 0,
+				font = 'PT Sans Narrow',
+				fontOutline = 'OUTLINE',
+				fontSize = 11,
+			},
+			healPrediction = {
+				enable = true,
+				absorbStyle = 'REVERSED',
+				anchorPoint = 'BOTTOM',
+				absorbTexture = 'ElvUI Norm',
+				height = -1,
+				maxOverflow = 0,
+				colors = {
+					myBar = {r = 0, g = 1, b = 0.5, a = 0.25},
+					otherBar = {r = 0, g = 1, b = 0, a = 0.25},
+					absorbs = {r = 0, g = 1, b = 1, a = 0.25},
+					healAbsorbs = {r = 1, g = 0, b = 0, a = 0.25},
+					overabsorbs = {r = 0, g = 1, b = 1, a = 1},
+					overhealabsorbs = {r = 1, g = 0, b = 0, a = 1},
+				},
+			},
+		}
 	end
 
 	NP:Health_SetColors(nameplate)
@@ -213,7 +251,6 @@ function NP:Update_Health(nameplate, skipUpdate)
 		NP:Health_SetTransparent(nameplate, true)
 	end
 
-	nameplate.Health.width = db.health.width
 	nameplate.Health.height = db.health.height
 	nameplate.Health:Height(db.health.height)
 end

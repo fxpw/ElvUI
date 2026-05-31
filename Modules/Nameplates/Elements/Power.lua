@@ -23,18 +23,13 @@ function NP:Power_UpdateColor(_, unit)
 	if sf.PowerColor then return end
 
 	local r, g, b, t
-	if element.colorDisconnected and not UnitIsConnected(unit) then
-		t = self.colors.disconnected
-	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
+	if element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
 		t = self.colors.tapped
 	elseif element.colorPower then
 		t = NP.db.colors.power and NP.db.colors.power[ptoken or ptype]
 	elseif (element.colorClass and self.isPlayer) then
 		local _, class = UnitClass(unit)
 		t = self.colors.class[class]
-	elseif element.colorReaction and UnitReaction(unit, 'player') then
-		local reaction = UnitReaction(unit, 'player')
-		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
 	end
 
 	if t then
@@ -62,7 +57,7 @@ function NP:Power_UpdateColor(_, unit)
 	end
 end
 
-function NP:Power_PostUpdate(unit, cur, _, max)
+function NP:Power_PostUpdate(unit, cur, max)
 	local frame = self.__owner
 	local db = NP:PlateDB(frame)
 	if not db.enable then return end

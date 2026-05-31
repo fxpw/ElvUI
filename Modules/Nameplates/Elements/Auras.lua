@@ -14,29 +14,6 @@ local UnitIsUnit = UnitIsUnit
 local UnitName = UnitName
 local ceil, min = math.ceil, math.min
 
--- Local MatchGrowthX/Y tables (retail UF doesn't exist in WotLK)
-local MatchGrowthX = {
-	TOPLEFT     = 'RIGHT',
-	TOPRIGHT    = 'LEFT',
-	BOTTOMLEFT  = 'RIGHT',
-	BOTTOMRIGHT = 'LEFT',
-	LEFT        = 'RIGHT',
-	RIGHT       = 'LEFT',
-	TOP         = 'RIGHT',
-	BOTTOM      = 'RIGHT',
-}
-
-local MatchGrowthY = {
-	TOPLEFT     = 'DOWN',
-	TOPRIGHT    = 'DOWN',
-	BOTTOMLEFT  = 'UP',
-	BOTTOMRIGHT = 'UP',
-	LEFT        = 'UP',
-	RIGHT       = 'UP',
-	TOP         = 'DOWN',
-	BOTTOM      = 'UP',
-}
-
 function NP:GetAuraIconSize(db)
 	if not db then return 27, 27 end
 
@@ -91,8 +68,9 @@ end
 local function NP_FormatUsesPowerTag(fmt)
 	if not fmt or fmt == '' then return false end
 	local lower = fmt:lower()
-	return lower:find('pp', 1, true) or lower:find('mana', 1, true) or lower:find('energy', 1, true)
-		or lower:find('rage', 1, true) or lower:find('runic', 1, true) or lower:find('focus', 1, true)
+	return lower:find('power', 1, true) or lower:find('pp', 1, true) or lower:find('mana', 1, true)
+		or lower:find('energy', 1, true) or lower:find('rage', 1, true) or lower:find('runic', 1, true)
+		or lower:find('focus', 1, true)
 end
 
 local function NP_ShouldTrackPower(nameplate)
@@ -181,8 +159,8 @@ local function NP_PlateUsesAuraTags(nameplate)
 
 	local function usesAuraTag(fmt)
 		if not fmt or fmt == '' then return false end
-		return fmt:find('%[category:', 1, true) or fmt:find('%[vip:', 1, true)
-			or fmt:find('%[premium:', 1, true) or fmt:find('%[zodiac:', 1, true)
+		return fmt:find('[category:', 1, true) or fmt:find('[vip:', 1, true)
+			or fmt:find('[premium:', 1, true) or fmt:find('[zodiac:', 1, true)
 	end
 
 	local db = NP:PlateDB(nameplate)
@@ -296,7 +274,6 @@ function NP:UnregisterAuraUnitEvents(nameplate)
 	end
 
 	buffs._npPlateUnit = nil
-	buffs._npAuraUnit = nil
 end
 
 function NP:RegisterAuraUnitEvents(nameplate, unit)
@@ -342,7 +319,6 @@ function NP:RegisterAuraUnitEvents(nameplate, unit)
 	end
 
 	buffs._npPlateUnit = unit
-	buffs._npAuraUnit = unit
 end
 
 -- Custom AuraFilter for nameplates — reads self.db (the aura frame's db) directly,
@@ -390,8 +366,8 @@ local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, dura
 end
 
 -- Smart aura position: fluid PostUpdate callbacks (NP-specific, since UF's use db.perrow/numrows).
--- Non-fluid modes reuse UF.UpdateBuffsHeaderPosition / UF.UpdateDebuffsHeaderPosition directly
--- because those only do position math with no db field lookups.
+-- Non-fluid modes use the local NP_UpdateBuffsHeaderPosition / NP_UpdateDebuffsHeaderPosition
+-- callbacks (defined below) because those only do position math with no db field lookups.
 local function NP_GetAuraRowHeight(auras)
 	return auras.sizeHeight or auras.size or 27
 end
@@ -480,21 +456,6 @@ local function NP_UpdateDebuffsPositionAndBuffHeight(self)
 	NP_UpdateBuffsHeight(self)
 end
 
--- Local ConvertFilters: split priority string into filterList table
-local function ConvertFilters(auras, priority)
-	local filterList = {}
-	if priority then
-		for filter in priority:gmatch('[^,]+') do
-			local f = filter:match('^%s*(.-)%s*$')
-			if f and f ~= '' then
-				filterList[#filterList + 1] = f
-			end
-		end
-	end
-	auras.filterList = filterList
-	return filterList
-end
-
 function NP:Construct_Auras(nameplate)
 	local frameName = nameplate:GetName()
 	local parent = nameplate.Health or nameplate
@@ -518,8 +479,6 @@ function NP:Construct_Auras(nameplate)
 	Buffs.type = 'buffs'
 	Buffs.forceShow = nameplate == _G.ElvNP_Test
 	Buffs.tickers = {}
-	Buffs.stacks = {}
-	Buffs.rows = {}
 
 	local Debuffs = CreateFrame('Frame', frameName .. 'Debuffs', parent)
 	do
@@ -540,8 +499,6 @@ function NP:Construct_Auras(nameplate)
 	Debuffs.type = 'debuffs'
 	Debuffs.forceShow = nameplate == _G.ElvNP_Test
 	Debuffs.tickers = {}
-	Debuffs.stacks = {}
-	Debuffs.rows = {}
 
 	-- WotLK oUF: PostCreateIcon / PostUpdateIcon (not PostCreateButton / PostUpdateButton)
 	Buffs.PreSetPosition = UF.SortAuras
@@ -581,7 +538,7 @@ function NP:Construct_AuraIcon(button)
 	button.stealable:SetTexture()
 
 	button.cd.CooldownOverride = 'nameplates'
-	E:RegisterCooldown(button.cd, 'nameplates')
+	E:RegisterCooldown(button.cd)
 
 	local auras = button:GetParent()
 	if auras and auras.type then
@@ -599,16 +556,9 @@ local function RefreshAuraCooldownFont(button)
 end
 
 function NP:PostUpdateAuraIcon(unit, button)
+	-- Border coloring / desaturate only. Size, texcoords and cooldown font are set
+	-- once at config time in UpdateAuraSettings and do not change between aura updates.
 	UF:PostUpdateAura(unit, button)
-
-	local auras = button and button:GetParent()
-	local db = auras and auras.db
-	if db then
-		local width, height = NP:GetAuraIconSize(db)
-		button:SetSize(width, height)
-		NP:SetAuraIconTexCoords(button.icon, button)
-		RefreshAuraCooldownFont(button)
-	end
 end
 
 function NP:UpdateAuraSettings(button)
@@ -641,10 +591,8 @@ function NP:UpdateAuraSettings(button)
 end
 
 function NP:Configure_Auras(nameplate, auras, db)
-	-- WotLK Profile uses perrow/numrows, retail uses numAuras/numRows - support both
-	local numAuras = db.numAuras or db.perrow or 5
-	local numRows = db.numRows or db.numrows or 1
-	local priority = db.priority or (db.filters and db.filters.priority) or ''
+	local numAuras = db.numAuras or 5
+	local numRows = db.numRows or 1
 
 	local width, height = NP:GetAuraIconSize(db)
 	auras.size = width
@@ -654,14 +602,13 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras.onlyShowPlayer = false
 	auras.spacing = db.spacing
 	local anchorPoint = db.anchorPoint
-	auras['growth-y'] = db.growthY or MatchGrowthY[anchorPoint] or 'UP'
-	auras['growth-x'] = db.growthX or MatchGrowthX[anchorPoint] or 'RIGHT'
+	auras['growth-y'] = db.growthY or 'UP'
+	auras['growth-x'] = db.growthX or 'RIGHT'
 	auras.xOffset = db.xOffset
 	auras.yOffset = db.yOffset
 	auras.anchorPoint = anchorPoint
 	auras.initialAnchor = E.InversePoints[anchorPoint]
 	auras.point = auras.initialAnchor -- needed by SmartAuraPosition PostUpdate callbacks
-	ConvertFilters(auras, priority)
 	auras.PostUpdate = nil         -- cleared here; SetSmartAuraPosition may re-assign after Configure
 	auras.attachTo = nameplate.Health or nameplate -- always anchor to Health (db.attachTo ignored on nameplates)
 	auras.num = numAuras * numRows

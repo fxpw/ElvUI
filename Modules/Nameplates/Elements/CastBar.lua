@@ -177,7 +177,7 @@ function NP:Construct_Castbar(nameplate)
 end
 
 -- WotLK: COMBAT_LOG_EVENT_UNFILTERED passes args as event args (no CombatLogGetCurrentEventInfo)
-function NP:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, subEvent, _, sourceGUID, sourceName, _, _, targetGUID)
+function NP:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, subEvent, sourceGUID, sourceName, _, targetGUID)
 	if (subEvent == 'SPELL_INTERRUPT' or subEvent == 'SPELL_PERIODIC_INTERRUPT') and targetGUID and (sourceName and sourceName ~= '') then
 		local plate = NP.PlateGUID[targetGUID]
 		if plate and plate.Castbar then

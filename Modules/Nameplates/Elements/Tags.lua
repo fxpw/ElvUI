@@ -3,10 +3,6 @@ local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 local pairs = pairs
 
-local function CustomTextAnchor(nameplate)
-	return (nameplate and nameplate.Health) or nameplate
-end
-
 function NP:Construct_TagText(nameplate)
 	local Text = nameplate:CreateFontString(nil, 'OVERLAY')
 	Text:FontTemplate(LSM:Fetch('font', NP.db.font), NP.db.fontSize, NP.db.fontOutline)
@@ -107,7 +103,6 @@ function NP:Update_CustomTexts(nameplate)
 		if objectDB.enable == nil then
 			objectDB.enable = true
 		end
-		objectDB.attachTextTo = 'Health'
 
 		object:FontTemplate(
 			LSM:Fetch('font', objectDB.font or NP.db.font),
@@ -118,7 +113,7 @@ function NP:Update_CustomTexts(nameplate)
 		object:ClearAllPoints()
 		object:Point(
 			objectDB.justifyH or 'CENTER',
-			CustomTextAnchor(nameplate),
+			nameplate.Health or nameplate,
 			objectDB.justifyH or 'CENTER',
 			objectDB.xOffset or 0,
 			objectDB.yOffset or 0

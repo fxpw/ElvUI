@@ -74,6 +74,7 @@ function NP:UpdateNameplateStacking()
 	local movedCount = 0
 	local maxMove = 0
 	local minDistanceSeen = 1000
+	local activeCount = 0
 
 	for nameplate in pairs(NP.Plates) do
 		if nameplate ~= NP.TestFrame and nameplate:IsShown() and ENEMY_TYPES[nameplate.frameType] then
@@ -102,6 +103,7 @@ function NP:UpdateNameplateStacking()
 	end
 
 	for basePlate, data in pairs(NP.StackingPlates) do
+		activeCount = activeCount + 1
 		local _, height = basePlate:GetSize()
 		local minDistance = 1000
 		local reset = true
@@ -135,7 +137,7 @@ function NP:UpdateNameplateStacking()
 		end
 
 		-- Keep stacking soft and prevent runaway separation.
-		newPosition = mathMax(0, mathMin(newPosition, cfg.maxOffset or 90))
+		newPosition = mathMax(0, mathMin(newPosition, cfg.maxOffset))
 
 		data.position = newPosition
 		local moved = abs(newPosition - oldPosition)
@@ -154,14 +156,11 @@ function NP:UpdateNameplateStacking()
 	end
 
 	NP.StackingLastStats = {
-		active = 0,
+		active = activeCount,
 		moved = movedCount,
 		maxMove = maxMove,
 		minDistance = minDistanceSeen < 1000 and minDistanceSeen or -1,
 	}
-	for _ in pairs(NP.StackingPlates) do
-		NP.StackingLastStats.active = NP.StackingLastStats.active + 1
-	end
 end
 
 function NP:UpdateStackingState()
@@ -217,12 +216,14 @@ function NP:StackingDiagnostic()
 		return
 	end
 
-	local okClamp, errClamp = pcall(basePlate.SetClampRectInsets, basePlate, -10, 10, 10, -10)
-	local okScreen, errScreen = pcall(basePlate.SetClampedToScreen, basePlate, true)
+	local managed = NP.StackingPlates[basePlate] ~= nil
+
+	basePlate:SetClampRectInsets(-10, 10, 10, -10)
+	basePlate:SetClampedToScreen(true)
 	local x, y = GetPlatePosition(basePlate)
 
 	E:Print(format('[NPStack] base=%s clamp=%s screen=%s x=%s y=%s',
-		tostring(basePlate:GetName()), tostring(okClamp), tostring(okScreen), tostring(x), tostring(y)))
+		tostring(basePlate:GetName()), tostring(true), tostring(true), tostring(x), tostring(y)))
 
 	local stats = NP.StackingLastStats
 	if stats then
@@ -230,18 +231,16 @@ function NP:StackingDiagnostic()
 			stats.active or 0, stats.moved or 0, stats.maxMove or 0, stats.minDistance or -1))
 	end
 
-	if not okClamp then
-		E:Print(format('[NPStack] Clamp error: %s', tostring(errClamp)))
+	-- Don't reset a managed StackingPlate to base; the OnUpdate loop owns its clamp
+	-- and the destructive 0,0,0,0 reset would snap/flicker it until the next tick.
+	if not managed then
+		basePlate:SetClampRectInsets(0, 0, 0, 0)
+		basePlate:SetClampedToScreen(false)
 	end
-	if not okScreen then
-		E:Print(format('[NPStack] Screen error: %s', tostring(errScreen)))
-	end
-
-	pcall(basePlate.SetClampRectInsets, basePlate, 0, 0, 0, 0)
-	pcall(basePlate.SetClampedToScreen, basePlate, false)
 end
 
 function NP:ForceStackingPreview()
+	local cfg = GetStackingDB()
 	local changed = 0
 
 	for nameplate in pairs(NP.Plates) do
@@ -254,7 +253,7 @@ function NP:ForceStackingPreview()
 				local offset = changed * 60
 
 				basePlate:SetClampedToScreen(true)
-				basePlate:SetClampRectInsets(-10, 10, 10, -(y or 0) - offset + height)
+				basePlate:SetClampRectInsets(-10, 10, cfg.upperborder, -(y or 0) - offset - cfg.originpos + height)
 				NP.StackingForcedPlates[basePlate] = true
 			end
 		end

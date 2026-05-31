@@ -4,17 +4,13 @@ NP.LSM = E.Libs.LSM
 local ElvUF = E.oUF
 assert(ElvUF, 'ElvUI was unable to locate oUF.')
 
--- local _G = _G
 local pairs, ipairs, wipe = pairs, ipairs, wipe
 local select, unpack, type = select, unpack, type
-local match = string.match
 local strsplit = strsplit
 local tonumber = tonumber
 
 local CreateFrame = CreateFrame
-local GetBattlefieldScore = GetBattlefieldScore
 local GetCVar = GetCVar
-local GetNumBattlefieldScores = GetNumBattlefieldScores
 local GetNumPartyMembers = GetNumPartyMembers
 local GetNumRaidMembers = GetNumRaidMembers
 local GetPartyAssignment = GetPartyAssignment
@@ -46,12 +42,9 @@ NP.GroupRoles    = {}
 NP.PlateGUID     = {}
 NP.mouseoverGUID = nil
 NP.StatusBars = {}
-NP.Healers    = {}
 NP.multiplier = 0.35
 NP.IsInGroup  = false
 NP.TEST_FRAME_SCALE = 1.75 -- preview frame in options (larger than in-world plates)
-
-NP.StyleFilterEventFunctions = {}
 
 -- Single OnUpdate frame to poll UnitHealth for all nameplate units.
 -- UNIT_HEALTH only fires for player/target in WotLK; this covers non-targeted units.
@@ -78,22 +71,31 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u then
-				-- local changed = false
 				-- Update health value only when changed (avoids unnecessary StatusBar redraws)
 				local h = plate.Health
 				if h then
 					local cur = UnitHealth(u)
 					local max = UnitHealthMax(u)
 					if max and max > 0 then
+						local changed = false
 						if h._np_max ~= max then
 							h._np_max = max
 							h:SetMinMaxValues(0, max)
-							-- changed = true
+							changed = true
 						end
 						if h._np_cur ~= cur then
 							h._np_cur = cur
+							changed = true
+						end
+						if changed then
+							-- Fire BEFORE SetValue so CutawayHealth can read the previous
+							-- bar value (frame.Health:GetValue) to compute the drain delta.
+							if plate.HealthValueChangeCallbacks then
+								for _, cb in ipairs(plate.HealthValueChangeCallbacks) do
+									cb(NP, plate, cur, max)
+								end
+							end
 							h:SetValue(cur)
-							-- changed = true
 						end
 					end
 				end
@@ -134,7 +136,7 @@ do
 						local Buffs = plate.Buffs
 						if Buffs and Buffs:IsShown() then
 							Buffs:SetFrameLevel(engineLevel + 2)
-							local n = Buffs.visibleAuras or Buffs.visibleBuffs or #Buffs
+							local n = Buffs.visibleBuffs or #Buffs
 							for i = 1, n do
 								local btn = Buffs[i]
 								if btn and btn:IsShown() then
@@ -150,7 +152,7 @@ do
 						local Debuffs = plate.Debuffs
 						if Debuffs and Debuffs:IsShown() then
 							Debuffs:SetFrameLevel(engineLevel + 2)
-							local n = Debuffs.visibleAuras or Debuffs.visibleDebuffs or #Debuffs
+							local n = Debuffs.visibleDebuffs or #Debuffs
 							for i = 1, n do
 								local btn = Debuffs[i]
 								if btn and btn:IsShown() then
@@ -442,21 +444,6 @@ function NP:UpdatePlateType(nameplate)
 	nameplate.UnitClass    = nameplate.classFile
 end
 
-function NP:GetUnitTypeFromUnit(unit)
-	local reaction = UnitReaction('player', unit)
-	local isPlayer = UnitIsPlayer(unit)
-
-	if isPlayer and UnitIsFriend('player', unit) and reaction and reaction >= 5 then
-		return 'FRIENDLY_PLAYER'
-	elseif not isPlayer and (reaction and reaction >= 5 or UnitFactionGroup(unit) == 'Neutral') then
-		return 'FRIENDLY_NPC'
-	elseif not isPlayer and (reaction and reaction <= 4) then
-		return 'ENEMY_NPC'
-	else
-		return 'ENEMY_PLAYER'
-	end
-end
-
 function NP:UpdatePlateSize(nameplate)
 	if not InCombatLockdown() then
 		local ft = nameplate.frameType
@@ -746,40 +733,8 @@ function NP:GROUP_ROSTER_UPDATE()
 end
 
 function NP:PLAYER_ENTERING_WORLD()
-	wipe(self.Healers)
-	local inInstance, instanceType = IsInInstance()
-	if inInstance and instanceType == 'pvp' and self.db.units.ENEMY_PLAYER.markHealers then
-		self:RegisterEvent('UPDATE_BATTLEFIELD_SCORE', 'CheckBGHealers')
-		self.CheckHealerTimer = self:ScheduleRepeatingTimer('CheckBGHealers', 3)
-	else
-		self:UnregisterEvent('UPDATE_BATTLEFIELD_SCORE')
-		if self.CheckHealerTimer then
-			self:CancelTimer(self.CheckHealerTimer)
-			self.CheckHealerTimer = nil
-		end
-	end
-
 	NP:ConfigureAll(true)
 	NP:RefreshPlatesOnMouseoverChanged()
-end
-
-function NP:PLAYER_REGEN_DISABLED() end
-
-function NP:PLAYER_REGEN_ENABLED() end
-
-function NP:CheckBGHealers()
-	local name, _, classToken, damageDone, healingDone
-	for i = 1, GetNumBattlefieldScores() do
-		name, _, _, _, _, _, _, _, _, classToken, damageDone, healingDone = GetBattlefieldScore(i)
-		if name and classToken and E.HealingClasses and E.HealingClasses[classToken] then
-			name = match(name, '([^%-]+).*')
-			if name and healingDone > (damageDone * 2) then
-				self.Healers[name] = true
-			elseif name and self.Healers[name] then
-				self.Healers[name] = nil
-			end
-		end
-	end
 end
 
 function NP:PlateFade(nameplate, timeToFade, startAlpha, endAlpha)
@@ -797,100 +752,6 @@ function NP:PlateFade(nameplate, timeToFade, startAlpha, endAlpha)
 	else
 		E:UIFrameFade(nameplate, nameplate.FadeObject)
 	end
-end
-
-function NP:StyleFrame(parent, noBackdrop, point)
-	point = point or parent
-	local noscalemult = E.mult * UIParent:GetScale()
-
-	if point.bordertop then return end
-
-	if not noBackdrop then
-		point.backdrop = parent:CreateTexture(nil, 'BACKGROUND')
-		point.backdrop:SetAllPoints(point)
-		point.backdrop:SetTexture(unpack(E.media.backdropfadecolor))
-	end
-
-	if E.PixelMode then
-		point.bordertop = parent:CreateTexture()
-		point.bordertop:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult, noscalemult)
-		point.bordertop:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult, noscalemult)
-		point.bordertop:SetHeight(noscalemult)
-		point.bordertop:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderbottom = parent:CreateTexture()
-		point.borderbottom:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', -noscalemult, -noscalemult)
-		point.borderbottom:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', noscalemult, -noscalemult)
-		point.borderbottom:SetHeight(noscalemult)
-		point.borderbottom:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderleft = parent:CreateTexture()
-		point.borderleft:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult, noscalemult)
-		point.borderleft:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', noscalemult, -noscalemult)
-		point.borderleft:SetWidth(noscalemult)
-		point.borderleft:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderright = parent:CreateTexture()
-		point.borderright:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult, noscalemult)
-		point.borderright:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', -noscalemult, -noscalemult)
-		point.borderright:SetWidth(noscalemult)
-		point.borderright:SetTexture(unpack(E.media.bordercolor))
-	else
-		point.bordertop = parent:CreateTexture(nil, 'OVERLAY')
-		point.bordertop:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult, noscalemult*2)
-		point.bordertop:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult, noscalemult*2)
-		point.bordertop:SetHeight(noscalemult)
-		point.bordertop:SetTexture(unpack(E.media.bordercolor))
-
-		point.bordertop.backdrop = parent:CreateTexture()
-		point.bordertop.backdrop:SetPoint('TOPLEFT', point.bordertop, 'TOPLEFT', noscalemult, noscalemult)
-		point.bordertop.backdrop:SetPoint('TOPRIGHT', point.bordertop, 'TOPRIGHT', -noscalemult, noscalemult)
-		point.bordertop.backdrop:SetHeight(noscalemult * 3)
-		point.bordertop.backdrop:SetTexture(0, 0, 0)
-
-		point.borderbottom = parent:CreateTexture(nil, 'OVERLAY')
-		point.borderbottom:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', -noscalemult, -noscalemult*2)
-		point.borderbottom:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', noscalemult, -noscalemult*2)
-		point.borderbottom:SetHeight(noscalemult)
-		point.borderbottom:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderbottom.backdrop = parent:CreateTexture()
-		point.borderbottom.backdrop:SetPoint('BOTTOMLEFT', point.borderbottom, 'BOTTOMLEFT', noscalemult, -noscalemult)
-		point.borderbottom.backdrop:SetPoint('BOTTOMRIGHT', point.borderbottom, 'BOTTOMRIGHT', -noscalemult, -noscalemult)
-		point.borderbottom.backdrop:SetHeight(noscalemult * 3)
-		point.borderbottom.backdrop:SetTexture(0, 0, 0)
-
-		point.borderleft = parent:CreateTexture(nil, 'OVERLAY')
-		point.borderleft:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult*2, noscalemult*2)
-		point.borderleft:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', noscalemult*2, -noscalemult*2)
-		point.borderleft:SetWidth(noscalemult)
-		point.borderleft:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderleft.backdrop = parent:CreateTexture()
-		point.borderleft.backdrop:SetPoint('TOPLEFT', point.borderleft, 'TOPLEFT', -noscalemult, noscalemult)
-		point.borderleft.backdrop:SetPoint('BOTTOMLEFT', point.borderleft, 'BOTTOMLEFT', -noscalemult, -noscalemult)
-		point.borderleft.backdrop:SetWidth(noscalemult * 3)
-		point.borderleft.backdrop:SetTexture(0, 0, 0)
-
-		point.borderright = parent:CreateTexture(nil, 'OVERLAY')
-		point.borderright:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult*2, noscalemult*2)
-		point.borderright:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', -noscalemult*2, -noscalemult*2)
-		point.borderright:SetWidth(noscalemult)
-		point.borderright:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderright.backdrop = parent:CreateTexture()
-		point.borderright.backdrop:SetPoint('TOPRIGHT', point.borderright, 'TOPRIGHT', noscalemult, noscalemult)
-		point.borderright.backdrop:SetPoint('BOTTOMRIGHT', point.borderright, 'BOTTOMRIGHT', noscalemult, -noscalemult)
-		point.borderright.backdrop:SetWidth(noscalemult * 3)
-		point.borderright.backdrop:SetTexture(0, 0, 0)
-	end
-end
-
-function NP:StyleFrameColor(frame, r, g, b)
-	frame.bordertop:SetTexture(r, g, b)
-	frame.borderbottom:SetTexture(r, g, b)
-	frame.borderleft:SetTexture(r, g, b)
-	frame.borderright:SetTexture(r, g, b)
 end
 
 local function CopySettings(from, to)
@@ -1028,9 +889,9 @@ end
 -- StyleFilterEvents / StyleFilterEventWatch / StyleFilterSetVariables / StyleFilterClearVariables
 -- now defined in StyleFilter.lua (retail-faithful pooler + fake-register pattern).
 
--- UpdateLibAuraInfoInfo: initialises LibAuraInfo integration for aura tracking
+-- UpdateLibAuraInfoInfo: intentional no-op placeholder (called from Init.lua).
+-- LibAuraInfo callbacks can be registered here later if integration is added.
 function NP:UpdateLibAuraInfoInfo()
-	-- stub: LibAuraInfo callbacks can be registered here when needed
 end
 
 function NP:RefreshTestFrame()
@@ -1060,12 +921,6 @@ function NP:TogleTestFrame(unit)
 	end
 end
 
--- UpdateAllNames: update name tags on all visible plates of a given unit type
--- In oUF architecture, tags are re-applied via Update_Tags during ConfigurePlates
-function NP:UpdateAllNames(unit, tag)
-	NP:ConfigurePlates()
-end
-
 function NP:ConfigurePlates()
 	NP.SkipFading = true
 
@@ -1091,18 +946,14 @@ function NP:ConfigurePlates()
 	NP.SkipFading = nil
 end
 
-function NP:ConfigureAll(init)
+function NP:ConfigureAll()
 	if not E.private.nameplates.enable then return end
 
 	NP:UpdateCVars()
 	NP:StyleFilterConfigure()
-	NP:PLAYER_REGEN_ENABLED()
 	NP:Update_StatusBars()
 	NP:ConfigurePlates()
 end
-
-function NP:CacheArenaUnits() end
-function NP:CacheGroupUnits() end
 
 function NP:Initialize()
 	self.db = E.db.nameplates
@@ -1130,8 +981,6 @@ function NP:Initialize()
 		NP:NamePlateCallBack(nameplate, event, unit)
 	end)
 
-	NP:RegisterEvent('PLAYER_REGEN_ENABLED')
-	NP:RegisterEvent('PLAYER_REGEN_DISABLED')
 	NP:RegisterEvent('PLAYER_ENTERING_WORLD')
 	NP:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 	NP:RegisterEvent('GROUP_ROSTER_UPDATE')

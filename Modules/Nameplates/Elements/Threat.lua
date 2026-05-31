@@ -12,7 +12,7 @@ local function IsTank(unit)
 	return GetPartyAssignment('MAINTANK', unit or 'player') ~= nil
 end
 
-function NP:ThreatIndicator_PreUpdate(unit, pass)
+function NP:ThreatIndicator_PreUpdate(unit)
 	local nameplate, db, unitTarget = self.__owner, NP.db.threat, unit..'target'
 	local imTank = IsTank('player')
 	local unitRole = NP.IsInGroup and (UnitExists(unitTarget) and not UnitIsUnit(unitTarget, 'player')) and NP.GroupRoles[UnitName(unitTarget)] or 'NONE'
@@ -23,13 +23,9 @@ function NP:ThreatIndicator_PreUpdate(unit, pass)
 
 	nameplate.ThreatScale = nil
 
-	if pass then
-		return isTank, offTank, feedbackUnit
-	else
-		self.feedbackUnit = feedbackUnit
-		self.offTank = offTank
-		self.isTank = isTank
-	end
+	self.feedbackUnit = feedbackUnit
+	self.offTank = offTank
+	self.isTank = isTank
 end
 
 function NP:ThreatIndicator_PostUpdate(unit, status)

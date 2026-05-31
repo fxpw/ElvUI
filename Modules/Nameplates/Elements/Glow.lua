@@ -67,10 +67,9 @@ function NP:Update_Glow(frame)
 		if showIndicator == 1 then
 			local color = self.db.colors.glowColor
 			r, g, b = color.r, color.g, color.b
-		elseif showIndicator == 2 then
-			r, g, b = 1, 0, 0
 		else
-			r, g, b = 1, 1, 0
+			local c = showIndicator == 2 and self.db.colors.lowHealthHalf or self.db.colors.lowHealthColor
+			r, g, b = c.r, c.g, c.b
 		end
 
 		-- Indicators

@@ -2,7 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
--- local _G = _G
 local max, pairs = max, pairs
 
 local CreateFrame = CreateFrame
@@ -12,7 +11,6 @@ local GetRuneType = GetRuneType
 local GetTime = GetTime
 local InCombatLockdown = InCombatLockdown
 local UnitHasVehicleUI = UnitHasVehicleUI
--- local UnitIsUnit = UnitIsUnit
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 -- Classes that display resources
@@ -99,13 +97,12 @@ function NP:ClassPower_SetBarColor(bar, r, g, b)
 end
 
 function NP:ClassPower_UpdateColor(frame, powerType)
-	local colors   = NP.db.colors.classResources
-	local fallback = NP.db.colors.power and NP.db.colors.power[powerType]
+	local colors     = NP.db.colors.classResources
 	local classColor = (powerType == 'COMBO_POINTS') and colors.comboPoints
 	for i = 1, #frame do
 		local bar = frame[i]
 		if bar then
-			local color = (classColor and classColor[i]) or colors[E.myclass] or fallback
+			local color = classColor and classColor[i]
 			if color then NP:ClassPower_SetBarColor(bar, color.r, color.g, color.b) end
 		end
 	end
@@ -274,6 +271,16 @@ function NP:Update_ClassPower(nameplate)
 	if nameplate == _G.ElvNP_Test then
 		local db = NP:PlateDB(nameplate)
 		if not db.nameOnly and db.classpower and db.classpower.enable then
+			local fixedCount = 5
+			if fixedCount > #frame then fixedCount = #frame end
+			LayoutClassPowerBars(frame, db.classpower, fixedCount)
+			for i = 1, fixedCount do
+				local bar = frame[i]
+				if bar then
+					bar:Show()
+					if bar.bg then bar.bg:Show() end
+				end
+			end
 			NP:ClassPower_UpdateColor(frame, 'COMBO_POINTS')
 			frame:SetAlpha(1)
 		else
@@ -295,59 +302,36 @@ function NP:Update_ClassPower(nameplate)
 		return
 	end
 
+	-- ── Player's own nameplate or targeted nameplate: combo points / DK runes ──
 	local isPlayer = nameplate.frameType == 'PLAYER'
 	local isTarget = nameplate.isTarget
 
-	if isPlayer then
-		-- ── Player's own nameplate: combo points / DK runes ──
-		local db = NP.db.units.PLAYER and NP.db.units.PLAYER.classpower
-		if not db or not db.enable then
-			frame:Hide()
-			return
-		end
-		if db.onlyInCombat and not InCombatLockdown() then
-			frame:Hide()
-			return
-		end
-
-		local isRuneMode = E.myclass == RUNE_CLASS
-		local maxButtons = isRuneMode and 6 or MAX_COMBO_POINTS
-		if maxButtons > #frame then maxButtons = #frame end
-
-		LayoutClassPowerBars(frame, db, maxButtons)
-
-		if isRuneMode then
-			NP:ClassPower_UpdateAllRunes(nameplate)
-		else
-			NP:ClassPower_UpdateComboPoints(nameplate)
-		end
-
-	elseif isTarget then
-		-- ── Targeted nameplate: combo points or DK runes ──
-		local db = NP.db.units.TARGET and NP.db.units.TARGET.classpower
-		if not db or not db.enable then
-			frame:Hide()
-			return
-		end
-		if db.onlyInCombat and not InCombatLockdown() then
-			frame:Hide()
-			return
-		end
-
-		local isRuneMode = E.myclass == RUNE_CLASS
-		local maxButtons = isRuneMode and 6 or MAX_COMBO_POINTS
-		if maxButtons > #frame then maxButtons = #frame end
-
-		LayoutClassPowerBars(frame, db, maxButtons)
-
-		if isRuneMode then
-			NP:ClassPower_UpdateAllRunes(nameplate)
-		else
-			NP:ClassPower_UpdateComboPoints(nameplate)
-		end
-
-	else
+	local db = isPlayer and (NP.db.units.PLAYER and NP.db.units.PLAYER.classpower)
+		or (isTarget and (NP.db.units.TARGET and NP.db.units.TARGET.classpower))
+	if not db then
 		frame:Hide()
+		return
+	end
+
+	if not db.enable then
+		frame:Hide()
+		return
+	end
+	if db.onlyInCombat and not InCombatLockdown() then
+		frame:Hide()
+		return
+	end
+
+	local isRuneMode = E.myclass == RUNE_CLASS
+	local maxButtons = isRuneMode and 6 or MAX_COMBO_POINTS
+	if maxButtons > #frame then maxButtons = #frame end
+
+	LayoutClassPowerBars(frame, db, maxButtons)
+
+	if isRuneMode then
+		NP:ClassPower_UpdateAllRunes(nameplate)
+	else
+		NP:ClassPower_UpdateComboPoints(nameplate)
 	end
 end
 

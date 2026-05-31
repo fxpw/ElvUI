@@ -46,10 +46,6 @@ local function Enable(self)
 			element:SetTexture(E.Media.Textures.Nameplates)
 		end
 
-		if not self.isNamePlate then
-			self:RegisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
-		end
-
 		return true
 	end
 end
@@ -58,10 +54,6 @@ local function Disable(self)
 	local element = self.ClassificationIndicator
 	if element then
 		element:Hide()
-
-		if not self.isNamePlate then
-			self:UnregisterEvent('UNIT_CLASSIFICATION_CHANGED', Path)
-		end
 	end
 end
 

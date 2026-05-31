@@ -2,7 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...))
 local _, Engine = ...
 local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
-local StatusBarPrototype = Engine and Engine.Compat and Engine.Compat.StatusBarPrototype
+local StatusBarPrototype = Engine.Compat.StatusBarPrototype
 
 local CreateFrame = CreateFrame
 
@@ -10,9 +10,9 @@ local CreateFrame = CreateFrame
 local DEFAULT_COLORS = {
 	myBar           = { r = 0,   g = 1,   b = 0.5, a = 0.25 },
 	otherBar        = { r = 0,   g = 1,   b = 0,   a = 0.25 },
-	absorbs         = { r = 1,   g = 1,   b = 0,   a = 0.25 },
+	absorbs         = { r = 0,   g = 1,   b = 1,   a = 0.25 },
 	healAbsorbs     = { r = 1,   g = 0,   b = 0,   a = 0.25 },
-	overabsorbs     = { r = 1,   g = 1,   b = 0,   a = 1 },
+	overabsorbs     = { r = 0,   g = 1,   b = 1,   a = 1 },
 	overhealabsorbs = { r = 1,   g = 0,   b = 0,   a = 1 },
 }
 
@@ -130,7 +130,7 @@ function NP:Construct_HealPrediction(nameplate)
 
 	-- All sub-bars parent to Health so they inherit framelevel/scale and clip with the nameplate.
 	-- Use the Compat StatusBarPrototype emulation, since the native 3.3.5 StatusBar lacks SetReverseFill.
-	local makeBar = StatusBarPrototype or function(_, parent) return CreateFrame('StatusBar', nil, parent) end
+	local makeBar = StatusBarPrototype
 	local myBar          = makeBar(nil, health)
 	local otherBar       = makeBar(nil, health)
 	local absorbBar      = makeBar(nil, health)

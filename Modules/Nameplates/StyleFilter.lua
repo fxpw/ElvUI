@@ -1,8 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local mod = E:GetModule("NamePlates")
 local LSM = E.Libs.LSM
-local LibDispel = E.Libs.Dispel
-local BleedList = LibDispel and LibDispel.BleedList or {}
 
 --Lua functions
 local ipairs, next, pairs, select, setmetatable, tonumber, type, unpack, tostring = ipairs, next, pairs, select, setmetatable, tonumber, type, unpack, tostring
@@ -25,13 +23,13 @@ local UnitHealthMax = UnitHealthMax
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
 local UnitIsTapDenied = UnitIsTapped -- 3.3.5a fallback (tap-denied semantics absorbed by tapped flag)
-local UnitThreatSituation = UnitThreatSituation
 
 mod.StyleFilterStackPattern = '([^\n:]+):?(%d*)$'
 
--- Sirus 3.3.5a: native C_Timer with colon syntax. Returned object supports :Cancel().
+-- Sirus 3.3.5a: native C_Timer. NewTimer is dot-style C_Timer.NewTimer(duration, callback);
+-- only :After / :NewTicker use colon syntax. Returned object supports :Cancel().
 local function C_Timer_NewTimer(delay, cb)
-	return C_Timer:NewTimer(delay, cb)
+	return C_Timer.NewTimer(delay, cb)
 end
 
 local function StyleFilterGetColor(color, fallback)
@@ -229,34 +227,26 @@ function mod:StyleFilterAuraWait(frame, ticker, timer, timeLeft, mTimeLeft)
 	end
 end
 
-function mod:StyleFilterDispelCheck(frame, filter)
-	-- 3.3.5a UnitAura returns: name, rank, icon, count, dispelType, duration, expirationTime, source, isStealable, shouldConsolidate, spellID
-	local index = 1
-	local name, _, _, _, auraType, _, _, _, isStealable, _, spellID = UnitAura(frame.unit, index, filter)
-	while name do
-		if filter == 'HELPFUL' then
-			if isStealable then
-				return true
-			end
-		elseif auraType and E:IsDispellableByMe(auraType) then
-			return true
-		elseif not auraType and BleedList[spellID] and E:IsDispellableByMe('Bleed') then
-			return true
-		end
-
-		index = index + 1
-		name, _, _, _, auraType, _, _, _, isStealable, _, spellID = UnitAura(frame.unit, index, filter)
-	end
-end
-
 -- Reusable scratch buckets to avoid per-call table allocations on hot path.
+-- Three tiers are pooled: the outer `temp` map, the per-spell `info` buckets,
+-- and the per-index data tables stored inside each `info`.
 local styleFilterTempPool = {}
 local styleFilterInfoPool = {}
 local styleFilterInfoInUse = {}
+local styleFilterDataPool = {}
 
 local function acquireInfoTable()
 	local t = tremove(styleFilterInfoPool) or {}
 	styleFilterInfoInUse[#styleFilterInfoInUse + 1] = t
+	return t
+end
+
+local function acquireDataTable(count, expiration, source)
+	local t = tremove(styleFilterDataPool) or {}
+	t.count = count
+	t.expiration = expiration
+	t.source = source
+	t.modRate = 1
 	return t
 end
 
@@ -266,7 +256,12 @@ function mod:StyleFilterReleaseAuraData(temp)
 	styleFilterTempPool[#styleFilterTempPool + 1] = temp
 	for i = #styleFilterInfoInUse, 1, -1 do
 		local info = styleFilterInfoInUse[i]
-		wipe(info)
+		for index, data in pairs(info) do
+			wipe(data)
+			styleFilterDataPool[#styleFilterDataPool + 1] = data
+			info[index] = nil
+		end
+		wipe(info) -- defensive: clear any non-data keys
 		styleFilterInfoPool[#styleFilterInfoPool + 1] = info
 		styleFilterInfoInUse[i] = nil
 	end
@@ -287,7 +282,7 @@ function mod:StyleFilterAuraData(frame, filter, unit)
 			temp[name] = info
 			temp[spellID] = info
 
-			info[index] = { count = count, expiration = expiration, source = source, modRate = 1 }
+			info[index] = acquireDataTable(count, expiration, source)
 
 			index = index + 1
 			name, _, _, count, _, _, expiration, source, _, _, spellID = UnitAura(unit, index, filter)
@@ -298,16 +293,13 @@ function mod:StyleFilterAuraData(frame, filter, unit)
 end
 
 function mod:StyleFilterAuraCheck(frame, names, tickers, filter, mustHaveAll, missing, minTimeLeft, maxTimeLeft, fromMe, fromPet, onMe, onPet)
-	-- Backwards-compat: if `tickers` is actually the old icons array (has integer indices but no .hasMinTimer/etc fields)
-	-- callers were passing frame.Buffs / frame.Debuffs. Detect by checking if it looks like an oUF aura header (has .createdIcons or such),
-	-- and in that case treat it as the per-frame ticker bucket on the element.
-	if tickers and type(tickers) == 'table' and tickers.tickers then
-		tickers = tickers.tickers
-	elseif type(tickers) ~= 'table' then
+	-- Callers pass the per-element ticker bucket directly (Buffs_/Buffs.tickers or
+	-- Debuffs_/Debuffs.tickers). Guard against a missing/non-table value only.
+	if type(tickers) ~= 'table' then
 		tickers = {}
 	end
 
-	-- Default filter to HARMFUL if not provided (matches old behavior context: debuffs)
+	-- Default filter to HELPFUL if not provided (callers always pass an explicit filter).
 	if not filter then filter = 'HELPFUL' end
 
 	local total, matches, now = 0, 0, GetTime()
@@ -403,15 +395,13 @@ function mod:StyleFilterCooldownCheck(names, mustHaveAll)
 end
 
 -- ============================================================================
--- Retail-style helper shims (substage 4a). They are used by the upcoming
--- retail-style Set/ClearChanges (substage 4f). For now they are SAFE to call:
+-- Helpers backing the retail-style Set/ClearChanges path. All wired and live:
 -- - StyleFilterChanges() lives in Nameplates.lua and returns the per-frame table.
 -- - StyleFilterHiddenState() returns 1/2/3 depending on Visibility/NameOnly flags.
--- - StyleFilterBorderLock() locks/unlocks a backdrop's border colour. Will be
---   used once Health/Power are migrated to the backdrop+bordercolor model in 4c/4d.
--- - StyleFilterFinishedFlash + SetupFlash build a proper anim-group flasher.
--- - StyleFilterClearVisibility / BaseUpdate / ThreatUpdate restore plates after
---   a NameOnly/Visibility filter releases.
+-- - StyleFilterBorderLock() locks/unlocks a backdrop's border colour
+--   (called from StyleFilterSetChanges / StyleFilterClearChanges).
+-- - StyleFilterClearVisibility / BaseUpdate restore plates after a
+--   NameOnly/Visibility filter releases.
 -- ============================================================================
 
 function mod:StyleFilterHiddenState(c)
@@ -431,28 +421,6 @@ function mod:StyleFilterBorderLock(backdrop, r, g, b, a)
 			backdrop:SetBackdropBorderColor(unpack(E.media.bordercolor))
 		end
 	end
-end
-
-function mod:StyleFilterFinishedFlash(requested)
-	if not requested then self:Play() end
-end
-
-function mod:StyleFilterSetupFlash(FlashTexture)
-	local anim = FlashTexture:CreateAnimationGroup('Flash')
-	anim:SetScript('OnFinished', mod.StyleFilterFinishedFlash)
-	FlashTexture.anim = anim
-
-	local fadein = anim:CreateAnimation('ALPHA', 'FadeIn')
-	fadein:SetChange(1)        -- 3.3.5a uses SetChange instead of SetFromAlpha/SetToAlpha
-	fadein:SetOrder(2)
-	anim.fadein = fadein
-
-	local fadeout = anim:CreateAnimation('ALPHA', 'FadeOut')
-	fadeout:SetChange(-1)
-	fadeout:SetOrder(1)
-	anim.fadeout = fadeout
-
-	return anim
 end
 
 function mod:StyleFilterBaseUpdate(frame, state)
@@ -496,19 +464,6 @@ function mod:StyleFilterClearVisibility(frame, previous)
 
 	if previous and not state then
 		mod:StyleFilterBaseUpdate(frame, state == 1)
-	end
-end
-
-function mod:StyleFilterThreatUpdate(frame, unit)
-	if mod:UnitExists(unit) then
-		local indicator = frame.ThreatIndicator
-		if not (indicator and mod.ThreatIndicator_PreUpdate) then return end
-		local isTank, offTank, feedbackUnit = mod.ThreatIndicator_PreUpdate(indicator, unit, true)
-		if feedbackUnit and (feedbackUnit ~= unit) and mod:UnitExists(feedbackUnit) then
-			return isTank, offTank, UnitThreatSituation(feedbackUnit, unit)
-		else
-			return isTank, offTank, UnitThreatSituation(unit)
-		end
 	end
 end
 
@@ -1347,7 +1302,6 @@ function mod:StyleFilterConfigure()
 					end
 				end
 
-				if t.keyMod and t.keyMod.enable then	events.MODIFIER_STATE_CHANGED = 1 end
 				if t.isFocus or t.notFocus then			events.PLAYER_FOCUS_CHANGED = 1 end
 				if t.isResting or t.notResting then		events.PLAYER_UPDATE_RESTING = 1 end
 				if t.isPet or t.isNotPet then			events.UNIT_PET = 1 end
