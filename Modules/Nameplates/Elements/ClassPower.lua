@@ -311,7 +311,7 @@ function NP:Update_ClassPower(nameplate)
 		return
 	end
 
-	-- ── Player's own nameplate or targeted nameplate: combo points / DK runes ──
+	-- player's own or targeted nameplate: combo points / DK runes
 	local isPlayer = nameplate.frameType == 'PLAYER'
 	local isTarget = nameplate.isTarget
 

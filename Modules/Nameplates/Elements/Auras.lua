@@ -368,8 +368,6 @@ local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, dura
 end
 
 -- Smart aura position: fluid PostUpdate callbacks (NP-specific, since UF's use db.perrow/numrows).
--- Non-fluid modes use the local NP_UpdateBuffsHeaderPosition / NP_UpdateDebuffsHeaderPosition
--- callbacks (defined below) because those only do position math with no db field lookups.
 local function NP_GetAuraRowHeight(auras)
 	return auras.sizeHeight or auras.size or 27
 end
@@ -558,8 +556,7 @@ local function RefreshAuraCooldownFont(button)
 end
 
 function NP:PostUpdateAuraIcon(unit, button)
-	-- Border coloring / desaturate only. Size, texcoords and cooldown font are set
-	-- once at config time in UpdateAuraSettings and do not change between aura updates.
+	-- border/desaturate only; size, texcoords and cooldown font are set once in UpdateAuraSettings
 	UF:PostUpdateAura(unit, button)
 end
 

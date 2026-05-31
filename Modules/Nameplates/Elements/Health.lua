@@ -14,6 +14,46 @@ local UnitReaction = UnitReaction
 local UnitIsConnected = UnitIsConnected
 local CreateFrame = CreateFrame
 
+-- Nameplate border (Health backdrop edge): pin to exactly 1 physical px and keep it above neighbour plates.
+
+-- 1 physical px in logical units at the frame's effective scale (native PixelUtil, taint-safe; falls back to 768/screenheight).
+function NP:BorderPixelSize(effectiveScale)
+	local factor = (PixelUtil and PixelUtil.GetPixelToUIUnitFactor and PixelUtil.GetPixelToUIUnitFactor())
+	if not factor or factor <= 0 then
+		local sh = E.screenheight or (select(2, GetPhysicalScreenSize and GetPhysicalScreenSize())) or 768
+		if not sh or sh <= 0 then sh = 768 end
+		factor = 768 / sh
+	end
+	local s = effectiveScale
+	if not s or s <= 0 then s = 1 end
+	return factor / s
+end
+
+-- Pin a crisp 1px edge and keep it through SetTemplate re-applies (preserves bg/edge/insets).
+function NP:Health_FixBorderPixel(Health)
+	local backdrop = Health and Health.backdrop
+	if not backdrop or not backdrop.GetBackdrop then return end
+	local px = NP:BorderPixelSize(backdrop:GetEffectiveScale())
+	local bd = backdrop:GetBackdrop()
+	if not bd then return end
+	if bd.edgeSize ~= px then
+		local cr, cg, cb, ca = backdrop:GetBackdropColor() -- SetBackdrop wipes both colors; restore bg so it isn't opaque white
+		bd.edgeSize = px
+		backdrop:SetBackdrop(bd)
+		if cr then backdrop:SetBackdropColor(cr, cg, cb, ca) end
+		backdrop:SetBackdropBorderColor(unpack(E.media.unitframeBorderColor))
+	end
+	backdrop:SetOutside(Health, px, px)
+	backdrop.ignoreFrameTemplates = true -- don't let E:UpdateFrameTemplates reset edgeSize
+end
+
+-- Glue the border level to Health so it draws above the fill and above overlapping neighbour plates.
+function NP:Health_SyncBorderLevel(Health)
+	local backdrop = Health and Health.backdrop
+	if not backdrop then return end
+	backdrop:SetFrameLevel(Health:GetFrameLevel())
+end
+
 function NP:Health_UpdateColor(_, unit)
 	if not unit or self.unit ~= unit then return end
 
@@ -137,6 +177,8 @@ function NP:Construct_Health(nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
 	Health:SetFrameLevel(nameplate:GetFrameLevel() + 1)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
+	NP:Health_FixBorderPixel(Health)   -- crisp 1 physical px border (no 1<->2px flicker)
+	NP:Health_SyncBorderLevel(Health)  -- keep border above health fill / above neighbors
 	Health:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
 	-- Defaults so the bar is visible before oUF's first Update fills MinMax/Value/Color.
 	Health:SetMinMaxValues(0, 1)

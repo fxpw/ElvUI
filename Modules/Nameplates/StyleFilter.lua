@@ -26,8 +26,7 @@ local UnitIsTapDenied = UnitIsTapped -- 3.3.5a fallback (tap-denied semantics ab
 
 mod.StyleFilterStackPattern = '([^\n:]+):?(%d*)$'
 
--- Sirus 3.3.5a: native C_Timer. NewTimer is dot-style C_Timer.NewTimer(duration, callback);
--- only :After / :NewTicker use colon syntax. Returned object supports :Cancel().
+-- Sirus 3.3.5a C_Timer.NewTimer is dot-style (only :After / :NewTicker use colon)
 local function C_Timer_NewTimer(delay, cb)
 	return C_Timer.NewTimer(delay, cb)
 end
@@ -73,13 +72,11 @@ mod.TriggerConditions = {
 		["DAMAGER"] = "damager"
 	},
 	difficulties = {
-		-- WotLK/Sirus GetInstanceInfo difficultyIDs are instanceType-specific.
-		-- party (dungeon): 1=Normal, 2=Heroic
+		-- WotLK GetInstanceInfo difficultyIDs, per instanceType (party: 1=N,2=H; raid: 1/2=10/25N, 3/4=10/25H)
 		party = {
 			[1] = "normal",
 			[2] = "heroic",
 		},
-		-- raid: 1=10N, 2=25N, 3=10H, 4=25H
 		raid = {
 			[1] = "normal",
 			[2] = "normal",
@@ -234,9 +231,7 @@ function mod:StyleFilterAuraWait(frame, ticker, timer, timeLeft, mTimeLeft)
 	end
 end
 
--- Reusable scratch buckets to avoid per-call table allocations on hot path.
--- Three tiers are pooled: the outer `temp` map, the per-spell `info` buckets,
--- and the per-index data tables stored inside each `info`.
+-- Reusable scratch buckets (temp map, per-spell info, per-index data) to avoid hot-path allocations.
 local styleFilterTempPool = {}
 local styleFilterInfoPool = {}
 local styleFilterInfoInUse = {}
@@ -300,13 +295,10 @@ function mod:StyleFilterAuraData(frame, filter, unit)
 end
 
 function mod:StyleFilterAuraCheck(frame, names, tickers, filter, mustHaveAll, missing, minTimeLeft, maxTimeLeft, fromMe, fromPet, onMe, onPet)
-	-- Callers pass the per-element ticker bucket directly (Buffs_/Buffs.tickers or
-	-- Debuffs_/Debuffs.tickers). Guard against a missing/non-table value only.
 	if type(tickers) ~= 'table' then
 		tickers = {}
 	end
 
-	-- Default filter to HELPFUL if not provided (callers always pass an explicit filter).
 	if not filter then filter = 'HELPFUL' end
 
 	local total, matches, now = 0, 0, GetTime()
@@ -401,16 +393,7 @@ function mod:StyleFilterCooldownCheck(names, mustHaveAll)
 	end
 end
 
--- ============================================================================
--- Helpers backing the retail-style Set/ClearChanges path. All wired and live:
--- - StyleFilterChanges() lives in Nameplates.lua and returns the per-frame table.
--- - StyleFilterHiddenState() returns 1/2/3 depending on Visibility/NameOnly flags.
--- - StyleFilterBorderLock() locks/unlocks a backdrop's border colour
---   (called from StyleFilterSetChanges / StyleFilterClearChanges).
--- - StyleFilterClearVisibility / BaseUpdate restore plates after a
---   NameOnly/Visibility filter releases.
--- ============================================================================
-
+-- Helpers backing the retail-style Set/ClearChanges path.
 function mod:StyleFilterHiddenState(c)
 	return c and ((c.NameOnly and c.Visibility and 3) or (c.NameOnly and 2) or (c.Visibility and 1))
 end
@@ -532,6 +515,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			frame.appliedFrameLevelBoost = boost
 			local base = frame._npBase or frame:GetFrameLevel()
 			frame.Health:SetFrameLevel(base + 1 + boost)
+			mod:Health_SyncBorderLevel(frame.Health) -- keep border glued above the bar
 			if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2 + boost) end
 			if frame.Auras then
 				if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2 + boost)  end
@@ -1465,6 +1449,7 @@ function mod:StyleFilterUpdate(frame, event)
 		frame.appliedFrameLevelBoost = nil
 		local base = frame._npBase or frame:GetFrameLevel()
 		frame.Health:SetFrameLevel(base + 1)
+		mod:Health_SyncBorderLevel(frame.Health) -- keep border glued above the bar
 		if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2) end
 		if frame.Auras then
 			if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2)  end

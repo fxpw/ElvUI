@@ -231,8 +231,7 @@ function NP:StackingDiagnostic()
 			stats.active or 0, stats.moved or 0, stats.maxMove or 0, stats.minDistance or -1))
 	end
 
-	-- Don't reset a managed StackingPlate to base; the OnUpdate loop owns its clamp
-	-- and the destructive 0,0,0,0 reset would snap/flicker it until the next tick.
+	-- skip managed plates: the OnUpdate loop owns their clamp, a 0,0,0,0 reset would flicker them
 	if not managed then
 		basePlate:SetClampRectInsets(0, 0, 0, 0)
 		basePlate:SetClampedToScreen(false)

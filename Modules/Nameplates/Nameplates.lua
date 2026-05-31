@@ -88,14 +88,17 @@ do
 							changed = true
 						end
 						if changed then
-							-- Fire BEFORE SetValue so CutawayHealth can read the previous
-							-- bar value (frame.Health:GetValue) to compute the drain delta.
+							-- fire before SetValue so CutawayHealth reads the previous value for its drain delta
 							if plate.HealthValueChangeCallbacks then
 								for _, cb in ipairs(plate.HealthValueChangeCallbacks) do
 									cb(NP, plate, cur, max)
 								end
 							end
-							h:SetValue(cur)
+							if PixelUtil and PixelUtil.SetStatusBarValue then
+								PixelUtil.SetStatusBarValue(h, cur)
+							else
+								h:SetValue(cur)
+							end
 						end
 					end
 				end
@@ -116,14 +119,17 @@ do
 							changed = true
 						end
 						if changed then
-							-- Fire BEFORE SetValue so CutawayPower can read the previous
-							-- bar value (frame.Power:GetValue) to compute the drain delta.
+							-- fire before SetValue so CutawayPower reads the previous value for its drain delta
 							if plate.PowerValueChangeCallbacks then
 								for _, cb in ipairs(plate.PowerValueChangeCallbacks) do
 									cb(NP, plate, cur, max)
 								end
 							end
-							pw:SetValue(cur)
+							if PixelUtil and PixelUtil.SetStatusBarValue then
+								PixelUtil.SetStatusBarValue(pw, cur)
+							else
+								pw:SetValue(cur)
+							end
 						end
 					end
 				end
@@ -141,6 +147,7 @@ do
 					if engineLevel and plate._engineBaseLevel ~= engineLevel then
 						plate._engineBaseLevel = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
+						NP:Health_SyncBorderLevel(plate.Health) -- keep border glued above the bar / above neighbors
 						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
 						local Buffs = plate.Buffs
@@ -876,6 +883,8 @@ function NP:ScalePlate(nameplate, scale)
 		scale = scale * NP.db.targetScale
 	end
 	nameplate:SetScale(scale * (E.uiscale or 1))
+	-- re-pin the border to 1px at the new scale
+	if nameplate.Health then NP:Health_FixBorderPixel(nameplate.Health) end
 end
 
 -- Alias used by StyleFilter and HealthBar
@@ -900,8 +909,7 @@ end
 -- StyleFilterEvents / StyleFilterEventWatch / StyleFilterSetVariables / StyleFilterClearVariables
 -- now defined in StyleFilter.lua (retail-faithful pooler + fake-register pattern).
 
--- UpdateLibAuraInfoInfo: intentional no-op placeholder (called from Init.lua).
--- LibAuraInfo callbacks can be registered here later if integration is added.
+-- intentional no-op placeholder (called from Init.lua)
 function NP:UpdateLibAuraInfoInfo()
 end
 
