@@ -80,6 +80,7 @@ function B:Initialize()
 	self:PositionVehicleFrame()
 	self:ObjectiveTracker_Setup()
 	self:SocialToast_Setup()
+	self:NamePlate_RedirectBlizzOptions()
 
 	self:RegisterEvent("ADDON_LOADED")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", SetMapToCurrentZone)
@@ -160,6 +161,51 @@ function B:Initialize()
 			end)
 		end
 	end
+end
+
+-- Duplicate nameplate panel ("Индикаторы здоровья") is fully mirrored by ElvUI's Nameplate Engine; cover it with a redirect.
+function B:NamePlate_RedirectBlizzOptions()
+	local panel = _G.InterfaceOptionsNamePlatePanel
+	if not panel or panel.elvNPRedirect then return end
+
+	local overlay = CreateFrame('Frame', nil, panel)
+	overlay:SetAllPoints(panel)
+	overlay:SetFrameLevel(panel:GetFrameLevel() + 50)
+	overlay:EnableMouse(true)
+	overlay:SetTemplate('Default')
+	overlay:SetBackdropColor(0, 0, 0, 1)
+
+	local msg = overlay:CreateFontString(nil, 'OVERLAY')
+	msg:FontTemplate(nil, 16, 'OUTLINE')
+	msg:SetPoint('CENTER', 0, 26)
+	msg:SetWidth(panel:GetWidth() - 80)
+	msg:SetText('Настройки неймплейтов вынесены в ElvUI, чтобы не дублироваться со стандартными.')
+
+	local btn = CreateFrame('Button', nil, overlay)
+	btn:SetSize(280, 30)
+	btn:SetPoint('CENTER', 0, -28)
+	btn:SetTemplate('Default', true)
+	local label = btn:CreateFontString(nil, 'OVERLAY')
+	label:FontTemplate(nil, 14)
+	label:SetPoint('CENTER')
+	label:SetText('Открыть настройки ElvUI')
+	btn:SetScript('OnEnter', function(s) s:SetBackdropBorderColor(unpack(E.media.rgbvaluecolor)) end)
+	btn:SetScript('OnLeave', function(s) s:SetBackdropBorderColor(unpack(E.media.bordercolor)) end)
+	btn:SetScript('OnClick', function()
+		if _G.InterfaceOptionsFrame:IsShown() then HideUIPanel(_G.InterfaceOptionsFrame) end
+		if _G.GameMenuFrame:IsShown() then HideUIPanel(_G.GameMenuFrame) end
+		E:ToggleOptionsUI('nameplates,engineGroup')
+	end)
+
+	panel:HookScript('OnShow', function()
+		for i = 1, panel:GetNumChildren() do
+			local child = select(i, panel:GetChildren())
+			if child ~= overlay then child:Hide() end
+		end
+		overlay:Show()
+	end)
+
+	panel.elvNPRedirect = overlay
 end
 
 local function InitializeCallback()
