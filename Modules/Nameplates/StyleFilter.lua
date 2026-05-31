@@ -73,12 +73,19 @@ mod.TriggerConditions = {
 		["DAMAGER"] = "damager"
 	},
 	difficulties = {
-		-- dungeons
-		[1] = "normal",
-		[2] = "heroic",
-		-- raids
-		[14] = "normal",
-		[15] = "heroic",
+		-- WotLK/Sirus GetInstanceInfo difficultyIDs are instanceType-specific.
+		-- party (dungeon): 1=Normal, 2=Heroic
+		party = {
+			[1] = "normal",
+			[2] = "heroic",
+		},
+		-- raid: 1=10N, 2=25N, 3=10H, 4=25H
+		raid = {
+			[1] = "normal",
+			[2] = "normal",
+			[3] = "heroic",
+			[4] = "heroic",
+		},
 	},
 }
 
@@ -463,7 +470,7 @@ function mod:StyleFilterClearVisibility(frame, previous)
 	end
 
 	if previous and not state then
-		mod:StyleFilterBaseUpdate(frame, state == 1)
+		mod:StyleFilterBaseUpdate(frame, previous == 1)
 	end
 end
 
@@ -690,7 +697,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			frame.StyleFilterChanges.TargetIndicatorStyle = actions.targetIndicatorStyle or 'style4'
 			frame.StyleFilterChanges.TargetIndicatorArrow = actions.targetIndicatorArrow or 'ArrowUp'
 			frame.StyleFilterChanges.TargetIndicatorArrowSize = actions.targetIndicatorArrowSize or 20
-			frame.StyleFilterChanges.TargetIndicatorArrowXOffset = actions.targetIndicatorArrowXOffset or 0
+			frame.StyleFilterChanges.TargetIndicatorArrowXOffset = actions.targetIndicatorArrowXOffset or 3
 			frame.StyleFilterChanges.TargetIndicatorArrowYOffset = actions.targetIndicatorArrowYOffset or 0
 		end
 	end
@@ -969,8 +976,10 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 			-- Instance Difficulty
 			if instanceType == "raid" or instanceType == "party" then
 				local D = trigger.instanceDifficulty[(instanceType == "party" and "dungeon") or instanceType]
+				local difficultyMap = mod.TriggerConditions.difficulties[instanceType]
+				local currentDifficulty = difficultyMap and difficultyMap[difficultyID]
 				for _, value in pairs(D) do
-					if value and not D[mod.TriggerConditions.difficulties[difficultyID]] then return end
+					if value and not D[currentDifficulty] then return end
 				end
 			end
 		else return end
@@ -986,7 +995,7 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 	-- Reaction Type
 	if trigger.reactionType and trigger.reactionType.enable then
 		local reaction = frame.UnitReaction
-		if ((reaction == 1 or reaction == 2 or reaction == 3) and trigger.reactionType.hostile) or (reaction == 4 and trigger.reactionType.neutral) or (reaction == 5 and trigger.reactionType.friendly) then passed = true else return end
+		if ((reaction == 1 or reaction == 2 or reaction == 3) and trigger.reactionType.hostile) or (reaction == 4 and trigger.reactionType.neutral) or (reaction >= 5 and trigger.reactionType.friendly) then passed = true else return end
 	end
 
 	-- Unit Faction (Alliance / Horde / Neutral / Renegade)

@@ -35,6 +35,13 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 		nameplate.ThreatStatus = nil -- clear so Health_UpdateColor runs normally next cycle
 		nameplate.ThreatScale = 1
 		NP:ScalePlate(nameplate, 1)
+		-- Threat just dropped: re-enable the standard health color flags that were
+		-- disabled when threat became active (Health_SetColors(..., true)), then force
+		-- an immediate recolor so the correct reaction/tapped color shows right away.
+		NP:Health_SetColors(nameplate)
+		if nameplate.Health and nameplate.Health.ForceUpdate then
+			nameplate.Health:ForceUpdate()
+		end
 	elseif status and db.enable and db.useThreatColor and not UnitIsTapped(unit) then
 		NP:Health_SetColors(nameplate, true)
 		nameplate.ThreatStatus = status

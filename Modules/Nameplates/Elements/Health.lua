@@ -35,7 +35,7 @@ function NP:Health_UpdateColor(_, unit)
 		t = self.colors.disconnected
 	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
 		t = NP.db.colors.tapped
-	elseif (element.colorClass and self.isPlayer) or (element.colorClassNPC and not self.isPlayer) or (element.colorClassPet and UnitPlayerControlled(unit) and not self.isPlayer) then
+	elseif element.colorClass and self.isPlayer then
 		local _, class = UnitClass(unit)
 		local cc = class and self.colors.class[class]
 		if cc then

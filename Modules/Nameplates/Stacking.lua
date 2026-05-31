@@ -194,7 +194,7 @@ function NP:StackingDiagnostic()
 	local sampleNameplate
 	for nameplate in pairs(NP.Plates) do
 		allPlates = allPlates + 1
-		if nameplate:IsShown() and ENEMY_TYPES[nameplate.frameType] then
+		if nameplate ~= NP.TestFrame and nameplate:IsShown() and ENEMY_TYPES[nameplate.frameType] then
 			enemyPlates = enemyPlates + 1
 			if not sampleNameplate then
 				sampleNameplate = nameplate
@@ -266,7 +266,9 @@ function NP:ForceStackingPreview()
 	end
 	NP.StackingForceRestoreTimer = NP:ScheduleTimer(function()
 		for basePlate in pairs(NP.StackingForcedPlates) do
-			NP:ClearStackingPlate(basePlate)
+			if not NP.StackingPlates[basePlate] then
+				NP:ClearStackingPlate(basePlate)
+			end
 		end
 		wipe(NP.StackingForcedPlates)
 		E:Print('[NPStack] Force preview cleared')

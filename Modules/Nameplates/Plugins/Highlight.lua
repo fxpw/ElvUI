@@ -59,6 +59,7 @@ function NP:Construct_Highlight(nameplate)
 	local tex = Highlight:CreateTexture(nil, 'OVERLAY', nil, 7)
 	tex:SetAllPoints(Highlight)
 	tex:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
+	NP.StatusBars[tex] = true
 	tex:SetBlendMode('ADD')
 	tex:SetVertexColor(1, 1, 1, 0.35)
 	Highlight.texture = tex

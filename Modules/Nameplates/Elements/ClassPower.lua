@@ -3,6 +3,7 @@ local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
 local max, pairs = max, pairs
+local huge = math.huge
 
 local CreateFrame = CreateFrame
 local GetComboPoints = GetComboPoints
@@ -81,6 +82,13 @@ local runemap = {1, 2, 5, 6, 3, 4}
 local RUNE_STEP = 0.05
 local function RuneOnUpdate(self, elapsed)
 	self.duration = self.duration + elapsed
+	if self.duration >= (self._np_dur or huge) then
+		self:SetMinMaxValues(0, 1)
+		self:SetValue(1)
+		self._lastApplied = nil
+		self:SetScript('OnUpdate', nil)
+		return
+	end
 	if (self.duration - (self._lastApplied or -1)) >= RUNE_STEP then
 		self._lastApplied = self.duration
 		self:SetValue(self.duration)
@@ -173,6 +181,7 @@ function NP:ClassPower_UpdateRune(nameplate, runeID)
 	else
 		rune.duration = GetTime() - start
 		rune._lastApplied = nil
+		rune._np_dur = duration
 		rune:SetMinMaxValues(0, duration)
 		rune:SetValue(0)
 		rune:SetScript('OnUpdate', RuneOnUpdate)

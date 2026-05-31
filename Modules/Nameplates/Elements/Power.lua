@@ -19,9 +19,6 @@ function NP:Power_UpdateColor(_, unit)
 	local ptype, ptoken = UnitPowerType(unit)
 	element.token = ptoken
 
-	local sf = NP:StyleFilterChanges(self)
-	if sf.PowerColor then return end
-
 	local r, g, b, t
 	if element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
 		t = self.colors.tapped
@@ -131,8 +128,8 @@ function NP:Update_Power(nameplate)
 		nameplate:DisableElement('Power')
 	end
 
-	nameplate.Power.colorClass = db.power and db.power.useClassColor
-	nameplate.Power.colorPower = not (db.power and db.power.useClassColor)
+	nameplate.Power.colorClass = db.power and db.power.classColor
+	nameplate.Power.colorPower = not (db.power and db.power.classColor)
 	nameplate.Power.width = db.power and db.power.width
 	nameplate.Power.height = db.power and db.power.height
 	if db.power then

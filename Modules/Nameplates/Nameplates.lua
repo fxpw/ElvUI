@@ -70,7 +70,7 @@ do
 
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
-			if u then
+			if u and UnitExists(u) then
 				-- Update health value only when changed (avoids unnecessary StatusBar redraws)
 				local h = plate.Health
 				if h then
@@ -105,15 +105,25 @@ do
 					local cur = UnitPower(u)
 					local max = UnitPowerMax(u)
 					if max and max > 0 then
+						local changed = false
 						if pw._np_max ~= max then
 							pw._np_max = max
 							pw:SetMinMaxValues(0, max)
-							-- changed = true
+							changed = true
 						end
 						if pw._np_cur ~= cur then
 							pw._np_cur = cur
+							changed = true
+						end
+						if changed then
+							-- Fire BEFORE SetValue so CutawayPower can read the previous
+							-- bar value (frame.Power:GetValue) to compute the drain delta.
+							if plate.PowerValueChangeCallbacks then
+								for _, cb in ipairs(plate.PowerValueChangeCallbacks) do
+									cb(NP, plate, cur, max)
+								end
+							end
 							pw:SetValue(cur)
-							-- changed = true
 						end
 					end
 				end
@@ -128,8 +138,8 @@ do
 					local engineParent = plate._engineParent or plate:GetParent()
 					plate._engineParent = engineParent
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
-					if engineLevel and plate._npBase ~= engineLevel then
-						plate._npBase = engineLevel
+					if engineLevel and plate._engineBaseLevel ~= engineLevel then
+						plate._engineBaseLevel = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
 						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
@@ -689,6 +699,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		nameplate.Power._np_cur  = nil
 		nameplate.Power._np_max  = nil
 		nameplate.npcID       = nil
+		nameplate.unit        = nil  -- clear stale unit token so the poller skips this recycled plate
 		nameplate.previousType = nil  -- force full re-init on next UNIT_ADDED (same frame, new unit)
 	end
 end

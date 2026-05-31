@@ -154,12 +154,12 @@ function NP:Construct_TargetIndicator(nameplate)
 
 	TI.LeftIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
 	TI.LeftIndicator:SetSize(20, 20)
-	TI.LeftIndicator:SetPoint('RIGHT', health, 'LEFT', -2, 0)
+	TI.LeftIndicator:SetPoint('LEFT', health, 'RIGHT', 2, 0)
 	TI.LeftIndicator:Hide()
 
 	TI.RightIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
 	TI.RightIndicator:SetSize(20, 20)
-	TI.RightIndicator:SetPoint('LEFT', health, 'RIGHT', 2, 0)
+	TI.RightIndicator:SetPoint('RIGHT', health, 'LEFT', -2, 0)
 	TI.RightIndicator:Hide()
 
 	TI.Shadow = CreateFrame('Frame', nil, nameplate)

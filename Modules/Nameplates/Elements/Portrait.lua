@@ -8,9 +8,8 @@ local hooksecurefunc = hooksecurefunc
 function NP:Portrait_PostUpdate()
 	local nameplate = self.__owner
 	local db = NP:PlateDB(nameplate)
-	local sf = NP:StyleFilterChanges(nameplate)
 
-	if sf.Portrait or (db.portrait and db.portrait.enable) then
+	if db.portrait and db.portrait.enable then
 		if db.portrait and db.portrait.classicon and nameplate.isPlayer then
 			self:SetTexture([[Interface\WorldStateFrame\Icons-Classes]])
 			self:SetTexCoord(unpack(_G.CLASS_ICON_TCOORDS[nameplate.classFile or 'WARRIOR']))
@@ -47,7 +46,7 @@ function NP:Update_Portrait(nameplate)
 	local db = NP:PlateDB(nameplate)
 	local sf = NP:StyleFilterChanges(nameplate)
 
-	if (sf.Portrait or (db.portrait and db.portrait.enable)) and not db.nameOnly then
+	if (db.portrait and db.portrait.enable) and not db.nameOnly then
 		if not nameplate:IsElementEnabled('Portrait') then
 			nameplate:EnableElement('Portrait')
 			nameplate.Portrait:ForceUpdate()

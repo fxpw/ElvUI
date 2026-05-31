@@ -62,15 +62,17 @@ end
 local function NP_ShouldTrackAuras(nameplate)
 	if not nameplate then return false end
 	local db = NP:PlateDB(nameplate)
-	return db and not db.nameOnly and (db.buffs.enable or db.debuffs.enable)
+	return db and not db.nameOnly and ((db.buffs and db.buffs.enable) or (db.debuffs and db.debuffs.enable))
 end
 
 local function NP_FormatUsesPowerTag(fmt)
 	if not fmt or fmt == '' then return false end
 	local lower = fmt:lower()
-	return lower:find('power', 1, true) or lower:find('pp', 1, true) or lower:find('mana', 1, true)
+	return lower:find('power', 1, true) or lower:find('mana', 1, true)
 		or lower:find('energy', 1, true) or lower:find('rage', 1, true) or lower:find('runic', 1, true)
 		or lower:find('focus', 1, true)
+		or lower:find('[pp', 1, true) or lower:find('curpp', 1, true) or lower:find('maxpp', 1, true)
+		or lower:find('perpp', 1, true) or lower:find('missingpp', 1, true)
 end
 
 local function NP_ShouldTrackPower(nameplate)
@@ -670,7 +672,7 @@ end
 function NP:Update_Auras(nameplate)
 	local db = NP:PlateDB(nameplate)
 
-	if (db.debuffs.enable or db.buffs.enable) and not db.nameOnly then
+	if ((db.debuffs and db.debuffs.enable) or (db.buffs and db.buffs.enable)) and not db.nameOnly then
 		if not nameplate:IsElementEnabled('Auras') then
 			nameplate:EnableElement('Auras')
 		end

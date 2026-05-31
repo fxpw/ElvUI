@@ -10,8 +10,9 @@ local CreateFrame = CreateFrame
 -- Each nameplate gets `frame.Cutaway = { Health = StatusBar, Power = StatusBar }`.
 -- The legacy `frame.CutawayHealth` field is preserved as an alias for backwards
 -- compatibility (StyleFilter.lua / Plugins still reference it).
--- Both halves are fully wired: Power fires its value callbacks from
--- Power.lua (Power_PostUpdate) and its color callbacks from Power_UpdateColor;
+-- Both halves are fully wired: Power fires its value callbacks from the
+-- OnUpdate poller in Nameplates.lua (the only value source for non-target
+-- plates, mirroring Health) and its color callbacks from Power_UpdateColor;
 -- Health fires its value callbacks from the OnUpdate poller in Nameplates.lua
 -- (the only value source for non-target plates) and its color callbacks from
 -- Health_UpdateColor.
@@ -83,6 +84,7 @@ function NP:ConstructElement_CutawayHealth(parent)
 	cutawayHealth:SetAllPoints()
 	cutawayHealth:SetStatusBarTexture(E.media.blankTex)
 	cutawayHealth:SetFrameLevel(healthBar:GetFrameLevel() - 1)
+	cutawayHealth:Hide()
 
 	NP:RegisterHealthBarCallbacks(parent, NP.CutawayHealthValueChangeCallback, NP.CutawayHealthColorChangeCallback)
 
