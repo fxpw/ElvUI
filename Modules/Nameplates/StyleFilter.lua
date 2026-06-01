@@ -86,127 +86,6 @@ mod.TriggerConditions = {
 	},
 }
 
--- Sirus-only totem/uniqueUnit tracking removed in 4g.
-
---[==[ DEAD-CODE BLOCK BELOW (totem/uniqueUnit data tables, retained as comment for historical reference; safe to delete):
-local _UNUSED_totemTypes = {
-	air = { -- Air Totems
-		[8177] = "a1",	-- Grounding Totem
-		[10595] = "a2",	-- Nature Resistance Totem I
-		[10600] = "a2",	-- Nature Resistance Totem II
-		[10601] = "a2",	-- Nature Resistance Totem III
-		[25574] = "a2",	-- Nature Resistance Totem IV
-		[58746] = "a2",	-- Nature Resistance Totem V
-		[58749] = "a2",	-- Nature Resistance Totem VI
-		[6495] = "a3",	-- Sentry Totem
-		[8512] = "a4",	-- Windfury Totem
-		[3738] = "a5",	-- Wrath of Air Totem
-	},
-	earth = { -- Earth Totems
-		[2062] = "e1",	-- Earth Elemental Totem
-		[2484] = "e2",	-- Earthbind Totem
-		[5730] = "e3",	-- Stoneclaw Totem I
-		[6390] = "e3",	-- Stoneclaw Totem II
-		[6391] = "e3",	-- Stoneclaw Totem III
-		[6392] = "e3",	-- Stoneclaw Totem IV
-		[10427] = "e3",	-- Stoneclaw Totem V
-		[10428] = "e3",	-- Stoneclaw Totem VI
-		[25525] = "e3",	-- Stoneclaw Totem VII
-		[58580] = "e3",	-- Stoneclaw Totem VIII
-		[58581] = "e3",	-- Stoneclaw Totem IX
-		[58582] = "e3",	-- Stoneclaw Totem X
-		[8071] = "e4",	-- Stoneskin Totem I -- Faction Champs
-		[8154] = "e4",	-- Stoneskin Totem II
-		[8155] = "e4",	-- Stoneskin Totem III
-		[10406] = "e4",	-- Stoneskin Totem IV
-		[10407] = "e4",	-- Stoneskin Totem V
-		[10408] = "e4",	-- Stoneskin Totem VI
-		[25508] = "e4",	-- Stoneskin Totem VII
-		[25509] = "e4",	-- Stoneskin Totem VIII
-		[58751] = "e4",	-- Stoneskin Totem IX
-		[58753] = "e4",	-- Stoneskin Totem X
-		[8075] = "e5",	-- Strength of Earth Totem I -- Faction Champs
-		[8160] = "e5",	-- Strength of Earth Totem II
-		[8161] = "e5",	-- Strength of Earth Totem III
-		[10442] = "e5",	-- Strength of Earth Totem IV
-		[25361] = "e5",	-- Strength of Earth Totem V
-		[25528] = "e5",	-- Strength of Earth Totem VI
-		[57622] = "e5",	-- Strength of Earth Totem VII
-		[58643] = "e5",	-- Strength of Earth Totem VIII
-		[8143] = "e6",	-- Tremor Totem
-	},
-	fire = { -- Fire Totems
-		[2894] = "f1",	-- Fire Elemental Totem
-		[8227] = "f2",	-- Flametongue Totem I -- Faction Champs
-		[8249] = "f2",	-- Flametongue Totem II
-		[10526] = "f2",	-- Flametongue Totem III
-		[16387] = "f2",	-- Flametongue Totem IV
-		[25557] = "f2",	-- Flametongue Totem V
-		[58649] = "f2",	-- Flametongue Totem VI
-		[58652] = "f2",	-- Flametongue Totem VII
-		[58656] = "f2",	-- Flametongue Totem VIII
-		[8181] = "f3",	-- Frost Resistance Totem I
-		[10478] = "f3",	-- Frost Resistance Totem II
-		[10479] = "f3",	-- Frost Resistance Totem III
-		[25560] = "f3",	-- Frost Resistance Totem IV
-		[58741] = "f3",	-- Frost Resistance Totem V
-		[58745] = "f3",	-- Frost Resistance Totem VI
-		[8190] = "f4",	-- Magma Totem I
-		[10585] = "f4",	-- Magma Totem II
-		[10586] = "f4",	-- Magma Totem III
-		[10587] = "f4",	-- Magma Totem IV
-		[25552] = "f4",	-- Magma Totem V
-		[58731] = "f4",	-- Magma Totem VI
-		[58734] = "f4",	-- Magma Totem VII
-		[3599] = "f5",	-- Searing Totem I -- Faction Champs
-		[6363] = "f5",	-- Searing Totem II
-		[6364] = "f5",	-- Searing Totem III
-		[6365] = "f5",	-- Searing Totem IV
-		[10437] = "f5",	-- Searing Totem V
-		[10438] = "f5",	-- Searing Totem VI
-		[25533] = "f5",	-- Searing Totem VII
-		[58699] = "f5",	-- Searing Totem VIII
-		[58703] = "f5",	-- Searing Totem IX
-		[58704] = "f5",	-- Searing Totem X
-		[30706] = "f6",	-- Totem of Wrath I
-		[57720] = "f6",	-- Totem of Wrath II
-		[57721] = "f6",	-- Totem of Wrath III
-		[57722] = "f6",	-- Totem of Wrath IV
-	},
-	water = { -- Water Totems
-		[8170] = "w1",	-- Cleansing Totem
-		[8184] = "w2",	-- Fire Resistance Totem I
-		[10537] = "w2",	-- Fire Resistance Totem II
-		[10538] = "w2",	-- Fire Resistance Totem III
-		[25563] = "w2",	-- Fire Resistance Totem IV
-		[58737] = "w2",	-- Fire Resistance Totem V
-		[58739] = "w2",	-- Fire Resistance Totem VI
-		[5394] = "w3",	-- Healing Stream Totem I -- Faction Champs
-		[6375] = "w3",	-- Healing Stream Totem II
-		[6377] = "w3",	-- Healing Stream Totem III
-		[10462] = "w3",	-- Healing Stream Totem IV
-		[10463] = "w3",	-- Healing Stream Totem V
-		[25567] = "w3",	-- Healing Stream Totem VI
-		[58755] = "w3",	-- Healing Stream Totem VII
-		[58756] = "w3",	-- Healing Stream Totem VIII
-		[58757] = "w3",	-- Healing Stream Totem IX
-		[5675] = "w4",	-- Mana Spring Totem I
-		[10495] = "w4",	-- Mana Spring Totem II
-		[10496] = "w4",	-- Mana Spring Totem III
-		[10497] = "w4",	-- Mana Spring Totem IV
-		[25570] = "w4",	-- Mana Spring Totem V
-		[58771] = "w4",	-- Mana Spring Totem VI
-		[58773] = "w4",	-- Mana Spring Totem VII
-		[58774] = "w4",	-- Mana Spring Totem VIII
-		[16190] = "w5"	-- Mana Tide Totem
-	},
-	other = {
-		[724] = "o1"	-- Lightwell
-	}
-}
-]==]
--- end dead-code block
-
 function mod:StyleFilterTickerCallback(frame, ticker, timer)
 	if frame and frame:IsShown() then
 		mod:StyleFilterUpdate(frame, 'FAKE_AuraWaitTimer')
@@ -457,10 +336,7 @@ function mod:StyleFilterClearVisibility(frame, previous)
 	end
 end
 
--- Returns the default tag format string for a given element (`name`, `level`,
--- `health.text`, `power.text`, `title`) on `frame` based on its UnitType DB.
--- Used by StyleFilterClearChanges to restore the tag after a Name/Level/Health/
--- Power/TitleTag action is rolled back.
+-- Default tag per element; used by StyleFilterClearChanges to restore after a tag action.
 local STYLEFILTER_DEFAULT_TAGS = {
 	name   = '[name:long]',
 	level  = '[smartlevel]',
@@ -504,7 +380,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleFilterChanges.Visibility = true
 		frame.StyleFilterChanges.Hidden = true
 		frame:Hide()
-		return --We hide it. Lets not do other things (no point)
+		return
 	end
 	if FrameLevelChanged then
 		frame.StyleChanged = true
@@ -539,7 +415,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			cutawayHealth:SetStatusBarColor(hr * 1.5, hg * 1.5, hb * 1.5, ha)
 		end
 	end
-	if BorderChanged then --Lets lock this to the values we want (needed for when the media border color changes)
+	if BorderChanged then -- relock after media border color changes
 		frame.StyleChanged = true
 		frame.BorderChanged = true
 		local bc = actions.color.borderColor
@@ -1126,7 +1002,7 @@ end
 
 function mod:StyleFilterSort(place)
 	if self[2] and place[2] then
-		return self[2] > place[2] --Sort by priority: 1=first, 2=second, 3=third, etc
+		return self[2] > place[2] -- sort by priority
 	end
 end
 
@@ -1192,20 +1068,17 @@ mod.StyleFilterTriggerList = {} -- configured filters enabled with sorted priori
 mod.StyleFilterTriggerEvents = {} -- events required by the filter that we need to watch for
 mod.StyleFilterPlateEvents = {} -- events watched inside of oUF, called on the nameplate itself, updated by StyleFilterWatchEvents
 mod.StyleFilterDefaultEvents = { -- list of events style filter uses (true if unitless). Sirus 3.3.5a-compatible only.
-	-- existing oUF/UF events:
 	UNIT_AURA = false,
 	UNIT_DISPLAYPOWER = false,
 	UNIT_MAXHEALTH = false,
 	UNIT_NAME_UPDATE = false,
 	UNIT_PET = false,
 	UNIT_HEALTH = false,
-	-- WotLK power events (no UNIT_POWER_UPDATE on 3.3.5a):
 	UNIT_MANA = false,
 	UNIT_RAGE = false,
 	UNIT_ENERGY = false,
 	UNIT_FOCUS = false,
 	UNIT_RUNIC_POWER = false,
-	-- mod events:
 	GROUP_ROSTER_UPDATE = true,
 	MODIFIER_STATE_CHANGED = true,
 	PLAYER_EQUIPMENT_CHANGED = true,
@@ -1624,7 +1497,7 @@ function mod:StyleFilterRemoveCustomCheck(name)
 	mod.StyleFilterCustomChecks[name] = nil
 end
 
--- Shamelessy taken from AceDB-3.0 and stripped down by Simpy
+-- from AceDB-3.0
 local function copyDefaults(dest, src)
 	for k, v in pairs(src) do
 		if type(v) == "table" then
@@ -1670,5 +1543,3 @@ function mod:StyleFilterInitialize()
 		mod:StyleFilterCopyDefaults(filterTable)
 	end
 end
-
--- Russian totem-name fixup removed in 4g (Sirus-only totem tracking dropped).

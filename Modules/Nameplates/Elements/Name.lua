@@ -55,7 +55,6 @@ function NP:Update_Name(frame, triggered)
 		end
 	end
 
-	-- if for some reason the values failed just default to white
 	if not (r and g and b) then
 		r, g, b = 1, 1, 1
 	end

@@ -1,17 +1,7 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local NP = E:GetModule("NamePlates")
 
---[[
-Target Glow Style Option Variables
-	style1 - Border
-	style2 - Background
-	style3 - Top Arrow Only
-	style4 - Side Arrows Only
-	style5 - Border + Top Arrow
-	style6 - Background + Top Arrow
-	style7 - Border + Side Arrows
-	style8 - Background + Side Arrows
-]]
+-- glowStyle style1-8 = Border/Background/Top/Side arrow combinations
 
 function NP:Update_Glow(frame)
 	local ti = frame.TargetIndicator

@@ -95,8 +95,6 @@ local function RuneOnUpdate(self, elapsed)
 	end
 end
 
--- ─── Color helpers ──────────────────────────────────────────────────────────
-
 function NP:ClassPower_SetBarColor(bar, r, g, b)
 	bar:SetStatusBarColor(r, g, b)
 	if bar.bg then
@@ -115,8 +113,6 @@ function NP:ClassPower_UpdateColor(frame, powerType)
 		end
 	end
 end
-
--- ─── Value updaters (called every time a resource changes) ──────────────────
 
 function NP:ClassPower_UpdateComboPoints(nameplate)
 	local frame = nameplate.ClassPower
@@ -197,8 +193,6 @@ function NP:ClassPower_UpdateAllRunes(nameplate)
 	nameplate.ClassPower:Show()
 end
 
--- ─── Construction ───────────────────────────────────────────────────────────
-
 function NP:Construct_ClassPower(nameplate)
 	local frameName  = nameplate:GetName()
 	local ClassPower = CreateFrame('Frame', frameName..'ClassPower', nameplate)
@@ -239,8 +233,6 @@ function NP:Construct_ClassPower(nameplate)
 	return ClassPower
 end
 
--- ─── Layout helper ──────────────────────────────────────────────────────────
-
 local function LayoutClassPowerBars(frame, db, maxButtons)
 	frame:ClearAllPoints()
 	frame:Point('CENTER', frame:GetParent(), 'CENTER', db.xOffset, db.yOffset)
@@ -269,8 +261,6 @@ local function LayoutClassPowerBars(frame, db, maxButtons)
 		end
 	end
 end
-
--- ─── Main update ────────────────────────────────────────────────────────────
 
 function NP:Update_ClassPower(nameplate)
 	local frame = nameplate.ClassPower
@@ -343,8 +333,6 @@ function NP:Update_ClassPower(nameplate)
 		NP:ClassPower_UpdateComboPoints(nameplate)
 	end
 end
-
--- ─── Module-level event handlers ────────────────────────────────────────────
 
 -- Combo points changed (Rogue/Druid) — update player plate and target plate
 function NP:ClassPower_UNIT_COMBO_POINTS()

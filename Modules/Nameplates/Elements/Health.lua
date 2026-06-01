@@ -184,9 +184,9 @@ function NP:Construct_Health(nameplate)
 	Health:SetMinMaxValues(0, 1)
 	Health:SetValue(1)
 	Health:SetStatusBarColor(0.7, 0.7, 0.7)
-	Health.colorTapping = true    -- enable tapped coloring for nameplates
-	Health.colorReaction = true   -- WotLK: always use reaction color
-	Health.colorSelection = false -- WotLK: no selection color system
+	Health.colorTapping = true
+	Health.colorReaction = true
+	Health.colorSelection = false
 	Health.UpdateColor = NP.Health_UpdateColor
 
 	NP.StatusBars[Health] = true
@@ -219,8 +219,8 @@ function NP:Health_SetColors(nameplate, threatColors)
 		nameplate.Health.colorClass = nil
 	else
 		local db = NP:PlateDB(nameplate)
-		nameplate.Health:SetColorTapping(true)  -- enabled with proper retail-style check (UnitIsTappedByPlayer / UnitIsTappedByAllThreatList)
-		nameplate.Health.colorReaction = true  -- WotLK: not E.Retail
+		nameplate.Health:SetColorTapping(true)
+		nameplate.Health.colorReaction = true
 		nameplate.Health.colorClass = db.health and db.health.useClassColor
 	end
 end

@@ -36,7 +36,6 @@ local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
 
--- Module state tables
 NP.Plates        = {}
 NP.GroupRoles    = {}
 NP.PlateGUID     = {}
@@ -71,7 +70,6 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u and UnitExists(u) then
-				-- Update health value only when changed (avoids unnecessary StatusBar redraws)
 				local h = plate.Health
 				if h then
 					local cur = UnitHealth(u)
@@ -102,7 +100,6 @@ do
 						end
 					end
 				end
-				-- Update power value only when changed
 				local pw = plate.Power
 				if pw and pw:IsShown() then
 					local cur = UnitPower(u)
@@ -905,9 +902,6 @@ function NP:UnitLevel(frame)
 	end
 	return level, 1, 1, 1
 end
-
--- StyleFilterEvents / StyleFilterEventWatch / StyleFilterSetVariables / StyleFilterClearVariables
--- now defined in StyleFilter.lua (retail-faithful pooler + fake-register pattern).
 
 -- intentional no-op placeholder (called from Init.lua)
 function NP:UpdateLibAuraInfoInfo()
