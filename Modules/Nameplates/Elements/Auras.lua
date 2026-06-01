@@ -323,8 +323,7 @@ function NP:RegisterAuraUnitEvents(nameplate, unit)
 	buffs._npPlateUnit = unit
 end
 
--- Custom AuraFilter for nameplates — reads self.db (the aura frame's db) directly,
--- because UF:AuraFilter reads parent.db which is not set on nameplate frames.
+-- Reads self.db directly because UF:AuraFilter reads parent.db, which nameplate frames don't set.
 local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, duration, expiration, caster, isStealable, _,
 							 spellID)
 	if not name then return end
@@ -367,7 +366,6 @@ local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, dura
 	return allowDuration and true
 end
 
--- Smart aura position: fluid PostUpdate callbacks (NP-specific, since UF's use db.perrow/numrows).
 local function NP_GetAuraRowHeight(auras)
 	return auras.sizeHeight or auras.size or 27
 end
@@ -392,7 +390,6 @@ local function NP_UpdateDebuffsHeight(self)
 	end
 end
 
--- Non-fluid BUFFS_ON_DEBUFFS: PostUpdate on Debuffs — reposition Buffs
 local function NP_UpdateBuffsHeaderPosition(self)
 	local nameplate = self.nameplate
 	if not nameplate then return end
@@ -408,7 +405,6 @@ local function NP_UpdateBuffsHeaderPosition(self)
 	end
 end
 
--- Non-fluid DEBUFFS_ON_BUFFS: PostUpdate on Buffs — reposition Debuffs
 local function NP_UpdateDebuffsHeaderPosition(self)
 	local nameplate = self.nameplate
 	if not nameplate then return end
@@ -424,7 +420,6 @@ local function NP_UpdateDebuffsHeaderPosition(self)
 	end
 end
 
--- FLUID_BUFFS_ON_DEBUFFS: PostUpdate on Debuffs — adjust debuff height, reposition Buffs
 local function NP_UpdateBuffsPositionAndDebuffHeight(self)
 	local nameplate = self.nameplate or self:GetParent()
 	local Buffs = nameplate and nameplate.Buffs
@@ -440,7 +435,6 @@ local function NP_UpdateBuffsPositionAndDebuffHeight(self)
 	NP_UpdateDebuffsHeight(self)
 end
 
--- FLUID_DEBUFFS_ON_BUFFS: PostUpdate on Buffs — adjust buff height, reposition Debuffs
 local function NP_UpdateDebuffsPositionAndBuffHeight(self)
 	local nameplate = self.nameplate or self:GetParent()
 	local Debuffs = nameplate and nameplate.Debuffs
@@ -500,7 +494,6 @@ function NP:Construct_Auras(nameplate)
 	Debuffs.forceShow = nameplate == _G.ElvNP_Test
 	Debuffs.tickers = {}
 
-	-- WotLK oUF: PostCreateIcon / PostUpdateIcon (not PostCreateButton / PostUpdateButton)
 	Buffs.PreSetPosition = UF.SortAuras
 	Buffs.PostCreateIcon = NP.Construct_AuraIcon
 	Buffs.PostUpdateIcon = NP.PostUpdateAuraIcon
@@ -556,7 +549,6 @@ local function RefreshAuraCooldownFont(button)
 end
 
 function NP:PostUpdateAuraIcon(unit, button)
-	-- border/desaturate only; size, texcoords and cooldown font are set once in UpdateAuraSettings
 	UF:PostUpdateAura(unit, button)
 end
 
@@ -607,9 +599,9 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras.yOffset = db.yOffset
 	auras.anchorPoint = anchorPoint
 	auras.initialAnchor = E.InversePoints[anchorPoint]
-	auras.point = auras.initialAnchor -- needed by SmartAuraPosition PostUpdate callbacks
-	auras.PostUpdate = nil         -- cleared here; SetSmartAuraPosition may re-assign after Configure
-	auras.attachTo = nameplate.Health or nameplate -- always anchor to Health (db.attachTo ignored on nameplates)
+	auras.point = auras.initialAnchor
+	auras.PostUpdate = nil
+	auras.attachTo = nameplate.Health or nameplate
 	auras.num = numAuras * numRows
 	auras.db = db
 
@@ -629,8 +621,6 @@ function NP:Configure_Auras(nameplate, auras, db)
 	auras:Size(numAuras * width + ((numAuras - 1) * db.spacing), numRows * height + ((numRows - 1) * db.spacing))
 end
 
--- Apply smart aura position: re-anchor buffs/debuffs relative to each other and set PostUpdate.
--- Must be called AFTER both Configure_Auras calls so that .point/.attachTo etc. are all set.
 function NP:SetSmartAuraPosition(nameplate, db)
 	local Buffs    = nameplate.Buffs
 	local Debuffs  = nameplate.Debuffs

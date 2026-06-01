@@ -14,24 +14,20 @@ local InCombatLockdown = InCombatLockdown
 local UnitHasVehicleUI = UnitHasVehicleUI
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
--- Classes that display resources
 local COMBO_CLASS = { ROGUE = true, DRUID = true }
 local RUNE_CLASS  = 'DEATHKNIGHT'
 
--- Number of power bars per class
 local MAX_POINTS = {
 	DEATHKNIGHT = 6,
 	ROGUE       = max(5, MAX_COMBO_POINTS),
 	DRUID       = max(5, MAX_COMBO_POINTS),
 }
 
--- Hide Blizzard RuneFrame and class nameplate mechanic bar when custom display is enabled
 function NP:ClassPower_UpdateRuneFrameVisibility()
 	local playerDB = NP.db.units.PLAYER and NP.db.units.PLAYER.classpower
 	local targetDB = NP.db.units.TARGET and NP.db.units.TARGET.classpower
 	local enabled  = (playerDB and playerDB.enable) or (targetDB and targetDB.enable)
 
-	-- Standalone DK rune bar
 	if E.myclass == RUNE_CLASS then
 		local rf = _G.RuneFrame
 		if rf then
@@ -45,7 +41,6 @@ function NP:ClassPower_UpdateRuneFrameVisibility()
 		end
 	end
 
-	-- Blizzard class nameplate mechanic bar (combo points / runes on nameplate)
 	if COMBO_CLASS[E.myclass] or E.myclass == RUNE_CLASS then
 		local driver = _G.NamePlateDriverFrame
 		local bar    = driver and driver:GetClassNameplateBar()
@@ -59,7 +54,6 @@ function NP:ClassPower_UpdateRuneFrameVisibility()
 	end
 end
 
--- Hook NamePlateDriverFrame:SetupClassNameplateBars so Blizzard can't re-show the bar
 function NP:ClassPower_HookBlizzardBars()
 	if not (COMBO_CLASS[E.myclass] or E.myclass == RUNE_CLASS) then return end
 	local driver = _G.NamePlateDriverFrame
@@ -75,10 +69,9 @@ function NP:ClassPower_HookBlizzardBars()
 	end)
 end
 
--- Rune slot -> display position map (matches oUF runes.lua)
+-- Rune slot -> display position map (matches oUF runes.lua).
 local runemap = {1, 2, 5, 6, 3, 4}
 
--- Smooth rune cooldown fill: throttle SetValue so we don't spam StatusBar every frame.
 local RUNE_STEP = 0.05
 local function RuneOnUpdate(self, elapsed)
 	self.duration = self.duration + elapsed
@@ -211,7 +204,6 @@ function NP:Construct_ClassPower(nameplate)
 		bar:SetFrameLevel(nameplate:GetFrameLevel() + 3)
 		NP.StatusBars[bar] = true
 
-		-- bg texture anchored to bar (sized per-bar later)
 		bar.bg = ClassPower:CreateTexture(frameName..'ClassPower'..i..'bg', 'BORDER')
 		bar.bg:SetTexture(texture)
 		bar.bg:SetAllPoints(bar)
@@ -224,7 +216,6 @@ function NP:Construct_ClassPower(nameplate)
 		ClassPower[i] = bar
 	end
 
-	-- Test frame: always visible, use combo-point colors
 	if nameplate == _G.ElvNP_Test then
 		ClassPower.Hide = ClassPower.Show
 		ClassPower:Show()
@@ -266,7 +257,6 @@ function NP:Update_ClassPower(nameplate)
 	local frame = nameplate.ClassPower
 	if not frame then return end
 
-	-- Test-frame preview
 	if nameplate == _G.ElvNP_Test then
 		local db = NP:PlateDB(nameplate)
 		if not db.nameOnly and db.classpower and db.classpower.enable then
@@ -288,20 +278,17 @@ function NP:Update_ClassPower(nameplate)
 		return
 	end
 
-	-- Gate by class
 	if not COMBO_CLASS[E.myclass] and E.myclass ~= RUNE_CLASS then
 		frame:Hide()
 		return
 	end
 
-	-- Hide when nameOnly is enabled for this plate type
 	local plateDB = NP:PlateDB(nameplate)
 	if plateDB.nameOnly then
 		frame:Hide()
 		return
 	end
 
-	-- player's own or targeted nameplate: combo points / DK runes
 	local isPlayer = nameplate.frameType == 'PLAYER'
 	local isTarget = nameplate.isTarget
 
@@ -334,7 +321,6 @@ function NP:Update_ClassPower(nameplate)
 	end
 end
 
--- Combo points changed (Rogue/Druid) — update player plate and target plate
 function NP:ClassPower_UNIT_COMBO_POINTS()
 	if not COMBO_CLASS[E.myclass] or not NP.Plates then return end
 	for plate in pairs(NP.Plates) do
@@ -344,7 +330,6 @@ function NP:ClassPower_UNIT_COMBO_POINTS()
 	end
 end
 
--- DK rune changed — update player plate and/or target plate
 function NP:ClassPower_RUNE_POWER_UPDATE(_, runeID)
 	if E.myclass ~= RUNE_CLASS or not NP.Plates then return end
 	local playerDB = NP.db.units.PLAYER and NP.db.units.PLAYER.classpower
@@ -363,7 +348,6 @@ end
 
 NP.ClassPower_RUNE_TYPE_UPDATE = NP.ClassPower_RUNE_POWER_UPDATE
 
--- Combat state changed: refresh all relevant plates (for onlyInCombat setting)
 function NP:ClassPower_PLAYER_REGEN()
 	if not NP.Plates then return end
 	for plate in pairs(NP.Plates) do

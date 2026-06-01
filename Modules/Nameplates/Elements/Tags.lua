@@ -13,7 +13,6 @@ end
 function NP:Update_TagText(nameplate, element, db, hide, anchor)
 	if not db then return end
 
-	-- textFormat (new oUF style: '[name:long]') takes precedence over format (old style)
 	local tagFormat = db.textFormat or db.format
 
 	if db.enable and not hide and tagFormat and tagFormat ~= '' then
@@ -35,16 +34,13 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 	local db = NP:PlateDB(nameplate)
 	local hide = db.nameOnly or nameOnlySF
 
-	-- Name uses oUF tag system (textFormat = '[name:long]' etc.)
 	NP:Update_TagText(nameplate, nameplate.Name, db.name, nil, nameplate.Health)
-	-- nameOnly: center the name in the plate regardless of db.name.position settings
 	if hide then
 		nameplate.Name:ClearAllPoints()
 		nameplate.Name:SetJustifyH('CENTER')
 		nameplate.Name:SetPoint('CENTER', nameplate.Health or nameplate)
 	end
 
-	-- Level uses smartlevel oUF tag
 	if db.level and db.level.enable and not hide then
 		local lvlFmt = db.level.textFormat or db.level.format or '[smartlevel]'
 		nameplate:Tag(nameplate.Level, lvlFmt)
@@ -64,7 +60,6 @@ function NP:Update_Tags(nameplate, nameOnlySF)
 		nameplate.Level:Hide()
 	end
 
-	-- Health/Power text: use E:GetFormattedText via a direct tag if configured
 	if db.health and db.health.text then
 		NP:Update_TagText(nameplate, nameplate.Health.Text, db.health.text, hide, nameplate.Health)
 	end
@@ -82,7 +77,6 @@ function NP:Update_CustomTexts(nameplate)
 	local customDB = db and db.customTexts
 	nameplate.customTexts = nameplate.customTexts or {}
 
-	-- Hide stale texts that were removed from profile.
 	for objectName, object in pairs(nameplate.customTexts) do
 		if not (customDB and customDB[objectName]) then
 			nameplate:Untag(object)

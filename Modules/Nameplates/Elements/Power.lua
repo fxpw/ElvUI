@@ -43,7 +43,6 @@ function NP:Power_UpdateColor(_, unit)
 		element:PostUpdateColor(unit, r, g, b)
 	end
 
-	-- Mirror Health's color callbacks (used by CutawayPower).
 	local frame = self
 	if frame.PowerColorChangeCallbacks and b then
 		for _, cb in ipairs(frame.PowerColorChangeCallbacks) do
@@ -63,7 +62,6 @@ function NP:Power_PostUpdate(unit, cur, max)
 		self:Show()
 	end
 
-	-- Mirror Health's value callbacks (used by CutawayPower).
 	if frame.PowerValueChangeCallbacks then
 		for _, cb in ipairs(frame.PowerValueChangeCallbacks) do
 			cb(NP, frame, cur or 0, max or 0)
@@ -71,7 +69,6 @@ function NP:Power_PostUpdate(unit, cur, max)
 	end
 end
 
--- Symmetric to NP:RegisterHealthBarCallbacks; consumed by Cutaway.lua.
 function NP:RegisterPowerBarCallbacks(frame, valueChangeCB, colorChangeCB)
 	if valueChangeCB then
 		frame.PowerValueChangeCallbacks = frame.PowerValueChangeCallbacks or {}
@@ -92,14 +89,13 @@ function NP:Construct_Power(nameplate)
 
 	NP.StatusBars[Power] = true
 
-	-- bg texture, tinted in Power_UpdateColor
 	local bg = Power:CreateTexture(nameplate:GetName()..'PowerBG', 'BORDER')
 	bg:SetAllPoints(Power)
 	bg:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
 	bg:SetVertexColor(0, 0, 0, 1)
 	Power.bg = bg
 
-	Power.frequentUpdates = false -- UNIT_POWER events are sufficient for plates; saves a per-frame OnUpdate
+	Power.frequentUpdates = false -- UNIT_POWER events suffice; avoids a per-frame OnUpdate
 	Power.colorTapping = false
 	Power.colorClass = false
 	Power.colorPower = true

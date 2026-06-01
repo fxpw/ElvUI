@@ -176,7 +176,7 @@ function NP:Construct_Castbar(nameplate)
 	return castbar
 end
 
--- WotLK: COMBAT_LOG_EVENT_UNFILTERED passes args as event args (no CombatLogGetCurrentEventInfo)
+-- 3.3.5a passes combat-log fields as event args; there is no CombatLogGetCurrentEventInfo.
 function NP:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, subEvent, sourceGUID, sourceName, _, targetGUID)
 	if (subEvent == 'SPELL_INTERRUPT' or subEvent == 'SPELL_PERIODIC_INTERRUPT') and targetGUID and (sourceName and sourceName ~= '') then
 		local plate = NP.PlateGUID[targetGUID]
@@ -210,7 +210,6 @@ function NP:Update_Castbar(nameplate)
 
 		castbar:Size(db.width, db.height)
 		castbar:ClearAllPoints()
-		-- Anchor below the Health bar by default. xOffset/yOffset still nudges it.
 		castbar:Point('TOP', nameplate.Health, 'BOTTOM', db.xOffset, db.yOffset)
 
 		if db.showIcon then

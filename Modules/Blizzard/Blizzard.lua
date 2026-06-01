@@ -163,7 +163,6 @@ function B:Initialize()
 	end
 end
 
--- Duplicate nameplate panel ("Индикаторы здоровья") is fully mirrored by ElvUI's Nameplate Engine; cover it with a redirect.
 function B:NamePlate_RedirectBlizzOptions()
 	local panel = _G.InterfaceOptionsNamePlatePanel
 	if not panel or panel.elvNPRedirect then return end

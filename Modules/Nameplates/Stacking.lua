@@ -15,12 +15,8 @@ local ENEMY_TYPES = {
 
 NP.StackingPlates = NP.StackingPlates or {}
 NP.StackingForcedPlates = NP.StackingForcedPlates or {}
--- Diagnostic stats (read by /elvnpstack). Persistent table reused each tick so we
--- assign fields instead of allocating a fresh table every OnUpdate frame.
 NP.StackingLastStats = NP.StackingLastStats or {}
 
--- Per-tick scratch set of active plates. Reused (wiped) each UpdateNameplateStacking
--- call to avoid allocating a table every OnUpdate frame. Read only within one call.
 local stackingActive = {}
 
 local function GetStackingDB()
@@ -29,9 +25,7 @@ local function GetStackingDB()
 		NP.db.stacking = E:CopyTable(P.nameplates.stacking)
 	end
 
-	-- A profile with a PARTIAL stacking table (missing newer keys) leaves those keys nil,
-	-- causing arithmetic-on-nil in the 33Hz OnUpdate. Fill any missing keys from defaults
-	-- without overwriting existing user values.
+	-- fill keys missing from a partial profile to avoid arithmetic-on-nil in OnUpdate
 	local def = P.nameplates.stacking
 	if def then
 		for k, v in pairs(def) do
@@ -157,7 +151,6 @@ function NP:UpdateNameplateStacking()
 			newPosition = oldPosition - exp(-yspace / minDistance) * delta * 0.8 * cfg.speedlower
 		end
 
-		-- Keep stacking soft and prevent runaway separation.
 		newPosition = mathMax(0, mathMin(newPosition, cfg.maxOffset))
 
 		data.position = newPosition
@@ -251,7 +244,7 @@ function NP:StackingDiagnostic()
 			stats.active or 0, stats.moved or 0, stats.maxMove or 0, stats.minDistance or -1))
 	end
 
-	-- skip managed plates: the OnUpdate loop owns their clamp, a 0,0,0,0 reset would flicker them
+	-- skip managed plates: the OnUpdate loop owns their clamp, a reset would flicker them
 	if not managed then
 		basePlate:SetClampRectInsets(0, 0, 0, 0)
 		basePlate:SetClampedToScreen(false)

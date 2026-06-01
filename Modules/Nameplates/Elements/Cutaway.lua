@@ -1,12 +1,9 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule("NamePlates")
 
---Lua functions
---WoW API / Variables
 local CreateFrame = CreateFrame
 
--- Cutaway element (Health + Power); frame.CutawayHealth kept as legacy alias.
-
+-- frame.CutawayHealth is a legacy alias for frame.Cutaway.Health.
 function NP:UpdateElement_CutawayHealthFadeOut(frame)
 	local cutawayHealth = frame.Cutaway and frame.Cutaway.Health or frame.CutawayHealth
 	if not cutawayHealth then return end
