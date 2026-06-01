@@ -33,7 +33,8 @@ end
 function NP:Health_FixBorderPixel(Health)
 	local backdrop = Health and Health.backdrop
 	if not backdrop or not backdrop.GetBackdrop then return end
-	local px = NP:BorderPixelSize(backdrop:GetEffectiveScale())
+	local eff = backdrop:GetEffectiveScale()
+	local px = NP:BorderPixelSize(eff)
 	local bd = backdrop:GetBackdrop()
 	if not bd then return end
 	if bd.edgeSize ~= px then
@@ -45,6 +46,7 @@ function NP:Health_FixBorderPixel(Health)
 	end
 	backdrop:SetOutside(Health, px, px)
 	backdrop.ignoreFrameTemplates = true -- don't let E:UpdateFrameTemplates reset edgeSize
+	backdrop._npPinnedScale = eff -- poller re-pins if the engine rescales the plate (target/dynamic scale)
 end
 
 -- Glue the border level to Health so it draws above the fill and above overlapping neighbour plates.

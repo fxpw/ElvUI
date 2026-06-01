@@ -133,6 +133,12 @@ do
 					plate:UpdateTags()
 				end
 
+				-- Re-pin the 1px border when the engine rescales the plate (target/dynamic scale changes effectiveScale).
+				local bdf = h and h.backdrop
+				if bdf and bdf._npPinnedScale ~= bdf:GetEffectiveScale() then
+					NP:Health_FixBorderPixel(h)
+				end
+
 				-- Sync frame levels to engine plate: engine can reassign plate levels
 				-- dynamically (stacking, targeting). Skip if StyleFilter boost is active.
 				if not plate.appliedFrameLevelBoost then
