@@ -7,12 +7,12 @@ local UnitIsUnit = UnitIsUnit
 local UnitIsTapped = UnitIsTapped
 local GetPartyAssignment = GetPartyAssignment
 
--- WotLK: no E.myrole, use GetPartyAssignment instead
 local function IsTank(unit)
 	return GetPartyAssignment('MAINTANK', unit or 'player') ~= nil
 end
 
 function NP:ThreatIndicator_PreUpdate(unit)
+	if not unit then return end
 	local nameplate, db, unitTarget = self.__owner, NP.db.threat, unit..'target'
 	local imTank = IsTank('player')
 	local unitRole = NP.IsInGroup and (UnitExists(unitTarget) and not UnitIsUnit(unitTarget, 'player')) and NP.GroupRoles[UnitName(unitTarget)] or 'NONE'
@@ -32,29 +32,28 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 	local nameplate, colors, db = self.__owner, NP.db.colors.threat, NP.db.threat
 	local sf = NP:StyleFilterChanges(nameplate)
 	if not status and not sf.Scale then
-		nameplate.ThreatStatus = nil -- clear so Health_UpdateColor runs normally next cycle
+		nameplate.ThreatStatus = nil
 		nameplate.ThreatScale = 1
 		NP:ScalePlate(nameplate, 1)
-		-- threat dropped: re-enable the standard color flags (disabled on threat) and recolor now
 		NP:Health_SetColors(nameplate)
 		if nameplate.Health and nameplate.Health.ForceUpdate then
 			nameplate.Health:ForceUpdate()
 		end
-	elseif status and db.enable and db.useThreatColor and not UnitIsTapped(unit) then
+	elseif status and db.enable and db.useThreatColor and not (unit and UnitIsTapped(unit)) then
 		NP:Health_SetColors(nameplate, true)
 		nameplate.ThreatStatus = status
 
 		local Color, Scale
-		if status == 3 then -- securely tanking
+		if status == 3 then
 			Color = self.offTank and colors.offTankColor or self.isTank and colors.goodColor or colors.badColor
 			Scale = self.isTank and db.goodScale or db.badScale
-		elseif status == 2 then -- insecurely tanking
+		elseif status == 2 then
 			Color = self.offTank and colors.offTankColorBadTransition or self.isTank and colors.badTransition or colors.goodTransition
 			Scale = 1
-		elseif status == 1 then -- not tanking but threat higher than tank
+		elseif status == 1 then
 			Color = self.offTank and colors.offTankColorGoodTransition or self.isTank and colors.goodTransition or colors.badTransition
 			Scale = 1
-		else -- not tanking at all
+		else
 			Color = self.isTank and colors.badColor or colors.goodColor
 			Scale = self.isTank and db.badScale or db.goodScale
 		end

@@ -6,7 +6,6 @@ local StatusBarPrototype = Engine.Compat.StatusBarPrototype
 
 local CreateFrame = CreateFrame
 
--- Default colors fallback used when a profile entry is missing.
 local DEFAULT_COLORS = {
 	myBar           = { r = 0,   g = 1,   b = 0.5, a = 0.25 },
 	otherBar        = { r = 0,   g = 1,   b = 0,   a = 0.25 },
@@ -38,8 +37,6 @@ local function HealPrediction_ShouldHide(nameplate, plateDB)
 	return (plateDB and plateDB.nameOnly) or sf.NameOnly or not NP:Health_IsVisible(nameplate)
 end
 
--- PostUpdate runs after the oUF_HealthPrediction plugin updates the bars.
--- Adjusts absorb / heal-absorb bar values according to the configured absorbStyle.
 local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomingHeal, absorb, healAbsorb, hasOverAbsorb, hasOverHealAbsorb, health, maxHealth)
 	local nameplate = element.__owner
 	local db = nameplate and nameplate.HealPredictionDB
@@ -69,7 +66,6 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 	local missingHealth = maxHealth - health
 	local healthPostHeal = health + (myIncomingHeal or 0) + (otherIncomingHeal or 0)
 
-	-- Absorb color: switch to over-absorb tint when overflowing
 	if hasOverAbsorb then
 		local c = GetColor(db, 'overabsorbs')
 		absorbBar:SetStatusBarColor(c.r, c.g, c.b, c.a)
@@ -78,7 +74,6 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 		absorbBar:SetStatusBarColor(c.r, c.g, c.b, c.a)
 	end
 
-	-- Heal-absorb color
 	if healAbsorbBar then
 		if hasOverHealAbsorb then
 			local c = GetColor(db, 'overhealabsorbs')
@@ -89,7 +84,6 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 		end
 	end
 
-	-- Apply absorb-style rules. The plugin already SetValue(absorb); we override for special cases.
 	if db.absorbStyle == 'NORMAL' then
 		if hasOverAbsorb then
 			if health == maxHealth then
@@ -128,8 +122,6 @@ function NP:Construct_HealPrediction(nameplate)
 	local health = nameplate.Health
 	if not health then return end
 
-	-- All sub-bars parent to Health so they inherit framelevel/scale and clip with the nameplate.
-	-- Use the Compat StatusBarPrototype emulation, since the native 3.3.5 StatusBar lacks SetReverseFill.
 	local makeBar = StatusBarPrototype
 	local myBar          = makeBar(nil, health)
 	local otherBar       = makeBar(nil, health)
@@ -141,7 +133,6 @@ function NP:Construct_HealPrediction(nameplate)
 		bar:Hide()
 	end
 
-	-- Sparks/over-absorb icons must render ABOVE the bars, so they live on a dedicated frame with a higher level.
 	local overlay = CreateFrame('Frame', nil, health)
 	overlay:SetAllPoints(health)
 	overlay:SetFrameLevel(health:GetFrameLevel() + 3)
@@ -167,9 +158,8 @@ function NP:Construct_HealPrediction(nameplate)
 		PostUpdate = HealPrediction_PostUpdate,
 	}
 
-	-- oUF_HealthPrediction stores its widget under HealCommBar (see Libraries/oUF_Plugins/oUF_HealthPrediction).
+	-- oUF_HealthPrediction requires the element under HealCommBar; HealPrediction is our own alias.
 	nameplate.HealCommBar = element
-	-- Keep an alias under a friendlier name for our own code.
 	nameplate.HealPrediction = element
 
 	return element
@@ -216,7 +206,6 @@ function NP:Configure_HealPrediction(nameplate)
 	end
 	element.absorbBar:SetStatusBarTexture(absorbTex)
 
-	-- Colors
 	local myC      = GetColor(db, 'myBar')
 	local otherC   = GetColor(db, 'otherBar')
 	local absorbC  = GetColor(db, 'absorbs')
@@ -226,7 +215,6 @@ function NP:Configure_HealPrediction(nameplate)
 	element.absorbBar:SetStatusBarColor(absorbC.r, absorbC.g, absorbC.b, absorbC.a)
 	element.healAbsorbBar:SetStatusBarColor(healAbC.r, healAbC.g, healAbC.b, healAbC.a)
 
-	-- Anchoring (horizontal nameplates).
 	local anchor = db.anchorPoint or 'BOTTOM'
 	element.myBar:ClearAllPoints()
 	element.myBar:SetPoint(anchor, health, anchor)
@@ -253,7 +241,7 @@ function NP:Configure_HealPrediction(nameplate)
 		element.absorbBar:SetReverseFill(false)
 		element.absorbBar:SetPoint('LEFT', element.otherBar:GetStatusBarTexture(), 'RIGHT')
 		element.absorbBar:SetPoint('RIGHT', health, 'RIGHT')
-	else -- NORMAL / WRAPPED / OVERFLOW
+	else
 		element.absorbBar:SetReverseFill(false)
 		element.absorbBar:SetPoint('LEFT', healthTex, 'RIGHT')
 		element.absorbBar:SetPoint('RIGHT', health, 'RIGHT')

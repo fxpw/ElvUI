@@ -14,9 +14,7 @@ local UnitReaction = UnitReaction
 local UnitIsConnected = UnitIsConnected
 local CreateFrame = CreateFrame
 
--- Nameplate border (Health backdrop edge): pin to exactly 1 physical px and keep it above neighbour plates.
-
--- 1 physical px in logical units at the frame's effective scale (native PixelUtil, taint-safe; falls back to 768/screenheight).
+-- 1 physical px in logical units = factor/effectiveScale (PixelUtil factor is taint-safe; falls back to 768/screenheight).
 function NP:BorderPixelSize(effectiveScale)
 	local factor = (PixelUtil and PixelUtil.GetPixelToUIUnitFactor and PixelUtil.GetPixelToUIUnitFactor())
 	if not factor or factor <= 0 then
@@ -29,25 +27,25 @@ function NP:BorderPixelSize(effectiveScale)
 	return factor / s
 end
 
--- Pin a crisp 1px edge and keep it through SetTemplate re-applies (preserves bg/edge/insets).
 function NP:Health_FixBorderPixel(Health)
 	local backdrop = Health and Health.backdrop
 	if not backdrop or not backdrop.GetBackdrop then return end
-	local px = NP:BorderPixelSize(backdrop:GetEffectiveScale())
+	local eff = backdrop:GetEffectiveScale()
+	local px = NP:BorderPixelSize(eff)
 	local bd = backdrop:GetBackdrop()
 	if not bd then return end
 	if bd.edgeSize ~= px then
-		local cr, cg, cb, ca = backdrop:GetBackdropColor() -- SetBackdrop wipes both colors; restore bg so it isn't opaque white
+		local cr, cg, cb, ca = backdrop:GetBackdropColor()
 		bd.edgeSize = px
 		backdrop:SetBackdrop(bd)
 		if cr then backdrop:SetBackdropColor(cr, cg, cb, ca) end
 		backdrop:SetBackdropBorderColor(unpack(E.media.unitframeBorderColor))
 	end
 	backdrop:SetOutside(Health, px, px)
-	backdrop.ignoreFrameTemplates = true -- don't let E:UpdateFrameTemplates reset edgeSize
+	backdrop.ignoreFrameTemplates = true
+	backdrop._npPinnedScale = eff
 end
 
--- Glue the border level to Health so it draws above the fill and above overlapping neighbour plates.
 function NP:Health_SyncBorderLevel(Health)
 	local backdrop = Health and Health.backdrop
 	if not backdrop then return end
@@ -57,9 +55,6 @@ end
 function NP:Health_UpdateColor(_, unit)
 	if not unit or self.unit ~= unit then return end
 
-	-- ThreatIndicator_PostUpdate manages the bar color directly via SetStatusBarColor.
-	-- While ThreatStatus is set (threat active + useThreatColor), skip all standard color
-	-- logic to avoid overwriting the threat color on every UNIT_THREAT_LIST_UPDATE.
 	if self.ThreatStatus
 		and NP.db.threat
 		and NP.db.threat.enable
@@ -71,6 +66,7 @@ function NP:Health_UpdateColor(_, unit)
 	local element = self.Health
 
 	local r, g, b, t
+	local reaction = element.colorReaction and UnitReaction(unit, 'player')
 	if element.colorDisconnected and not UnitIsConnected(unit) then
 		t = self.colors.disconnected
 	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
@@ -82,8 +78,7 @@ function NP:Health_UpdateColor(_, unit)
 			r, g, b = cc[1] or cc.r, cc[2] or cc.g, cc[3] or cc.b
 			element.r, element.g, element.b = r, g, b
 		end
-	elseif element.colorReaction and UnitReaction(unit, 'player') then
-		local reaction = UnitReaction(unit, 'player')
+	elseif element.colorReaction and reaction then
 		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
 	elseif element.colorHealth then
 		t = NP.db.colors.health
@@ -100,13 +95,12 @@ function NP:Health_UpdateColor(_, unit)
 	end
 
 	if not b then
-		-- UnitReaction returned nil (race with UNIT_FACTION) — use cached reaction.
 		local reaction = self.reaction
 		local t2 = reaction and NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
 		if t2 then
 			r, g, b = t2.r, t2.g, t2.b
 		else
-			r, g, b = 0.8, 0.1, 0.1 -- ultimate fallback: hostile red
+			r, g, b = 0.8, 0.1, 0.1
 		end
 	end
 
@@ -122,7 +116,6 @@ function NP:Health_UpdateColor(_, unit)
 		element:PostUpdateColor(unit, r, g, b)
 	end
 
-	-- Mirror Power's color callbacks (used by CutawayHealth to sync drain-bar color).
 	local frame = self
 	if frame.HealthColorChangeCallbacks and b then
 		for _, cb in ipairs(frame.HealthColorChangeCallbacks) do
@@ -130,16 +123,11 @@ function NP:Health_UpdateColor(_, unit)
 		end
 	end
 
-	-- Some paths re-assign statusbar textures/colors after NameOnly is applied.
-	-- Re-assert transparency so the health fill cannot visually reappear.
 	if element._isTransparent then
 		NP:Health_SetTransparent(self, true)
 	end
 end
 
--- nameOnly visual toggle: keep the Health frame Shown so children (Name/Level) keep
--- inheriting its framelevel/strata across plate recycling and engine target switches,
--- but make the bar visually disappear (texture/bg/backdrop).
 function NP:Health_SetTransparent(nameplate, transparent)
 	local Health = nameplate and nameplate.Health
 	if not Health then return end
@@ -165,7 +153,6 @@ function NP:Health_SetTransparent(nameplate, transparent)
 	Health._isTransparent = transparent or nil
 end
 
--- Returns true when the Health bar is visually visible (not Hidden, not transparent).
 function NP:Health_IsVisible(nameplate)
 	local Health = nameplate and nameplate.Health
 	if not Health or not Health:IsShown() then return false end
@@ -177,22 +164,19 @@ function NP:Construct_Health(nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
 	Health:SetFrameLevel(nameplate:GetFrameLevel() + 1)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
-	NP:Health_FixBorderPixel(Health)   -- crisp 1 physical px border (no 1<->2px flicker)
-	NP:Health_SyncBorderLevel(Health)  -- keep border above health fill / above neighbors
+	NP:Health_FixBorderPixel(Health)
+	NP:Health_SyncBorderLevel(Health)
 	Health:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
-	-- Defaults so the bar is visible before oUF's first Update fills MinMax/Value/Color.
 	Health:SetMinMaxValues(0, 1)
 	Health:SetValue(1)
 	Health:SetStatusBarColor(0.7, 0.7, 0.7)
-	Health.colorTapping = true    -- enable tapped coloring for nameplates
-	Health.colorReaction = true   -- WotLK: always use reaction color
-	Health.colorSelection = false -- WotLK: no selection color system
+	Health.colorTapping = true
+	Health.colorReaction = true
+	Health.colorSelection = false
 	Health.UpdateColor = NP.Health_UpdateColor
 
 	NP.StatusBars[Health] = true
 
-	-- Background texture for the unfilled portion of the bar.
-	-- Color is set in Health_UpdateColor as (r,g,b) * NP.multiplier so it tints with the bar.
 	local bg = Health:CreateTexture(nameplate:GetName()..'HealthBG', 'BORDER')
 	bg:SetAllPoints(Health)
 	bg:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
@@ -205,8 +189,6 @@ function NP:Construct_Health(nameplate)
 	healthFlashTexture:Point('TOPRIGHT', Health:GetStatusBarTexture(), 'TOPRIGHT')
 	healthFlashTexture:Hide()
 	nameplate.HealthFlashTexture = healthFlashTexture
-	-- StyleFilter looks up frame.FlashTexture (see StyleFilterPass / StyleFilterSetChanges).
-	-- Keep both names so legacy code paths and the StyleFilter flash action both work.
 	nameplate.FlashTexture = healthFlashTexture
 
 	return Health
@@ -219,8 +201,8 @@ function NP:Health_SetColors(nameplate, threatColors)
 		nameplate.Health.colorClass = nil
 	else
 		local db = NP:PlateDB(nameplate)
-		nameplate.Health:SetColorTapping(true)  -- enabled with proper retail-style check (UnitIsTappedByPlayer / UnitIsTappedByAllThreatList)
-		nameplate.Health.colorReaction = true  -- WotLK: not E.Retail
+		nameplate.Health:SetColorTapping(true)
+		nameplate.Health.colorReaction = true
 		nameplate.Health.colorClass = db.health and db.health.useClassColor
 	end
 end
@@ -228,8 +210,6 @@ end
 function NP:Update_Health(nameplate, skipUpdate)
 	local db = NP:PlateDB(nameplate)
 
-	-- Defensive: old saved profiles may be missing the per-unit health subtable entirely.
-	-- Without this guard db.health.enable nils out and the bar is permanently disabled.
 	if not db.health then
 		db.health = {
 			enable = true,
@@ -287,8 +267,6 @@ function NP:Update_Health(nameplate, skipUpdate)
 			nameplate:DisableElement('Health')
 		end
 
-		-- nameOnly: keep Health frame Shown (so children Name/Level inherit its framelevel and stay visible),
-		-- just hide the visual textures + backdrop.
 		nameplate.Health:Show()
 		NP:Health_SetTransparent(nameplate, true)
 	end
@@ -297,7 +275,6 @@ function NP:Update_Health(nameplate, skipUpdate)
 	nameplate.Health:Height(db.health.height)
 end
 
--- Registers value/color change callbacks on a nameplate health bar (used by CutawayHealth)
 function NP:RegisterHealthBarCallbacks(frame, valueChangeCB, colorChangeCB)
 	if valueChangeCB then
 		frame.HealthValueChangeCallbacks = frame.HealthValueChangeCallbacks or {}

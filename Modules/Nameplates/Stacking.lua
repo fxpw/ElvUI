@@ -15,11 +15,24 @@ local ENEMY_TYPES = {
 
 NP.StackingPlates = NP.StackingPlates or {}
 NP.StackingForcedPlates = NP.StackingForcedPlates or {}
+NP.StackingLastStats = NP.StackingLastStats or {}
+
+local stackingActive = {}
 
 local function GetStackingDB()
 	NP.db = NP.db or E.db.nameplates
 	if not NP.db.stacking then
 		NP.db.stacking = E:CopyTable(P.nameplates.stacking)
+	end
+
+	-- fill keys missing from a partial profile to avoid arithmetic-on-nil in OnUpdate
+	local def = P.nameplates.stacking
+	if def then
+		for k, v in pairs(def) do
+			if NP.db.stacking[k] == nil then
+				NP.db.stacking[k] = v
+			end
+		end
 	end
 
 	return NP.db.stacking
@@ -67,7 +80,8 @@ function NP:UpdateNameplateStacking()
 	if not NP:IsOverlapStackingEnabled() then return end
 
 	local cfg = GetStackingDB()
-	local active = {}
+	local active = stackingActive
+	wipe(active)
 	local xspace = cfg.xspace
 	local yspace = cfg.yspace
 	local delta = cfg.speed * 5
@@ -115,8 +129,9 @@ function NP:UpdateNameplateStacking()
 				local ydiffOrigin = data.ypos - otherData.ypos - otherData.position
 
 				if abs(xdiff) < xspace then
-					if ydiff >= 0 and abs(ydiff) < minDistance then
-						minDistance = abs(ydiff)
+					local ayd = abs(ydiff)
+					if ydiff >= 0 and ayd < minDistance then
+						minDistance = ayd
 					end
 					if abs(ydiffOrigin) < yspace + 2 * delta then
 						reset = false
@@ -136,7 +151,6 @@ function NP:UpdateNameplateStacking()
 			newPosition = oldPosition - exp(-yspace / minDistance) * delta * 0.8 * cfg.speedlower
 		end
 
-		-- Keep stacking soft and prevent runaway separation.
 		newPosition = mathMax(0, mathMin(newPosition, cfg.maxOffset))
 
 		data.position = newPosition
@@ -155,12 +169,11 @@ function NP:UpdateNameplateStacking()
 		basePlate:SetClampRectInsets(-10, 10, cfg.upperborder, -data.ypos - newPosition - cfg.originpos + height)
 	end
 
-	NP.StackingLastStats = {
-		active = activeCount,
-		moved = movedCount,
-		maxMove = maxMove,
-		minDistance = minDistanceSeen < 1000 and minDistanceSeen or -1,
-	}
+	local stats = NP.StackingLastStats
+	stats.active = activeCount
+	stats.moved = movedCount
+	stats.maxMove = maxMove
+	stats.minDistance = minDistanceSeen < 1000 and minDistanceSeen or -1
 end
 
 function NP:UpdateStackingState()
@@ -231,7 +244,7 @@ function NP:StackingDiagnostic()
 			stats.active or 0, stats.moved or 0, stats.maxMove or 0, stats.minDistance or -1))
 	end
 
-	-- skip managed plates: the OnUpdate loop owns their clamp, a 0,0,0,0 reset would flicker them
+	-- skip managed plates: the OnUpdate loop owns their clamp, a reset would flicker them
 	if not managed then
 		basePlate:SetClampRectInsets(0, 0, 0, 0)
 		basePlate:SetClampedToScreen(false)

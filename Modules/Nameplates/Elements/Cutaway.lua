@@ -1,19 +1,9 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule("NamePlates")
 
---Lua functions
---WoW API / Variables
 local CreateFrame = CreateFrame
 
--- ============================================================================
--- Cutaway element (Health + Power). Substage 4b of the v2.1 retail-like rewrite.
--- Each nameplate gets `frame.Cutaway = { Health = StatusBar, Power = StatusBar }`.
--- The legacy `frame.CutawayHealth` field is preserved as an alias for backwards
--- compatibility (StyleFilter.lua / Plugins still reference it).
--- ============================================================================
-
--- ===== Health side ==========================================================
-
+-- frame.CutawayHealth is a legacy alias for frame.Cutaway.Health.
 function NP:UpdateElement_CutawayHealthFadeOut(frame)
 	local cutawayHealth = frame.Cutaway and frame.Cutaway.Health or frame.CutawayHealth
 	if not cutawayHealth then return end
@@ -85,8 +75,6 @@ function NP:ConstructElement_CutawayHealth(parent)
 	return cutawayHealth
 end
 
--- ===== Power side ===========================================================
-
 function NP:UpdateElement_CutawayPowerFadeOut(frame)
 	local cutawayPower = frame.Cutaway and frame.Cutaway.Power
 	if not cutawayPower then return end
@@ -150,8 +138,6 @@ function NP:ConstructElement_CutawayPower(parent)
 
 	return cutawayPower
 end
-
--- ===== Wrapper ==============================================================
 
 function NP:Construct_Cutaway(parent)
 	local cutaway = {
