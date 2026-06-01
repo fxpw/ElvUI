@@ -95,8 +95,8 @@ function NP:Health_UpdateColor(_, unit)
 	end
 
 	if not b then
-		local reaction = self.reaction
-		local t2 = reaction and NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
+		local reaction2 = self.reaction
+		local t2 = reaction2 and NP.db.colors.reactions[reaction2 == 4 and 'neutral' or reaction2 <= 3 and 'bad' or 'good']
 		if t2 then
 			r, g, b = t2.r, t2.g, t2.b
 		else

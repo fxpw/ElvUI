@@ -5,7 +5,7 @@ local ElvUF = E.oUF
 assert(ElvUF, 'ElvUI was unable to locate oUF.')
 
 local pairs, ipairs, wipe = pairs, ipairs, wipe
-local select, unpack, type = select, unpack, type
+local select, type = select, type
 local strsplit = strsplit
 local tonumber = tonumber
 
@@ -16,7 +16,6 @@ local GetNumRaidMembers = GetNumRaidMembers
 local GetPartyAssignment = GetPartyAssignment
 local GetRaidRosterInfo = GetRaidRosterInfo
 local InCombatLockdown = InCombatLockdown
-local IsInInstance = IsInInstance
 local SetCVar = SetCVar
 local UnitClass = UnitClass
 local UnitClassification = UnitClassification
