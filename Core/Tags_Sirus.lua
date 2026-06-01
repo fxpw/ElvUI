@@ -6,7 +6,6 @@ local addon = E:GetModule("Sirus")
 local ipairs = ipairs
 local tonumber = tonumber
 local unpack = unpack
-local find = string.find
 local format = string.format
 local gmatch = gmatch
 local gsub = gsub
@@ -108,6 +107,8 @@ addon.VIP = VIP
 local Premium = {
 	[90037] = {name = "Premium", icon = "INTERFACE\\ICONS\\VIP", name2 = "(P)"},
 	[371930] = {name = "Премиум", icon = "INTERFACE\\ICONS\\VIP", name2 = "(P)"},
+	[378467] = {name = "Премиум", icon = "INTERFACE\\ICONS\\VIP", name2 = "(P)"},
+	[378471] = {name = "Премиум", icon = "INTERFACE\\ICONS\\VIP", name2 = "(P)"},
 }
 addon.Premium = Premium
 
@@ -261,35 +262,34 @@ ElvUF.Tags.Methods["premium:icon"] = function(unit)
 end
 
 local await = {}
-if EventHandler and EventHandler.events and type(EventHandler.events.ASMSG_CHARACTER_BG_INFO) == "function" then
-	hooksecurefunc(EventHandler.events, "ASMSG_CHARACTER_BG_INFO", function(_, msg)
-		local _, _, GUID = find(msg, "^(.-)|")
-		GUID = tonumber(GUID)
-		if await[GUID] then
-			for _, frame in ipairs(ElvUF.objects) do
-				if frame.unit == await[GUID] and frame.__tags then
-					for _, tag in ipairs(frame.__tags) do
-						tag:UpdateTag()
+-- Sirus delivers BG info via EventHandler listeners, not a function on .events; register one so pending pvp tags refresh on arrival
+if EventHandler and EventHandler.RegisterListener then
+	EventHandler:RegisterListener({
+		ASMSG_CHARACTER_BG_INFO = function(_, msg)
+			local GUID = tonumber(match(msg, "^(.-)|"))
+			if GUID and await[GUID] then
+				for _, frame in ipairs(ElvUF.objects) do
+					if frame.unit == await[GUID] and frame.__tags then
+						for _, tag in ipairs(frame.__tags) do
+							tag:UpdateTag()
+						end
+						break
 					end
-					break
 				end
+				await[GUID] = nil
 			end
-			await[GUID] = nil
 		end
-	end)
+	})
 end
 
 ElvUF.Tags.Events["pvp:name"] = "UNIT_FACTION UNIT_TARGET"
 ElvUF.Tags.Methods["pvp:name"] = function(unit)
 	if unit and UnitIsPlayer(unit) then
-		local GUID = UnitGUID(unit)
-		local currTitle, _, _, _, _, _, _, _, _, _, unit2 = GetUnitRatedBattlegroundRankInfo(unit)
+		local currTitle = GetUnitRatedBattlegroundRankInfo(unit)
 		if currTitle then
-			if (unit2 == unit or UnitGUID(unit2) == GUID) and currTitle then
-				return currTitle
-			end
+			return currTitle
 		else
-			await[tonumber(GUID)] = unit
+			await[tonumber(UnitGUID(unit))] = unit
 		end
 	end
 end
@@ -297,14 +297,13 @@ end
 ElvUF.Tags.Events["pvp:id"] = "UNIT_FACTION UNIT_TARGET"
 ElvUF.Tags.Methods["pvp:id"] = function(unit)
 	if unit and UnitIsPlayer(unit) then
-		local GUID = UnitGUID(unit)
-		local currTitle, currRankID, _, _, _, _, _, _, _, _, unit2 = GetUnitRatedBattlegroundRankInfo(unit)
+		local currTitle, currRankID = GetUnitRatedBattlegroundRankInfo(unit)
 		if currTitle then
-			if (unit2 == unit or UnitGUID(unit2) == GUID) and currRankID then
+			if currRankID then
 				return currRankID
 			end
 		else
-			await[tonumber(GUID)] = unit
+			await[tonumber(UnitGUID(unit))] = unit
 		end
 	end
 end
@@ -312,15 +311,14 @@ end
 ElvUF.Tags.Events["pvp:icon"] = "UNIT_FACTION UNIT_TARGET"
 ElvUF.Tags.Methods["pvp:icon"] = function(unit)
 	if unit and UnitIsPlayer(unit) then
-		local GUID = UnitGUID(unit)
-		local currTitle, _, currRankIconCoord, _, _, _, _, _, _, _, unit2 = GetUnitRatedBattlegroundRankInfo(unit)
+		local currTitle, _, currRankIconCoord = GetUnitRatedBattlegroundRankInfo(unit)
 		if currTitle then
-			if (unit2 == unit or UnitGUID(unit2) == GUID) and currRankIconCoord then
+			if currRankIconCoord then
 				local left, right, top, bottom = unpack(currRankIconCoord)
 				return format("|T%s:18:18:0:0:1024:512:%d:%d:%d:%d|t", "Interface\\PVPFrame\\PvPPrestigeIcons", left * 1024, right * 1024, top * 512, bottom * 512)
 			end
 		else
-			await[tonumber(GUID)] = unit
+			await[tonumber(UnitGUID(unit))] = unit
 		end
 	end
 end

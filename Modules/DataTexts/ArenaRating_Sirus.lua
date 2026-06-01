@@ -48,7 +48,7 @@ local textFormat = "|cff00ff00%d|r |cffff0000%d|r %d%%"
 local function OnEnter(self)
 	DT:SetupTooltip(self)
 
-	local pvpStats = C_CacheInstance:Get("ASMSG_PVP_STATS", {})
+	local pvpStats = C_GlobalStorage.GetVar("ASMSG_PVP_STATS") or {}
 	for i, enabled in ipairs(E.db.datatexts.ArenaRating) do
 		if enabled then
 			DT.tooltip:AddLine(brackets[i])
@@ -60,7 +60,7 @@ local function OnEnter(self)
 				DT.tooltip:AddDoubleLine(PVP_LADDER_WEEK, format(textFormat, weekWins, weekGames - weekWins, weekPerc), 1, 1, 1, weekPerc >= 50 and 0 or 1, weekPerc >= 50 and 1 or 0, 0)
 				DT.tooltip:AddDoubleLine(PVP_LADDER_SEASON, format(textFormat, seasonWins, seasonGames - seasonWins, seasonPerc), 1, 1, 1, seasonPerc >= 50 and 0 or 1, seasonPerc >= 50 and 1 or 0, 0)
 			else
-				local todayWins, todayGames, weekWins, weekGames, seasonWins, seasonGames = pvpStats[i] and pvpStats[i].TodayWins or 0, pvpStats[i] and pvpStats[i].TodayGames or 0, pvpStats[i] and pvpStats[i].weekWins or 0, pvpStats[i] and pvpStats[i].weekGames or 0,pvpStats[i] and pvpStats[i].seasonWins or 0, pvpStats[i] and pvpStats[i].seasonGames or 0
+				local todayWins, todayGames, weekWins, weekGames, seasonWins, seasonGames = pvpStats[i] and pvpStats[i].todayWins or 0, pvpStats[i] and pvpStats[i].todayGames or 0, pvpStats[i] and pvpStats[i].weekWins or 0, pvpStats[i] and pvpStats[i].weekGames or 0,pvpStats[i] and pvpStats[i].seasonWins or 0, pvpStats[i] and pvpStats[i].seasonGames or 0
 				local todayPerc, weekPerc, seasonPerc = todayGames == 0 and 0 or math.ceil(todayWins / todayGames * 100), weekGames == 0 and 0 or math.ceil(weekWins / weekGames * 100), seasonGames == 0 and 0 or math.ceil(seasonWins / seasonGames * 100)
 
 				DT.tooltip:AddDoubleLine(PVP_LADDER_DAY, format(textFormat, todayWins, todayGames - todayWins, todayPerc), 1, 1, 1, todayPerc >= 50 and 0 or 1, todayPerc >= 50 and 1 or 0, 0)

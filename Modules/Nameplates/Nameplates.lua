@@ -131,8 +131,12 @@ do
 				end
 
 				if not plate.appliedFrameLevelBoost then
-					local engineParent = plate._engineParent or plate:GetParent()
-					plate._engineParent = engineParent
+					-- cache engine parent once; only GetFrameLevel + dirty-check run per tick
+					local engineParent = plate._engineParent
+					if not engineParent then
+						engineParent = plate:GetParent()
+						plate._engineParent = engineParent
+					end
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
 					if engineLevel and plate._engineBaseLevel ~= engineLevel then
 						plate._engineBaseLevel = engineLevel
@@ -371,6 +375,18 @@ function NP:ResetEngineDefaults()
 end
 
 function NP:UpdateCVars()
+	if InCombatLockdown() then
+		if not NP.cvarDeferFrame then
+			NP.cvarDeferFrame = CreateFrame('Frame')
+			NP.cvarDeferFrame:SetScript('OnEvent', function(frame)
+				frame:UnregisterEvent('PLAYER_REGEN_ENABLED')
+				NP:UpdateCVars()
+			end)
+		end
+		NP.cvarDeferFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+		return
+	end
+
 	local db = NP.db
 	NP:EnsureEngineDB()
 	local e = db.engine
@@ -877,9 +893,6 @@ function NP:UnitLevel(frame)
 		return level, color.r, color.g, color.b
 	end
 	return level, 1, 1, 1
-end
-
-function NP:UpdateLibAuraInfoInfo()
 end
 
 function NP:RefreshTestFrame()

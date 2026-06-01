@@ -77,7 +77,7 @@ function E:AddTag(tagName, eventsOrSeconds, func, block)
 		ElvUF.Tags.OnUpdateThrottle[tagName] = eventsOrSeconds
 	else
 
-		ElvUF.Tags.Events[tagName] = (E.Retail and gsub(eventsOrSeconds, 'UNIT_HEALTH_FREQUENT', 'UNIT_HEALTH')) or gsub(eventsOrSeconds, 'UNIT_HEALTH([^_])', 'UNIT_HEALTH_FREQUENT%1')
+		ElvUF.Tags.Events[tagName] = gsub(eventsOrSeconds, 'UNIT_HEALTH([^_])', 'UNIT_HEALTH_FREQUENT%1')
 	end
 
 	ElvUF.Tags.Methods[tagName] = func
