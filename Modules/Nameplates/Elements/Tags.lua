@@ -31,6 +31,7 @@ function NP:Update_TagText(nameplate, element, db, hide, anchor)
 end
 
 function NP:Update_Tags(nameplate, nameOnlySF)
+	if not nameplate.unit then return end
 	local db = NP:PlateDB(nameplate)
 	local hide = db.nameOnly or nameOnlySF
 
