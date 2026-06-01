@@ -1,21 +1,9 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule("NamePlates")
 
---Lua functions
---WoW API / Variables
 local CreateFrame = CreateFrame
 
--- ============================================================================
--- Cutaway element (Health + Power). Substage 4b of the v2.1 retail-like rewrite.
--- Each nameplate gets `frame.Cutaway = { Health = StatusBar, Power = StatusBar }`.
--- The legacy `frame.CutawayHealth` field is preserved as an alias for backwards
--- compatibility (StyleFilter.lua / Plugins still reference it).
--- The Power half is constructed but its value-change firing is wired up later in
--- substage 4d once Power.lua exposes a callback registry analogous to Health's.
--- ============================================================================
-
--- ===== Health side ==========================================================
-
+-- frame.CutawayHealth is a legacy alias for frame.Cutaway.Health.
 function NP:UpdateElement_CutawayHealthFadeOut(frame)
 	local cutawayHealth = frame.Cutaway and frame.Cutaway.Health or frame.CutawayHealth
 	if not cutawayHealth then return end
@@ -80,13 +68,12 @@ function NP:ConstructElement_CutawayHealth(parent)
 	cutawayHealth:SetAllPoints()
 	cutawayHealth:SetStatusBarTexture(E.media.blankTex)
 	cutawayHealth:SetFrameLevel(healthBar:GetFrameLevel() - 1)
+	cutawayHealth:Hide()
 
 	NP:RegisterHealthBarCallbacks(parent, NP.CutawayHealthValueChangeCallback, NP.CutawayHealthColorChangeCallback)
 
 	return cutawayHealth
 end
-
--- ===== Power side ===========================================================
 
 function NP:UpdateElement_CutawayPowerFadeOut(frame)
 	local cutawayPower = frame.Cutaway and frame.Cutaway.Power
@@ -151,8 +138,6 @@ function NP:ConstructElement_CutawayPower(parent)
 
 	return cutawayPower
 end
-
--- ===== Wrapper ==============================================================
 
 function NP:Construct_Cutaway(parent)
 	local cutaway = {

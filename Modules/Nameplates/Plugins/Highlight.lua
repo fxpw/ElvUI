@@ -5,7 +5,6 @@ local LSM = E.Libs.LSM
 
 local function Update(self)
 	local element = self.Highlight
-	if not element then return end
 
 	if element.PreUpdate then
 		element:PreUpdate()
@@ -14,7 +13,7 @@ local function Update(self)
 	local sf = NP:StyleFilterChanges(self)
 	if sf.ShowMouseoverHighlight and self.isMouseover then
 		local c = NP.db.colors.mouseoverHighlight or { r = 1, g = 1, b = 1, a = 0.35 }
-		element.texture:SetVertexColor(c.r, c.g, c.b, c.a or 0.35)
+		element.texture:SetVertexColor(c.r, c.g, c.b, c.a)
 		element:Show()
 	else
 		element:Hide()
@@ -60,6 +59,7 @@ function NP:Construct_Highlight(nameplate)
 	local tex = Highlight:CreateTexture(nil, 'OVERLAY', nil, 7)
 	tex:SetAllPoints(Highlight)
 	tex:SetTexture(LSM:Fetch('statusbar', NP.db.statusbar))
+	NP.StatusBars[tex] = true
 	tex:SetBlendMode('ADD')
 	tex:SetVertexColor(1, 1, 1, 0.35)
 	Highlight.texture = tex

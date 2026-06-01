@@ -415,6 +415,7 @@ local NP_Portrait = {
 
 local NP_Name = {
 	enable = true,
+	useClassColor = false,
 	textFormat = '[name:long]',
 	position = 'TOPLEFT',
 	parent = 'Health',
@@ -491,7 +492,6 @@ local NP_PvPIndicator = {
 }
 
 P.nameplates = {
-	clampToScreen = false,
 	fadeIn = true,
 	font = 'PT Sans Narrow',
 	fontOutline = 'OUTLINE',
@@ -512,8 +512,6 @@ P.nameplates = {
 	nameColoredGlow = false,
 	overlapH = 0.8,
 	overlapV = 1.1,
-	showEnemyCombat = 'DISABLED',
-	showFriendlyCombat = 'DISABLED',
 	smoothbars = false,
 	statusbar = 'ElvUI Norm',
 	thinBorders = false,
@@ -540,10 +538,6 @@ P.nameplates = {
 		badScale = 1.2,
 		useThreatColor = true,
 		indicator = false,
-	},
-	targetIndicator = {
-		enable = true,
-		style = 'style1',
 	},
 	engine = {
 		loadDistance = 41,
@@ -573,24 +567,6 @@ P.nameplates = {
 		personalOffsetY = 0,
 		resourceOnTarget = false,
 		classResourceTopInset = 0,
-	},
-	visibility = {
-		showAll = true,
-		showOnlyNames = false,
-		enemy = {
-			guardians = false,
-			minions = false,
-			minus = true,
-			pets = false,
-			totems = false,
-		},
-		friendly = {
-			guardians = false,
-			minions = false,
-			npcs = true,
-			pets = false,
-			totems = false,
-		},
 	},
 	cutaway = {
 		health = {
@@ -625,10 +601,6 @@ P.nameplates = {
 			neutral = {r = .85, g = .77, b = .36},
 			bad = {r = 0.78, g = 0.25, b = 0.25},
 			friendlyPlayer = {r = 0.31, g = 0.45, b = 0.63},
-		},
-		healPrediction = {
-			personal = {r = 0, g = 1, b = 0.5, a = 0.25},
-			others = {r = 0, g = 1, b = 0, a = 0.25},
 		},
 		threat = {
 			goodColor = {r = 0.20, g = 0.71, b = 0.00},
@@ -702,20 +674,10 @@ P.nameplates = {
 			classpower = {
 				enable = false,
 				onlyInCombat = false,
-				classColor = false,
 				height = 7,
-				sortDirection = 'NONE',
 				width = 125,
 				xOffset = 0,
 				yOffset = 30,
-			},
-			comboPoints = {
-				enable = true,
-				width = 8,
-				height = 4,
-				spacing = 5,
-				xOffset = 0,
-				yOffset = 0,
 			},
 		},
 		PLAYER = {

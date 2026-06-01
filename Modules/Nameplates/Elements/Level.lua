@@ -1,9 +1,5 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule("NamePlates")
-local LSM = E.Libs.LSM
-
---Lua functions
---WoW API / Variables
 
 function NP:Update_Level(frame)
 	if not self.db.units[frame.UnitType].level.enable then return end
@@ -27,11 +23,6 @@ function NP:Update_Level(frame)
 		level:SetFormattedText(" [%s]", levelText)
 	end
 	level:SetTextColor(r, g, b)
-end
-
-function NP:Configure_Level(frame)
-	local db = self.db.units[frame.UnitType].level
-	frame.Level:FontTemplate(LSM:Fetch("font", db.font), db.fontSize, db.fontOutline)
 end
 
 function NP:Construct_Level(frame)

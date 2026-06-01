@@ -1,16 +1,5 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule("NamePlates")
--- local UF = E:GetModule("UnitFrames")
-local LSM = E.Libs.LSM
--- local ElvUF = E.oUF
---Lua functions
--- local format = string.format
--- local gmatch = gmatch
--- local gsub = gsub
--- local match = string.match
--- local utf8lower = string.utf8lower
--- local utf8sub = string.utf8sub
---WoW API / Variables
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UNKNOWN = UNKNOWN
 
@@ -44,7 +33,7 @@ function NP:Update_Name(frame, triggered)
 		useClassColor = self.db.units[frame.UnitType].name and self.db.units[frame.UnitType].name.useClassColor
 	end
 
-	if useClassColor and (frame.UnitType == "FRIENDLY_PLAYER" or frame.UnitType == "ENEMY_PLAYER") then
+	if useClassColor and classColor and (frame.UnitType == "FRIENDLY_PLAYER" or frame.UnitType == "ENEMY_PLAYER") then
 		r, g, b = classColor.r, classColor.g, classColor.b
 	elseif triggered or (self.db.units[frame.UnitType].nameOnly) or (not self.db.units[frame.UnitType].health.enable and not frame.isTarget) then
 		local reactionType = frame.UnitReaction
@@ -64,7 +53,6 @@ function NP:Update_Name(frame, triggered)
 		end
 	end
 
-	-- if for some reason the values failed just default to white
 	if not (r and g and b) then
 		r, g, b = 1, 1, 1
 	end
@@ -81,18 +69,6 @@ function NP:Update_Name(frame, triggered)
 	else
 		name.NameOnlyGlow:SetVertexColor(self.db.colors.glowColor.r, self.db.colors.glowColor.g, self.db.colors.glowColor.b, self.db.colors.glowColor.a)
 	end
-end
-
-function NP:Configure_Name(frame)
-	local db = self.db.units[frame.UnitType].name
-	frame.Name:FontTemplate(LSM:Fetch("font", db.font), db.fontSize, db.fontOutline)
-end
-
-function NP:Configure_NameOnlyGlow(frame)
-	local name = frame.Name
-	name.NameOnlyGlow:ClearAllPoints()
-	name.NameOnlyGlow:SetPoint("TOPLEFT", name, -20, 8)
-	name.NameOnlyGlow:SetPoint("BOTTOMRIGHT", name, 20, -8)
 end
 
 function NP:Construct_Name(frame)

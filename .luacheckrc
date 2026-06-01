@@ -43072,4 +43072,6 @@ globals = {
 	"ItemUpgradeFramePagingFramePrevPageButton",
 	"EquipmentFlyoutFrameNavigationFrame",
 
+	"PixelUtil",
+	"GetPhysicalScreenSize",
 }

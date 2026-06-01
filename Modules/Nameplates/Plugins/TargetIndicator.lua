@@ -85,9 +85,7 @@ local function Update(self)
 	element.style = sf.TargetIndicatorStyle or 'style4'
 	ConfigureStyleFilterIndicators(self, element, sf)
 
-	if element.style ~= 'none' then
-		ShowIndicators(element, NP.db.colors.glowColor)
-	end
+	ShowIndicators(element, NP.db.colors.glowColor)
 
 	if element.PostUpdate then
 		return element:PostUpdate(self.unit)
@@ -108,8 +106,6 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		if not element.style then element.style = 'style1' end
-
 		if element.Shadow and element.Shadow:IsObjectType('Frame') and not element.Shadow:GetBackdrop() then
 			element.Shadow:SetBackdrop({edgeFile = E.Media.Textures.GlowTex, edgeSize = 5})
 		end
@@ -125,12 +121,10 @@ local function Enable(self)
 
 		if element.LeftIndicator and element.LeftIndicator:IsObjectType('Texture') and not element.LeftIndicator:GetTexture() then
 			element.LeftIndicator:SetTexture(E.Media.Arrows.ArrowUp)
-			element.LeftIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0)
 		end
 
 		if element.RightIndicator and element.RightIndicator:IsObjectType('Texture') and not element.RightIndicator:GetTexture() then
 			element.RightIndicator:SetTexture(E.Media.Arrows.ArrowUp)
-			element.RightIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
 		end
 
 		return true
@@ -160,12 +154,12 @@ function NP:Construct_TargetIndicator(nameplate)
 
 	TI.LeftIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
 	TI.LeftIndicator:SetSize(20, 20)
-	TI.LeftIndicator:SetPoint('RIGHT', health, 'LEFT', -2, 0)
+	TI.LeftIndicator:SetPoint('LEFT', health, 'RIGHT', 2, 0)
 	TI.LeftIndicator:Hide()
 
 	TI.RightIndicator = TI:CreateTexture(nil, 'OVERLAY', nil, 6)
 	TI.RightIndicator:SetSize(20, 20)
-	TI.RightIndicator:SetPoint('LEFT', health, 'RIGHT', 2, 0)
+	TI.RightIndicator:SetPoint('RIGHT', health, 'LEFT', -2, 0)
 	TI.RightIndicator:Hide()
 
 	TI.Shadow = CreateFrame('Frame', nil, nameplate)

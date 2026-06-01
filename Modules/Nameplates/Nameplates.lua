@@ -4,23 +4,18 @@ NP.LSM = E.Libs.LSM
 local ElvUF = E.oUF
 assert(ElvUF, 'ElvUI was unable to locate oUF.')
 
--- local _G = _G
 local pairs, ipairs, wipe = pairs, ipairs, wipe
-local select, unpack, type = select, unpack, type
-local match = string.match
+local select, type = select, type
 local strsplit = strsplit
 local tonumber = tonumber
 
 local CreateFrame = CreateFrame
-local GetBattlefieldScore = GetBattlefieldScore
 local GetCVar = GetCVar
-local GetNumBattlefieldScores = GetNumBattlefieldScores
 local GetNumPartyMembers = GetNumPartyMembers
 local GetNumRaidMembers = GetNumRaidMembers
 local GetPartyAssignment = GetPartyAssignment
 local GetRaidRosterInfo = GetRaidRosterInfo
 local InCombatLockdown = InCombatLockdown
-local IsInInstance = IsInInstance
 local SetCVar = SetCVar
 local UnitClass = UnitClass
 local UnitClassification = UnitClassification
@@ -40,28 +35,25 @@ local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
 
--- Module state tables
+local SetBarValue = (PixelUtil and PixelUtil.SetStatusBarValue)
+	and function(bar, v) PixelUtil.SetStatusBarValue(bar, v) end
+	or function(bar, v) bar:SetValue(v) end
+
 NP.Plates        = {}
 NP.GroupRoles    = {}
 NP.PlateGUID     = {}
 NP.mouseoverGUID = nil
 NP.StatusBars = {}
-NP.Healers    = {}
 NP.multiplier = 0.35
 NP.IsInGroup  = false
-NP.TEST_FRAME_SCALE = 1.75 -- preview frame in options (larger than in-world plates)
+NP.TEST_FRAME_SCALE = 1.75
 
-NP.StyleFilterEventFunctions = {}
-
--- Single OnUpdate frame to poll UnitHealth for all nameplate units.
--- UNIT_HEALTH only fires for player/target in WotLK; this covers non-targeted units.
--- Only values are updated here — color is intentionally left to events/StyleFilter.
 do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
 	local tagsElapsed = 0
-	local HEALTH_INTERVAL = 0.2  -- health/power bar value update rate
-	local TAGS_INTERVAL   = 0.5  -- tag text update rate (name, %, etc. — less critical)
+	local HEALTH_INTERVAL = 0.2
+	local TAGS_INTERVAL   = 0.5
 	f:SetScript('OnUpdate', function(_, dt)
 		elapsed     = elapsed     + dt
 		tagsElapsed = tagsElapsed + dt
@@ -70,71 +62,88 @@ do
 		elapsed = 0
 		if doTags then tagsElapsed = 0 end
 
-		-- UPDATE_MOUSEOVER_UNIT does not fire when the cursor leaves a nameplate; poll GUID instead.
 		if NP.watchMouseover then
 			NP:RefreshPlatesOnMouseoverChanged()
 		end
 
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
-			if u then
-				-- local changed = false
-				-- Update health value only when changed (avoids unnecessary StatusBar redraws)
+			if u and UnitExists(u) then
 				local h = plate.Health
 				if h then
 					local cur = UnitHealth(u)
 					local max = UnitHealthMax(u)
 					if max and max > 0 then
+						local changed = false
 						if h._np_max ~= max then
 							h._np_max = max
 							h:SetMinMaxValues(0, max)
-							-- changed = true
+							changed = true
 						end
 						if h._np_cur ~= cur then
 							h._np_cur = cur
-							h:SetValue(cur)
-							-- changed = true
+							changed = true
+						end
+						if changed then
+							-- fire before SetValue so Cutaway reads the previous value
+							if plate.HealthValueChangeCallbacks then
+								for _, cb in ipairs(plate.HealthValueChangeCallbacks) do
+									cb(NP, plate, cur, max)
+								end
+							end
+							SetBarValue(h, cur)
 						end
 					end
 				end
-				-- Update power value only when changed
 				local pw = plate.Power
 				if pw and pw:IsShown() then
 					local cur = UnitPower(u)
 					local max = UnitPowerMax(u)
 					if max and max > 0 then
+						local changed = false
 						if pw._np_max ~= max then
 							pw._np_max = max
 							pw:SetMinMaxValues(0, max)
-							-- changed = true
+							changed = true
 						end
 						if pw._np_cur ~= cur then
 							pw._np_cur = cur
-							pw:SetValue(cur)
-							-- changed = true
+							changed = true
+						end
+						if changed then
+							if plate.PowerValueChangeCallbacks then
+								for _, cb in ipairs(plate.PowerValueChangeCallbacks) do
+									cb(NP, plate, cur, max)
+								end
+							end
+							SetBarValue(pw, cur)
 						end
 					end
 				end
-				-- Update tag texts only on the slower cadence; the bar already reflects current value.
 				if doTags then
 					plate:UpdateTags()
 				end
 
-				-- Sync frame levels to engine plate: engine can reassign plate levels
-				-- dynamically (stacking, targeting). Skip if StyleFilter boost is active.
+				-- re-pin 1px border when engine rescale changes effectiveScale
+				local bdf = h and h.backdrop
+				if bdf and bdf._npPinnedScale ~= bdf:GetEffectiveScale() then
+					NP:Health_FixBorderPixel(h)
+				end
+
 				if not plate.appliedFrameLevelBoost then
 					local engineParent = plate._engineParent or plate:GetParent()
 					plate._engineParent = engineParent
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
-					if engineLevel and plate._npBase ~= engineLevel then
-						plate._npBase = engineLevel
+					if engineLevel and plate._engineBaseLevel ~= engineLevel then
+						plate._engineBaseLevel = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
+						NP:Health_SyncBorderLevel(plate.Health)
 						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
 						local Buffs = plate.Buffs
 						if Buffs and Buffs:IsShown() then
 							Buffs:SetFrameLevel(engineLevel + 2)
-							local n = Buffs.visibleAuras or Buffs.visibleBuffs or #Buffs
+							local n = Buffs.visibleBuffs or #Buffs
 							for i = 1, n do
 								local btn = Buffs[i]
 								if btn and btn:IsShown() then
@@ -150,7 +159,7 @@ do
 						local Debuffs = plate.Debuffs
 						if Debuffs and Debuffs:IsShown() then
 							Debuffs:SetFrameLevel(engineLevel + 2)
-							local n = Debuffs.visibleAuras or Debuffs.visibleDebuffs or #Debuffs
+							local n = Debuffs.visibleDebuffs or #Debuffs
 							for i = 1, n do
 								local btn = Debuffs[i]
 								if btn and btn:IsShown() then
@@ -215,7 +224,6 @@ local NP_ENGINE_CVARS = {
 	classResourceTopInset = { cvar = 'nameplateClassResourceTopInset', driver = true },
 }
 
--- Sirus: plain GetCVar/SetCVar(cvar [, value]) — no extra args
 function NP:GetEngineCVar(key)
 	local db = NP.db or E.db.nameplates
 	local default = (db and db.engine and db.engine[key]) or P.nameplates.engine[key]
@@ -385,14 +393,11 @@ function NP:UnitNPCID(unit)
 	local guid = UnitGUID(unit)
 	if not guid then return nil, nil end
 
-	-- Retail-style GUID: Creature-0-...-<npcID>-...
 	if guid:find('-', 1, true) then
 		local parts = {strsplit('-', guid)}
 		return parts[6], guid
 	end
 
-	-- 3.3.5a/Sirus-style packed GUID (hex string). This matches tooltip NPC ID extraction.
-	-- Keep as string to align with style-filter name keys.
 	local id = tonumber(guid:sub(8, 12), 16)
 	return id and tostring(id) or nil, guid
 end
@@ -442,21 +447,6 @@ function NP:UpdatePlateType(nameplate)
 	nameplate.UnitClass    = nameplate.classFile
 end
 
-function NP:GetUnitTypeFromUnit(unit)
-	local reaction = UnitReaction('player', unit)
-	local isPlayer = UnitIsPlayer(unit)
-
-	if isPlayer and UnitIsFriend('player', unit) and reaction and reaction >= 5 then
-		return 'FRIENDLY_PLAYER'
-	elseif not isPlayer and (reaction and reaction >= 5 or UnitFactionGroup(unit) == 'Neutral') then
-		return 'FRIENDLY_NPC'
-	elseif not isPlayer and (reaction and reaction <= 4) then
-		return 'ENEMY_NPC'
-	else
-		return 'ENEMY_PLAYER'
-	end
-end
-
 function NP:UpdatePlateSize(nameplate)
 	if not InCombatLockdown() then
 		local ft = nameplate.frameType
@@ -485,12 +475,12 @@ function NP:StylePlate(nameplate)
 	nameplate:SetScale(scale)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
-	nameplate:SetFrameStrata('BACKGROUND') -- keep plates under Minimap/UI frames
+	nameplate:SetFrameStrata('BACKGROUND')
 	nameplate._npBase = nameplate:GetFrameLevel()
 
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.Health.Text = NP:Construct_TagText(nameplate.Health)
-	nameplate.RaisedElement = nameplate.Health -- legacy alias: all overlay elements share Health's framelevel
+	nameplate.RaisedElement = nameplate.Health
 
 	NP:Construct_HealPrediction(nameplate)
 
@@ -510,7 +500,7 @@ function NP:StylePlate(nameplate)
 	nameplate.Highlight           = NP:Construct_Highlight(nameplate)
 	nameplate.ClassPower          = NP:Construct_ClassPower(nameplate)
 	nameplate.Cutaway             = NP:Construct_Cutaway(nameplate)
-	nameplate.CutawayHealth       = nameplate.Cutaway.Health -- legacy alias
+	nameplate.CutawayHealth       = nameplate.Cutaway.Health
 
 	NP:Construct_Auras(nameplate)
 	NP:StyleFilterEvents(nameplate)
@@ -664,7 +654,6 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 			return
 		end
 
-		-- Hide Sirus's default nameplate UnitFrame so it doesn't overlap ElvUI's
 		local baseFrame = nameplate:GetParent()
 		if baseFrame and baseFrame.UnitFrame then
 			if not baseFrame.UnitFrame._elvHooked then
@@ -674,7 +663,6 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 			baseFrame.UnitFrame:Hide()
 		end
 
-		-- Hide Blizzard mana/power bar on personal nameplate (it's parented to the nameplate, not UnitFrame)
 		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame then
 			local manaBar = NamePlateDriverFrame:GetClassNameplateManaBar()
 			if manaBar and not manaBar._elvHooked then
@@ -702,7 +690,8 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		nameplate.Power._np_cur  = nil
 		nameplate.Power._np_max  = nil
 		nameplate.npcID       = nil
-		nameplate.previousType = nil  -- force full re-init on next UNIT_ADDED (same frame, new unit)
+		nameplate.unit        = nil
+		nameplate.previousType = nil
 	end
 end
 
@@ -746,40 +735,8 @@ function NP:GROUP_ROSTER_UPDATE()
 end
 
 function NP:PLAYER_ENTERING_WORLD()
-	wipe(self.Healers)
-	local inInstance, instanceType = IsInInstance()
-	if inInstance and instanceType == 'pvp' and self.db.units.ENEMY_PLAYER.markHealers then
-		self:RegisterEvent('UPDATE_BATTLEFIELD_SCORE', 'CheckBGHealers')
-		self.CheckHealerTimer = self:ScheduleRepeatingTimer('CheckBGHealers', 3)
-	else
-		self:UnregisterEvent('UPDATE_BATTLEFIELD_SCORE')
-		if self.CheckHealerTimer then
-			self:CancelTimer(self.CheckHealerTimer)
-			self.CheckHealerTimer = nil
-		end
-	end
-
 	NP:ConfigureAll(true)
 	NP:RefreshPlatesOnMouseoverChanged()
-end
-
-function NP:PLAYER_REGEN_DISABLED() end
-
-function NP:PLAYER_REGEN_ENABLED() end
-
-function NP:CheckBGHealers()
-	local name, _, classToken, damageDone, healingDone
-	for i = 1, GetNumBattlefieldScores() do
-		name, _, _, _, _, _, _, _, _, classToken, damageDone, healingDone = GetBattlefieldScore(i)
-		if name and classToken and E.HealingClasses and E.HealingClasses[classToken] then
-			name = match(name, '([^%-]+).*')
-			if name and healingDone > (damageDone * 2) then
-				self.Healers[name] = true
-			elseif name and self.Healers[name] then
-				self.Healers[name] = nil
-			end
-		end
-	end
 end
 
 function NP:PlateFade(nameplate, timeToFade, startAlpha, endAlpha)
@@ -797,100 +754,6 @@ function NP:PlateFade(nameplate, timeToFade, startAlpha, endAlpha)
 	else
 		E:UIFrameFade(nameplate, nameplate.FadeObject)
 	end
-end
-
-function NP:StyleFrame(parent, noBackdrop, point)
-	point = point or parent
-	local noscalemult = E.mult * UIParent:GetScale()
-
-	if point.bordertop then return end
-
-	if not noBackdrop then
-		point.backdrop = parent:CreateTexture(nil, 'BACKGROUND')
-		point.backdrop:SetAllPoints(point)
-		point.backdrop:SetTexture(unpack(E.media.backdropfadecolor))
-	end
-
-	if E.PixelMode then
-		point.bordertop = parent:CreateTexture()
-		point.bordertop:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult, noscalemult)
-		point.bordertop:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult, noscalemult)
-		point.bordertop:SetHeight(noscalemult)
-		point.bordertop:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderbottom = parent:CreateTexture()
-		point.borderbottom:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', -noscalemult, -noscalemult)
-		point.borderbottom:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', noscalemult, -noscalemult)
-		point.borderbottom:SetHeight(noscalemult)
-		point.borderbottom:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderleft = parent:CreateTexture()
-		point.borderleft:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult, noscalemult)
-		point.borderleft:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', noscalemult, -noscalemult)
-		point.borderleft:SetWidth(noscalemult)
-		point.borderleft:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderright = parent:CreateTexture()
-		point.borderright:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult, noscalemult)
-		point.borderright:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', -noscalemult, -noscalemult)
-		point.borderright:SetWidth(noscalemult)
-		point.borderright:SetTexture(unpack(E.media.bordercolor))
-	else
-		point.bordertop = parent:CreateTexture(nil, 'OVERLAY')
-		point.bordertop:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult, noscalemult*2)
-		point.bordertop:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult, noscalemult*2)
-		point.bordertop:SetHeight(noscalemult)
-		point.bordertop:SetTexture(unpack(E.media.bordercolor))
-
-		point.bordertop.backdrop = parent:CreateTexture()
-		point.bordertop.backdrop:SetPoint('TOPLEFT', point.bordertop, 'TOPLEFT', noscalemult, noscalemult)
-		point.bordertop.backdrop:SetPoint('TOPRIGHT', point.bordertop, 'TOPRIGHT', -noscalemult, noscalemult)
-		point.bordertop.backdrop:SetHeight(noscalemult * 3)
-		point.bordertop.backdrop:SetTexture(0, 0, 0)
-
-		point.borderbottom = parent:CreateTexture(nil, 'OVERLAY')
-		point.borderbottom:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', -noscalemult, -noscalemult*2)
-		point.borderbottom:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', noscalemult, -noscalemult*2)
-		point.borderbottom:SetHeight(noscalemult)
-		point.borderbottom:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderbottom.backdrop = parent:CreateTexture()
-		point.borderbottom.backdrop:SetPoint('BOTTOMLEFT', point.borderbottom, 'BOTTOMLEFT', noscalemult, -noscalemult)
-		point.borderbottom.backdrop:SetPoint('BOTTOMRIGHT', point.borderbottom, 'BOTTOMRIGHT', -noscalemult, -noscalemult)
-		point.borderbottom.backdrop:SetHeight(noscalemult * 3)
-		point.borderbottom.backdrop:SetTexture(0, 0, 0)
-
-		point.borderleft = parent:CreateTexture(nil, 'OVERLAY')
-		point.borderleft:SetPoint('TOPLEFT', point, 'TOPLEFT', -noscalemult*2, noscalemult*2)
-		point.borderleft:SetPoint('BOTTOMLEFT', point, 'BOTTOMLEFT', noscalemult*2, -noscalemult*2)
-		point.borderleft:SetWidth(noscalemult)
-		point.borderleft:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderleft.backdrop = parent:CreateTexture()
-		point.borderleft.backdrop:SetPoint('TOPLEFT', point.borderleft, 'TOPLEFT', -noscalemult, noscalemult)
-		point.borderleft.backdrop:SetPoint('BOTTOMLEFT', point.borderleft, 'BOTTOMLEFT', -noscalemult, -noscalemult)
-		point.borderleft.backdrop:SetWidth(noscalemult * 3)
-		point.borderleft.backdrop:SetTexture(0, 0, 0)
-
-		point.borderright = parent:CreateTexture(nil, 'OVERLAY')
-		point.borderright:SetPoint('TOPRIGHT', point, 'TOPRIGHT', noscalemult*2, noscalemult*2)
-		point.borderright:SetPoint('BOTTOMRIGHT', point, 'BOTTOMRIGHT', -noscalemult*2, -noscalemult*2)
-		point.borderright:SetWidth(noscalemult)
-		point.borderright:SetTexture(unpack(E.media.bordercolor))
-
-		point.borderright.backdrop = parent:CreateTexture()
-		point.borderright.backdrop:SetPoint('TOPRIGHT', point.borderright, 'TOPRIGHT', noscalemult, noscalemult)
-		point.borderright.backdrop:SetPoint('BOTTOMRIGHT', point.borderright, 'BOTTOMRIGHT', noscalemult, -noscalemult)
-		point.borderright.backdrop:SetWidth(noscalemult * 3)
-		point.borderright.backdrop:SetTexture(0, 0, 0)
-	end
-end
-
-function NP:StyleFrameColor(frame, r, g, b)
-	frame.bordertop:SetTexture(r, g, b)
-	frame.borderbottom:SetTexture(r, g, b)
-	frame.borderleft:SetTexture(r, g, b)
-	frame.borderright:SetTexture(r, g, b)
 end
 
 local function CopySettings(from, to)
@@ -985,33 +848,24 @@ function NP:RefreshPlatesOnTargetChanged()
 	end
 end
 
--- Thin alias around the global UnitExists; used by retail-derived StyleFilter helpers.
-function NP:UnitExists(unit)
-	return unit and UnitExists(unit) or nil
-end
-
--- Hook for StyleFilter NameOnly transitions; ClassPower/ClassBar isn't ported on WotLK,
--- so this currently just refreshes the TargetIndicator if present. Safe no-op otherwise.
 function NP:SetupTarget(nameplate, _)
 	if nameplate and nameplate.TargetIndicator and nameplate:IsElementEnabled('TargetIndicator') then
 		nameplate.TargetIndicator:ForceUpdate()
 	end
 end
 
--- Scale a nameplate by a given multiplier (called from Threat element)
 function NP:ScalePlate(nameplate, scale)
 	if nameplate.isTarget and NP.db.useTargetScale then
 		scale = scale * NP.db.targetScale
 	end
 	nameplate:SetScale(scale * (E.uiscale or 1))
+	if nameplate.Health then NP:Health_FixBorderPixel(nameplate.Health) end
 end
 
--- Alias used by StyleFilter and HealthBar
 function NP:SetFrameScale(frame, scale)
 	NP:ScalePlate(frame, scale)
 end
 
--- Returns level text + r,g,b; used by Level.lua and StyleFilter
 function NP:UnitLevel(frame)
 	if not frame.unit then return '??', 1, 1, 1 end
 	local level = UnitLevel(frame.unit)
@@ -1025,12 +879,7 @@ function NP:UnitLevel(frame)
 	return level, 1, 1, 1
 end
 
--- StyleFilterEvents / StyleFilterEventWatch / StyleFilterSetVariables / StyleFilterClearVariables
--- now defined in StyleFilter.lua (retail-faithful pooler + fake-register pattern).
-
--- UpdateLibAuraInfoInfo: initialises LibAuraInfo integration for aura tracking
 function NP:UpdateLibAuraInfoInfo()
-	-- stub: LibAuraInfo callbacks can be registered here when needed
 end
 
 function NP:RefreshTestFrame()
@@ -1043,7 +892,6 @@ function NP:RefreshTestFrame()
 	test:UpdateAllElements('ForceUpdate')
 end
 
--- TogleTestFrame: toggle the test nameplate frame for a given unit type (called from OptionsUI)
 function NP:TogleTestFrame(unit)
 	local test = NP.TestFrame
 	if not test then return end
@@ -1060,12 +908,6 @@ function NP:TogleTestFrame(unit)
 	end
 end
 
--- UpdateAllNames: update name tags on all visible plates of a given unit type
--- In oUF architecture, tags are re-applied via Update_Tags during ConfigurePlates
-function NP:UpdateAllNames(unit, tag)
-	NP:ConfigurePlates()
-end
-
 function NP:ConfigurePlates()
 	NP.SkipFading = true
 
@@ -1075,13 +917,13 @@ function NP:ConfigurePlates()
 
 	local test = NP.TestFrame
 	for nameplate in pairs(NP.Plates) do
-		if nameplate ~= test then
+		if nameplate ~= test and nameplate.unit and UnitExists(nameplate.unit) then
 			NP:UpdatePlateSize(nameplate)
 
 			nameplate.previousType = nil
 			NP:NamePlateCallBack(nameplate, 'NAME_PLATE_UNIT_ADDED')
 
-			NP:StyleFilterUpdate(nameplate, 'PoolerUpdate') -- re-evaluate filter conditions after reconfigure
+			NP:StyleFilterUpdate(nameplate, 'PoolerUpdate')
 
 			nameplate.StyleFilterBaseAlreadyUpdated = nil
 			nameplate:UpdateAllElements('ForceUpdate')
@@ -1091,18 +933,14 @@ function NP:ConfigurePlates()
 	NP.SkipFading = nil
 end
 
-function NP:ConfigureAll(init)
+function NP:ConfigureAll()
 	if not E.private.nameplates.enable then return end
 
 	NP:UpdateCVars()
 	NP:StyleFilterConfigure()
-	NP:PLAYER_REGEN_ENABLED()
 	NP:Update_StatusBars()
 	NP:ConfigurePlates()
 end
-
-function NP:CacheArenaUnits() end
-function NP:CacheGroupUnits() end
 
 function NP:Initialize()
 	self.db = E.db.nameplates
@@ -1130,15 +968,12 @@ function NP:Initialize()
 		NP:NamePlateCallBack(nameplate, event, unit)
 	end)
 
-	NP:RegisterEvent('PLAYER_REGEN_ENABLED')
-	NP:RegisterEvent('PLAYER_REGEN_DISABLED')
 	NP:RegisterEvent('PLAYER_ENTERING_WORLD')
 	NP:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 	NP:RegisterEvent('GROUP_ROSTER_UPDATE')
 	NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'RefreshPlatesOnTargetChanged')
 	NP:RegisterEvent('UPDATE_MOUSEOVER_UNIT', 'RefreshPlatesOnMouseoverChanged')
 
-	-- Class resources on nameplates
 	if E.myclass == 'ROGUE' or E.myclass == 'DRUID' then
 		NP:RegisterEvent('UNIT_COMBO_POINTS',     'ClassPower_UNIT_COMBO_POINTS')
 		NP:RegisterEvent('PLAYER_REGEN_ENABLED',  'ClassPower_PLAYER_REGEN')
@@ -1160,7 +995,6 @@ function NP:Initialize()
 	NP:UpdateStackingState()
 	NP:RegisterStackingSlash()
 
-	-- Create test nameplate frame for OptionsUI preview
 	ElvUF:Spawn('player', 'ElvNP_Test')
 	local test = NP.TestFrame
 	if test then

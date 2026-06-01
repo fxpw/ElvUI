@@ -1,17 +1,5 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule("NamePlates")
-
---[[
-Target Glow Style Option Variables
-	style1 - Border
-	style2 - Background
-	style3 - Top Arrow Only
-	style4 - Side Arrows Only
-	style5 - Border + Top Arrow
-	style6 - Background + Top Arrow
-	style7 - Border + Side Arrows
-	style8 - Background + Side Arrows
-]]
 
 function NP:Update_Glow(frame)
 	local ti = frame.TargetIndicator
@@ -49,7 +37,7 @@ function NP:Update_Glow(frame)
 
 	local glowStyle = self.db.units.TARGET.glowStyle
 	local healthIsShown = NP:Health_IsVisible(frame)
-	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
+	local t = frame.Name:GetText(); local nameExists = frame.Name:IsShown() and t and t ~= ''
 
 	if not healthIsShown and nameExists then
 		if glowStyle == "style1" then
@@ -67,13 +55,11 @@ function NP:Update_Glow(frame)
 		if showIndicator == 1 then
 			local color = self.db.colors.glowColor
 			r, g, b = color.r, color.g, color.b
-		elseif showIndicator == 2 then
-			r, g, b = 1, 0, 0
 		else
-			r, g, b = 1, 1, 0
+			local c = showIndicator == 2 and self.db.colors.lowHealthHalf or self.db.colors.lowHealthColor
+			r, g, b = c.r, c.g, c.b
 		end
 
-		-- Indicators
 		ti.TopIndicator:SetVertexColor(r, g, b)
 		ti.LeftIndicator:SetVertexColor(r, g, b)
 		ti.RightIndicator:SetVertexColor(r, g, b)
@@ -94,7 +80,6 @@ function NP:Update_Glow(frame)
 			end
 		end
 
-		-- Spark / Shadow
 		ti.Shadow:SetBackdropBorderColor(r, g, b)
 		ti.Spark:SetVertexColor(r, g, b)
 
@@ -141,7 +126,7 @@ function NP:Configure_Glow(frame)
 
 	local glowStyle = self.db.units.TARGET.glowStyle
 	local healthIsShown = NP:Health_IsVisible(frame)
-	local nameExists = frame.Name:IsShown() and frame.Name:GetText() ~= nil
+	local t = frame.Name:GetText(); local nameExists = frame.Name:IsShown() and t and t ~= ''
 
 	if not healthIsShown and nameExists then
 		if glowStyle == "style1" then
@@ -160,7 +145,6 @@ function NP:Configure_Glow(frame)
 		local arrowXOffset, arrowYOffset = 0, 0
 		local r, g, b, a = color.r, color.g, color.b, color.a
 
-		-- Indicators
 		ti.LeftIndicator:SetTexture(arrowTex)
 		ti.LeftIndicator:SetVertexColor(r, g, b)
 		ti.LeftIndicator:SetSize(arrowSize, arrowSize)
@@ -193,7 +177,6 @@ function NP:Configure_Glow(frame)
 			end
 		end
 
-		-- Spark / Shadow
 		ti.Shadow:SetBackdropBorderColor(r, g, b)
 		ti.Shadow:SetAlpha(a)
 
@@ -215,5 +198,5 @@ function NP:Configure_Glow(frame)
 	end
 end
 
--- Construct_Glow is a no-op: TargetIndicator.lua creates Shadow/Spark/Indicators under frame.TargetIndicator
+-- No-op: TargetIndicator.lua creates the Shadow/Spark/Indicator textures.
 function NP:Construct_Glow(frame) end

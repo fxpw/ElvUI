@@ -197,7 +197,7 @@ E.StyleFilterDefaults = {
 			notSpell = false,
 			spells = {}
 		},
-		class = {}, -- per-class subtable: { WARRIOR = { enabled = true } }
+		class = {}, -- per-class subtable, direct boolean lookup: { WARRIOR = true }
 		faction = {
 			Alliance = false,
 			Horde = false,
@@ -351,11 +351,4 @@ E.StyleFilterDefaults = {
 		alpha = -1,
 		frameLevel = 0
 	}
-}
-
-G.nameplates.specialFilters = {
-	Personal = true,
-	nonPersonal = true,
-	blockNonPersonal = true,
-	blockNoDuration = true
 }

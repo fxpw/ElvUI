@@ -2,8 +2,8 @@ local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local LSM = E.Libs.LSM
 
--- local _G = _G
 local max, pairs = max, pairs
+local huge = math.huge
 
 local CreateFrame = CreateFrame
 local GetComboPoints = GetComboPoints
@@ -12,27 +12,22 @@ local GetRuneType = GetRuneType
 local GetTime = GetTime
 local InCombatLockdown = InCombatLockdown
 local UnitHasVehicleUI = UnitHasVehicleUI
--- local UnitIsUnit = UnitIsUnit
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
--- Classes that display resources
 local COMBO_CLASS = { ROGUE = true, DRUID = true }
 local RUNE_CLASS  = 'DEATHKNIGHT'
 
--- Number of power bars per class
 local MAX_POINTS = {
 	DEATHKNIGHT = 6,
 	ROGUE       = max(5, MAX_COMBO_POINTS),
 	DRUID       = max(5, MAX_COMBO_POINTS),
 }
 
--- Hide Blizzard RuneFrame and class nameplate mechanic bar when custom display is enabled
 function NP:ClassPower_UpdateRuneFrameVisibility()
 	local playerDB = NP.db.units.PLAYER and NP.db.units.PLAYER.classpower
 	local targetDB = NP.db.units.TARGET and NP.db.units.TARGET.classpower
 	local enabled  = (playerDB and playerDB.enable) or (targetDB and targetDB.enable)
 
-	-- Standalone DK rune bar
 	if E.myclass == RUNE_CLASS then
 		local rf = _G.RuneFrame
 		if rf then
@@ -46,7 +41,6 @@ function NP:ClassPower_UpdateRuneFrameVisibility()
 		end
 	end
 
-	-- Blizzard class nameplate mechanic bar (combo points / runes on nameplate)
 	if COMBO_CLASS[E.myclass] or E.myclass == RUNE_CLASS then
 		local driver = _G.NamePlateDriverFrame
 		local bar    = driver and driver:GetClassNameplateBar()
@@ -60,7 +54,6 @@ function NP:ClassPower_UpdateRuneFrameVisibility()
 	end
 end
 
--- Hook NamePlateDriverFrame:SetupClassNameplateBars so Blizzard can't re-show the bar
 function NP:ClassPower_HookBlizzardBars()
 	if not (COMBO_CLASS[E.myclass] or E.myclass == RUNE_CLASS) then return end
 	local driver = _G.NamePlateDriverFrame
@@ -76,20 +69,24 @@ function NP:ClassPower_HookBlizzardBars()
 	end)
 end
 
--- Rune slot -> display position map (matches oUF runes.lua)
+-- Rune slot -> display position map (matches oUF runes.lua).
 local runemap = {1, 2, 5, 6, 3, 4}
 
--- Smooth rune cooldown fill: throttle SetValue so we don't spam StatusBar every frame.
 local RUNE_STEP = 0.05
 local function RuneOnUpdate(self, elapsed)
 	self.duration = self.duration + elapsed
+	if self.duration >= (self._np_dur or huge) then
+		self:SetMinMaxValues(0, 1)
+		self:SetValue(1)
+		self._lastApplied = nil
+		self:SetScript('OnUpdate', nil)
+		return
+	end
 	if (self.duration - (self._lastApplied or -1)) >= RUNE_STEP then
 		self._lastApplied = self.duration
 		self:SetValue(self.duration)
 	end
 end
-
--- ─── Color helpers ──────────────────────────────────────────────────────────
 
 function NP:ClassPower_SetBarColor(bar, r, g, b)
 	bar:SetStatusBarColor(r, g, b)
@@ -99,19 +96,16 @@ function NP:ClassPower_SetBarColor(bar, r, g, b)
 end
 
 function NP:ClassPower_UpdateColor(frame, powerType)
-	local colors   = NP.db.colors.classResources
-	local fallback = NP.db.colors.power and NP.db.colors.power[powerType]
+	local colors     = NP.db.colors.classResources
 	local classColor = (powerType == 'COMBO_POINTS') and colors.comboPoints
 	for i = 1, #frame do
 		local bar = frame[i]
 		if bar then
-			local color = (classColor and classColor[i]) or colors[E.myclass] or fallback
+			local color = classColor and classColor[i]
 			if color then NP:ClassPower_SetBarColor(bar, color.r, color.g, color.b) end
 		end
 	end
 end
-
--- ─── Value updaters (called every time a resource changes) ──────────────────
 
 function NP:ClassPower_UpdateComboPoints(nameplate)
 	local frame = nameplate.ClassPower
@@ -119,9 +113,9 @@ function NP:ClassPower_UpdateComboPoints(nameplate)
 
 	local cp
 	if UnitHasVehicleUI('player') then
-		cp = GetComboPoints('vehicle', 'target')
+		cp = GetComboPoints('vehicle', 'target') or 0
 	else
-		cp = GetComboPoints('player', 'target')
+		cp = GetComboPoints('player', 'target') or 0
 	end
 
 	for i = 1, MAX_COMBO_POINTS do
@@ -176,6 +170,7 @@ function NP:ClassPower_UpdateRune(nameplate, runeID)
 	else
 		rune.duration = GetTime() - start
 		rune._lastApplied = nil
+		rune._np_dur = duration
 		rune:SetMinMaxValues(0, duration)
 		rune:SetValue(0)
 		rune:SetScript('OnUpdate', RuneOnUpdate)
@@ -190,8 +185,6 @@ function NP:ClassPower_UpdateAllRunes(nameplate)
 	end
 	nameplate.ClassPower:Show()
 end
-
--- ─── Construction ───────────────────────────────────────────────────────────
 
 function NP:Construct_ClassPower(nameplate)
 	local frameName  = nameplate:GetName()
@@ -211,7 +204,6 @@ function NP:Construct_ClassPower(nameplate)
 		bar:SetFrameLevel(nameplate:GetFrameLevel() + 3)
 		NP.StatusBars[bar] = true
 
-		-- bg texture anchored to bar (sized per-bar later)
 		bar.bg = ClassPower:CreateTexture(frameName..'ClassPower'..i..'bg', 'BORDER')
 		bar.bg:SetTexture(texture)
 		bar.bg:SetAllPoints(bar)
@@ -224,7 +216,6 @@ function NP:Construct_ClassPower(nameplate)
 		ClassPower[i] = bar
 	end
 
-	-- Test frame: always visible, use combo-point colors
 	if nameplate == _G.ElvNP_Test then
 		ClassPower.Hide = ClassPower.Show
 		ClassPower:Show()
@@ -232,8 +223,6 @@ function NP:Construct_ClassPower(nameplate)
 
 	return ClassPower
 end
-
--- ─── Layout helper ──────────────────────────────────────────────────────────
 
 local function LayoutClassPowerBars(frame, db, maxButtons)
 	frame:ClearAllPoints()
@@ -264,16 +253,23 @@ local function LayoutClassPowerBars(frame, db, maxButtons)
 	end
 end
 
--- ─── Main update ────────────────────────────────────────────────────────────
-
 function NP:Update_ClassPower(nameplate)
 	local frame = nameplate.ClassPower
 	if not frame then return end
 
-	-- Test-frame preview
 	if nameplate == _G.ElvNP_Test then
 		local db = NP:PlateDB(nameplate)
 		if not db.nameOnly and db.classpower and db.classpower.enable then
+			local fixedCount = 5
+			if fixedCount > #frame then fixedCount = #frame end
+			LayoutClassPowerBars(frame, db.classpower, fixedCount)
+			for i = 1, fixedCount do
+				local bar = frame[i]
+				if bar then
+					bar:Show()
+					if bar.bg then bar.bg:Show() end
+				end
+			end
 			NP:ClassPower_UpdateColor(frame, 'COMBO_POINTS')
 			frame:SetAlpha(1)
 		else
@@ -282,13 +278,11 @@ function NP:Update_ClassPower(nameplate)
 		return
 	end
 
-	-- Gate by class
 	if not COMBO_CLASS[E.myclass] and E.myclass ~= RUNE_CLASS then
 		frame:Hide()
 		return
 	end
 
-	-- Hide when nameOnly is enabled for this plate type
 	local plateDB = NP:PlateDB(nameplate)
 	if plateDB.nameOnly then
 		frame:Hide()
@@ -298,62 +292,35 @@ function NP:Update_ClassPower(nameplate)
 	local isPlayer = nameplate.frameType == 'PLAYER'
 	local isTarget = nameplate.isTarget
 
-	if isPlayer then
-		-- ── Player's own nameplate: combo points / DK runes ──
-		local db = NP.db.units.PLAYER and NP.db.units.PLAYER.classpower
-		if not db or not db.enable then
-			frame:Hide()
-			return
-		end
-		if db.onlyInCombat and not InCombatLockdown() then
-			frame:Hide()
-			return
-		end
-
-		local isRuneMode = E.myclass == RUNE_CLASS
-		local maxButtons = isRuneMode and 6 or MAX_COMBO_POINTS
-		if maxButtons > #frame then maxButtons = #frame end
-
-		LayoutClassPowerBars(frame, db, maxButtons)
-
-		if isRuneMode then
-			NP:ClassPower_UpdateAllRunes(nameplate)
-		else
-			NP:ClassPower_UpdateComboPoints(nameplate)
-		end
-
-	elseif isTarget then
-		-- ── Targeted nameplate: combo points or DK runes ──
-		local db = NP.db.units.TARGET and NP.db.units.TARGET.classpower
-		if not db or not db.enable then
-			frame:Hide()
-			return
-		end
-		if db.onlyInCombat and not InCombatLockdown() then
-			frame:Hide()
-			return
-		end
-
-		local isRuneMode = E.myclass == RUNE_CLASS
-		local maxButtons = isRuneMode and 6 or MAX_COMBO_POINTS
-		if maxButtons > #frame then maxButtons = #frame end
-
-		LayoutClassPowerBars(frame, db, maxButtons)
-
-		if isRuneMode then
-			NP:ClassPower_UpdateAllRunes(nameplate)
-		else
-			NP:ClassPower_UpdateComboPoints(nameplate)
-		end
-
-	else
+	local db = isPlayer and (NP.db.units.PLAYER and NP.db.units.PLAYER.classpower)
+		or (isTarget and (NP.db.units.TARGET and NP.db.units.TARGET.classpower))
+	if not db then
 		frame:Hide()
+		return
+	end
+
+	if not db.enable then
+		frame:Hide()
+		return
+	end
+	if db.onlyInCombat and not InCombatLockdown() then
+		frame:Hide()
+		return
+	end
+
+	local isRuneMode = E.myclass == RUNE_CLASS
+	local maxButtons = isRuneMode and 6 or MAX_COMBO_POINTS
+	if maxButtons > #frame then maxButtons = #frame end
+
+	LayoutClassPowerBars(frame, db, maxButtons)
+
+	if isRuneMode then
+		NP:ClassPower_UpdateAllRunes(nameplate)
+	else
+		NP:ClassPower_UpdateComboPoints(nameplate)
 	end
 end
 
--- ─── Module-level event handlers ────────────────────────────────────────────
-
--- Combo points changed (Rogue/Druid) — update player plate and target plate
 function NP:ClassPower_UNIT_COMBO_POINTS()
 	if not COMBO_CLASS[E.myclass] or not NP.Plates then return end
 	for plate in pairs(NP.Plates) do
@@ -363,7 +330,6 @@ function NP:ClassPower_UNIT_COMBO_POINTS()
 	end
 end
 
--- DK rune changed — update player plate and/or target plate
 function NP:ClassPower_RUNE_POWER_UPDATE(_, runeID)
 	if E.myclass ~= RUNE_CLASS or not NP.Plates then return end
 	local playerDB = NP.db.units.PLAYER and NP.db.units.PLAYER.classpower
@@ -382,7 +348,6 @@ end
 
 NP.ClassPower_RUNE_TYPE_UPDATE = NP.ClassPower_RUNE_POWER_UPDATE
 
--- Combat state changed: refresh all relevant plates (for onlyInCombat setting)
 function NP:ClassPower_PLAYER_REGEN()
 	if not NP.Plates then return end
 	for plate in pairs(NP.Plates) do
