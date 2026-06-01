@@ -120,9 +120,9 @@ function NP:ClassPower_UpdateComboPoints(nameplate)
 
 	local cp
 	if UnitHasVehicleUI('player') then
-		cp = GetComboPoints('vehicle', 'target')
+		cp = GetComboPoints('vehicle', 'target') or 0
 	else
-		cp = GetComboPoints('player', 'target')
+		cp = GetComboPoints('player', 'target') or 0
 	end
 
 	for i = 1, MAX_COMBO_POINTS do

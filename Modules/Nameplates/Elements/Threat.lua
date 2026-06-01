@@ -13,6 +13,7 @@ local function IsTank(unit)
 end
 
 function NP:ThreatIndicator_PreUpdate(unit)
+	if not unit then return end
 	local nameplate, db, unitTarget = self.__owner, NP.db.threat, unit..'target'
 	local imTank = IsTank('player')
 	local unitRole = NP.IsInGroup and (UnitExists(unitTarget) and not UnitIsUnit(unitTarget, 'player')) and NP.GroupRoles[UnitName(unitTarget)] or 'NONE'
@@ -40,7 +41,7 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 		if nameplate.Health and nameplate.Health.ForceUpdate then
 			nameplate.Health:ForceUpdate()
 		end
-	elseif status and db.enable and db.useThreatColor and not UnitIsTapped(unit) then
+	elseif status and db.enable and db.useThreatColor and not (unit and UnitIsTapped(unit)) then
 		NP:Health_SetColors(nameplate, true)
 		nameplate.ThreatStatus = status
 

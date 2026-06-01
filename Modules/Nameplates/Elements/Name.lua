@@ -35,7 +35,7 @@ function NP:Update_Name(frame, triggered)
 		useClassColor = self.db.units[frame.UnitType].name and self.db.units[frame.UnitType].name.useClassColor
 	end
 
-	if useClassColor and (frame.UnitType == "FRIENDLY_PLAYER" or frame.UnitType == "ENEMY_PLAYER") then
+	if useClassColor and classColor and (frame.UnitType == "FRIENDLY_PLAYER" or frame.UnitType == "ENEMY_PLAYER") then
 		r, g, b = classColor.r, classColor.g, classColor.b
 	elseif triggered or (self.db.units[frame.UnitType].nameOnly) or (not self.db.units[frame.UnitType].health.enable and not frame.isTarget) then
 		local reactionType = frame.UnitReaction

@@ -22,6 +22,18 @@ local function GetStackingDB()
 		NP.db.stacking = E:CopyTable(P.nameplates.stacking)
 	end
 
+	-- A profile with a PARTIAL stacking table (missing newer keys) leaves those keys nil,
+	-- causing arithmetic-on-nil in the 33Hz OnUpdate. Fill any missing keys from defaults
+	-- without overwriting existing user values.
+	local def = P.nameplates.stacking
+	if def then
+		for k, v in pairs(def) do
+			if NP.db.stacking[k] == nil then
+				NP.db.stacking[k] = v
+			end
+		end
+	end
+
 	return NP.db.stacking
 end
 

@@ -636,21 +636,22 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		frame.StyleFilterChanges.PowerByNameOnly = nil
 		frame.StyleFilterChanges.CastbarByNameOnly = nil
 		frame.TopLevelFrame = nil --We can safely clear this here because it is set upon `UpdateElement_Auras` if needed
-		if mod.db.units[frame.UnitType].health.enable or (frame.isTarget and mod.db.alwaysShowTargetHealth) then
+		local unitDB = frame.UnitType and mod.db.units[frame.UnitType]
+		if (unitDB and unitDB.health and unitDB.health.enable) or (frame.isTarget and mod.db.alwaysShowTargetHealth) then
 			mod:Health_SetTransparent(frame, false)
 			mod:Configure_Glow(frame)
 			mod:Update_Glow(frame)
 		end
 		frame.Name:ClearAllPoints()
 		frame.Level:ClearAllPoints()
-		if mod.db.units[frame.UnitType].name.enable then
+		if unitDB and unitDB.name and unitDB.name.enable then
 			mod:Update_Name(frame)
 			local nr, ng, nb = frame.Name.r or 1, frame.Name.g or 1, frame.Name.b or 1
 			frame.Name:SetTextColor(nr, ng, nb)
 		else
 			frame.Name:SetText()
 		end
-		if mod.db.units[frame.UnitType].level.enable then
+		if unitDB and unitDB.level and unitDB.level.enable then
 			mod:Update_Level(frame)
 		end
 		mod:Update_Tags(frame)
@@ -833,11 +834,13 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 			-- Instance Difficulty
 			if instanceType == "raid" or instanceType == "party" then
-				local D = trigger.instanceDifficulty[(instanceType == "party" and "dungeon") or instanceType]
-				local difficultyMap = mod.TriggerConditions.difficulties[instanceType]
-				local currentDifficulty = difficultyMap and difficultyMap[difficultyID]
-				for _, value in pairs(D) do
-					if value and not D[currentDifficulty] then return end
+				local D = trigger.instanceDifficulty and trigger.instanceDifficulty[(instanceType == "party" and "dungeon") or instanceType]
+				if D then
+					local difficultyMap = mod.TriggerConditions.difficulties[instanceType]
+					local currentDifficulty = difficultyMap and difficultyMap[difficultyID]
+					for _, value in pairs(D) do
+						if value and not D[currentDifficulty] then return end
+					end
 				end
 			end
 		else return end
