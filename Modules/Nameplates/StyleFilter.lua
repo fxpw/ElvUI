@@ -887,10 +887,11 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 		-- Spell
 		if b.spellName then
+			-- spellID derives from b.spellName (loop-invariant); hoist out of the spells loop
+			local _, _, _, _, _, _, spellID = GetSpellInfo(b.spellName)
 			if c.spells and next(c.spells) then
 				for _, value in pairs(c.spells) do
 					if value then -- only run if at least one is selected
-						local _, _, _, _, _, _, spellID = GetSpellInfo(b.spellName)
 						local castingSpell = (spellID and c.spells[tostring(spellID)]) or c.spells[b.spellName]
 						if (c.notSpell and not castingSpell) or (castingSpell and not c.notSpell) then passed = true else return end
 						break -- we can execute this once on the first enabled option then kill the loop
@@ -946,7 +947,7 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 			if value then -- only run if at least one is selected
 				local npcID = frame.npcID
 				local name = trigger.names[frame.UnitName]
-					or (npcID and (trigger.names[npcID] or trigger.names[tonumber(npcID)] or trigger.names[tostring(npcID)]))
+					or (npcID and (trigger.names[npcID] or trigger.names[tonumber(npcID)]))
 				if (not trigger.negativeMatch and name) or (trigger.negativeMatch and not name) then passed = true else return end
 				break -- we can execute this once on the first enabled option then kill the loop
 			end

@@ -71,6 +71,9 @@ function NP:Health_UpdateColor(_, unit)
 	local element = self.Health
 
 	local r, g, b, t
+	-- Resolve reaction once (only when colorReaction is set, mirroring the elseif guard)
+	-- so UnitReaction is queried at most once per color update instead of twice.
+	local reaction = element.colorReaction and UnitReaction(unit, 'player')
 	if element.colorDisconnected and not UnitIsConnected(unit) then
 		t = self.colors.disconnected
 	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
@@ -82,8 +85,7 @@ function NP:Health_UpdateColor(_, unit)
 			r, g, b = cc[1] or cc.r, cc[2] or cc.g, cc[3] or cc.b
 			element.r, element.g, element.b = r, g, b
 		end
-	elseif element.colorReaction and UnitReaction(unit, 'player') then
-		local reaction = UnitReaction(unit, 'player')
+	elseif element.colorReaction and reaction then
 		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
 	elseif element.colorHealth then
 		t = NP.db.colors.health

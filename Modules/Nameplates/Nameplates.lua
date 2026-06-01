@@ -36,6 +36,12 @@ local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
 
+-- Status-bar value-write dispatcher. PixelUtil is a session constant, so resolve
+-- the branch once at load instead of per bar-write in the OnUpdate poller hot path.
+local SetBarValue = (PixelUtil and PixelUtil.SetStatusBarValue)
+	and function(bar, v) PixelUtil.SetStatusBarValue(bar, v) end
+	or function(bar, v) bar:SetValue(v) end
+
 NP.Plates        = {}
 NP.GroupRoles    = {}
 NP.PlateGUID     = {}
@@ -92,11 +98,7 @@ do
 									cb(NP, plate, cur, max)
 								end
 							end
-							if PixelUtil and PixelUtil.SetStatusBarValue then
-								PixelUtil.SetStatusBarValue(h, cur)
-							else
-								h:SetValue(cur)
-							end
+							SetBarValue(h, cur)
 						end
 					end
 				end
@@ -122,11 +124,7 @@ do
 									cb(NP, plate, cur, max)
 								end
 							end
-							if PixelUtil and PixelUtil.SetStatusBarValue then
-								PixelUtil.SetStatusBarValue(pw, cur)
-							else
-								pw:SetValue(cur)
-							end
+							SetBarValue(pw, cur)
 						end
 					end
 				end

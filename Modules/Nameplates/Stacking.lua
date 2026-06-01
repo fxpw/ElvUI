@@ -15,6 +15,13 @@ local ENEMY_TYPES = {
 
 NP.StackingPlates = NP.StackingPlates or {}
 NP.StackingForcedPlates = NP.StackingForcedPlates or {}
+-- Diagnostic stats (read by /elvnpstack). Persistent table reused each tick so we
+-- assign fields instead of allocating a fresh table every OnUpdate frame.
+NP.StackingLastStats = NP.StackingLastStats or {}
+
+-- Per-tick scratch set of active plates. Reused (wiped) each UpdateNameplateStacking
+-- call to avoid allocating a table every OnUpdate frame. Read only within one call.
+local stackingActive = {}
 
 local function GetStackingDB()
 	NP.db = NP.db or E.db.nameplates
@@ -79,7 +86,8 @@ function NP:UpdateNameplateStacking()
 	if not NP:IsOverlapStackingEnabled() then return end
 
 	local cfg = GetStackingDB()
-	local active = {}
+	local active = stackingActive
+	wipe(active)
 	local xspace = cfg.xspace
 	local yspace = cfg.yspace
 	local delta = cfg.speed * 5
@@ -127,8 +135,9 @@ function NP:UpdateNameplateStacking()
 				local ydiffOrigin = data.ypos - otherData.ypos - otherData.position
 
 				if abs(xdiff) < xspace then
-					if ydiff >= 0 and abs(ydiff) < minDistance then
-						minDistance = abs(ydiff)
+					local ayd = abs(ydiff)
+					if ydiff >= 0 and ayd < minDistance then
+						minDistance = ayd
 					end
 					if abs(ydiffOrigin) < yspace + 2 * delta then
 						reset = false
@@ -167,12 +176,11 @@ function NP:UpdateNameplateStacking()
 		basePlate:SetClampRectInsets(-10, 10, cfg.upperborder, -data.ypos - newPosition - cfg.originpos + height)
 	end
 
-	NP.StackingLastStats = {
-		active = activeCount,
-		moved = movedCount,
-		maxMove = maxMove,
-		minDistance = minDistanceSeen < 1000 and minDistanceSeen or -1,
-	}
+	local stats = NP.StackingLastStats
+	stats.active = activeCount
+	stats.moved = movedCount
+	stats.maxMove = maxMove
+	stats.minDistance = minDistanceSeen < 1000 and minDistanceSeen or -1
 end
 
 function NP:UpdateStackingState()
