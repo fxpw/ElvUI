@@ -7,8 +7,6 @@ local tinsert = tinsert
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitIsTapped = UnitIsTapped
 local UnitClass = UnitClass
-local UnitReaction = UnitReaction
-local UnitIsConnected = UnitIsConnected
 local CreateFrame = CreateFrame
 local UnitPowerType = UnitPowerType
 

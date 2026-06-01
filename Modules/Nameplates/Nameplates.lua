@@ -861,11 +861,6 @@ function NP:RefreshPlatesOnTargetChanged()
 	end
 end
 
--- Thin alias around the global UnitExists; used by retail-derived StyleFilter helpers.
-function NP:UnitExists(unit)
-	return unit and UnitExists(unit) or nil
-end
-
 -- Hook for StyleFilter NameOnly transitions; ClassPower/ClassBar isn't ported on WotLK,
 -- so this currently just refreshes the TargetIndicator if present. Safe no-op otherwise.
 function NP:SetupTarget(nameplate, _)

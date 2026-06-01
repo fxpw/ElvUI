@@ -340,16 +340,14 @@ end
 local STYLEFILTER_DEFAULT_TAGS = {
 	name   = '[name:long]',
 	level  = '[smartlevel]',
-	health = '',
 	power  = '',
-	title  = '',
 }
 
 function mod:StyleFilterDefaultTag(frame, kind)
 	local unitDB = frame.UnitType and mod.db.units and mod.db.units[frame.UnitType]
 	if unitDB then
 		local section
-		if kind == 'health' or kind == 'power' then
+		if kind == 'power' then
 			section = unitDB[kind] and unitDB[kind].text
 		else
 			section = unitDB[kind]
