@@ -204,7 +204,6 @@ local NP_ENGINE_CVARS = {
 	loadDistance = { cvar = 'nameplateMaxDistance', driver = true },
 	predictedHealthAndPower = { cvar = 'nameplatePredictedHealthAndPower', bool = true },
 	offsetY = { cvar = 'nameplateOffsetY', driver = true },
-	showOnlyNames = { cvar = 'nameplateShowOnlyNames', driver = true },
 	showClassColorFriendly = { cvar = 'ShowClassColorInFriendlyNameplate', bool = true },
 	showNameClassColorFriendly = { cvar = 'ShowNameClassColorInFriendlyNameplate', bool = true },
 	showDebuffsOnFriendly = { cvar = 'nameplateShowDebuffsOnFriendly', bool = true },
@@ -330,7 +329,6 @@ function NP:ImportEngineFromCVars(e)
 	e.dynamicScale = NP_CVarNum('nameplateMinScale', 1) < 1
 	e.dynamicAlpha = NP_CVarNum('nameplateMinAlpha', 1) < 1
 	e.offsetY = NP_CVarNum('nameplateOffsetY', e.offsetY)
-	e.showOnlyNames = NP_CVarNum('nameplateShowOnlyNames', e.showOnlyNames)
 	e.showClassColorFriendly = NP_CVarBool('ShowClassColorInFriendlyNameplate', e.showClassColorFriendly)
 	e.showNameClassColorFriendly = NP_CVarBool('ShowNameClassColorInFriendlyNameplate', e.showNameClassColorFriendly)
 	e.showDebuffsOnFriendly = NP_CVarBool('nameplateShowDebuffsOnFriendly', e.showDebuffsOnFriendly)
@@ -394,6 +392,11 @@ function NP:UpdateCVars()
 	NP:SetEngineCVar('nameplateEnableNew', '1')
 	NP:SetEngineCVar('showVKeyCastbar', '1')
 	NP:SetEngineCVar('nameplateAllowOverlap', db.motionType == 'STACKED' and '0' or '1')
+
+	-- ElvUI owns these natively (nameOnly filter / per-unit enable); pin the CVars so they don't duplicate our settings
+	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
+	NP:SetEngineCVar('nameplateShowFriends', '1')
+	NP:SetEngineCVar('nameplateShowEnemies', '1')
 
 	NP:ApplyDynamicScale(e)
 	NP:ApplyDynamicAlpha(e)
