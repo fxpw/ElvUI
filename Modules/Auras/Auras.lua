@@ -1,5 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local A = E:GetModule("Auras")
+local Sirus = E:GetModule("Sirus", true)
 local LSM = E.Libs.LSM
 local LBF = E.Libs.LBF
 
@@ -559,7 +560,10 @@ function A:UpdateHeader(header)
 			aura.filter = filter
 			aura.index = i
 
-			if db.filter ~= "" and E.global.unitframe.aurafilters[db.filter] then
+			local cat = spellID and Sirus and Sirus:IsServiceAura(spellID)
+			if cat and self.db.serviceAuras and self.db.serviceAuras[cat] then
+				releaseTable(aura)
+			elseif db.filter ~= "" and E.global.unitframe.aurafilters[db.filter] then
 				local aurafilter = E.global.unitframe.aurafilters[db.filter]
 				local filterType = aurafilter.type
 				local spellList = aurafilter.spells

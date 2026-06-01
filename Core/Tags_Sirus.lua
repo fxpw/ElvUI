@@ -111,6 +111,29 @@ local Premium = {
 }
 addon.Premium = Premium
 
+local ServiceAuraCat
+-- spellID -> service category; live server globals first, addon tables as fallback
+function addon:IsServiceAura(spellID)
+	if not spellID then return end
+	if not ServiceAuraCat then
+		ServiceAuraCat = {}
+		local function add(t, key)
+			if type(t) == 'table' then
+				for id in pairs(t) do ServiceAuraCat[id] = key end
+			end
+		end
+		add(S_CATEGORY_SPELL_ID, 'category')
+		add(S_PREMIUM_SPELL_ID, 'premium')
+		add(S_VIP_STATUS_DATA, 'vip')
+		add(ZODIAC_DEBUFFS, 'zodiac')
+		add(FACTION_OVERRIDE_BY_DEBUFFS, 'faction')
+		add(Categories, 'category')
+		add(VIP, 'vip')
+		add(Premium, 'premium')
+	end
+	return ServiceAuraCat[spellID]
+end
+
 ElvUF.Tags.Events["category:name"] = "UNIT_AURA"
 ElvUF.Tags.Methods["category:name"] = function(unit)
 	local _, spellID = C_Unit.GetCategoryInfo(unit)
