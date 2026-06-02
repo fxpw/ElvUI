@@ -1197,6 +1197,8 @@ end
 function mod:StyleFilterUpdate(frame, event)
 	if frame == _G.ElvNP_Test or not frame.StyleFilterChanges or not mod.StyleFilterTriggerEvents[event] then return end
 
+	if not frame.unit then return end
+
 	if not frame.StyleChanged and not frame.pendingFrameLevelReset and not next(mod.StyleFilterTriggerList) then return end
 
 	local hadNameTag = frame.NameTagChanged

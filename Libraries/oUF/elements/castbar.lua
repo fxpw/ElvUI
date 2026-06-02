@@ -114,6 +114,7 @@ end
 
 local function CastStart(self, event, unit)
 	if(self.unit ~= unit) then return end
+	if(not unit) then return end
 
 	local element = self.Castbar
 	local name, _, _, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
