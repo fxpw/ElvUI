@@ -142,6 +142,7 @@ do
 						plate._engineBaseLevel = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
 						NP:Health_SyncBorderLevel(plate.Health)
+						NP:Health_SyncTextLevel(plate.Health)
 						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
 						local Buffs = plate.Buffs
@@ -496,16 +497,18 @@ function NP:StylePlate(nameplate)
 	nameplate._npBase = nameplate:GetFrameLevel()
 
 	nameplate.Health = NP:Construct_Health(nameplate)
-	nameplate.Health.Text = NP:Construct_TagText(nameplate.Health)
 	nameplate.RaisedElement = nameplate.Health
+
+	local textFrame = nameplate.Health.TextFrame or nameplate.Health
+	nameplate.Health.Text = NP:Construct_TagText(textFrame)
 
 	NP:Construct_HealPrediction(nameplate)
 
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.Power)
 
-	nameplate.Name  = NP:Construct_Name(nameplate.Health)
-	nameplate.Level = NP:Construct_Level(nameplate.Health)
+	nameplate.Name  = NP:Construct_Name(textFrame)
+	nameplate.Level = NP:Construct_Level(textFrame)
 
 	nameplate.ClassificationIndicator = NP:Construct_ClassificationIndicator(nameplate.RaisedElement)
 	nameplate.Castbar             = NP:Construct_Castbar(nameplate)

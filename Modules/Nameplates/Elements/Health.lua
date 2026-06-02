@@ -56,6 +56,12 @@ function NP:Health_SyncBorderLevel(Health)
 	backdrop:SetFrameLevel(Health:GetFrameLevel())
 end
 
+function NP:Health_SyncTextLevel(Health)
+	local textFrame = Health and Health.TextFrame
+	if not textFrame then return end
+	textFrame:SetFrameLevel(Health:GetFrameLevel() + 4)
+end
+
 function NP:Health_UpdateColor(_, unit)
 	if not unit or self.unit ~= unit then return end
 
@@ -170,6 +176,11 @@ function NP:Construct_Health(nameplate)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
 	NP:Health_FixBorderPixel(Health)
 	NP:Health_SyncBorderLevel(Health)
+
+	local textFrame = CreateFrame('Frame', nil, Health)
+	textFrame:SetAllPoints(Health)
+	Health.TextFrame = textFrame
+	NP:Health_SyncTextLevel(Health)
 	Health:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
 	Health:SetMinMaxValues(0, 1)
 	Health:SetValue(1)
