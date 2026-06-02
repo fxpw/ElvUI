@@ -683,7 +683,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 			baseFrame.UnitFrame:Hide()
 		end
 
-		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame then
+		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame and NamePlateDriverFrame.GetClassNameplateManaBar then
 			local manaBar = NamePlateDriverFrame:GetClassNameplateManaBar()
 			if manaBar and not manaBar._elvHooked then
 				manaBar:HookScript('OnShow', function(self) self:Hide() end)
@@ -963,6 +963,12 @@ function NP:Initialize()
 	self.db = E.db.nameplates
 
 	if not E.private.nameplates.enable then return end
+
+	if not (NamePlateDriverFrame and C_NamePlate and C_NamePlate.GetNamePlateForUnit) then
+		E:Print('нейплейты отключены: в клиенте сломан API C_NamePlate.')
+		return
+	end
+
 	self.Initialized = true
 
 	NP.thinBorders = NP.db.thinBorders
