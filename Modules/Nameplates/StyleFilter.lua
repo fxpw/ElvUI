@@ -382,6 +382,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			local base = frame._npBase or frame:GetFrameLevel()
 			frame.Health:SetFrameLevel(base + 1 + boost)
 			mod:Health_SyncBorderLevel(frame.Health)
+			mod:Health_SyncTextLevel(frame.Health)
 			if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2 + boost) end
 			if frame.Buffs   then frame.Buffs:SetFrameLevel(base + 2 + boost)   end
 			if frame.Debuffs then frame.Debuffs:SetFrameLevel(base + 2 + boost) end
@@ -1249,6 +1250,7 @@ function mod:StyleFilterUpdate(frame, event)
 		local base = frame._npBase or frame:GetFrameLevel()
 		frame.Health:SetFrameLevel(base + 1)
 		mod:Health_SyncBorderLevel(frame.Health)
+		mod:Health_SyncTextLevel(frame.Health)
 		if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2) end
 		if frame.Buffs   then frame.Buffs:SetFrameLevel(base + 2)   end
 		if frame.Debuffs then frame.Debuffs:SetFrameLevel(base + 2) end

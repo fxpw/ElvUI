@@ -142,6 +142,7 @@ do
 						plate._engineBaseLevel = engineLevel
 						plate.Health:SetFrameLevel(engineLevel + 1)
 						NP:Health_SyncBorderLevel(plate.Health)
+						NP:Health_SyncTextLevel(plate.Health)
 						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
 						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
 						if plate.TextFrame then plate.TextFrame:SetFrameLevel(engineLevel + 3) end
@@ -497,16 +498,18 @@ function NP:StylePlate(nameplate)
 	nameplate._npBase = nameplate:GetFrameLevel()
 
 	nameplate.Health = NP:Construct_Health(nameplate)
-	nameplate.Health.Text = NP:Construct_TagText(nameplate.Health)
 	nameplate.RaisedElement = nameplate.Health
+
+	local textFrame = nameplate.Health.TextFrame or nameplate.Health
+	nameplate.Health.Text = NP:Construct_TagText(textFrame)
 
 	NP:Construct_HealPrediction(nameplate)
 
 	nameplate.Power = NP:Construct_Power(nameplate)
 	nameplate.Power.Text = NP:Construct_TagText(nameplate.Power)
 
-	nameplate.Name  = NP:Construct_Name(nameplate.Health)
-	nameplate.Level = NP:Construct_Level(nameplate.Health)
+	nameplate.Name  = NP:Construct_Name(textFrame)
+	nameplate.Level = NP:Construct_Level(textFrame)
 
 	-- text frame sits above heal prediction bars so text always renders on top
 	nameplate.TextFrame = CreateFrame('Frame', nil, nameplate.Health)
