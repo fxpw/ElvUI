@@ -727,11 +727,11 @@ for unit, data in next, P.nameplates.units do
 end
 
 P.nameplates.serviceAuras = {
-	category = true,
-	premium = true,
-	vip = true,
-	zodiac = true,
-	faction = true,
+	category = false,
+	premium = false,
+	vip = false,
+	zodiac = false,
+	faction = false,
 }
 
 -- Per-unit overrides
@@ -829,11 +829,11 @@ P.auras = {
 }
 
 P.auras.serviceAuras = {
-	category = true,
-	premium = true,
-	vip = true,
-	zodiac = true,
-	faction = true,
+	category = false,
+	premium = false,
+	vip = false,
+	zodiac = false,
+	faction = false,
 }
 
 --Chat
@@ -4144,11 +4144,11 @@ P.unitframe = {
 }
 
 P.unitframe.serviceAuras = {
-	category = true,
-	premium = true,
-	vip = true,
-	zodiac = true,
-	faction = true,
+	category = false,
+	premium = false,
+	vip = false,
+	zodiac = false,
+	faction = false,
 }
 
 --Cooldown
