@@ -1,6 +1,7 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 local UF = E:GetModule('UnitFrames')
+local Sirus = E:GetModule('Sirus', true)
 local LSM = E.Libs.LSM
 
 local _G = _G
@@ -330,6 +331,12 @@ local function NP_AuraFilter(self, unit, button, name, _, _, _, debuffType, dura
 
 	local db = self.db
 	if not db then return true end
+
+	if spellID and Sirus then
+		local cat = Sirus:IsServiceAura(spellID)
+		local sdb = cat and NP.db and NP.db.serviceAuras
+		if sdb and sdb[cat] then return false end
+	end
 
 	local isPlayer      = (caster == 'player' or caster == 'vehicle')
 	local isFriend      = unit and UnitIsFriend('player', unit) and not UnitCanAttack('player', unit)

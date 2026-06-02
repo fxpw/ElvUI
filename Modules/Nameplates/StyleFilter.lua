@@ -384,10 +384,8 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 			frame.Health:SetFrameLevel(base + 1 + boost)
 			mod:Health_SyncBorderLevel(frame.Health)
 			if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2 + boost) end
-			if frame.Auras then
-				if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2 + boost)  end
-				if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(base + 2 + boost) end
-			end
+			if frame.Buffs   then frame.Buffs:SetFrameLevel(base + 2 + boost)   end
+			if frame.Debuffs then frame.Debuffs:SetFrameLevel(base + 2 + boost) end
 		end
 	end
 	if HealthColorChanged then
@@ -730,10 +728,6 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 		if curLevel or minLevel or maxLevel or matchMyLevel then passed = true else return end
 	end
 
-	if E.Retail and trigger.questBoss then
-		if UnitIsQuestBoss(frame.unit) then passed = true else return end
-	end
-
 	if trigger.isResting or trigger.notResting then
 		local resting = IsResting()
 		if (trigger.isResting and resting) or (trigger.notResting and not resting) then passed = true else return end
@@ -781,15 +775,6 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 
 	if E.Retail and (trigger.isPet or trigger.isNotPet) then
 		if (trigger.isPet and frame.isPet) or (trigger.isNotPet and not frame.isPet) then passed = true else return end
-	end
-
-	if (E.Retail or E.Wrath) and (trigger.inVehicle or trigger.outOfVehicle) then
-		local inVehicle = UnitInVehicle and UnitInVehicle('player')
-		if (trigger.inVehicle and inVehicle) or (trigger.outOfVehicle and not inVehicle) then passed = true else return end
-	end
-
-	if (E.Retail or E.Wrath) and (trigger.inVehicleUnit or trigger.outOfVehicleUnit) then
-		if (trigger.inVehicleUnit and frame.inVehicle) or (trigger.outOfVehicleUnit and not frame.inVehicle) then passed = true else return end
 	end
 
 	if trigger.role and (trigger.role.tank or trigger.role.healer or trigger.role.damager) then
@@ -960,7 +945,7 @@ end
 
 function mod:StyleFilterVehicleFunction(_, unit)
 	unit = unit or self.unit
-	self.inVehicle = (E.Retail or E.Wrath) and UnitInVehicle and UnitInVehicle(unit) or nil
+	self.inVehicle = nil
 end
 
 function mod:StyleFilterTargetFunction(_, unit)
@@ -1212,6 +1197,8 @@ end
 function mod:StyleFilterUpdate(frame, event)
 	if frame == _G.ElvNP_Test or not frame.StyleFilterChanges or not mod.StyleFilterTriggerEvents[event] then return end
 
+	if not frame.unit then return end
+
 	if not frame.StyleChanged and not frame.pendingFrameLevelReset and not next(mod.StyleFilterTriggerList) then return end
 
 	local hadNameTag = frame.NameTagChanged
@@ -1265,10 +1252,8 @@ function mod:StyleFilterUpdate(frame, event)
 		frame.Health:SetFrameLevel(base + 1)
 		mod:Health_SyncBorderLevel(frame.Health)
 		if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2) end
-		if frame.Auras then
-			if frame.Auras.Buffs  then frame.Auras.Buffs:SetFrameLevel(base + 2)  end
-			if frame.Auras.Debuffs then frame.Auras.Debuffs:SetFrameLevel(base + 2) end
-		end
+		if frame.Buffs   then frame.Buffs:SetFrameLevel(base + 2)   end
+		if frame.Debuffs then frame.Debuffs:SetFrameLevel(base + 2) end
 	end
 
 	mod:Update_TargetIndicator(frame)

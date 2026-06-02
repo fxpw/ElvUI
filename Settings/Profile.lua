@@ -726,6 +726,14 @@ for unit, data in next, P.nameplates.units do
 	end
 end
 
+P.nameplates.serviceAuras = {
+	category = true,
+	premium = true,
+	vip = true,
+	zodiac = true,
+	faction = true,
+}
+
 -- Per-unit overrides
 P.nameplates.units.PLAYER.nameOnly = false
 P.nameplates.units.PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal'
@@ -818,6 +826,14 @@ P.auras = {
 		hhmmThreshold = -1,
 		mmssThreshold = -1
 	}
+}
+
+P.auras.serviceAuras = {
+	category = true,
+	premium = true,
+	vip = true,
+	zodiac = true,
+	faction = true,
 }
 
 --Chat
@@ -4125,6 +4141,14 @@ P.unitframe = {
 			}
 		}
 	}
+}
+
+P.unitframe.serviceAuras = {
+	category = true,
+	premium = true,
+	vip = true,
+	zodiac = true,
+	faction = true,
 }
 
 --Cooldown
