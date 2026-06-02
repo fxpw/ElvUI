@@ -39,7 +39,11 @@ function NP:Health_FixBorderPixel(Health)
 		bd.edgeSize = px
 		backdrop:SetBackdrop(bd)
 		if cr then backdrop:SetBackdropColor(cr, cg, cb, ca) end
-		backdrop:SetBackdropBorderColor(unpack(E.media.unitframeBorderColor))
+		if backdrop.forcedBorderColors then
+			backdrop:SetBackdropBorderColor(unpack(backdrop.forcedBorderColors))
+		else
+			backdrop:SetBackdropBorderColor(unpack(E.media.unitframeBorderColor))
+		end
 	end
 	backdrop:SetOutside(Health, px, px)
 	backdrop.ignoreFrameTemplates = true
