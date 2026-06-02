@@ -11,7 +11,6 @@ local GetRaidTargetIndex = GetRaidTargetIndex
 local GetSpellCooldown = GetSpellCooldown
 local GetSpellInfo = GetSpellInfo
 local GetTime = GetTime
-local UnitInVehicle = UnitInVehicle
 local UnitIsUnit = UnitIsUnit
 local IsResting = IsResting
 local UnitAffectingCombat = UnitAffectingCombat
@@ -943,8 +942,7 @@ function mod:StyleFilterSort(place)
 	end
 end
 
-function mod:StyleFilterVehicleFunction(_, unit)
-	unit = unit or self.unit
+function mod:StyleFilterVehicleFunction()
 	self.inVehicle = nil
 end
 
