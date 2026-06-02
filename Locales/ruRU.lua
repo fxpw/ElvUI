@@ -342,7 +342,7 @@ L["DESC_MOVERCONFIG"] = [=[Блокировка отключена. Передв
 L["Colors names by player class or NPC reaction"] = "Изменение цвета по класску игрока или реакции NPC"
 L["Colors the power text based upon its type"] = "Цвета текста энергии класса на основе его типа"
 L["Colors the following tags by difficulty, red for impossible, orange for hard, green for easy"] = "Цвета следующих тегов по сложности, красным для невозможного, оранжевый для сложного, зеленый для легкого"
-L["Changes color of health text, depending on the unit's current health"] = "Меняет цвет здоровья текста, в зависимости от текущего здоровья .ybnf"
+L["Changes color of health text, depending on the unit's current health"] = "Меняет цвет здоровья текста, в зависимости от текущего здоровья юнита"
 L["Changes color of health, depending on the unit's threat situation"] = "Меняет цвет здоровья, в зависимости от ситуации с угрозой"
 L["Changes color of health, depending on the unit's classification"] = "Меняет цвет здоровья, в зависимости от классификации юнита"
 L["Displays the unit's classification (e.g. 'ELITE' and 'RARE')"] = "Отображает классификацию юнита (например, «элита» и «редкий»)"
