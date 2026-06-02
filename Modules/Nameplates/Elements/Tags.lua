@@ -90,7 +90,7 @@ function NP:Update_CustomTexts(nameplate)
 	for objectName, objectDB in pairs(customDB) do
 		local object = nameplate.customTexts[objectName]
 		if not object then
-			local parent = nameplate.RaisedElement or nameplate
+			local parent = nameplate.TextFrame or nameplate.RaisedElement or nameplate
 			object = parent:CreateFontString(nil, 'OVERLAY')
 			nameplate.customTexts[objectName] = object
 		end
