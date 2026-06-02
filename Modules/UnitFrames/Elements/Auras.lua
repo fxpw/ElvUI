@@ -1,5 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule("UnitFrames")
+local Sirus = E:GetModule("Sirus", true)
 local LSM = E.Libs.LSM
 
 --Lua functions
@@ -402,6 +403,12 @@ function UF:AuraFilter(unit, button, name, _, _, _, debuffType, duration, expira
 	local parent = self:GetParent()
 	local db = parent.db and parent.db[self.type]
 	if not db then return true end
+
+	if spellID and Sirus then
+		local cat = Sirus:IsServiceAura(spellID)
+		local sdb = cat and E.db.unitframe.serviceAuras
+		if sdb and sdb[cat] then return false end
+	end
 
 	local isPlayer = (caster == "player" or caster == "vehicle")
 	local isFriend = unit and UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)
