@@ -1,5 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule("UnitFrames")
+local Sirus = E:GetModule("Sirus", true)
 
 --Lua functions
 local tostring, select = tostring, select
@@ -236,6 +237,11 @@ function UF:AuraBarFilter(unit, name, _, _, _, debuffType, duration, _, unitCast
 	local db = self.db.aurabar
 
 	if not name then return nil end
+	if spellID and Sirus then
+		local cat = Sirus:IsServiceAura(spellID)
+		local sdb = cat and E.db.unitframe.serviceAuras
+		if sdb and sdb[cat] then return nil end
+	end
 	local filterCheck, isUnit, isFriend, isPlayer, canDispell, allowDuration, noDuration
 
 	if db.priority ~= "" then

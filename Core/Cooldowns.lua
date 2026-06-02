@@ -72,7 +72,6 @@ end
 
 function E:Cooldown_OnSizeChanged(cd, width, force)
 	width = width and floor(width + 0.5) or 0
-	if width <= 0 then return end
 
 	local scale = width / ICON_SIZE
 

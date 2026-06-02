@@ -133,6 +133,7 @@ globals = {
 	"C_SendOpcode",
 	"C_FactionManager",
 	"C_Talent",
+	"C_GlobalStorage",
 	"Mixin",
 	"IsInGroup",
 
