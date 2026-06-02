@@ -131,8 +131,12 @@ do
 				end
 
 				if not plate.appliedFrameLevelBoost then
-					local engineParent = plate._engineParent or plate:GetParent()
-					plate._engineParent = engineParent
+					-- cache engine parent once; only GetFrameLevel + dirty-check run per tick
+					local engineParent = plate._engineParent
+					if not engineParent then
+						engineParent = plate:GetParent()
+						plate._engineParent = engineParent
+					end
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
 					if engineLevel and plate._engineBaseLevel ~= engineLevel then
 						plate._engineBaseLevel = engineLevel
@@ -200,7 +204,6 @@ local NP_ENGINE_CVARS = {
 	loadDistance = { cvar = 'nameplateMaxDistance', driver = true },
 	predictedHealthAndPower = { cvar = 'nameplatePredictedHealthAndPower', bool = true },
 	offsetY = { cvar = 'nameplateOffsetY', driver = true },
-	showOnlyNames = { cvar = 'nameplateShowOnlyNames', driver = true },
 	showClassColorFriendly = { cvar = 'ShowClassColorInFriendlyNameplate', bool = true },
 	showNameClassColorFriendly = { cvar = 'ShowNameClassColorInFriendlyNameplate', bool = true },
 	showDebuffsOnFriendly = { cvar = 'nameplateShowDebuffsOnFriendly', bool = true },
@@ -210,12 +213,8 @@ local NP_ENGINE_CVARS = {
 	verticalScale = { cvar = 'NamePlateVerticalScale', driver = true },
 	globalScale = { cvar = 'nameplateGlobalScale', driver = true },
 	selectedScale = { cvar = 'nameplateSelectedScale', driver = true },
-	occludedAlphaMult = { cvar = 'nameplateOccludedAlphaMult' },
-	selectedAlpha = { cvar = 'nameplateSelectedAlpha' },
-	notSelectedAlpha = { cvar = 'nameplateNotSelectedAlpha' },
 	showSelf = { cvar = 'nameplateShowSelf', bool = true, driver = true },
 	personalClickThrough = { cvar = 'NameplatePersonalClickThrough', bool = true },
-	selfAlpha = { cvar = 'nameplateSelfAlpha' },
 	personalShowAlways = { cvar = 'NameplatePersonalShowAlways', bool = true, driver = true },
 	personalShowInCombat = { cvar = 'NameplatePersonalShowInCombat', bool = true, driver = true },
 	personalShowWithTarget = { cvar = 'NameplatePersonalShowWithTarget', driver = true },
@@ -324,9 +323,7 @@ function NP:ImportEngineFromCVars(e)
 	e.loadDistance = NP_CVarNum('nameplateMaxDistance', e.loadDistance or P.nameplates.engine.loadDistance)
 	e.predictedHealthAndPower = NP_CVarBool('nameplatePredictedHealthAndPower', e.predictedHealthAndPower)
 	e.dynamicScale = NP_CVarNum('nameplateMinScale', 1) < 1
-	e.dynamicAlpha = NP_CVarNum('nameplateMinAlpha', 1) < 1
 	e.offsetY = NP_CVarNum('nameplateOffsetY', e.offsetY)
-	e.showOnlyNames = NP_CVarNum('nameplateShowOnlyNames', e.showOnlyNames)
 	e.showClassColorFriendly = NP_CVarBool('ShowClassColorInFriendlyNameplate', e.showClassColorFriendly)
 	e.showNameClassColorFriendly = NP_CVarBool('ShowNameClassColorInFriendlyNameplate', e.showNameClassColorFriendly)
 	e.showDebuffsOnFriendly = NP_CVarBool('nameplateShowDebuffsOnFriendly', e.showDebuffsOnFriendly)
@@ -336,12 +333,8 @@ function NP:ImportEngineFromCVars(e)
 	e.verticalScale = NP_CVarNum('NamePlateVerticalScale', e.verticalScale)
 	e.globalScale = NP_CVarNum('nameplateGlobalScale', e.globalScale)
 	e.selectedScale = NP_CVarNum('nameplateSelectedScale', e.selectedScale)
-	e.occludedAlphaMult = NP_CVarNum('nameplateOccludedAlphaMult', e.occludedAlphaMult)
-	e.selectedAlpha = NP_CVarNum('nameplateSelectedAlpha', e.selectedAlpha)
-	e.notSelectedAlpha = NP_CVarNum('nameplateNotSelectedAlpha', e.notSelectedAlpha)
 	e.showSelf = NP_CVarBool('nameplateShowSelf', e.showSelf)
 	e.personalClickThrough = NP_CVarBool('NameplatePersonalClickThrough', e.personalClickThrough)
-	e.selfAlpha = NP_CVarNum('nameplateSelfAlpha', e.selfAlpha)
 	e.personalShowAlways = NP_CVarBool('NameplatePersonalShowAlways', e.personalShowAlways)
 	e.personalShowInCombat = NP_CVarBool('NameplatePersonalShowInCombat', e.personalShowInCombat)
 	e.personalShowWithTarget = NP_CVarNum('NameplatePersonalShowWithTarget', e.personalShowWithTarget)
@@ -371,6 +364,18 @@ function NP:ResetEngineDefaults()
 end
 
 function NP:UpdateCVars()
+	if InCombatLockdown() then
+		if not NP.cvarDeferFrame then
+			NP.cvarDeferFrame = CreateFrame('Frame')
+			NP.cvarDeferFrame:SetScript('OnEvent', function(frame)
+				frame:UnregisterEvent('PLAYER_REGEN_ENABLED')
+				NP:UpdateCVars()
+			end)
+		end
+		NP.cvarDeferFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+		return
+	end
+
 	local db = NP.db
 	NP:EnsureEngineDB()
 	local e = db.engine
@@ -379,8 +384,20 @@ function NP:UpdateCVars()
 	NP:SetEngineCVar('showVKeyCastbar', '1')
 	NP:SetEngineCVar('nameplateAllowOverlap', db.motionType == 'STACKED' and '0' or '1')
 
+	-- ElvUI owns these natively (nameOnly filter / per-unit enable); pin the CVars so they don't duplicate our settings
+	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
+	NP:SetEngineCVar('nameplateShowFriends', '1')
+	NP:SetEngineCVar('nameplateShowEnemies', '1')
+
+	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
+	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
+	NP:SetEngineCVar('nameplateNotSelectedAlpha', '1')
+	NP:SetEngineCVar('nameplateOccludedAlphaMult', '1')
+	NP:SetEngineCVar('nameplateSelfAlpha', '1')
+	NP:SetEngineCVar('nameplateMinAlpha', '1')
+	NP:SetEngineCVar('nameplateMaxAlpha', '1')
+
 	NP:ApplyDynamicScale(e)
-	NP:ApplyDynamicAlpha(e)
 
 	for key in pairs(NP_ENGINE_CVARS) do
 		NP:ApplyEngineOption(key)
@@ -877,9 +894,6 @@ function NP:UnitLevel(frame)
 		return level, color.r, color.g, color.b
 	end
 	return level, 1, 1, 1
-end
-
-function NP:UpdateLibAuraInfoInfo()
 end
 
 function NP:RefreshTestFrame()
