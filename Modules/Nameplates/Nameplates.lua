@@ -666,6 +666,10 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		NP:StyleFilterEventWatch(nameplate)
 		NP:StyleFilterSetVariables(nameplate)
 
+		if nameplate ~= NP.TestFrame then
+			E:Delay(0.1, NP.UpdatePlateName, NP, nameplate)
+		end
+
 		if NP.db.fadeIn and nameplate ~= NP.TestFrame then
 			NP:PlateFade(nameplate, 1, 0, 1)
 		end
