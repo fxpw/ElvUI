@@ -86,11 +86,8 @@ function NP:Construct_Power(nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Power:SetFrameStrata(s) else Power:SetFrameStrata('MEDIUM') end end
 	Power:SetFrameLevel(nameplate:GetFrameLevel() + 1)
 	Power:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
-	NP:FixBorderPixel(Power)
-	Power.backdrop.ignoreFrameTemplates = true
-	hooksecurefunc(Power, 'SetStatusBarTexture', function()
-		NP:FixBorderPixel(Power)
-	end)
+	NP:PinBorderPixel(Power)
+	NP:HookBorderPin(Power)
 
 	NP.StatusBars[Power] = true
 

@@ -48,12 +48,6 @@ NP.multiplier = 0.35
 NP.IsInGroup  = false
 NP.TEST_FRAME_SCALE = 1.75
 
-local function CheckFix(el)
-	if el and el.backdrop and el.backdrop._npPinnedScale ~= el:GetEffectiveScale() then
-		NP:FixBorderPixel(el)
-	end
-end
-
 do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
@@ -130,11 +124,9 @@ do
 					plate:UpdateTags()
 				end
 
-				CheckFix(h)
-				CheckFix(plate.Power)
-				CheckFix(plate.Castbar)
-				CheckFix(plate.ClassPower)
-				CheckFix(plate.Portrait)
+				if plate._npPinnedScale ~= plate:GetEffectiveScale() then
+					NP:PinPlateBorders(plate)
+				end
 
 				if not plate.appliedFrameLevelBoost then
 					-- cache engine parent once; only GetFrameLevel + dirty-check run per tick
@@ -881,13 +873,18 @@ function NP:SetupTarget(nameplate, _)
 	end
 end
 
+function NP:PinPlateBorders(nameplate)
+	if nameplate.Health then NP:PinBorderPixel(nameplate.Health) end
+	if nameplate.Power then NP:PinBorderPixel(nameplate.Power) end
+	if nameplate.Castbar then NP:PinBorderPixel(nameplate.Castbar) end
+	if nameplate.ClassPower then NP:PinBorderPixel(nameplate.ClassPower) end
+	if nameplate.Portrait then NP:PinBorderPixel(nameplate.Portrait) end
+	nameplate._npPinnedScale = nameplate:GetEffectiveScale()
+end
+
 function NP:ScalePlate(nameplate, scale)
 	nameplate:SetScale(scale * (E.uiscale or 1))
-	if nameplate.Health then NP:FixBorderPixel(nameplate.Health) end
-	if nameplate.Power then NP:FixBorderPixel(nameplate.Power) end
-	if nameplate.Castbar then NP:FixBorderPixel(nameplate.Castbar) end
-	if nameplate.ClassPower then NP:FixBorderPixel(nameplate.ClassPower) end
-	if nameplate.Portrait then NP:FixBorderPixel(nameplate.Portrait) end
+	NP:PinPlateBorders(nameplate)
 end
 
 function NP:SetFrameScale(frame, scale)
