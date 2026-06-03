@@ -296,7 +296,7 @@ function NP:ApplyEngineOption(key)
 	if not entry then return end
 
 	if key == 'selectedScale' then
-		NP:ApplyEngineCVar(entry, NP.db.useTargetScale and NP.db.targetScale or e.selectedScale)
+		NP:ApplyEngineCVar(entry, e.selectedScale)
 	elseif key == 'notSelectedAlpha' then
 		NP:ApplyEngineCVar(entry, NP.db.nonTargetTransparency or e.notSelectedAlpha)
 	else
@@ -879,9 +879,6 @@ function NP:SetupTarget(nameplate, _)
 end
 
 function NP:ScalePlate(nameplate, scale)
-	if nameplate.isTarget and NP.db.useTargetScale then
-		scale = scale * NP.db.targetScale
-	end
 	nameplate:SetScale(scale * (E.uiscale or 1))
 	if nameplate.Health then NP:Health_FixBorderPixel(nameplate.Health) end
 end
