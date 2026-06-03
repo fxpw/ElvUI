@@ -1740,6 +1740,29 @@ function E:DBConversions()
 					end
 				end
 			end
+
+			if not E.db.nameplates.fpClassColorConverted then
+				E.db.nameplates.fpClassColorConverted = true
+				local fp = E.db.nameplates.units.FRIENDLY_PLAYER
+				if type(fp) == "table" and type(fp.health) == "table"
+					and fp.health.useClassColor == false and (fp.healthbar ~= nil or fp.title ~= nil)
+				then
+					fp.health.useClassColor = true
+				end
+			end
+
+			if not E.db.nameplates.npNameClassColorConverted then
+				E.db.nameplates.npNameClassColorConverted = true
+				local fp = E.db.nameplates.units.FRIENDLY_PLAYER
+				if type(fp) == "table" and (fp.healthbar ~= nil or fp.title ~= nil) then
+					for _, unit in ipairs({"FRIENDLY_PLAYER", "ENEMY_PLAYER"}) do
+						local u = E.db.nameplates.units[unit]
+						if type(u) == "table" and type(u.name) == "table" and u.name.useClassColor == false then
+							u.name.useClassColor = true
+						end
+					end
+				end
+			end
 		end
 	end
 end
