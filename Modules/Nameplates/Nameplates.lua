@@ -485,7 +485,7 @@ function NP:StylePlate(nameplate)
 		NP.TestFrame = nameplate
 	end
 
-	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or (E.uiscale or 1)
+	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or 1
 	nameplate:SetScale(scale)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
@@ -884,7 +884,7 @@ function NP:PinPlateBorders(nameplate)
 end
 
 function NP:ScalePlate(nameplate, scale)
-	nameplate:SetScale(scale * (E.uiscale or 1))
+	nameplate:SetScale(scale)
 	NP:PinPlateBorders(nameplate)
 end
 

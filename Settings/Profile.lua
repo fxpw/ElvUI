@@ -510,18 +510,12 @@ P.nameplates = {
 		maxOffset = 75,
 	},
 	nameColoredGlow = false,
-	overlapH = 0.8,
-	overlapV = 1.1,
 	smoothbars = false,
 	statusbar = 'ElvUI Norm',
 	thinBorders = false,
 	absorbSpark = true,
 	nonTargetTransparency = 0.40,
 	alwaysShowTargetHealth = true,
-	clickThrough = {
-		friendly = false,
-		enemy = false,
-	},
 	plateSize = {
 		friendlyWidth = 150,
 		friendlyHeight = 30,
