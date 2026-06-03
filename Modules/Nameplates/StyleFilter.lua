@@ -2,6 +2,8 @@ local E, L, V, P, G = unpack(select(2, ...));
 local mod = E:GetModule("NamePlates")
 local LSM = E.Libs.LSM
 
+local STYLE_LEVEL_FLOOR = 5000
+
 local ipairs, next, pairs, select, setmetatable, tonumber, type, unpack, tostring = ipairs, next, pairs, select, setmetatable, tonumber, type, unpack, tostring
 local tinsert, tremove, sort, wipe = table.insert, table.remove, table.sort, (wipe or table.wipe)
 local strmatch = string.match
@@ -379,7 +381,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		local boost = actions.frameLevel * 100
 		if frame.appliedFrameLevelBoost ~= boost then
 			frame.appliedFrameLevelBoost = boost
-			local base = frame._npBase or frame:GetFrameLevel()
+			local base = STYLE_LEVEL_FLOOR
 			frame.Health:SetFrameLevel(base + 1 + boost)
 			mod:Health_SyncBorderLevel(frame.Health)
 			mod:Health_SyncTextLevel(frame.Health)
@@ -570,10 +572,13 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 	if HealthColorChanged then
 		frame.HealthColorChanged = nil
 		frame.StyleFilterChanges.HealthColor = nil
-		frame.Health:SetStatusBarColor(frame.Health.r, frame.Health.g, frame.Health.b)
+		local hr = frame.Health.r or 1
+		local hg = frame.Health.g or 1
+		local hb = frame.Health.b or 1
+		frame.Health:SetStatusBarColor(hr, hg, hb)
 		local cutawayHealth = (frame.Cutaway and frame.Cutaway.Health) or frame.CutawayHealth
 		if cutawayHealth then
-			cutawayHealth:SetStatusBarColor(frame.Health.r * 1.5, frame.Health.g * 1.5, frame.Health.b * 1.5, 1)
+			cutawayHealth:SetStatusBarColor(hr * 1.5, hg * 1.5, hb * 1.5, 1)
 		end
 	end
 	if BorderChanged then
@@ -1241,7 +1246,7 @@ function mod:StyleFilterUpdate(frame, event)
 	if frame.pendingFrameLevelReset then
 		frame.pendingFrameLevelReset = nil
 		frame.appliedFrameLevelBoost = nil
-		local base = frame._npBase or frame:GetFrameLevel()
+		local base = (frame._npSlot or 0) * 10
 		frame.Health:SetFrameLevel(base + 1)
 		mod:Health_SyncBorderLevel(frame.Health)
 		mod:Health_SyncTextLevel(frame.Health)

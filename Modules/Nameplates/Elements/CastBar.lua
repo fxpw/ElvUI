@@ -134,6 +134,8 @@ function NP:Construct_Castbar(nameplate)
 	end
 	castbar:SetFrameLevel(nameplate:GetFrameLevel() + 2)
 	castbar:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
+	NP:PinBorderPixel(castbar)
+	NP:HookBorderPin(castbar)
 	castbar:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
 
 	NP.StatusBars[castbar] = true

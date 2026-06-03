@@ -69,6 +69,9 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u and UnitExists(u) then
+				if UnitReaction('player', u) ~= plate.reaction then
+					NP:RefreshPlateReaction(plate)
+				end
 				local h = plate.Health
 				if h then
 					local cur = UnitHealth(u)
@@ -124,10 +127,8 @@ do
 					plate:UpdateTags()
 				end
 
-				-- re-pin 1px border when engine rescale changes effectiveScale
-				local bdf = h and h.backdrop
-				if bdf and bdf._npPinnedScale ~= bdf:GetEffectiveScale() then
-					NP:Health_FixBorderPixel(h)
+				if plate._npPinnedScale ~= plate:GetEffectiveScale() then
+					NP:PinPlateBorders(plate)
 				end
 
 				if not plate.appliedFrameLevelBoost then
@@ -140,48 +141,49 @@ do
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
 					if engineLevel and plate._engineBaseLevel ~= engineLevel then
 						plate._engineBaseLevel = engineLevel
-						plate.Health:SetFrameLevel(engineLevel + 1)
+						local base = (plate._npSlot or 0) * 10
+						plate.Health:SetFrameLevel(base + 1)
 						NP:Health_SyncBorderLevel(plate.Health)
 						NP:Health_SyncTextLevel(plate.Health)
-						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
-						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
+						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(base + 1) end
+						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(base + 2) end
 						local Buffs = plate.Buffs
 						if Buffs and Buffs:IsShown() then
-							Buffs:SetFrameLevel(engineLevel + 2)
+							Buffs:SetFrameLevel(base + 2)
 							local n = Buffs.visibleBuffs or #Buffs
 							for i = 1, n do
 								local btn = Buffs[i]
 								if btn and btn:IsShown() then
-									btn:SetFrameLevel(engineLevel + 3)
+									btn:SetFrameLevel(base + 3)
 									local cd = btn.cd
 									if cd then
-										cd:SetFrameLevel(engineLevel + 4)
-										if cd.timer then cd.timer:SetFrameLevel(engineLevel + 5) end
+										cd:SetFrameLevel(base + 4)
+										if cd.timer then cd.timer:SetFrameLevel(base + 5) end
 									end
 								end
 							end
 						end
 						local Debuffs = plate.Debuffs
 						if Debuffs and Debuffs:IsShown() then
-							Debuffs:SetFrameLevel(engineLevel + 2)
+							Debuffs:SetFrameLevel(base + 2)
 							local n = Debuffs.visibleDebuffs or #Debuffs
 							for i = 1, n do
 								local btn = Debuffs[i]
 								if btn and btn:IsShown() then
-									btn:SetFrameLevel(engineLevel + 3)
+									btn:SetFrameLevel(base + 3)
 									local cd = btn.cd
 									if cd then
-										cd:SetFrameLevel(engineLevel + 4)
-										if cd.timer then cd.timer:SetFrameLevel(engineLevel + 5) end
+										cd:SetFrameLevel(base + 4)
+										if cd.timer then cd.timer:SetFrameLevel(base + 5) end
 									end
 								end
 							end
 						end
 						if plate.ClassPower and plate.ClassPower:IsShown() then
-							plate.ClassPower:SetFrameLevel(engineLevel + 2)
+							plate.ClassPower:SetFrameLevel(base + 2)
 							for i = 1, #plate.ClassPower do
 								local cp = plate.ClassPower[i]
-								if cp then cp:SetFrameLevel(engineLevel + 3) end
+								if cp then cp:SetFrameLevel(base + 3) end
 							end
 						end
 					end
@@ -213,6 +215,7 @@ local NP_ENGINE_CVARS = {
 	horizontalScale = { cvar = 'NamePlateHorizontalScale', driver = true },
 	verticalScale = { cvar = 'NamePlateVerticalScale', driver = true },
 	globalScale = { cvar = 'nameplateGlobalScale', driver = true },
+	occludedAlphaMult = { cvar = 'nameplateOccludedAlphaMult' },
 	selectedScale = { cvar = 'nameplateSelectedScale', driver = true },
 	showSelf = { cvar = 'nameplateShowSelf', bool = true, driver = true },
 	personalClickThrough = { cvar = 'NameplatePersonalClickThrough', bool = true },
@@ -230,10 +233,6 @@ function NP:GetEngineCVar(key)
 
 	if key == 'dynamicScale' then
 		local v = GetCVar('nameplateMinScale')
-		return v and tonumber(v) < 1 or default
-	end
-	if key == 'dynamicAlpha' then
-		local v = GetCVar('nameplateMinAlpha')
 		return v and tonumber(v) < 1 or default
 	end
 
@@ -265,16 +264,6 @@ function NP:ApplyDynamicScale(e)
 	end
 end
 
-function NP:ApplyDynamicAlpha(e)
-	if e.dynamicAlpha then
-		NP:SetEngineCVar('nameplateMinAlpha', '0.6')
-		NP:SetEngineCVar('nameplateMaxAlpha', '1')
-	else
-		NP:SetEngineCVar('nameplateMinAlpha', '1')
-		NP:SetEngineCVar('nameplateMaxAlpha', '1')
-	end
-end
-
 function NP:ApplyEngineCVar(entry, value)
 	NP:SetEngineCVar(entry.cvar, value, entry.bool)
 end
@@ -287,9 +276,6 @@ function NP:ApplyEngineOption(key)
 	if key == 'dynamicScale' then
 		NP:ApplyDynamicScale(e)
 		return
-	elseif key == 'dynamicAlpha' then
-		NP:ApplyDynamicAlpha(e)
-		return
 	end
 
 	local entry = NP_ENGINE_CVARS[key]
@@ -297,8 +283,6 @@ function NP:ApplyEngineOption(key)
 
 	if key == 'selectedScale' then
 		NP:ApplyEngineCVar(entry, e.selectedScale)
-	elseif key == 'notSelectedAlpha' then
-		NP:ApplyEngineCVar(entry, NP.db.nonTargetTransparency or e.notSelectedAlpha)
 	else
 		NP:ApplyEngineCVar(entry, e[key])
 	end
@@ -333,6 +317,7 @@ function NP:ImportEngineFromCVars(e)
 	e.horizontalScale = NP_CVarNum('NamePlateHorizontalScale', e.horizontalScale)
 	e.verticalScale = NP_CVarNum('NamePlateVerticalScale', e.verticalScale)
 	e.globalScale = NP_CVarNum('nameplateGlobalScale', e.globalScale)
+	e.occludedAlphaMult = NP_CVarNum('nameplateOccludedAlphaMult', e.occludedAlphaMult)
 	e.selectedScale = NP_CVarNum('nameplateSelectedScale', e.selectedScale)
 	e.showSelf = NP_CVarBool('nameplateShowSelf', e.showSelf)
 	e.personalClickThrough = NP_CVarBool('NameplatePersonalClickThrough', e.personalClickThrough)
@@ -390,7 +375,6 @@ function NP:UpdateCVars()
 	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
 	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
 	NP:SetEngineCVar('nameplateNotSelectedAlpha', '1')
-	NP:SetEngineCVar('nameplateOccludedAlphaMult', '1')
 	NP:SetEngineCVar('nameplateSelfAlpha', '1')
 	NP:SetEngineCVar('nameplateMinAlpha', '1')
 	NP:SetEngineCVar('nameplateMaxAlpha', '1')
@@ -486,12 +470,12 @@ function NP:StylePlate(nameplate)
 		NP.TestFrame = nameplate
 	end
 
-	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or (E.uiscale or 1)
+	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or 1
 	nameplate:SetScale(scale)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate:SetFrameStrata('BACKGROUND')
-	nameplate._npBase = nameplate:GetFrameLevel()
+	nameplate._npSlot = tonumber((nameplate:GetName() or ''):match('(%d+)$')) or 0
 
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.RaisedElement = nameplate.Health
@@ -608,6 +592,23 @@ function NP:UpdatePlateBase(nameplate)
 	nameplate.previousType = nameplate.frameType
 end
 
+function NP:RefreshPlateReaction(nameplate)
+	local unit = nameplate.unit
+	if not unit then return end
+
+	nameplate.reaction   = UnitReaction('player', unit)
+	nameplate.isFriend   = UnitIsFriend('player', unit)
+	nameplate.faction    = UnitFactionGroup(unit)
+	nameplate.classColor = (nameplate.isPlayer and E:ClassColor(nameplate.classFile)) or nil
+
+	NP:UpdatePlateType(nameplate)
+	NP:UpdatePlateSize(nameplate)
+	NP:UpdatePlateBase(nameplate)
+
+	NP:StyleFilterUpdate(nameplate, 'UNIT_FACTION')
+	nameplate.StyleFilterBaseAlreadyUpdated = nil
+end
+
 function NP:NamePlateCallBack(nameplate, event, unit)
 	if event == 'PLAYER_TARGET_CHANGED' then
 		return
@@ -616,19 +617,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 	end
 
 	if event == 'UNIT_FACTION' then
-		if not unit then unit = nameplate.unit end
-
-		nameplate.reaction   = UnitReaction('player', unit)
-		nameplate.isFriend   = UnitIsFriend('player', unit)
-		nameplate.faction    = UnitFactionGroup(unit)
-		nameplate.classColor = (nameplate.isPlayer and E:ClassColor(nameplate.classFile)) or nil
-
-		NP:UpdatePlateType(nameplate)
-		NP:UpdatePlateSize(nameplate)
-		NP:UpdatePlateBase(nameplate)
-
-		NP:StyleFilterUpdate(nameplate, event)
-		nameplate.StyleFilterBaseAlreadyUpdated = nil
+		NP:RefreshPlateReaction(nameplate)
 
 	elseif event == 'NAME_PLATE_UNIT_ADDED' then
 		if not unit then unit = nameplate.unit end
@@ -875,9 +864,18 @@ function NP:SetupTarget(nameplate, _)
 	end
 end
 
+function NP:PinPlateBorders(nameplate)
+	if nameplate.Health then NP:PinBorderPixel(nameplate.Health) end
+	if nameplate.Power then NP:PinBorderPixel(nameplate.Power) end
+	if nameplate.Castbar then NP:PinBorderPixel(nameplate.Castbar) end
+	if nameplate.ClassPower then NP:PinBorderPixel(nameplate.ClassPower) end
+	if nameplate.Portrait then NP:PinBorderPixel(nameplate.Portrait) end
+	nameplate._npPinnedScale = nameplate:GetEffectiveScale()
+end
+
 function NP:ScalePlate(nameplate, scale)
-	nameplate:SetScale(scale * (E.uiscale or 1))
-	if nameplate.Health then NP:Health_FixBorderPixel(nameplate.Health) end
+	nameplate:SetScale(scale)
+	NP:PinPlateBorders(nameplate)
 end
 
 function NP:SetFrameScale(frame, scale)

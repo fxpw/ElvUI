@@ -11,10 +11,8 @@ local UnitIsTappedByPlayer = UnitIsTappedByPlayer
 local UnitIsTappedByAllThreatList = UnitIsTappedByAllThreatList
 local UnitClass = UnitClass
 local UnitReaction = UnitReaction
-local UnitIsConnected = UnitIsConnected
 local CreateFrame = CreateFrame
 
--- 1 physical px in logical units = factor/effectiveScale (PixelUtil factor is taint-safe; falls back to 768/screenheight).
 function NP:BorderPixelSize(effectiveScale)
 	local factor = (PixelUtil and PixelUtil.GetPixelToUIUnitFactor and PixelUtil.GetPixelToUIUnitFactor())
 	if not factor or factor <= 0 then
@@ -27,10 +25,10 @@ function NP:BorderPixelSize(effectiveScale)
 	return factor / s
 end
 
-function NP:Health_FixBorderPixel(Health)
-	local backdrop = Health and Health.backdrop
+function NP:PinBorderPixel(frame)
+	local backdrop = frame and frame.backdrop
 	if not backdrop or not backdrop.GetBackdrop then return end
-	local eff = backdrop:GetEffectiveScale()
+	local eff = frame:GetEffectiveScale()
 	local px = NP:BorderPixelSize(eff)
 	local bd = backdrop:GetBackdrop()
 	if not bd then return end
@@ -45,9 +43,16 @@ function NP:Health_FixBorderPixel(Health)
 			backdrop:SetBackdropBorderColor(unpack(E.media.unitframeBorderColor))
 		end
 	end
-	backdrop:SetOutside(Health, px, px)
+	backdrop:ClearAllPoints()
+	backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -px, px)
+	backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", px, -px)
 	backdrop.ignoreFrameTemplates = true
-	backdrop._npPinnedScale = eff
+end
+
+function NP:HookBorderPin(el)
+	hooksecurefunc(el, 'SetStatusBarTexture', function()
+		NP:PinBorderPixel(el)
+	end)
 end
 
 function NP:Health_SyncBorderLevel(Health)
@@ -75,36 +80,33 @@ function NP:Health_UpdateColor(_, unit)
 
 	local element = self.Health
 
-	local r, g, b, t
-	local reaction = element.colorReaction and UnitReaction(unit, 'player')
-	if element.colorDisconnected and not UnitIsConnected(unit) then
-		t = self.colors.disconnected
-	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
+	local r, g, b, t, colored
+	local reaction = element.colorReaction and UnitReaction('player', unit)
+	if element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
 		t = NP.db.colors.tapped
 	elseif element.colorClass and self.isPlayer then
 		local _, class = UnitClass(unit)
 		local cc = class and self.colors.class[class]
 		if cc then
 			r, g, b = cc[1] or cc.r, cc[2] or cc.g, cc[3] or cc.b
-			element.r, element.g, element.b = r, g, b
+			colored = true
 		end
 	elseif element.colorReaction and reaction then
 		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
-	elseif element.colorHealth then
-		t = NP.db.colors.health
 	end
 
 	if t then
 		r, g, b = t.r, t.g, t.b
-		element.r, element.g, element.b = r, g, b
+		colored = true
 	end
 
 	local sf = NP:StyleFilterChanges(self)
 	if sf.HealthColor then
 		r, g, b = sf.HealthColor.r, sf.HealthColor.g, sf.HealthColor.b
+		colored = true
 	end
 
-	if not b then
+	if not colored then
 		local reaction2 = self.reaction
 		local t2 = reaction2 and NP.db.colors.reactions[reaction2 == 4 and 'neutral' or reaction2 <= 3 and 'bad' or 'good']
 		if t2 then
@@ -114,12 +116,12 @@ function NP:Health_UpdateColor(_, unit)
 		end
 	end
 
-	if b then
-		element:SetStatusBarColor(r, g, b)
+	element.r, element.g, element.b = r, g, b
 
-		if element.bg then
-			element.bg:SetVertexColor(r * NP.multiplier, g * NP.multiplier, b * NP.multiplier)
-		end
+	element:SetStatusBarColor(r, g, b)
+
+	if element.bg then
+		element.bg:SetVertexColor(r * NP.multiplier, g * NP.multiplier, b * NP.multiplier)
 	end
 
 	if element.PostUpdateColor then
@@ -127,7 +129,7 @@ function NP:Health_UpdateColor(_, unit)
 	end
 
 	local frame = self
-	if frame.HealthColorChangeCallbacks and b then
+	if frame.HealthColorChangeCallbacks then
 		for _, cb in ipairs(frame.HealthColorChangeCallbacks) do
 			cb(NP, frame, r, g, b)
 		end
@@ -174,8 +176,9 @@ function NP:Construct_Health(nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
 	Health:SetFrameLevel(nameplate:GetFrameLevel() + 1)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
-	NP:Health_FixBorderPixel(Health)
+	NP:PinBorderPixel(Health)
 	NP:Health_SyncBorderLevel(Health)
+	NP:HookBorderPin(Health)
 
 	local textFrame = CreateFrame('Frame', nil, Health)
 	textFrame:SetAllPoints(Health)

@@ -244,7 +244,7 @@ local function Enable(self)
 		element.healType = element.healType or HealComm.ALL_HEALS
 
 		self:RegisterEvent("UNIT_HEALTH", Path)
-		self:RegisterEvent("UNIT_HEALTH", Path)
+		self:RegisterEvent("UNIT_MAXHEALTH", Path)
 		self:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED", Path)
 
 
