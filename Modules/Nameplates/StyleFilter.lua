@@ -570,10 +570,13 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 	if HealthColorChanged then
 		frame.HealthColorChanged = nil
 		frame.StyleFilterChanges.HealthColor = nil
-		frame.Health:SetStatusBarColor(frame.Health.r, frame.Health.g, frame.Health.b)
+		local hr = frame.Health.r or 1
+		local hg = frame.Health.g or 1
+		local hb = frame.Health.b or 1
+		frame.Health:SetStatusBarColor(hr, hg, hb)
 		local cutawayHealth = (frame.Cutaway and frame.Cutaway.Health) or frame.CutawayHealth
 		if cutawayHealth then
-			cutawayHealth:SetStatusBarColor(frame.Health.r * 1.5, frame.Health.g * 1.5, frame.Health.b * 1.5, 1)
+			cutawayHealth:SetStatusBarColor(hr * 1.5, hg * 1.5, hb * 1.5, 1)
 		end
 	end
 	if BorderChanged then

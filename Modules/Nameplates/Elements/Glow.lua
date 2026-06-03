@@ -141,8 +141,7 @@ function NP:Configure_Glow(frame)
 	if glowStyle ~= "none" then
 		local color = self.db.colors.glowColor
 		local arrowTex = E.Media.Arrows.ArrowUp
-		local arrowSize = 20
-		local arrowXOffset, arrowYOffset = 0, 0
+		local arrowSize = frame.Health:GetHeight() * 2
 		local r, g, b, a = color.r, color.g, color.b, color.a
 
 		ti.LeftIndicator:SetTexture(arrowTex)
@@ -163,17 +162,17 @@ function NP:Configure_Glow(frame)
 
 		if glowStyle == "style3" or glowStyle == "style5" or glowStyle == "style6" then
 			if healthIsShown then
-				ti.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", arrowXOffset, arrowYOffset)
+				ti.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", 0, 0)
 			else
-				ti.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", arrowXOffset, arrowYOffset)
+				ti.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", 0, 0)
 			end
 		elseif glowStyle == "style4" or glowStyle == "style7" or glowStyle == "style8" then
 			if healthIsShown then
-				ti.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", arrowXOffset, arrowYOffset)
-				ti.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", -arrowXOffset, arrowYOffset)
+				ti.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", 0, 0)
+				ti.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", 0, 0)
 			else
-				ti.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", arrowXOffset, arrowYOffset)
-				ti.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -arrowXOffset, arrowYOffset)
+				ti.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", 0, 0)
+				ti.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", 0, 0)
 			end
 		end
 
@@ -187,9 +186,10 @@ function NP:Configure_Glow(frame)
 			ti.Shadow:SetOutside(frame.Health, E:Scale(E.PixelMode and 6 or 8), E:Scale(E.PixelMode and 6 or 8))
 		elseif glowStyle == "style2" or glowStyle == "style6" or glowStyle == "style8" then
 			if healthIsShown then
-				local size = E.Border + 14
-				ti.Spark:SetPoint("TOPLEFT", frame.Health, -(size * 2), size)
-				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Health, (size * 2), -size)
+				local hBleed = frame.Health:GetWidth() * 0.2
+				local vBleed = frame.Health:GetHeight() * 1.5
+				ti.Spark:SetPoint("TOPLEFT", frame.Health, -hBleed, vBleed)
+				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Health, hBleed, -vBleed)
 			else
 				ti.Spark:SetPoint("TOPLEFT", frame.Name, -20, 8)
 				ti.Spark:SetPoint("BOTTOMRIGHT", frame.Name, 20, -8)

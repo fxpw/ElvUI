@@ -11,7 +11,6 @@ local UnitIsTappedByPlayer = UnitIsTappedByPlayer
 local UnitIsTappedByAllThreatList = UnitIsTappedByAllThreatList
 local UnitClass = UnitClass
 local UnitReaction = UnitReaction
-local UnitIsConnected = UnitIsConnected
 local CreateFrame = CreateFrame
 
 function NP:BorderPixelSize(effectiveScale)
@@ -81,36 +80,33 @@ function NP:Health_UpdateColor(_, unit)
 
 	local element = self.Health
 
-	local r, g, b, t
-	local reaction = element.colorReaction and UnitReaction(unit, 'player')
-	if element.colorDisconnected and not UnitIsConnected(unit) then
-		t = self.colors.disconnected
-	elseif element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
+	local r, g, b, t, colored
+	local reaction = element.colorReaction and UnitReaction('player', unit)
+	if element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) and not UnitIsTappedByAllThreatList(unit) then
 		t = NP.db.colors.tapped
 	elseif element.colorClass and self.isPlayer then
 		local _, class = UnitClass(unit)
 		local cc = class and self.colors.class[class]
 		if cc then
 			r, g, b = cc[1] or cc.r, cc[2] or cc.g, cc[3] or cc.b
-			element.r, element.g, element.b = r, g, b
+			colored = true
 		end
 	elseif element.colorReaction and reaction then
 		t = NP.db.colors.reactions[reaction == 4 and 'neutral' or reaction <= 3 and 'bad' or 'good']
-	elseif element.colorHealth then
-		t = NP.db.colors.health
 	end
 
 	if t then
 		r, g, b = t.r, t.g, t.b
-		element.r, element.g, element.b = r, g, b
+		colored = true
 	end
 
 	local sf = NP:StyleFilterChanges(self)
 	if sf.HealthColor then
 		r, g, b = sf.HealthColor.r, sf.HealthColor.g, sf.HealthColor.b
+		colored = true
 	end
 
-	if not b then
+	if not colored then
 		local reaction2 = self.reaction
 		local t2 = reaction2 and NP.db.colors.reactions[reaction2 == 4 and 'neutral' or reaction2 <= 3 and 'bad' or 'good']
 		if t2 then
@@ -118,14 +114,15 @@ function NP:Health_UpdateColor(_, unit)
 		else
 			r, g, b = 0.8, 0.1, 0.1
 		end
+		colored = true
 	end
 
-	if b then
-		element:SetStatusBarColor(r, g, b)
+	element.r, element.g, element.b = r, g, b
 
-		if element.bg then
-			element.bg:SetVertexColor(r * NP.multiplier, g * NP.multiplier, b * NP.multiplier)
-		end
+	element:SetStatusBarColor(r, g, b)
+
+	if element.bg then
+		element.bg:SetVertexColor(r * NP.multiplier, g * NP.multiplier, b * NP.multiplier)
 	end
 
 	if element.PostUpdateColor then
@@ -133,7 +130,7 @@ function NP:Health_UpdateColor(_, unit)
 	end
 
 	local frame = self
-	if frame.HealthColorChangeCallbacks and b then
+	if frame.HealthColorChangeCallbacks then
 		for _, cb in ipairs(frame.HealthColorChangeCallbacks) do
 			cb(NP, frame, r, g, b)
 		end

@@ -47,8 +47,8 @@ function NP:ClassPower_UpdateRuneFrameVisibility()
 		if bar then
 			if enabled then
 				bar:Hide()
-			elseif driver then
-				driver:SetupClassNameplateBars()
+			else
+				bar:Show()
 			end
 		end
 	end
@@ -225,31 +225,38 @@ function NP:Construct_ClassPower(nameplate)
 	return ClassPower
 end
 
+local function ResetClassPowerBars(frame)
+	for i = 1, #frame do
+		local bar = frame[i]
+		if bar then
+			bar:Hide()
+			if bar.bg then bar.bg:Hide() end
+			if bar:GetScript('OnUpdate') then
+				bar:SetScript('OnUpdate', nil)
+			end
+		end
+	end
+end
+
 local function LayoutClassPowerBars(frame, db, maxButtons)
 	frame:ClearAllPoints()
 	frame:Point('CENTER', frame:GetParent(), 'CENTER', db.xOffset, db.yOffset)
 	frame:Size(db.width, db.height)
 
-	for i = 1, #frame do
-		frame[i]:Hide()
-		frame[i].bg:Hide()
-	end
+	ResetClassPowerBars(frame)
 
 	if maxButtons > 0 then
-		local barW = db.width / maxButtons
+		local gap  = E.mult
+		local barW = (db.width - (maxButtons - 1) * gap) / maxButtons
 		for i = 1, maxButtons do
 			local btn = frame[i]
 			btn:ClearAllPoints()
 			if i == 1 then
 				btn:Point('LEFT', frame, 'LEFT', 0, 0)
-				btn:Size(barW, db.height)
 			else
-				btn:Point('LEFT', frame[i - 1], 'RIGHT', 1, 0)
-				btn:Size(barW - 1, db.height)
-				if i == maxButtons then
-					btn:Point('RIGHT', frame)
-				end
+				btn:Point('LEFT', frame[i - 1], 'RIGHT', gap, 0)
 			end
+			btn:Size(barW, db.height)
 		end
 	end
 end
@@ -280,12 +287,14 @@ function NP:Update_ClassPower(nameplate)
 	end
 
 	if not COMBO_CLASS[E.myclass] and E.myclass ~= RUNE_CLASS then
+		ResetClassPowerBars(frame)
 		frame:Hide()
 		return
 	end
 
 	local plateDB = NP:PlateDB(nameplate)
 	if plateDB.nameOnly then
+		ResetClassPowerBars(frame)
 		frame:Hide()
 		return
 	end
@@ -296,15 +305,18 @@ function NP:Update_ClassPower(nameplate)
 	local db = isPlayer and (NP.db.units.PLAYER and NP.db.units.PLAYER.classpower)
 		or (isTarget and (NP.db.units.TARGET and NP.db.units.TARGET.classpower))
 	if not db then
+		ResetClassPowerBars(frame)
 		frame:Hide()
 		return
 	end
 
 	if not db.enable then
+		ResetClassPowerBars(frame)
 		frame:Hide()
 		return
 	end
 	if db.onlyInCombat and not InCombatLockdown() then
+		ResetClassPowerBars(frame)
 		frame:Hide()
 		return
 	end

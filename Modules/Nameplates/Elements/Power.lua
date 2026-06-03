@@ -17,9 +17,9 @@ function NP:Power_UpdateColor(_, unit)
 	local ptype, ptoken = UnitPowerType(unit)
 	element.token = ptoken
 
-	local r, g, b, t
+	local r, g, b, t, colored
 	if element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapped(unit) then
-		t = self.colors.tapped
+		t = NP.db.colors.tapped
 	elseif element.colorPower then
 		t = NP.db.colors.power and NP.db.colors.power[ptoken or ptype]
 	elseif (element.colorClass and self.isPlayer) then
@@ -29,14 +29,15 @@ function NP:Power_UpdateColor(_, unit)
 
 	if t then
 		r, g, b = t[1] or t.r, t[2] or t.g, t[3] or t.b
+		colored = true
 	end
 
-	if b then
+	if colored then
 		element:SetStatusBarColor(r, g, b)
-	end
 
-	if element.bg and b then
-		element.bg:SetVertexColor(r * NP.multiplier, g * NP.multiplier, b * NP.multiplier)
+		if element.bg then
+			element.bg:SetVertexColor(r * NP.multiplier, g * NP.multiplier, b * NP.multiplier)
+		end
 	end
 
 	if element.PostUpdateColor then
@@ -44,7 +45,7 @@ function NP:Power_UpdateColor(_, unit)
 	end
 
 	local frame = self
-	if frame.PowerColorChangeCallbacks and b then
+	if frame.PowerColorChangeCallbacks and colored then
 		for _, cb in ipairs(frame.PowerColorChangeCallbacks) do
 			cb(NP, frame, r, g, b)
 		end

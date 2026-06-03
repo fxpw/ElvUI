@@ -231,10 +231,6 @@ function NP:GetEngineCVar(key)
 		local v = GetCVar('nameplateMinScale')
 		return v and tonumber(v) < 1 or default
 	end
-	if key == 'dynamicAlpha' then
-		local v = GetCVar('nameplateMinAlpha')
-		return v and tonumber(v) < 1 or default
-	end
 
 	local entry = NP_ENGINE_CVARS[key]
 	if not entry then return default end
@@ -264,16 +260,6 @@ function NP:ApplyDynamicScale(e)
 	end
 end
 
-function NP:ApplyDynamicAlpha(e)
-	if e.dynamicAlpha then
-		NP:SetEngineCVar('nameplateMinAlpha', '0.6')
-		NP:SetEngineCVar('nameplateMaxAlpha', '1')
-	else
-		NP:SetEngineCVar('nameplateMinAlpha', '1')
-		NP:SetEngineCVar('nameplateMaxAlpha', '1')
-	end
-end
-
 function NP:ApplyEngineCVar(entry, value)
 	NP:SetEngineCVar(entry.cvar, value, entry.bool)
 end
@@ -286,9 +272,6 @@ function NP:ApplyEngineOption(key)
 	if key == 'dynamicScale' then
 		NP:ApplyDynamicScale(e)
 		return
-	elseif key == 'dynamicAlpha' then
-		NP:ApplyDynamicAlpha(e)
-		return
 	end
 
 	local entry = NP_ENGINE_CVARS[key]
@@ -296,8 +279,6 @@ function NP:ApplyEngineOption(key)
 
 	if key == 'selectedScale' then
 		NP:ApplyEngineCVar(entry, e.selectedScale)
-	elseif key == 'notSelectedAlpha' then
-		NP:ApplyEngineCVar(entry, NP.db.nonTargetTransparency or e.notSelectedAlpha)
 	else
 		NP:ApplyEngineCVar(entry, e[key])
 	end
