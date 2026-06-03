@@ -1671,6 +1671,100 @@ function E:DBConversions()
 			E.db.databars.experience.showBubbles = true
 		end
 	end
+
+	do
+		local enumToTag = {
+			NOSIGN              = "nosign",
+			CURRENT             = "current",
+			CURRENT_MAX         = "current-max",
+			CURRENT_PERCENT     = "current-percent",
+			CURRENT_MAX_PERCENT = "current-max-percent",
+			PERCENT             = "percent",
+			PERCENT_NOSIGN      = "percent-nosign",
+			DEFICIT             = "deficit",
+		}
+		local function ConvertNPText(textDB, prefix)
+			if type(textDB) ~= "table" then return end
+			local fmt = textDB.format
+			if type(fmt) ~= "string" or fmt == "" or find(fmt, "%[") then return end
+			if fmt == "BLANK" or fmt == "NONE" then
+				textDB.format = ""
+			elseif enumToTag[fmt] then
+				textDB.format = format("[%s:%s]", prefix, enumToTag[fmt])
+			end
+		end
+
+		local gmatch = string.gmatch
+		local nameRemap = {
+			["namenp:veryshort"] = "[name:veryshort]",
+			["namenp:short"]     = "[name:short]",
+			["namenp:medium"]    = "[name:medium]",
+			["namenp:long"]      = "[name:long]",
+			["name:last"]        = "[name:long]",
+		}
+		local function TagExists(tag)
+			return E.oUF and E.oUF.Tags and E.oUF.Tags.Methods[tag] ~= nil
+		end
+		local function ConvertNPName(nameDB, key)
+			local val = nameDB[key]
+			if type(val) ~= "string" or val == "" then return end
+			if not find(val, "%[") then
+				nameDB[key] = nameRemap[val] or "[name:long]"
+				return
+			end
+			local fixed, ok = val, true
+			for tag in gmatch(val, "%[(.-)%]") do
+				if not TagExists(tag) then
+					if nameRemap[tag] then
+						fixed = gsub(fixed, "%["..tag.."%]", nameRemap[tag])
+					else
+						ok = false
+					end
+				end
+			end
+			if not ok then
+				nameDB[key] = "[name:long]"
+			elseif fixed ~= val then
+				nameDB[key] = fixed
+			end
+		end
+
+		if E.db.nameplates and E.db.nameplates.units then
+			for _, unitDB in pairs(E.db.nameplates.units) do
+				if type(unitDB) == "table" then
+					if unitDB.health then ConvertNPText(unitDB.health.text, "health") end
+					if unitDB.power then ConvertNPText(unitDB.power.text, "power") end
+					if type(unitDB.name) == "table" then
+						ConvertNPName(unitDB.name, "textFormat")
+						ConvertNPName(unitDB.name, "format")
+					end
+				end
+			end
+
+			if not E.db.nameplates.fpClassColorConverted then
+				E.db.nameplates.fpClassColorConverted = true
+				local fp = E.db.nameplates.units.FRIENDLY_PLAYER
+				if type(fp) == "table" and type(fp.health) == "table"
+					and fp.health.useClassColor == false and (fp.healthbar ~= nil or fp.title ~= nil)
+				then
+					fp.health.useClassColor = true
+				end
+			end
+
+			if not E.db.nameplates.npNameClassColorConverted then
+				E.db.nameplates.npNameClassColorConverted = true
+				local fp = E.db.nameplates.units.FRIENDLY_PLAYER
+				if type(fp) == "table" and (fp.healthbar ~= nil or fp.title ~= nil) then
+					for _, unit in ipairs({"FRIENDLY_PLAYER", "ENEMY_PLAYER"}) do
+						local u = E.db.nameplates.units[unit]
+						if type(u) == "table" and type(u.name) == "table" and u.name.useClassColor == false then
+							u.name.useClassColor = true
+						end
+					end
+				end
+			end
+		end
+	end
 end
 
 function E:RefreshModulesDB()

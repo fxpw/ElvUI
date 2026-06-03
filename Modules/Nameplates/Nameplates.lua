@@ -296,7 +296,7 @@ function NP:ApplyEngineOption(key)
 	if not entry then return end
 
 	if key == 'selectedScale' then
-		NP:ApplyEngineCVar(entry, NP.db.useTargetScale and NP.db.targetScale or e.selectedScale)
+		NP:ApplyEngineCVar(entry, e.selectedScale)
 	elseif key == 'notSelectedAlpha' then
 		NP:ApplyEngineCVar(entry, NP.db.nonTargetTransparency or e.notSelectedAlpha)
 	else
@@ -385,10 +385,7 @@ function NP:UpdateCVars()
 	NP:SetEngineCVar('showVKeyCastbar', '1')
 	NP:SetEngineCVar('nameplateAllowOverlap', db.motionType == 'STACKED' and '0' or '1')
 
-	-- ElvUI owns these natively (nameOnly filter / per-unit enable); pin the CVars so they don't duplicate our settings
 	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
-	NP:SetEngineCVar('nameplateShowFriends', '1')
-	NP:SetEngineCVar('nameplateShowEnemies', '1')
 
 	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
 	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
@@ -666,6 +663,10 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		NP:StyleFilterEventWatch(nameplate)
 		NP:StyleFilterSetVariables(nameplate)
 
+		if nameplate ~= NP.TestFrame then
+			E:Delay(0.1, NP.UpdatePlateName, NP, nameplate)
+		end
+
 		if NP.db.fadeIn and nameplate ~= NP.TestFrame then
 			NP:PlateFade(nameplate, 1, 0, 1)
 		end
@@ -683,7 +684,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 			baseFrame.UnitFrame:Hide()
 		end
 
-		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame then
+		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame and NamePlateDriverFrame.GetClassNameplateManaBar then
 			local manaBar = NamePlateDriverFrame:GetClassNameplateManaBar()
 			if manaBar and not manaBar._elvHooked then
 				manaBar:HookScript('OnShow', function(self) self:Hide() end)
@@ -875,9 +876,6 @@ function NP:SetupTarget(nameplate, _)
 end
 
 function NP:ScalePlate(nameplate, scale)
-	if nameplate.isTarget and NP.db.useTargetScale then
-		scale = scale * NP.db.targetScale
-	end
 	nameplate:SetScale(scale * (E.uiscale or 1))
 	if nameplate.Health then NP:Health_FixBorderPixel(nameplate.Health) end
 end
@@ -963,6 +961,12 @@ function NP:Initialize()
 	self.db = E.db.nameplates
 
 	if not E.private.nameplates.enable then return end
+
+	if not (NamePlateDriverFrame and C_NamePlate and C_NamePlate.GetNamePlateForUnit) then
+		E:Print('нейплейты отключены: в клиенте сломан API C_NamePlate.')
+		return
+	end
+
 	self.Initialized = true
 
 	NP.thinBorders = NP.db.thinBorders

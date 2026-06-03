@@ -442,9 +442,6 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleFilterChanges.Scale = actions.scale
 		local scale = (frame.ThreatScale or 1)
 		frame.ActionScale = actions.scale
-		if frame.isTarget and mod.db.useTargetScale then
-			scale = scale * mod.db.targetScale
-		end
 		mod:SetFrameScale(frame, scale * actions.scale)
 	end
 	if AlphaChanged then
@@ -599,9 +596,6 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		frame.StyleFilterChanges.Scale = nil
 		frame.ActionScale = nil
 		local scale = frame.ThreatScale or 1
-		if frame.isTarget and mod.db.useTargetScale then
-			scale = scale * mod.db.targetScale
-		end
 		mod:SetFrameScale(frame, scale)
 	end
 	if AlphaChanged then
