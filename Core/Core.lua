@@ -1694,11 +1694,50 @@ function E:DBConversions()
 			end
 		end
 
+		local gmatch = string.gmatch
+		local nameRemap = {
+			["namenp:veryshort"] = "[name:veryshort]",
+			["namenp:short"]     = "[name:short]",
+			["namenp:medium"]    = "[name:medium]",
+			["namenp:long"]      = "[name:long]",
+			["name:last"]        = "[name:long]",
+		}
+		local function TagExists(tag)
+			return E.oUF and E.oUF.Tags and E.oUF.Tags.Methods[tag] ~= nil
+		end
+		local function ConvertNPName(nameDB, key)
+			local val = nameDB[key]
+			if type(val) ~= "string" or val == "" then return end
+			if not find(val, "%[") then
+				nameDB[key] = nameRemap[val] or "[name:long]"
+				return
+			end
+			local fixed, ok = val, true
+			for tag in gmatch(val, "%[(.-)%]") do
+				if not TagExists(tag) then
+					if nameRemap[tag] then
+						fixed = gsub(fixed, "%["..tag.."%]", nameRemap[tag])
+					else
+						ok = false
+					end
+				end
+			end
+			if not ok then
+				nameDB[key] = "[name:long]"
+			elseif fixed ~= val then
+				nameDB[key] = fixed
+			end
+		end
+
 		if E.db.nameplates and E.db.nameplates.units then
 			for _, unitDB in pairs(E.db.nameplates.units) do
 				if type(unitDB) == "table" then
 					if unitDB.health then ConvertNPText(unitDB.health.text, "health") end
 					if unitDB.power then ConvertNPText(unitDB.power.text, "power") end
+					if type(unitDB.name) == "table" then
+						ConvertNPName(unitDB.name, "textFormat")
+						ConvertNPName(unitDB.name, "format")
+					end
 				end
 			end
 		end
