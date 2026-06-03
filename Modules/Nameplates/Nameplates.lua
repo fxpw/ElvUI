@@ -211,6 +211,7 @@ local NP_ENGINE_CVARS = {
 	horizontalScale = { cvar = 'NamePlateHorizontalScale', driver = true },
 	verticalScale = { cvar = 'NamePlateVerticalScale', driver = true },
 	globalScale = { cvar = 'nameplateGlobalScale', driver = true },
+	occludedAlphaMult = { cvar = 'nameplateOccludedAlphaMult' },
 	selectedScale = { cvar = 'nameplateSelectedScale', driver = true },
 	showSelf = { cvar = 'nameplateShowSelf', bool = true, driver = true },
 	personalClickThrough = { cvar = 'NameplatePersonalClickThrough', bool = true },
@@ -331,6 +332,7 @@ function NP:ImportEngineFromCVars(e)
 	e.horizontalScale = NP_CVarNum('NamePlateHorizontalScale', e.horizontalScale)
 	e.verticalScale = NP_CVarNum('NamePlateVerticalScale', e.verticalScale)
 	e.globalScale = NP_CVarNum('nameplateGlobalScale', e.globalScale)
+	e.occludedAlphaMult = NP_CVarNum('nameplateOccludedAlphaMult', e.occludedAlphaMult)
 	e.selectedScale = NP_CVarNum('nameplateSelectedScale', e.selectedScale)
 	e.showSelf = NP_CVarBool('nameplateShowSelf', e.showSelf)
 	e.personalClickThrough = NP_CVarBool('NameplatePersonalClickThrough', e.personalClickThrough)
@@ -388,7 +390,6 @@ function NP:UpdateCVars()
 	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
 	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
 	NP:SetEngineCVar('nameplateNotSelectedAlpha', '1')
-	NP:SetEngineCVar('nameplateOccludedAlphaMult', '1')
 	NP:SetEngineCVar('nameplateSelfAlpha', '1')
 	NP:SetEngineCVar('nameplateMinAlpha', '1')
 	NP:SetEngineCVar('nameplateMaxAlpha', '1')
