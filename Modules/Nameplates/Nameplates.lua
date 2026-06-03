@@ -69,6 +69,9 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u and UnitExists(u) then
+				if UnitReaction('player', u) ~= plate.reaction then
+					NP:RefreshPlateReaction(plate)
+				end
 				local h = plate.Health
 				if h then
 					local cur = UnitHealth(u)
@@ -589,6 +592,23 @@ function NP:UpdatePlateBase(nameplate)
 	nameplate.previousType = nameplate.frameType
 end
 
+function NP:RefreshPlateReaction(nameplate)
+	local unit = nameplate.unit
+	if not unit then return end
+
+	nameplate.reaction   = UnitReaction('player', unit)
+	nameplate.isFriend   = UnitIsFriend('player', unit)
+	nameplate.faction    = UnitFactionGroup(unit)
+	nameplate.classColor = (nameplate.isPlayer and E:ClassColor(nameplate.classFile)) or nil
+
+	NP:UpdatePlateType(nameplate)
+	NP:UpdatePlateSize(nameplate)
+	NP:UpdatePlateBase(nameplate)
+
+	NP:StyleFilterUpdate(nameplate, 'UNIT_FACTION')
+	nameplate.StyleFilterBaseAlreadyUpdated = nil
+end
+
 function NP:NamePlateCallBack(nameplate, event, unit)
 	if event == 'PLAYER_TARGET_CHANGED' then
 		return
@@ -597,19 +617,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 	end
 
 	if event == 'UNIT_FACTION' then
-		if not unit then unit = nameplate.unit end
-
-		nameplate.reaction   = UnitReaction('player', unit)
-		nameplate.isFriend   = UnitIsFriend('player', unit)
-		nameplate.faction    = UnitFactionGroup(unit)
-		nameplate.classColor = (nameplate.isPlayer and E:ClassColor(nameplate.classFile)) or nil
-
-		NP:UpdatePlateType(nameplate)
-		NP:UpdatePlateSize(nameplate)
-		NP:UpdatePlateBase(nameplate)
-
-		NP:StyleFilterUpdate(nameplate, event)
-		nameplate.StyleFilterBaseAlreadyUpdated = nil
+		NP:RefreshPlateReaction(nameplate)
 
 	elseif event == 'NAME_PLATE_UNIT_ADDED' then
 		if not unit then unit = nameplate.unit end
