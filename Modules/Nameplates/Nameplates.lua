@@ -138,48 +138,49 @@ do
 					local engineLevel = engineParent and engineParent:GetFrameLevel()
 					if engineLevel and plate._engineBaseLevel ~= engineLevel then
 						plate._engineBaseLevel = engineLevel
-						plate.Health:SetFrameLevel(engineLevel + 1)
+						local base = (plate._npSlot or 0) * 10
+						plate.Health:SetFrameLevel(base + 1)
 						NP:Health_SyncBorderLevel(plate.Health)
 						NP:Health_SyncTextLevel(plate.Health)
-						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(engineLevel + 1) end
-						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(engineLevel + 2) end
+						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(base + 1) end
+						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(base + 2) end
 						local Buffs = plate.Buffs
 						if Buffs and Buffs:IsShown() then
-							Buffs:SetFrameLevel(engineLevel + 2)
+							Buffs:SetFrameLevel(base + 2)
 							local n = Buffs.visibleBuffs or #Buffs
 							for i = 1, n do
 								local btn = Buffs[i]
 								if btn and btn:IsShown() then
-									btn:SetFrameLevel(engineLevel + 3)
+									btn:SetFrameLevel(base + 3)
 									local cd = btn.cd
 									if cd then
-										cd:SetFrameLevel(engineLevel + 4)
-										if cd.timer then cd.timer:SetFrameLevel(engineLevel + 5) end
+										cd:SetFrameLevel(base + 4)
+										if cd.timer then cd.timer:SetFrameLevel(base + 5) end
 									end
 								end
 							end
 						end
 						local Debuffs = plate.Debuffs
 						if Debuffs and Debuffs:IsShown() then
-							Debuffs:SetFrameLevel(engineLevel + 2)
+							Debuffs:SetFrameLevel(base + 2)
 							local n = Debuffs.visibleDebuffs or #Debuffs
 							for i = 1, n do
 								local btn = Debuffs[i]
 								if btn and btn:IsShown() then
-									btn:SetFrameLevel(engineLevel + 3)
+									btn:SetFrameLevel(base + 3)
 									local cd = btn.cd
 									if cd then
-										cd:SetFrameLevel(engineLevel + 4)
-										if cd.timer then cd.timer:SetFrameLevel(engineLevel + 5) end
+										cd:SetFrameLevel(base + 4)
+										if cd.timer then cd.timer:SetFrameLevel(base + 5) end
 									end
 								end
 							end
 						end
 						if plate.ClassPower and plate.ClassPower:IsShown() then
-							plate.ClassPower:SetFrameLevel(engineLevel + 2)
+							plate.ClassPower:SetFrameLevel(base + 2)
 							for i = 1, #plate.ClassPower do
 								local cp = plate.ClassPower[i]
-								if cp then cp:SetFrameLevel(engineLevel + 3) end
+								if cp then cp:SetFrameLevel(base + 3) end
 							end
 						end
 					end
@@ -471,7 +472,7 @@ function NP:StylePlate(nameplate)
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate:SetFrameStrata('BACKGROUND')
-	nameplate._npBase = nameplate:GetFrameLevel()
+	nameplate._npSlot = tonumber((nameplate:GetName() or ''):match('(%d+)$')) or 0
 
 	nameplate.Health = NP:Construct_Health(nameplate)
 	nameplate.RaisedElement = nameplate.Health
