@@ -190,6 +190,8 @@ function NP:Construct_ClassPower(nameplate)
 	local frameName  = nameplate:GetName()
 	local ClassPower = CreateFrame('Frame', frameName..'ClassPower', nameplate)
 	ClassPower:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
+	NP:FixBorderPixel(ClassPower)
+	ClassPower.backdrop.ignoreFrameTemplates = true
 	ClassPower:Hide()
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then ClassPower:SetFrameStrata(s) else ClassPower:SetFrameStrata('MEDIUM') end end
 	ClassPower:SetFrameLevel(nameplate:GetFrameLevel() + 2)

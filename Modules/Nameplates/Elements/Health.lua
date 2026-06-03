@@ -27,10 +27,10 @@ function NP:BorderPixelSize(effectiveScale)
 	return factor / s
 end
 
-function NP:Health_FixBorderPixel(Health)
-	local backdrop = Health and Health.backdrop
+function NP:FixBorderPixel(frame)
+	local backdrop = frame and frame.backdrop
 	if not backdrop or not backdrop.GetBackdrop then return end
-	local eff = backdrop:GetEffectiveScale()
+	local eff = frame:GetEffectiveScale()
 	local px = NP:BorderPixelSize(eff)
 	local bd = backdrop:GetBackdrop()
 	if not bd then return end
@@ -45,10 +45,14 @@ function NP:Health_FixBorderPixel(Health)
 			backdrop:SetBackdropBorderColor(unpack(E.media.unitframeBorderColor))
 		end
 	end
-	backdrop:SetOutside(Health, px, px)
+	backdrop:ClearAllPoints()
+	backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -px, px)
+	backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", px, -px)
 	backdrop.ignoreFrameTemplates = true
 	backdrop._npPinnedScale = eff
 end
+
+NP.Health_FixBorderPixel = NP.FixBorderPixel
 
 function NP:Health_SyncBorderLevel(Health)
 	local backdrop = Health and Health.backdrop
@@ -174,8 +178,13 @@ function NP:Construct_Health(nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
 	Health:SetFrameLevel(nameplate:GetFrameLevel() + 1)
 	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
-	NP:Health_FixBorderPixel(Health)
+	NP:FixBorderPixel(Health)
 	NP:Health_SyncBorderLevel(Health)
+
+	Health.backdrop.ignoreFrameTemplates = true
+	hooksecurefunc(Health, 'SetStatusBarTexture', function()
+		NP:FixBorderPixel(Health)
+	end)
 
 	local textFrame = CreateFrame('Frame', nil, Health)
 	textFrame:SetAllPoints(Health)

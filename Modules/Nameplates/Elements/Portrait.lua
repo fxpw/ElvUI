@@ -33,6 +33,8 @@ function NP:Construct_Portrait(nameplate)
 	local Portrait = nameplate:CreateTexture(nameplate:GetName()..'Portrait', 'OVERLAY', nil, 2)
 	Portrait:SetTexCoord(.18, .82, .18, .82)
 	Portrait:CreateBackdrop(nil, nil, nil, nil, nil, true, true)
+	NP:FixBorderPixel(Portrait)
+	Portrait.backdrop.ignoreFrameTemplates = true
 	Portrait:Hide()
 
 	Portrait.PostUpdate = NP.Portrait_PostUpdate

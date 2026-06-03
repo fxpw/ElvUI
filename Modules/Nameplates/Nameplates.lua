@@ -48,6 +48,12 @@ NP.multiplier = 0.35
 NP.IsInGroup  = false
 NP.TEST_FRAME_SCALE = 1.75
 
+local function CheckFix(el)
+	if el and el.backdrop and el.backdrop._npPinnedScale ~= el:GetEffectiveScale() then
+		NP:FixBorderPixel(el)
+	end
+end
+
 do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
@@ -124,11 +130,11 @@ do
 					plate:UpdateTags()
 				end
 
-				-- re-pin 1px border when engine rescale changes effectiveScale
-				local bdf = h and h.backdrop
-				if bdf and bdf._npPinnedScale ~= bdf:GetEffectiveScale() then
-					NP:Health_FixBorderPixel(h)
-				end
+				CheckFix(h)
+				CheckFix(plate.Power)
+				CheckFix(plate.Castbar)
+				CheckFix(plate.ClassPower)
+				CheckFix(plate.Portrait)
 
 				if not plate.appliedFrameLevelBoost then
 					-- cache engine parent once; only GetFrameLevel + dirty-check run per tick
@@ -877,7 +883,11 @@ end
 
 function NP:ScalePlate(nameplate, scale)
 	nameplate:SetScale(scale * (E.uiscale or 1))
-	if nameplate.Health then NP:Health_FixBorderPixel(nameplate.Health) end
+	if nameplate.Health then NP:FixBorderPixel(nameplate.Health) end
+	if nameplate.Power then NP:FixBorderPixel(nameplate.Power) end
+	if nameplate.Castbar then NP:FixBorderPixel(nameplate.Castbar) end
+	if nameplate.ClassPower then NP:FixBorderPixel(nameplate.ClassPower) end
+	if nameplate.Portrait then NP:FixBorderPixel(nameplate.Portrait) end
 end
 
 function NP:SetFrameScale(frame, scale)
