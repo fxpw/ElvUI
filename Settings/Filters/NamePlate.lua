@@ -30,8 +30,8 @@ G.nameplates.filters = {
 			requireTarget = true,
 		},
 		actions = {
-			nameOnly = true,
-			alpha = 35,
+			nameOnly = false,
+			alpha = 50,
 		},
 	},
 	ElvUI_Boss = {
