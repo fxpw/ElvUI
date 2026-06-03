@@ -385,10 +385,7 @@ function NP:UpdateCVars()
 	NP:SetEngineCVar('showVKeyCastbar', '1')
 	NP:SetEngineCVar('nameplateAllowOverlap', db.motionType == 'STACKED' and '0' or '1')
 
-	-- ElvUI owns these natively (nameOnly filter / per-unit enable); pin the CVars so they don't duplicate our settings
 	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
-	NP:SetEngineCVar('nameplateShowFriends', '1')
-	NP:SetEngineCVar('nameplateShowEnemies', '1')
 
 	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
 	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
