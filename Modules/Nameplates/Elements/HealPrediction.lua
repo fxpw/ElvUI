@@ -7,12 +7,8 @@ local StatusBarPrototype = Engine.Compat.StatusBarPrototype
 local CreateFrame = CreateFrame
 
 local DEFAULT_COLORS = {
-	myBar           = { r = 0,   g = 1,   b = 0.5, a = 0.25 },
-	otherBar        = { r = 0,   g = 1,   b = 0,   a = 0.25 },
-	absorbs         = { r = 0,   g = 1,   b = 1,   a = 0.25 },
-	healAbsorbs     = { r = 1,   g = 0,   b = 0,   a = 0.25 },
-	overabsorbs     = { r = 0,   g = 1,   b = 1,   a = 1 },
-	overhealabsorbs = { r = 1,   g = 0,   b = 0,   a = 1 },
+	myBar    = { r = 0, g = 1, b = 0.5, a = 0.25 },
+	otherBar = { r = 0, g = 1, b = 0,   a = 0.25 },
 }
 
 local function GetColor(db, key)
@@ -52,6 +48,11 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 		HealPrediction_SetTransparent(element, false)
 	end
 
+	if NP.db.absorbSpark == false then
+		element.overAbsorb:Hide()
+		element.overHealAbsorb:Hide()
+	end
+
 	local absorbBar = element.absorbBar
 	local healAbsorbBar = element.healAbsorbBar
 
@@ -66,22 +67,12 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 	local missingHealth = maxHealth - health
 	local healthPostHeal = health + (myIncomingHeal or 0) + (otherIncomingHeal or 0)
 
-	if hasOverAbsorb then
-		local c = GetColor(db, 'overabsorbs')
-		absorbBar:SetStatusBarColor(c.r, c.g, c.b, c.a)
-	else
-		local c = GetColor(db, 'absorbs')
-		absorbBar:SetStatusBarColor(c.r, c.g, c.b, c.a)
-	end
+	local ac = NP.db.colors.absorbs
+	absorbBar:SetStatusBarColor(ac.r, ac.g, ac.b, ac.a)
 
 	if healAbsorbBar then
-		if hasOverHealAbsorb then
-			local c = GetColor(db, 'overhealabsorbs')
-			healAbsorbBar:SetStatusBarColor(c.r, c.g, c.b, c.a)
-		else
-			local c = GetColor(db, 'healAbsorbs')
-			healAbsorbBar:SetStatusBarColor(c.r, c.g, c.b, c.a)
-		end
+		local hac = NP.db.colors.healAbsorbs
+		healAbsorbBar:SetStatusBarColor(hac.r, hac.g, hac.b, hac.a)
 	end
 
 	if db.absorbStyle == 'NORMAL' then
@@ -103,7 +94,6 @@ local function HealPrediction_PostUpdate(element, _, myIncomingHeal, otherIncomi
 	elseif db.absorbStyle == 'REVERSED' then
 		if absorb > health then
 			absorbBar:SetValue(health)
-			if healAbsorbBar then healAbsorbBar:SetValue(health) end
 		end
 	elseif db.absorbStyle == 'OVERFLOW' then
 		if hasOverAbsorb then
@@ -208,8 +198,8 @@ function NP:Configure_HealPrediction(nameplate)
 
 	local myC      = GetColor(db, 'myBar')
 	local otherC   = GetColor(db, 'otherBar')
-	local absorbC  = GetColor(db, 'absorbs')
-	local healAbC  = GetColor(db, 'healAbsorbs')
+	local absorbC  = NP.db.colors.absorbs
+	local healAbC  = NP.db.colors.healAbsorbs
 	element.myBar:SetStatusBarColor(myC.r, myC.g, myC.b, myC.a)
 	element.otherBar:SetStatusBarColor(otherC.r, otherC.g, otherC.b, otherC.a)
 	element.absorbBar:SetStatusBarColor(absorbC.r, absorbC.g, absorbC.b, absorbC.a)
@@ -247,19 +237,31 @@ function NP:Configure_HealPrediction(nameplate)
 		element.absorbBar:SetPoint('RIGHT', health, 'RIGHT')
 	end
 
+	local sparkW = 6
 	element.overAbsorb:ClearAllPoints()
-	element.overAbsorb:SetSize(8, height + 4)
-	element.overAbsorb:SetPoint('LEFT', health, 'RIGHT', -4, 0)
+	element.overAbsorb:SetSize(sparkW, barHeight)
+	element.overAbsorb:SetPoint('CENTER', health, 'RIGHT')
+	element.overAbsorb:SetVertexColor(absorbC.r, absorbC.g, absorbC.b)
 
 	element.overHealAbsorb:ClearAllPoints()
-	element.overHealAbsorb:SetSize(8, height + 4)
-	element.overHealAbsorb:SetPoint('RIGHT', health, 'LEFT', 4, 0)
+	element.overHealAbsorb:SetSize(sparkW, barHeight)
+	element.overHealAbsorb:SetPoint('CENTER', health, 'LEFT')
+	element.overHealAbsorb:SetVertexColor(healAbC.r, healAbC.g, healAbC.b)
+
+	if NP.db.absorbSpark == false then
+		element.overAbsorb:Hide()
+		element.overHealAbsorb:Hide()
+	end
 
 	element.maxOverflow = 1 + (db.maxOverflow or 0)
 	HealPrediction_SetTransparent(element, HealPrediction_ShouldHide(nameplate, plateDB))
 
 	if not nameplate:IsElementEnabled('HealthPrediction') then
 		nameplate:EnableElement('HealthPrediction')
+	end
+
+	if element.ForceUpdate and nameplate.unit then
+		element:ForceUpdate()
 	end
 end
 

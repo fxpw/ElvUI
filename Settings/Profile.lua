@@ -515,6 +515,7 @@ P.nameplates = {
 	smoothbars = false,
 	statusbar = 'ElvUI Norm',
 	thinBorders = false,
+	absorbSpark = true,
 	nonTargetTransparency = 0.40,
 	alwaysShowTargetHealth = true,
 	clickThrough = {
@@ -589,6 +590,8 @@ P.nameplates = {
 		mouseoverHighlight = {r = 1, g = 1, b = 1, a = 0.35},
 		lowHealthColor = {r = 1, g = 1, b = 0.3, a = 1},
 		lowHealthHalf = {r = 1, g = 0.3, b = 0.3, a = 1},
+		absorbs = {r = 0, g = 1, b = 1, a = 0.25},
+		healAbsorbs = {r = 1, g = 0, b = 0, a = 0.25},
 		castColor = {r = 1, g = 0.81, b = 0},
 		tapped = {r = 0.55, g = 0.57, b = 0.61},
 		castNoInterruptColor = {r = 0.78, g = 0.25, b = 0.25},
