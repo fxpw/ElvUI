@@ -1671,6 +1671,38 @@ function E:DBConversions()
 			E.db.databars.experience.showBubbles = true
 		end
 	end
+
+	do
+		local enumToTag = {
+			NOSIGN              = "nosign",
+			CURRENT             = "current",
+			CURRENT_MAX         = "current-max",
+			CURRENT_PERCENT     = "current-percent",
+			CURRENT_MAX_PERCENT = "current-max-percent",
+			PERCENT             = "percent",
+			PERCENT_NOSIGN      = "percent-nosign",
+			DEFICIT             = "deficit",
+		}
+		local function ConvertNPText(textDB, prefix)
+			if type(textDB) ~= "table" then return end
+			local fmt = textDB.format
+			if type(fmt) ~= "string" or fmt == "" or find(fmt, "%[") then return end
+			if fmt == "BLANK" or fmt == "NONE" then
+				textDB.format = ""
+			elseif enumToTag[fmt] then
+				textDB.format = format("[%s:%s]", prefix, enumToTag[fmt])
+			end
+		end
+
+		if E.db.nameplates and E.db.nameplates.units then
+			for _, unitDB in pairs(E.db.nameplates.units) do
+				if type(unitDB) == "table" then
+					if unitDB.health then ConvertNPText(unitDB.health.text, "health") end
+					if unitDB.power then ConvertNPText(unitDB.power.text, "power") end
+				end
+			end
+		end
+	end
 end
 
 function E:RefreshModulesDB()
