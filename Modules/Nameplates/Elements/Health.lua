@@ -114,7 +114,6 @@ function NP:Health_UpdateColor(_, unit)
 		else
 			r, g, b = 0.8, 0.1, 0.1
 		end
-		colored = true
 	end
 
 	element.r, element.g, element.b = r, g, b
