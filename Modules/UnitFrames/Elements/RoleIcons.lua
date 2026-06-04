@@ -174,6 +174,13 @@ function UF:UpdateRoleIcon(event)
 		return
 	end
 
+	if not self.isForced and not self.unit then
+		if lfdrole then
+			lfdrole:Hide()
+		end
+		return
+	end
+
 	local role = GetUnitRole(self.unit)
 	if self.isForced and role == "NONE" then
 		local rnd = random(1, 3)
