@@ -442,9 +442,8 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.StyleChanged = true
 		frame.ScaleChanged = true
 		frame.StyleFilterChanges.Scale = actions.scale
-		local scale = (frame.ThreatScale or 1)
 		frame.ActionScale = actions.scale
-		mod:SetFrameScale(frame, scale * actions.scale)
+		mod:ApplyScale(frame)
 	end
 	if AlphaChanged then
 		frame.StyleChanged = true
@@ -600,8 +599,7 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		frame.ScaleChanged = nil
 		frame.StyleFilterChanges.Scale = nil
 		frame.ActionScale = nil
-		local scale = frame.ThreatScale or 1
-		mod:SetFrameScale(frame, scale)
+		mod:ApplyScale(frame)
 	end
 	if AlphaChanged then
 		frame.AlphaChanged = nil
@@ -1246,13 +1244,9 @@ function mod:StyleFilterUpdate(frame, event)
 	if frame.pendingFrameLevelReset then
 		frame.pendingFrameLevelReset = nil
 		frame.appliedFrameLevelBoost = nil
-		local base = (frame._npSlot or 0) * 10
-		frame.Health:SetFrameLevel(base + 1)
-		mod:Health_SyncBorderLevel(frame.Health)
-		mod:Health_SyncTextLevel(frame.Health)
-		if frame.Castbar then frame.Castbar:SetFrameLevel(base + 2) end
-		if frame.Buffs   then frame.Buffs:SetFrameLevel(base + 2)   end
-		if frame.Debuffs then frame.Debuffs:SetFrameLevel(base + 2) end
+		frame._engineBaseLevel = nil
+		mod:ApplyFrameLevels(frame, mod:SlotBase(frame))
+		if frame.isTarget then mod:UpdateTargetFrameLevel(frame) end
 	end
 
 	mod:Update_TargetIndicator(frame)
