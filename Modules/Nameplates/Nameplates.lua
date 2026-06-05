@@ -39,6 +39,8 @@ local SetBarValue = (PixelUtil and PixelUtil.SetStatusBarValue)
 	and function(bar, v) PixelUtil.SetStatusBarValue(bar, v) end
 	or function(bar, v) bar:SetValue(v) end
 
+local function HideSelf(self) self:Hide() end
+
 NP.Plates        = {}
 NP.GroupRoles    = {}
 NP.PlateGUID     = {}
@@ -70,7 +72,7 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u and UnitExists(u) then
-				if UnitReaction('player', u) ~= plate.reaction then
+				if doTags and UnitReaction('player', u) ~= plate.reaction then
 					NP:RefreshPlateReaction(plate)
 				end
 				local h = plate.Health
@@ -128,13 +130,22 @@ do
 					plate:UpdateTags()
 				end
 
-				if plate._npPinnedScale ~= plate:GetEffectiveScale() then
+				if doTags and plate._npPinnedScale ~= plate:GetEffectiveScale() then
 					NP:PinPlateBorders(plate)
 				end
 
 				if not plate.appliedFrameLevelBoost then
 					if plate._npTargetBoost then
-						NP:ApplyFrameLevels(plate, NP.TARGET_LEVEL_FLOOR)
+						local b = (plate.Buffs and plate.Buffs.visibleBuffs) or 0
+						local d = (plate.Debuffs and plate.Debuffs.visibleDebuffs) or 0
+						local extra = ((plate.Castbar and plate.Castbar:IsShown()) and 1 or 0)
+							+ ((plate.ClassPower and plate.ClassPower:IsShown()) and 2 or 0)
+							+ ((plate.Power and plate.Power:IsShown()) and 4 or 0)
+						local sig = b + d * 64 + extra * 16384
+						if plate._npTargetSig ~= sig then
+							plate._npTargetSig = sig
+							NP:ApplyFrameLevels(plate, NP.TARGET_LEVEL_FLOOR)
+						end
 					else
 						local engineParent = plate._engineParent
 						if not engineParent then
@@ -603,7 +614,6 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 		NP:UpdatePlateBase(nameplate)
-		NP:UpdatePlateTargetState(nameplate)
 		NP:UpdateTargetFrameLevel(nameplate)
 		NP:UpdatePlateMouseoverState(nameplate)
 		NP:RegisterAuraUnitEvents(nameplate, unit)
@@ -626,7 +636,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		local baseFrame = nameplate:GetParent()
 		if baseFrame and baseFrame.UnitFrame then
 			if not baseFrame.UnitFrame._elvHooked then
-				baseFrame.UnitFrame:HookScript('OnShow', function(self) self:Hide() end)
+				baseFrame.UnitFrame:HookScript('OnShow', HideSelf)
 				baseFrame.UnitFrame._elvHooked = true
 			end
 			baseFrame.UnitFrame:Hide()
@@ -635,7 +645,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame and NamePlateDriverFrame.GetClassNameplateManaBar then
 			local manaBar = NamePlateDriverFrame:GetClassNameplateManaBar()
 			if manaBar and not manaBar._elvHooked then
-				manaBar:HookScript('OnShow', function(self) self:Hide() end)
+				manaBar:HookScript('OnShow', HideSelf)
 				manaBar._elvHooked = true
 			end
 			if manaBar then manaBar:Hide() end
@@ -655,6 +665,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		E:UIFrameFadeRemoveFrame(nameplate)
 		if nameplate._npTargetBoost then
 			nameplate._npTargetBoost = nil
+			nameplate._npTargetSig = nil
 			nameplate._engineBaseLevel = nil
 		end
 
@@ -760,8 +771,9 @@ function NP:ForEachPlate(functionToRun, ...)
 	end
 end
 
+local EMPTY_CHANGES = {}
 function NP:StyleFilterChanges(frame)
-	return (frame and frame.StyleFilterChanges) or {}
+	return (frame and frame.StyleFilterChanges) or EMPTY_CHANGES
 end
 
 function NP:UpdatePlateTargetState(nameplate)
@@ -845,10 +857,6 @@ function NP:ScalePlate(nameplate, scale)
 	NP:PinPlateBorders(nameplate)
 end
 
-function NP:SetFrameScale(frame, scale)
-	NP:ScalePlate(frame, scale)
-end
-
 function NP:ApplyScale(frame)
 	local scale = (frame.ThreatScale or 1) * (frame.ActionScale or 1)
 	if frame._npAppliedScale ~= scale then
@@ -919,6 +927,7 @@ function NP:UpdateTargetFrameLevel(plate)
 		NP:ApplyFrameLevels(plate, NP.TARGET_LEVEL_FLOOR)
 	elseif plate._npTargetBoost then
 		plate._npTargetBoost = nil
+		plate._npTargetSig = nil
 		plate._engineBaseLevel = nil
 		NP:ApplyFrameLevels(plate, NP:SlotBase(plate))
 	end

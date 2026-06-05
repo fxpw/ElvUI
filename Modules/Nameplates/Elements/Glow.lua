@@ -197,6 +197,3 @@ function NP:Configure_Glow(frame)
 		end
 	end
 end
-
--- No-op: TargetIndicator.lua creates the Shadow/Spark/Indicator textures.
-function NP:Construct_Glow(frame) end
