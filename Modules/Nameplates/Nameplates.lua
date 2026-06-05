@@ -1063,7 +1063,6 @@ function NP:Initialize()
 
 	NP:UpdateCVars()
 	NP:UpdateStackingState()
-	NP:RegisterStackingSlash()
 
 	ElvUF:Spawn('player', 'ElvNP_Test')
 	local test = NP.TestFrame

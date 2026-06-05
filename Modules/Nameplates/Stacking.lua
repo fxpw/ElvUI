@@ -1,23 +1,23 @@
 local E, L, V, P, G = unpack(select(2, ...))
 local NP = E:GetModule('NamePlates')
 
-local abs, exp = math.abs, math.exp
-local format = string.format
+local abs, exp, floor = math.abs, math.exp, math.floor
+local sort = table.sort
 local pairs = pairs
-local strtrim = strtrim
 local wipe = wipe
-local mathMin, mathMax = math.min, math.max
 
 local ENEMY_TYPES = {
 	ENEMY_PLAYER = true,
 	ENEMY_NPC = true,
 }
 
-NP.StackingPlates = NP.StackingPlates or {}
-NP.StackingForcedPlates = NP.StackingForcedPlates or {}
-NP.StackingLastStats = NP.StackingLastStats or {}
+local STACK_INTERVAL = 0.05
 
-local stackingActive = {}
+NP.StackingPlates = NP.StackingPlates or {}
+
+local snapPool = {}
+local snap = {}
+local active = {}
 
 local function GetStackingDB()
 	NP.db = NP.db or E.db.nameplates
@@ -25,7 +25,6 @@ local function GetStackingDB()
 		NP.db.stacking = E:CopyTable(P.nameplates.stacking)
 	end
 
-	-- fill keys missing from a partial profile to avoid arithmetic-on-nil in OnUpdate
 	local def = P.nameplates.stacking
 	if def then
 		for k, v in pairs(def) do
@@ -57,123 +56,138 @@ function NP:IsOverlapStackingEnabled()
 	return NP.db and NP.db.motionType == 'OVERLAP_STACK'
 end
 
-function NP:ClearStackingPlate(basePlate)
-	if not basePlate then return end
-
-	basePlate:SetClampRectInsets(0, 0, 0, 0)
-	basePlate:SetClampedToScreen(false)
-	NP.StackingPlates[basePlate] = nil
+function NP:ResetPlateOffset(childPlate)
+	childPlate:ClearAllPoints()
+	childPlate:SetPoint('CENTER')
+	local d = NP.StackingPlates[childPlate]
+	if d then
+		d.applied = 0
+		d.lastApplied = 0
+	end
 end
 
 function NP:ClearStackingForNameplate(nameplate)
 	if not nameplate or nameplate == NP.TestFrame then return end
-	NP:ClearStackingPlate(nameplate:GetParent())
+	if NP.StackingPlates[nameplate] then
+		NP:ResetPlateOffset(nameplate)
+		NP.StackingPlates[nameplate] = nil
+	end
 end
 
 function NP:ClearAllStackingPlates()
-	for basePlate in pairs(NP.StackingPlates) do
-		NP:ClearStackingPlate(basePlate)
+	for childPlate in pairs(NP.StackingPlates) do
+		NP:ResetPlateOffset(childPlate)
+		NP.StackingPlates[childPlate] = nil
 	end
 end
 
-function NP:UpdateNameplateStacking()
+motion-jitter fix).
+local function SortByVisualY(a, b)
+	if a.vis ~= b.vis then
+		return a.vis < b.vis
+	end
+	return (a.plate._npSlot or 0) < (b.plate._npSlot or 0)
+end
+
+function NP:UpdateNameplateStacking(dt)
 	if not NP:IsOverlapStackingEnabled() then return end
 
 	local cfg = GetStackingDB()
-	local active = stackingActive
-	wipe(active)
 	local xspace = cfg.xspace
 	local yspace = cfg.yspace
-	local delta = cfg.speed * 5
-	local movedCount = 0
-	local maxMove = 0
-	local minDistanceSeen = 1000
-	local activeCount = 0
+	local maxOffset = cfg.maxOffset
+	local dampRate = (cfg.speed and cfg.speed > 0) and (cfg.speed * 22) or 10
 
+	local n = 0
+	wipe(snap)
+	wipe(active)
 	for nameplate in pairs(NP.Plates) do
 		if nameplate ~= NP.TestFrame and nameplate:IsShown() and ENEMY_TYPES[nameplate.frameType] then
-			local basePlate = nameplate:GetParent()
-			if basePlate and basePlate:IsShown() then
-				local x, y = GetPlatePosition(basePlate)
+			local base = nameplate:GetParent()
+			if base and base:IsShown() then
+				local x, y = GetPlatePosition(base)
 				if x and y then
-					local data = NP.StackingPlates[basePlate]
-					if not data then
-						data = {xpos = 0, ypos = 0, position = 0}
-						NP.StackingPlates[basePlate] = data
+					local d = NP.StackingPlates[nameplate]
+					if not d then
+						d = {applied = 0, lastApplied = 0}
+						NP.StackingPlates[nameplate] = d
 					end
-
-					data.xpos = x
-					data.ypos = y
-					active[basePlate] = true
+					n = n + 1
+					local e = snapPool[n]
+					if not e then e = {} snapPool[n] = e end
+					e.plate = nameplate
+					e.base = base
+					e.x = x
+					e.y = y
+					e.vis = y + d.applied
+					e.packed = y
+					snap[n] = e
+					active[nameplate] = true
 				end
 			end
 		end
 	end
 
-	for basePlate in pairs(NP.StackingPlates) do
-		if not active[basePlate] then
-			NP:ClearStackingPlate(basePlate)
+	for childPlate in pairs(NP.StackingPlates) do
+		if not active[childPlate] then
+			NP:ResetPlateOffset(childPlate)
+			NP.StackingPlates[childPlate] = nil
 		end
 	end
 
-	for basePlate, data in pairs(NP.StackingPlates) do
-		activeCount = activeCount + 1
-		local _, height = basePlate:GetSize()
-		local minDistance = 1000
-		local reset = true
+	if n == 0 then return end
 
-		for otherPlate, otherData in pairs(NP.StackingPlates) do
-			if basePlate ~= otherPlate then
-				local xdiff = data.xpos - otherData.xpos
-				local ydiff = data.ypos + data.position - otherData.ypos - otherData.position
-				local ydiffOrigin = data.ypos - otherData.ypos - otherData.position
+	sort(snap, SortByVisualY)
 
-				if abs(xdiff) < xspace then
-					local ayd = abs(ydiff)
-					if ydiff >= 0 and ayd < minDistance then
-						minDistance = ayd
-					end
-					if abs(ydiffOrigin) < yspace + 2 * delta then
-						reset = false
-					end
+	for i = 1, n do
+		local e = snap[i]
+		local packed = e.y
+		for j = 1, i - 1 do
+			local o = snap[j]
+			if abs(e.x - o.x) < xspace then
+				local need = o.packed + yspace
+				if need > packed then
+					packed = need
 				end
 			end
 		end
-
-		local oldPosition = data.position
-		local newPosition = oldPosition
-
-		if oldPosition >= 2 * delta and reset then
-			newPosition = oldPosition - exp(-10 / oldPosition) * delta * cfg.speedreset
-		elseif minDistance < yspace then
-			newPosition = oldPosition + exp(-minDistance / yspace) * delta * cfg.speedraise
-		elseif oldPosition >= 2 * delta and minDistance > yspace + 2 * delta then
-			newPosition = oldPosition - exp(-yspace / minDistance) * delta * 0.8 * cfg.speedlower
-		end
-
-		newPosition = mathMax(0, mathMin(newPosition, cfg.maxOffset))
-
-		data.position = newPosition
-		local moved = abs(newPosition - oldPosition)
-		if moved > 0.05 then
-			movedCount = movedCount + 1
-			if moved > maxMove then
-				maxMove = moved
-			end
-		end
-		if minDistance < minDistanceSeen then
-			minDistanceSeen = minDistance
-		end
-
-		basePlate:SetClampedToScreen(true)
-		basePlate:SetClampRectInsets(-10, 10, cfg.upperborder, -data.ypos - newPosition - cfg.originpos + height)
+		e.packed = packed
+		local target = packed - e.y
+		e.target = (target > maxOffset and maxOffset) or target
 	end
 
-	local stats = NP.StackingLastStats
-	stats.active = activeCount
-	stats.moved = movedCount
-	stats.maxMove = maxMove
-	stats.minDistance = minDistanceSeen < 1000 and minDistanceSeen or -1
+	-- ease toward target (lerp) but hard-cap the per-tick move: any target jump
+	-- (reslot/membership churn under motion) becomes a smooth ramp, never a jerk.
+	local lerp = 1 - exp(-dampRate * dt)
+	local maxStep = 90 * dt
+	if maxStep < 1 then maxStep = 1 end
+	for i = 1, n do
+		local e = snap[i]
+		local d = NP.StackingPlates[e.plate]
+		if d then
+			local step = (e.target - d.applied) * lerp
+			if step > maxStep then step = maxStep elseif step < -maxStep then step = -maxStep end
+			local a = d.applied + step
+			if abs(e.target - a) < 0.5 then
+				a = e.target
+			end
+			d.applied = a
+
+			local r = floor(a + 0.5)
+			if r ~= d.lastApplied then
+				d.lastApplied = r
+				e.plate:ClearAllPoints()
+				e.plate:SetPoint('CENTER', e.base, 'CENTER', 0, r)
+			end
+		end
+	end
+end
+
+function NP.StackingOnUpdate(frame, dt)
+	frame.elapsed = (frame.elapsed or 0) + dt
+	if frame.elapsed < STACK_INTERVAL then return end
+	NP:UpdateNameplateStacking(frame.elapsed)
+	frame.elapsed = 0
 end
 
 function NP:UpdateStackingState()
@@ -183,14 +197,8 @@ function NP:UpdateStackingState()
 		if not NP.StackingFrame then
 			NP.StackingFrame = CreateFrame('Frame')
 		end
-
-		local elapsed = 0
-		NP.StackingFrame:SetScript('OnUpdate', function(_, dt)
-			elapsed = elapsed + dt
-			if elapsed < 0.03 then return end
-			elapsed = 0
-			NP:UpdateNameplateStacking()
-		end)
+		NP.StackingFrame.elapsed = 0
+		NP.StackingFrame:SetScript('OnUpdate', NP.StackingOnUpdate)
 	else
 		if NP.StackingFrame then
 			NP.StackingFrame:SetScript('OnUpdate', nil)
@@ -199,116 +207,3 @@ function NP:UpdateStackingState()
 	end
 end
 
-function NP:StackingDiagnostic()
-	NP.db = NP.db or E.db.nameplates
-	local mode = NP.db and NP.db.motionType or 'nil'
-
-	local allPlates, enemyPlates = 0, 0
-	local sampleNameplate
-	for nameplate in pairs(NP.Plates) do
-		allPlates = allPlates + 1
-		if nameplate ~= NP.TestFrame and nameplate:IsShown() and ENEMY_TYPES[nameplate.frameType] then
-			enemyPlates = enemyPlates + 1
-			if not sampleNameplate then
-				sampleNameplate = nameplate
-			end
-		end
-	end
-
-	E:Print(format('[NPStack] mode=%s enabled=%s plates=%d enemy=%d',
-		tostring(mode), tostring(NP:IsOverlapStackingEnabled()), allPlates, enemyPlates))
-
-	if not sampleNameplate then
-		E:Print('[NPStack] Нет активных вражеских неймплейтов для теста')
-		return
-	end
-
-	local basePlate = sampleNameplate:GetParent()
-	if not basePlate then
-		E:Print('[NPStack] Не удалось получить базовый frame неймплейта')
-		return
-	end
-
-	local managed = NP.StackingPlates[basePlate] ~= nil
-
-	basePlate:SetClampRectInsets(-10, 10, 10, -10)
-	basePlate:SetClampedToScreen(true)
-	local x, y = GetPlatePosition(basePlate)
-
-	E:Print(format('[NPStack] base=%s clamp=%s screen=%s x=%s y=%s',
-		tostring(basePlate:GetName()), tostring(true), tostring(true), tostring(x), tostring(y)))
-
-	local stats = NP.StackingLastStats
-	if stats then
-		E:Print(format('[NPStack] active=%d moved=%d maxMove=%.2f minDist=%.2f',
-			stats.active or 0, stats.moved or 0, stats.maxMove or 0, stats.minDistance or -1))
-	end
-
-	-- skip managed plates: the OnUpdate loop owns their clamp, a reset would flicker them
-	if not managed then
-		basePlate:SetClampRectInsets(0, 0, 0, 0)
-		basePlate:SetClampedToScreen(false)
-	end
-end
-
-function NP:ForceStackingPreview()
-	local cfg = GetStackingDB()
-	local changed = 0
-
-	for nameplate in pairs(NP.Plates) do
-		if nameplate ~= NP.TestFrame and nameplate:IsShown() and ENEMY_TYPES[nameplate.frameType] then
-			local basePlate = nameplate:GetParent()
-			if basePlate and basePlate:IsShown() then
-				changed = changed + 1
-				local _, height = basePlate:GetSize()
-				local _, y = GetPlatePosition(basePlate)
-				local offset = changed * 60
-
-				basePlate:SetClampedToScreen(true)
-				basePlate:SetClampRectInsets(-10, 10, cfg.upperborder, -(y or 0) - offset - cfg.originpos + height)
-				NP.StackingForcedPlates[basePlate] = true
-			end
-		end
-	end
-
-	E:Print(format('[NPStack] Force preview applied to %d plate(s)', changed))
-
-	if NP.StackingForceRestoreTimer then
-		NP:CancelTimer(NP.StackingForceRestoreTimer)
-	end
-	NP.StackingForceRestoreTimer = NP:ScheduleTimer(function()
-		for basePlate in pairs(NP.StackingForcedPlates) do
-			if not NP.StackingPlates[basePlate] then
-				NP:ClearStackingPlate(basePlate)
-			end
-		end
-		wipe(NP.StackingForcedPlates)
-		E:Print('[NPStack] Force preview cleared')
-	end, 3)
-end
-
-function NP:RegisterStackingSlash()
-	if NP.StackingSlashRegistered then return end
-
-	SLASH_ELVNPSTACK1 = '/elvnpstack'
-	SlashCmdList.ELVNPSTACK = function(msg)
-		msg = msg and strtrim(msg) or ''
-		if msg == 'on' then
-			E.db.nameplates.motionType = 'OVERLAP_STACK'
-			NP:UpdateCVars()
-			NP:ConfigureAll()
-			E:Print('[NPStack] Режим OVERLAP_STACK включен')
-		elseif msg == 'off' then
-			E.db.nameplates.motionType = 'OVERLAP'
-			NP:UpdateCVars()
-			NP:ConfigureAll()
-			E:Print('[NPStack] Режим OVERLAP_STACK выключен')
-		elseif msg == 'force' then
-			NP:ForceStackingPreview()
-		else
-			NP:StackingDiagnostic()
-		end
-	end
-
-	NP.StackingSlashRegistered = true
-end
