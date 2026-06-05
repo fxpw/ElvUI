@@ -81,7 +81,6 @@ function NP:ClearAllStackingPlates()
 	end
 end
 
-motion-jitter fix).
 local function SortByVisualY(a, b)
 	if a.vis ~= b.vis then
 		return a.vis < b.vis
