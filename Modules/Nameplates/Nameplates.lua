@@ -39,6 +39,8 @@ local SetBarValue = (PixelUtil and PixelUtil.SetStatusBarValue)
 	and function(bar, v) PixelUtil.SetStatusBarValue(bar, v) end
 	or function(bar, v) bar:SetValue(v) end
 
+local function HideSelf(self) self:Hide() end
+
 NP.Plates        = {}
 NP.GroupRoles    = {}
 NP.PlateGUID     = {}
@@ -47,6 +49,7 @@ NP.StatusBars = {}
 NP.multiplier = 0.35
 NP.IsInGroup  = false
 NP.TEST_FRAME_SCALE = 1.75
+NP.TARGET_LEVEL_FLOOR = 4500
 
 do
 	local f = CreateFrame('Frame')
@@ -69,7 +72,7 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u and UnitExists(u) then
-				if UnitReaction('player', u) ~= plate.reaction then
+				if doTags and UnitReaction('player', u) ~= plate.reaction then
 					NP:RefreshPlateReaction(plate)
 				end
 				local h = plate.Health
@@ -127,64 +130,32 @@ do
 					plate:UpdateTags()
 				end
 
-				if plate._npPinnedScale ~= plate:GetEffectiveScale() then
+				if doTags and plate._npPinnedScale ~= plate:GetEffectiveScale() then
 					NP:PinPlateBorders(plate)
 				end
 
 				if not plate.appliedFrameLevelBoost then
-					-- cache engine parent once; only GetFrameLevel + dirty-check run per tick
-					local engineParent = plate._engineParent
-					if not engineParent then
-						engineParent = plate:GetParent()
-						plate._engineParent = engineParent
-					end
-					local engineLevel = engineParent and engineParent:GetFrameLevel()
-					if engineLevel and plate._engineBaseLevel ~= engineLevel then
-						plate._engineBaseLevel = engineLevel
-						local base = (plate._npSlot or 0) * 10
-						plate.Health:SetFrameLevel(base + 1)
-						NP:Health_SyncBorderLevel(plate.Health)
-						NP:Health_SyncTextLevel(plate.Health)
-						if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(base + 1) end
-						if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(base + 2) end
-						local Buffs = plate.Buffs
-						if Buffs and Buffs:IsShown() then
-							Buffs:SetFrameLevel(base + 2)
-							local n = Buffs.visibleBuffs or #Buffs
-							for i = 1, n do
-								local btn = Buffs[i]
-								if btn and btn:IsShown() then
-									btn:SetFrameLevel(base + 3)
-									local cd = btn.cd
-									if cd then
-										cd:SetFrameLevel(base + 4)
-										if cd.timer then cd.timer:SetFrameLevel(base + 5) end
-									end
-								end
-							end
+					if plate._npTargetBoost then
+						local b = (plate.Buffs and plate.Buffs.visibleBuffs) or 0
+						local d = (plate.Debuffs and plate.Debuffs.visibleDebuffs) or 0
+						local extra = ((plate.Castbar and plate.Castbar:IsShown()) and 1 or 0)
+							+ ((plate.ClassPower and plate.ClassPower:IsShown()) and 2 or 0)
+							+ ((plate.Power and plate.Power:IsShown()) and 4 or 0)
+						local sig = b + d * 64 + extra * 16384
+						if plate._npTargetSig ~= sig then
+							plate._npTargetSig = sig
+							NP:ApplyFrameLevels(plate, NP.TARGET_LEVEL_FLOOR)
 						end
-						local Debuffs = plate.Debuffs
-						if Debuffs and Debuffs:IsShown() then
-							Debuffs:SetFrameLevel(base + 2)
-							local n = Debuffs.visibleDebuffs or #Debuffs
-							for i = 1, n do
-								local btn = Debuffs[i]
-								if btn and btn:IsShown() then
-									btn:SetFrameLevel(base + 3)
-									local cd = btn.cd
-									if cd then
-										cd:SetFrameLevel(base + 4)
-										if cd.timer then cd.timer:SetFrameLevel(base + 5) end
-									end
-								end
-							end
+					else
+						local engineParent = plate._engineParent
+						if not engineParent then
+							engineParent = plate:GetParent()
+							plate._engineParent = engineParent
 						end
-						if plate.ClassPower and plate.ClassPower:IsShown() then
-							plate.ClassPower:SetFrameLevel(base + 2)
-							for i = 1, #plate.ClassPower do
-								local cp = plate.ClassPower[i]
-								if cp then cp:SetFrameLevel(base + 3) end
-							end
+						local engineLevel = engineParent and engineParent:GetFrameLevel()
+						if engineLevel and plate._engineBaseLevel ~= engineLevel then
+							plate._engineBaseLevel = engineLevel
+							NP:ApplyFrameLevels(plate, NP:SlotBase(plate))
 						end
 					end
 				end
@@ -447,15 +418,13 @@ function NP:UpdatePlateType(nameplate)
 end
 
 function NP:UpdatePlateSize(nameplate)
-	if not InCombatLockdown() then
-		local ft = nameplate.frameType
-		if ft == 'PLAYER' then
-			nameplate:SetSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
-		elseif ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
-			nameplate:SetSize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
-		else
-			nameplate:SetSize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
-		end
+	local ft = nameplate.frameType
+	if ft == 'PLAYER' then
+		nameplate:SetSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
+	elseif ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
+		nameplate:SetSize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
+	else
+		nameplate:SetSize(NP.db.plateSize.enemyWidth, NP.db.plateSize.enemyHeight)
 	end
 end
 
@@ -645,7 +614,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 		NP:UpdatePlateBase(nameplate)
-		NP:UpdatePlateTargetState(nameplate)
+		NP:UpdateTargetFrameLevel(nameplate)
 		NP:UpdatePlateMouseoverState(nameplate)
 		NP:RegisterAuraUnitEvents(nameplate, unit)
 
@@ -667,7 +636,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		local baseFrame = nameplate:GetParent()
 		if baseFrame and baseFrame.UnitFrame then
 			if not baseFrame.UnitFrame._elvHooked then
-				baseFrame.UnitFrame:HookScript('OnShow', function(self) self:Hide() end)
+				baseFrame.UnitFrame:HookScript('OnShow', HideSelf)
 				baseFrame.UnitFrame._elvHooked = true
 			end
 			baseFrame.UnitFrame:Hide()
@@ -676,7 +645,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		if UnitIsUnit(unit, 'player') and NamePlateDriverFrame and NamePlateDriverFrame.GetClassNameplateManaBar then
 			local manaBar = NamePlateDriverFrame:GetClassNameplateManaBar()
 			if manaBar and not manaBar._elvHooked then
-				manaBar:HookScript('OnShow', function(self) self:Hide() end)
+				manaBar:HookScript('OnShow', HideSelf)
 				manaBar._elvHooked = true
 			end
 			if manaBar then manaBar:Hide() end
@@ -692,6 +661,13 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 
 		NP:StyleFilterEventWatch(nameplate, true)
 		NP:StyleFilterClearVariables(nameplate)
+
+		E:UIFrameFadeRemoveFrame(nameplate)
+		if nameplate._npTargetBoost then
+			nameplate._npTargetBoost = nil
+			nameplate._npTargetSig = nil
+			nameplate._engineBaseLevel = nil
+		end
 
 		nameplate.Health.cur  = nil
 		nameplate.Health._np_cur = nil
@@ -795,8 +771,9 @@ function NP:ForEachPlate(functionToRun, ...)
 	end
 end
 
+local EMPTY_CHANGES = {}
 function NP:StyleFilterChanges(frame)
-	return (frame and frame.StyleFilterChanges) or {}
+	return (frame and frame.StyleFilterChanges) or EMPTY_CHANGES
 end
 
 function NP:UpdatePlateTargetState(nameplate)
@@ -850,6 +827,7 @@ end
 function NP:RefreshPlatesOnTargetChanged()
 	for plate in pairs(NP.Plates) do
 		NP:UpdatePlateTargetState(plate)
+		NP:UpdateTargetFrameLevel(plate)
 		NP:StyleFilterUpdate(plate, 'PLAYER_TARGET_CHANGED')
 		NP:Update_TargetIndicator(plate)
 		if plate.ClassPower then
@@ -875,11 +853,84 @@ end
 
 function NP:ScalePlate(nameplate, scale)
 	nameplate:SetScale(scale)
+	nameplate._npAppliedScale = scale
 	NP:PinPlateBorders(nameplate)
 end
 
-function NP:SetFrameScale(frame, scale)
-	NP:ScalePlate(frame, scale)
+function NP:ApplyScale(frame)
+	local scale = (frame.ThreatScale or 1) * (frame.ActionScale or 1)
+	if frame._npAppliedScale ~= scale then
+		NP:ScalePlate(frame, scale)
+	end
+end
+
+function NP:SlotBase(plate)
+	local base = (plate._npSlot or 0) * 10
+	return (base > NP.TARGET_LEVEL_FLOOR - 100) and (NP.TARGET_LEVEL_FLOOR - 100) or base
+end
+
+function NP:ApplyFrameLevels(plate, base)
+	plate.Health:SetFrameLevel(base + 1)
+	NP:Health_SyncBorderLevel(plate.Health)
+	NP:Health_SyncTextLevel(plate.Health)
+	if plate.Power and plate.Power:IsShown() then plate.Power:SetFrameLevel(base + 1) end
+	if plate.Castbar and plate.Castbar:IsShown() then plate.Castbar:SetFrameLevel(base + 2) end
+	local Buffs = plate.Buffs
+	if Buffs and Buffs:IsShown() then
+		Buffs:SetFrameLevel(base + 2)
+		local n = Buffs.visibleBuffs or #Buffs
+		for i = 1, n do
+			local btn = Buffs[i]
+			if btn and btn:IsShown() then
+				btn:SetFrameLevel(base + 3)
+				local cd = btn.cd
+				if cd then
+					cd:SetFrameLevel(base + 4)
+					if cd.timer then cd.timer:SetFrameLevel(base + 5) end
+				end
+			end
+		end
+	end
+	local Debuffs = plate.Debuffs
+	if Debuffs and Debuffs:IsShown() then
+		Debuffs:SetFrameLevel(base + 2)
+		local n = Debuffs.visibleDebuffs or #Debuffs
+		for i = 1, n do
+			local btn = Debuffs[i]
+			if btn and btn:IsShown() then
+				btn:SetFrameLevel(base + 3)
+				local cd = btn.cd
+				if cd then
+					cd:SetFrameLevel(base + 4)
+					if cd.timer then cd.timer:SetFrameLevel(base + 5) end
+				end
+			end
+		end
+	end
+	if plate.ClassPower and plate.ClassPower:IsShown() then
+		plate.ClassPower:SetFrameLevel(base + 2)
+		for i = 1, #plate.ClassPower do
+			local cp = plate.ClassPower[i]
+			if cp then cp:SetFrameLevel(base + 3) end
+		end
+	end
+end
+
+function NP:UpdateTargetFrameLevel(plate)
+	if not plate or plate == NP.TestFrame or not plate.Health then return end
+	if plate.appliedFrameLevelBoost then
+		plate._npTargetBoost = nil
+		return
+	end
+	if plate.isTarget then
+		plate._npTargetBoost = true
+		NP:ApplyFrameLevels(plate, NP.TARGET_LEVEL_FLOOR)
+	elseif plate._npTargetBoost then
+		plate._npTargetBoost = nil
+		plate._npTargetSig = nil
+		plate._engineBaseLevel = nil
+		NP:ApplyFrameLevels(plate, NP:SlotBase(plate))
+	end
 end
 
 function NP:UnitLevel(frame)
@@ -1012,7 +1063,6 @@ function NP:Initialize()
 
 	NP:UpdateCVars()
 	NP:UpdateStackingState()
-	NP:RegisterStackingSlash()
 
 	ElvUF:Spawn('player', 'ElvNP_Test')
 	local test = NP.TestFrame

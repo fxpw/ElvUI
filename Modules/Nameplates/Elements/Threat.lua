@@ -34,7 +34,6 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 	if not status and not sf.Scale then
 		nameplate.ThreatStatus = nil
 		nameplate.ThreatScale = 1
-		NP:ScalePlate(nameplate, 1)
 		NP:Health_SetColors(nameplate)
 		if nameplate.Health and nameplate.Health.ForceUpdate then
 			nameplate.Health:ForceUpdate()
@@ -64,14 +63,10 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 			nameplate.Health:SetStatusBarColor(Color.r, Color.g, Color.b)
 		end
 
-		if Scale then
-			nameplate.ThreatScale = Scale
-
-			if not sf.Scale then
-				NP:ScalePlate(nameplate, Scale)
-			end
-		end
+		nameplate.ThreatScale = Scale or 1
 	end
+
+	NP:ApplyScale(nameplate)
 end
 
 function NP:Construct_ThreatIndicator(nameplate)
