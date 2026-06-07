@@ -157,9 +157,11 @@ function UF:Update_PlayerFrame(frame, db)
 		CastingBarFrame_SetUnit(CastingBarFrame, "player", true, false)
 		PetCastingBarFrame_OnLoad(PetCastingBarFrame)
 		CastingBarFrame_SetUnit(PetCastingBarFrame, "pet", false, false)
-	elseif not db.enable and E.private.unitframe.disabledBlizzardFrames.player or (db.enable and not db.castbar.enable) then
+	elseif (not db.enable and E.private.unitframe.disabledBlizzardFrames.player) or (db.enable and not db.castbar.enable) then
 		CastingBarFrame_SetUnit(CastingBarFrame, nil)
 		CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
+		if CastingBarFrame then CastingBarFrame:Hide() end
+		if PetCastingBarFrame then PetCastingBarFrame:Hide() end
 	end
 
 	--Fader

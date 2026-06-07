@@ -1428,6 +1428,26 @@ function UF:Initialize()
 		end
 	end
 
+	-- Хук на OnShow для надёжного скрытия стандартного кастбара игрока,
+	-- если в настройках ElvUI он отключён (или отключён блюззард-фрейм игрока).
+	-- Решает случаи, когда CastingBarFrame иногда всплывает сам по себе.
+	local function HideBlizzCastbar(frame)
+		if not frame then return end
+		local db = E.db.unitframe.units.player
+		if not (not db.enable and not E.private.unitframe.disabledBlizzardFrames.player) then
+			frame:Hide()
+		end
+	end
+
+	if CastingBarFrame then
+		CastingBarFrame:HookScript("OnShow", HideBlizzCastbar)
+		HideBlizzCastbar(CastingBarFrame)
+	end
+	if PetCastingBarFrame then
+		PetCastingBarFrame:HookScript("OnShow", HideBlizzCastbar)
+		HideBlizzCastbar(PetCastingBarFrame)
+	end
+
 	local ORD = ns.oUF_RaidDebuffs or oUF_RaidDebuffs
 	if ORD then
 		ORD.ShowDispellableDebuff = true
