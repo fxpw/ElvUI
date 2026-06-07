@@ -11,7 +11,7 @@ local function ApplyElvUIFont(frame)
 		local r = select(i, frame:GetRegions())
 		if r and r.GetObjectType and r:GetObjectType() == "FontString" and r.FontTemplate then
 			local _, size, flags = r:GetFont()
-			if not size or size <= 0 then
+			if not size or size < 1 then
 				r:FontTemplate(nil, nil, flags)
 			else
 				r:FontTemplate(nil, size, flags)
@@ -37,7 +37,7 @@ local function ApplyElvUIFontForce(frame)
 		local r = select(i, frame:GetRegions())
 		if r and r.GetObjectType and r:GetObjectType() == "FontString" and r.SetFont then
 			local _, size, flags = r:GetFont()
-			r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())), (size and size > 0) and size or 12,
+			r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())), (size and size >= 1) and size or 12,
 				flags or "")
 		end
 	end
@@ -546,7 +546,7 @@ local function HandleBattlePassFrame()
 								end
 								local _, size, flags = r:GetFont()
 								r:SetFont(E.media.normFont or (select(1, GameFontNormal:GetFont())),
-									size and size > 0 and size or 12,
+									size and size >= 1 and size or 12,
 									flags or "")
 							end
 						end
