@@ -35,9 +35,17 @@ local HORIZONTAL_PRIMARY = {
 	LEFT_UP = true,
 }
 
+local function GetNameplatePerRow(db)
+	local perRow = db and db.groupsPerRowCol
+	if not perRow or perRow < 1 then
+		return 8
+	end
+	return perRow
+end
+
 local function PositionNameplateFrame(frame, db)
 	local index = frame.index
-	local perRow = db.groupsPerRowCol or 8
+	local perRow = GetNameplatePerRow(db)
 	local hSpace = db.horizontalSpacing or 0
 	local vSpace = db.verticalSpacing or 0
 	local direction = db.growthDirection or "RIGHT_DOWN"
@@ -107,7 +115,7 @@ function UF:EnsureNameplateHeaderMover()
 	local db = self.db and self.db.units and self.db.units.nameplate
 	if not db then return end
 
-	local perRow = db.groupsPerRowCol or 8
+	local perRow = GetNameplatePerRow(db)
 	local cols = min(perRow, NAMEPLATE_UF_COUNT)
 	local rows = floor((NAMEPLATE_UF_COUNT - 1) / perRow) + 1
 	local hSpace = db.horizontalSpacing or 0
@@ -262,7 +270,7 @@ function UF:Update_NameplateFrames(frame, db)
 	PositionNameplateFrame(frame, db)
 
 	if frame.index == NAMEPLATE_UF_COUNT then
-		local perRow = db.groupsPerRowCol or 8
+		local perRow = GetNameplatePerRow(db)
 		local hSpace = db.horizontalSpacing or 0
 		local vSpace = db.verticalSpacing or 0
 		local cols = min(perRow, NAMEPLATE_UF_COUNT)

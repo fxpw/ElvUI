@@ -8,6 +8,7 @@ local unpack = unpack
 local ceil = math.ceil
 local find, format, split = string.find, string.format, string.split
 local sort = table.sort
+local max = math.max
 --WoW API / Variables
 local CreateFrame = CreateFrame
 local IsShiftKeyDown = IsShiftKeyDown
@@ -157,9 +158,10 @@ function UF:Configure_Auras(frame, auraType)
 	auraType = string.lower(auraType)
 	auras.db = db[auraType]
 
-	local rows = auras.db.numrows
+	local rows = max(auras.db.numrows or 1, 1)
+	local perrow = max(auras.db.perrow or 1, 1)
 	auras.forceShow = frame.forceShowAuras
-	auras.num = auras.db.perrow * rows
+	auras.num = perrow * rows
 	auras.size = auras.db.sizeOverride ~= 0 and auras.db.sizeOverride or ((((auras:GetWidth() - (auras.spacing*(auras.num/rows - 1))) / auras.num)) * rows)
 	auras.disableMouse = auras.db.clickThrough
 
@@ -490,7 +492,7 @@ function UF:UpdateBuffsPositionAndDebuffHeight()
 	end
 
 	if numDebuffs > 0 then
-		local numRows = ceil(numDebuffs/db.debuffs.perrow)
+		local numRows = ceil(numDebuffs / max(db.debuffs.perrow or 1, 1))
 		debuffs:Height(debuffs.size * (numRows > db.debuffs.numrows and db.debuffs.numrows or numRows))
 	else
 		debuffs:Height(debuffs.size)
@@ -513,7 +515,7 @@ function UF:UpdateDebuffsPositionAndBuffHeight()
 	end
 
 	if numBuffs > 0 then
-		local numRows = ceil(numBuffs/db.buffs.perrow)
+		local numRows = ceil(numBuffs / max(db.buffs.perrow or 1, 1))
 		buffs:Height(buffs.size * (numRows > db.buffs.numrows and db.buffs.numrows or numRows))
 	else
 		buffs:Height(buffs.size)
@@ -527,7 +529,7 @@ function UF:UpdateBuffsHeight()
 	local numBuffs = self.visibleBuffs
 
 	if numBuffs > 0 then
-		local numRows = ceil(numBuffs/db.buffs.perrow)
+		local numRows = ceil(numBuffs / max(db.buffs.perrow or 1, 1))
 		buffs:Height(buffs.size * (numRows > db.buffs.numrows and db.buffs.numrows or numRows))
 	else
 		buffs:Height(buffs.size)
@@ -543,7 +545,7 @@ function UF:UpdateDebuffsHeight()
 	local numDebuffs = self.visibleDebuffs
 
 	if numDebuffs > 0 then
-		local numRows = ceil(numDebuffs/db.debuffs.perrow)
+		local numRows = ceil(numDebuffs / max(db.debuffs.perrow or 1, 1))
 		debuffs:Height(debuffs.size * (numRows > db.debuffs.numrows and db.debuffs.numrows or numRows))
 	else
 		debuffs:Height(debuffs.size)

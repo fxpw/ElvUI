@@ -174,7 +174,7 @@ function E:UIFrameFade_OnUpdate(elapsed)
 			end
 
 			-- If the fadeTimer is less then the desired fade time then set the alpha otherwise hold the fade state, call the finished function, or just finish the fade
-			if info.fadeTimer < info.timeToFade then
+			if info.timeToFade and info.timeToFade > 0 and info.fadeTimer < info.timeToFade then
 				if info.mode == "IN" then
 					frame:SetAlpha((info.fadeTimer / info.timeToFade) * info.diffAlpha + info.startAlpha)
 				else
