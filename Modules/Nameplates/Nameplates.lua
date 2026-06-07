@@ -914,7 +914,7 @@ function NP:PinPlateBorders(nameplate)
 end
 
 function NP:LockNamePlateScale(plate, scale)
-	if not plate then return end
+	if not plate or plate == NP.TestFrame or InCombatLockdown() then return end
 	scale = scale or 1
 	plate:SetScale(scale)
 	plate._npLockedScale = scale
@@ -929,12 +929,15 @@ function NP:LockNamePlateScale(plate, scale)
 end
 
 function NP:ScalePlate(nameplate, scale)
+	if not nameplate or nameplate == NP.TestFrame or InCombatLockdown() then return end
 	nameplate:SetScale(scale)
 	nameplate._npAppliedScale = scale
 	NP:PinPlateBorders(nameplate)
 end
 
 function NP:ApplyScale(frame)
+	if not frame or frame == NP.TestFrame or frame:GetName() == 'ElvNP_Test' or InCombatLockdown() then return end
+
 	if frame.frameType == 'PLAYER' then
 		-- Личный неймплейт игрока (personal/self).
 		-- Клиент (через NamePlateDriver + SetNamePlateSelfSize с коэффициентами и compact player setup)

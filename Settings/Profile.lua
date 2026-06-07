@@ -4121,6 +4121,11 @@ P.unitframe = {
 	}
 }
 
+P.unitframe.units.nameplate = CopyTable(P.unitframe.units.raid10)
+P.unitframe.units.nameplate.visibility = "show"
+P.unitframe.units.nameplate.groupsPerRowCol = 8
+P.unitframe.units.nameplate.fader.range = false
+
 P.unitframe.serviceAuras = {
 	category = false,
 	premium = false,

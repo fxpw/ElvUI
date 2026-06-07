@@ -49,6 +49,7 @@ L["Binds Saved"] = true
 L["BoE"] = true
 L["BoU"] = true
 L["Boss Frames"] = true
+L["Nameplate Frames"] = true
 L["Buffs"] = true
 L["CVars Set"] = true
 L["CVars"] = true

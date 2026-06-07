@@ -275,7 +275,8 @@ end
 function UF:PostUpdateHealth(_, _, max)
 	local parent = self:GetParent()
 	if parent.isForced then
-		local cur = random(1, max or 100)
+		local maxVal = (type(max) == "number" and max >= 1) and max or 100
+		local cur = random(1, maxVal)
 		parent.forcedHealth = cur
 		self:SetValue(cur)
 	else

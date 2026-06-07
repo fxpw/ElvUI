@@ -508,6 +508,15 @@ end
 function UF:CreateAndUpdateUFGroup(group, numGroup)
 	if InCombatLockdown() then self:RegisterEvent("PLAYER_REGEN_ENABLED") return end
 
+	if group == "nameplate" then
+		if UF.EnsureNameplateHeaderMover then
+			UF:EnsureNameplateHeaderMover()
+		end
+		if UF.RegisterNameplateUFEvents then
+			UF:RegisterNameplateUFEvents()
+		end
+	end
+
 	for i = 1, numGroup do
 		local unit = group..i
 		local frameName = E:StringTitle(unit)
@@ -516,11 +525,14 @@ function UF:CreateAndUpdateUFGroup(group, numGroup)
 
 		if not frame then
 			self.groupunits[unit] = group
-			frame = ElvUF:Spawn(unit, "ElvUF_"..frameName)
+			frame = ElvUF:Spawn(unit, "ElvUF_"..frameName, group == "nameplate")
 			frame.index = i
 			frame:SetParent(ElvUF_Parent)
 			frame:SetID(i)
 			self[unit] = frame
+		elseif group == "nameplate" and not frame.hasNameplateUFUnitWatch then
+			RegisterUnitWatch(frame)
+			frame.hasNameplateUFUnitWatch = true
 		end
 
 		frameName = E:StringTitle(group)
@@ -536,16 +548,32 @@ function UF:CreateAndUpdateUFGroup(group, numGroup)
 			if frame.isForced then
 				self:ForceShow(frame)
 			end
-			E:EnableMover(frame.mover:GetName())
+			if frame.mover then
+				E:EnableMover(frame.mover:GetName())
+			end
 		else
 			frame:Disable()
 
 			-- for some reason the boss/arena 'uncheck disable' doesnt fire this, we need to so putting it here.
-			if group == "boss" or group == "arena" then
+			if group == "boss" or group == "arena" or group == "nameplate" then
 				UF:Configure_Fader(frame)
 			end
 
-			E:DisableMover(frame.mover:GetName())
+			if frame.mover then
+				E:DisableMover(frame.mover:GetName())
+			end
+		end
+	end
+
+	if group == "nameplate" and UF.UpdateAllNameplateFrames then
+		UF:UpdateAllNameplateFrames()
+	end
+
+	if group == "nameplate" and _G.NameplateHeader and _G.NameplateHeader.mover then
+		if self.db.units[group].enable then
+			E:EnableMover(_G.NameplateHeader.mover:GetName())
+		else
+			E:DisableMover(_G.NameplateHeader.mover:GetName())
 		end
 	end
 end
@@ -1367,6 +1395,11 @@ function UF:Initialize()
 	self.db = E.db.unitframe
 	self.thinBorders = self.db.thinBorders or E.PixelMode
 	if E.private.unitframe.enable ~= true then return end
+
+	if not self.db.units.nameplate then
+		self.db.units.nameplate = E:CopyTable(P.unitframe.units.nameplate)
+	end
+
 	self.Initialized = true
 
 	local ElvUF_Parent = CreateFrame("Frame", "ElvUF_Parent", E.UIParent, "SecureHandlerStateTemplate")
@@ -1378,6 +1411,14 @@ function UF:Initialize()
 	end)
 
 	self:LoadUnits()
+
+	if self.db.units.nameplate and self.db.units.nameplate.enable and UF.EnsureNameplateHeaderMover then
+		UF:EnsureNameplateHeaderMover()
+		if _G.NameplateHeader and _G.NameplateHeader.mover then
+			E:EnableMover(_G.NameplateHeader.mover:GetName())
+		end
+	end
+
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	for k in pairs(UnitPopupMenus) do

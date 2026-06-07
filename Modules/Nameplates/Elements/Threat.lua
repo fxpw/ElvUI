@@ -30,6 +30,7 @@ end
 
 function NP:ThreatIndicator_PostUpdate(unit, status)
 	local nameplate, colors, db = self.__owner, NP.db.colors.threat, NP.db.threat
+	if nameplate == NP.TestFrame then return end
 	local sf = NP:StyleFilterChanges(nameplate)
 	if not status and not sf.Scale then
 		nameplate.ThreatStatus = nil

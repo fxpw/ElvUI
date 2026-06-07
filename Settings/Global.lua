@@ -284,6 +284,7 @@ G.profileCopy = {
 			pettarget = true,
 			boss = true,
 			arena = true,
+			nameplate = true,
 			party = true,
 			raid = true,
 			raid10 = true,
