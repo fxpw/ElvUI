@@ -371,6 +371,7 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.VisibilityChanged = true
 		frame.StyleFilterChanges.Visibility = true
 		frame.StyleFilterChanges.Hidden = true
+		E:UIFrameFadeRemoveFrame(frame)
 		frame:Hide()
 		return
 	end
@@ -1200,10 +1201,17 @@ function mod:StyleFilterUpdate(frame, event)
 	local hadNameTag = frame.NameTagChanged
 	local hadLevelTag = frame.LevelTagChanged
 	local hadPowerTag = frame.PowerTagChanged
+	local hadNameOnly = frame.NameOnlyChanged
+	local hadShowHealth = frame.ShowHealthChanged
+	local hadTargetIndicator = frame.TargetIndicatorChanged
+	local hadMouseoverHighlight = frame.MouseoverHighlightChanged
+
 	local state = mod:StyleFilterHiddenState(frame.StyleFilterChanges)
 	frame.StyleFilterChanges.NameTag = nil
 	frame.StyleFilterChanges.LevelTag = nil
 	frame.StyleFilterChanges.PowerTag = nil
+	frame.StyleFilterChanges.NameOnly = nil
+	frame.StyleFilterChanges.ShowHealth = nil
 	frame.StyleFilterChanges.ShowTargetIndicator = nil
 	frame.StyleFilterChanges.TargetIndicatorStyle = nil
 	frame.StyleFilterChanges.TargetIndicatorArrow = nil
@@ -1215,7 +1223,8 @@ function mod:StyleFilterUpdate(frame, event)
 	frame.TargetIndicatorChanged = nil
 	frame.MouseoverHighlightChanged = nil
 
-	mod:StyleFilterClear(frame)
+	mod:StyleFilterClearChanges(frame, frame.HealthColorChanged, frame.BorderChanged, frame.FlashingHealth, frame.TextureChanged, frame.ScaleChanged, frame.FrameLevelChanged, frame.AlphaChanged, frame.NameColorChanged, hadNameOnly, frame.VisibilityChanged, hadShowHealth, hadNameTag, hadLevelTag, hadPowerTag, hadTargetIndicator, hadMouseoverHighlight)
+	frame.StyleChanged = nil
 
 	for filterNum in ipairs(mod.StyleFilterTriggerList) do
 		local filter = E.global.nameplates.filters[mod.StyleFilterTriggerList[filterNum][1]]

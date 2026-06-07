@@ -355,8 +355,6 @@ function NP:UpdateCVars()
 	for key in pairs(NP_ENGINE_CVARS) do
 		NP:ApplyEngineOption(key)
 	end
-
-	NP:UpdateStackingState()
 end
 
 function NP:UnitNPCID(unit)
@@ -516,6 +514,8 @@ function NP:UpdatePlate(nameplate, updateBase)
 	else
 		NP:Update_Health(nameplate, true)
 	end
+
+	NP:ApplyScale(nameplate)
 end
 
 NP.DisableElements = {
@@ -652,7 +652,6 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		end
 
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
-		NP:ClearStackingForNameplate(nameplate)
 		NP:UnregisterAuraUnitEvents(nameplate)
 
 		if nameplate.unitGUID then
@@ -726,6 +725,13 @@ function NP:PLAYER_ENTERING_WORLD()
 end
 
 function NP:PlateFade(nameplate, timeToFade, startAlpha, endAlpha)
+	if nameplate.StyleFilterChanges and nameplate.StyleFilterChanges.Hidden then
+		E:UIFrameFadeRemoveFrame(nameplate)
+		nameplate:SetAlpha(0)
+		nameplate:Hide()
+		return
+	end
+
 	if not nameplate.FadeObject then
 		nameplate.FadeObject = {}
 	end
@@ -828,11 +834,55 @@ function NP:RefreshPlatesOnTargetChanged()
 	for plate in pairs(NP.Plates) do
 		NP:UpdatePlateTargetState(plate)
 		NP:UpdateTargetFrameLevel(plate)
+
+		-- Clear any target-specific overrides from previous target status so the
+		-- immediate UpdatePlate below sees the correct non-target DB (e.g. health
+		-- enable or nameOnly from profile). Style filters will re-apply their own
+		-- showHealth/nameOnly later if a matching filter (like ElvUI_Target) requires it.
+		plate.plateDBOverride = nil
+		if plate.StyleFilterChanges then
+			plate.StyleFilterChanges.ShowHealth = nil
+			plate.StyleFilterChanges.NameOnly = nil
+		end
+		plate.ShowHealthChanged = nil
+		plate.NameOnlyChanged = nil
+
+		plate.StyleChanged = true
+		NP:StyleFilterSetVariables(plate)
+		NP:UpdatePlate(plate, true)
+		plate:UpdateAllElements('PLAYER_TARGET_CHANGED')
 		NP:StyleFilterUpdate(plate, 'PLAYER_TARGET_CHANGED')
 		NP:Update_TargetIndicator(plate)
 		if plate.ClassPower then
 			NP:Update_ClassPower(plate)
 		end
+
+		-- Second full plate update after a short delay. This catches cases where
+		-- the client/server has not yet fully updated the 'target' token or unit
+		-- state when the synchronous PLAYER_TARGET_CHANGED fires. We capture the
+		-- plate in a local to avoid the classic Lua for-loop closure capturing
+		-- only the final iterator value.
+		local p = plate
+		E:Delay(0.1, function()
+			if p and p.unit and UnitExists(p.unit) then
+				NP:UpdatePlateTargetState(p)
+
+				p.plateDBOverride = nil
+				if p.StyleFilterChanges then
+					p.StyleFilterChanges.ShowHealth = nil
+					p.StyleFilterChanges.NameOnly = nil
+				end
+				p.ShowHealthChanged = nil
+				p.NameOnlyChanged = nil
+
+				p.StyleChanged = true
+				NP:StyleFilterSetVariables(p)
+				NP:UpdatePlate(p, true)
+				p:UpdateAllElements('PLAYER_TARGET_CHANGED')
+				NP:StyleFilterUpdate(p, 'PLAYER_TARGET_CHANGED')
+				NP:Update_TargetIndicator(p)
+			end
+		end)
 	end
 end
 
@@ -1062,7 +1112,6 @@ function NP:Initialize()
 	NP:GROUP_ROSTER_UPDATE()
 
 	NP:UpdateCVars()
-	NP:UpdateStackingState()
 
 	ElvUF:Spawn('player', 'ElvNP_Test')
 	local test = NP.TestFrame
