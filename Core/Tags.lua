@@ -100,6 +100,15 @@ ElvUF.Tags.Methods["afk"] = function(unit)
 		return nil
 	end
 end
+ElvUF.Tags.Events["afk_eng"] = "PLAYER_FLAGS_CHANGED"
+ElvUF.Tags.Methods["afk_eng"] = function(unit)
+	local isAFK = UnitIsAFK(unit)
+	if isAFK then
+		return format("|cffFFFFFF[|r|cffFF0000%s|r|cFFFFFFFF]|r", "AFK")
+	else
+		return nil
+	end
+end
 
 do
 	local faction = {

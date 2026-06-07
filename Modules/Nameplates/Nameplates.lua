@@ -419,6 +419,10 @@ function NP:UpdatePlateSize(nameplate)
 	local ft = nameplate.frameType
 	if ft == 'PLAYER' then
 		nameplate:SetSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
+		-- Для личного неймплейта фиксируем скейл 1 только на нашем фрейме.
+		-- Не трогаем родительский base-контейнер от C_NamePlate — его позиционированием и скейлом управляет драйвер клиента,
+		-- иначе личный неймплейт съезжает вбок (влево) относительно центра под моделью игрока.
+		NP:LockNamePlateScale(nameplate, 1)
 	elseif ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
 		nameplate:SetSize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
 	else
@@ -439,6 +443,9 @@ function NP:StylePlate(nameplate)
 
 	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or 1
 	nameplate:SetScale(scale)
+	if nameplate.SetIgnoreParentScale then
+		nameplate:SetIgnoreParentScale(true)
+	end
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate:SetFrameStrata('BACKGROUND')
@@ -649,6 +656,11 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 				manaBar._elvHooked = true
 			end
 			if manaBar then manaBar:Hide() end
+		end
+
+		-- Для личного неймплейта фиксируем скейл 1 на нашем контенте (игнорируя scale родителя от драйвера).
+		if nameplate.frameType == 'PLAYER' then
+			NP:LockNamePlateScale(nameplate, 1)
 		end
 
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
@@ -901,6 +913,21 @@ function NP:PinPlateBorders(nameplate)
 	nameplate._npPinnedScale = nameplate:GetEffectiveScale()
 end
 
+function NP:LockNamePlateScale(plate, scale)
+	if not plate then return end
+	scale = scale or 1
+	plate:SetScale(scale)
+	plate._npLockedScale = scale
+	if not plate._npScaleLocked then
+		plate._npScaleLocked = true
+		hooksecurefunc(plate, 'SetScale', function(self, s)
+			if self._npLockedScale and s ~= self._npLockedScale then
+				self:SetScale(self._npLockedScale)
+			end
+		end)
+	end
+end
+
 function NP:ScalePlate(nameplate, scale)
 	nameplate:SetScale(scale)
 	nameplate._npAppliedScale = scale
@@ -908,6 +935,19 @@ function NP:ScalePlate(nameplate, scale)
 end
 
 function NP:ApplyScale(frame)
+	if frame.frameType == 'PLAYER' then
+		-- Личный неймплейт игрока (personal/self).
+		-- Клиент (через NamePlateDriver + SetNamePlateSelfSize с коэффициентами и compact player setup)
+		-- может давать эффективный скейл ~1.2 родительскому контейнеру.
+		-- Мы не трогаем scale родителя (base plate), иначе съезжает позиция (влево от центра под игроком).
+		-- Фиксируем скейл 1 только на нашем фрейме + SetIgnoreParentScale (в StylePlate) + перехват SetScale.
+		if frame._npAppliedScale ~= 1 then
+			NP:ScalePlate(frame, 1)
+		end
+		NP:LockNamePlateScale(frame, 1)
+		return
+	end
+
 	local scale = (frame.ThreatScale or 1) * (frame.ActionScale or 1)
 	if frame._npAppliedScale ~= scale then
 		NP:ScalePlate(frame, scale)
