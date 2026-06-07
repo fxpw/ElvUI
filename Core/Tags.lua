@@ -590,11 +590,13 @@ ElvUF.Tags.Methods["guild"] = function(unit)
 	end
 end
 
-ElvUF.Tags.Events["guild:brackets"] = "PLAYER_GUILD_UPDATE"
+ElvUF.Tags.Events["guild:brackets"] = "UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE"
 ElvUF.Tags.Methods["guild:brackets"] = function(unit)
-	local guildName = GetGuildInfo(unit)
+	if UnitIsPlayer(unit) then
+		local guildName = GetGuildInfo(unit)
 
-	return guildName and format("<%s>", guildName) or nil
+		return guildName and format("<%s>", guildName) or nil
+	end
 end
 
 ElvUF.Tags.Events["guild:translit"] = "UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE"
@@ -604,11 +606,13 @@ ElvUF.Tags.Methods["guild:translit"] = function(unit)
 	end
 end
 
-ElvUF.Tags.Events["guild:brackets:translit"] = "PLAYER_GUILD_UPDATE"
+ElvUF.Tags.Events["guild:brackets:translit"] = "UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE"
 ElvUF.Tags.Methods["guild:brackets:translit"] = function(unit)
-	local guildName = Translit:Transliterate(GetGuildInfo(unit), translitMark)
+	if UnitIsPlayer(unit) then
+		local guildName = Translit:Transliterate(GetGuildInfo(unit), translitMark)
 
-	return guildName and format("<%s>", guildName) or nil
+		return guildName and format("<%s>", guildName) or nil
+	end
 end
 
 ElvUF.Tags.Events["target"] = "UNIT_TARGET"
