@@ -41,7 +41,7 @@ end
 local specChecked
 local function CheckSpec(self, event, levels)
 	if event == "SPELL_UPDATE_USABLE" then self:UnregisterEvent(event) end
-	if event == "CHARACTER_POINTS_CHANGED" and tonumber(levels) > 0 then return end
+	if event == "CHARACTER_POINTS_CHANGED" and type(levels) == "number" and levels > 0 then return end
 
 	if not event then
 		if specChecked then return end
