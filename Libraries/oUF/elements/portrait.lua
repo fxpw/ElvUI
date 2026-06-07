@@ -42,6 +42,47 @@ local UnitIsConnected = UnitIsConnected
 local UnitIsUnit = UnitIsUnit
 local UnitIsVisible = UnitIsVisible
 
+local lower = string.lower
+local match = string.match
+
+local HD_MODEL_PATTERN = '[^\\]*%.m2$'
+local HD_MODEL_CAMERA = {
+	['dwarfmale.m2'] = true,
+	['orcmalenpc.m2'] = true,
+	['scourgemalenpc.m2'] = true,
+	['vulperamale.m2'] = true,
+	['scourgefemalenpc.m2'] = true,
+	['dwarfmalenpc.m2'] = true,
+	['humanmalekid.m2'] = true,
+	['humanfemalekid.m2'] = true,
+	['chicken.m2'] = true,
+	['scourgefemale_hd.m2'] = true,
+	['rat.m2'] = true,
+	['scourgemale_hd.m2'] = true,
+	['dwarfmale_hd.m2'] = true,
+	['vulperafemale.m2'] = true,
+	['humanfemale_hd.m2'] = true,
+	['darkirondwarfmale.m2'] = true,
+	['dracthyrdragonmale1.m2'] = true,
+	['dracthyrfemale.m2'] = true,
+	['dracthyrdragonfemale2.m2'] = true,
+	['dracthyrdragonfemale3.m2'] = true,
+	['taurenmale_hd.m2'] = true,
+	['gnomemale_hd.m2'] = true,
+}
+
+local function ApplyHDPortraitCamera(element)
+	if not element:IsObjectType('PlayerModel') then return end
+
+	local model = element:GetModel()
+	if type(model) ~= 'string' then return end
+
+	model = lower(match(model, HD_MODEL_PATTERN))
+	if model and HD_MODEL_CAMERA[model] then
+		element:SetCamera(1)
+	end
+end
+
 local function Update(self, event, unit)
 	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
 
@@ -70,9 +111,11 @@ local function Update(self, event, unit)
 				element:SetModelScale(4.25)
 				element:SetCamera(0)
 				element:SetPosition(0, 0, 0)
+				ApplyHDPortraitCamera(element)
 			else
 				element:SetModelScale(4.25)
 				element:SetCamera(0)
+				ApplyHDPortraitCamera(element)
 			end
 		else
 			SetPortraitTexture(element, unit)
