@@ -50,6 +50,7 @@ globals = {
 	"C_CurrencyInfo",
 	"C_Guild",
 	"LadderFrame",
+	"NameplateHeaderMover",
 	"LadderFrameCloseButton",
 	"LadderMythicPlusFrame",
 	"ChallengesFrame",
