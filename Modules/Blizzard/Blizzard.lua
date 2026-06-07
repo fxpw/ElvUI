@@ -80,7 +80,9 @@ function B:Initialize()
 	self:PositionVehicleFrame()
 	self:ObjectiveTracker_Setup()
 	self:SocialToast_Setup()
-	self:NamePlate_RedirectBlizzOptions()
+	if E.private.nameplates.enable then
+		self:NamePlate_RedirectBlizzOptions()
+	end
 
 	self:RegisterEvent("ADDON_LOADED")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", SetMapToCurrentZone)
@@ -164,6 +166,8 @@ function B:Initialize()
 end
 
 function B:NamePlate_RedirectBlizzOptions()
+	if not E.private.nameplates.enable then return end
+
 	local panel = _G.InterfaceOptionsNamePlatePanel
 	if not panel or panel.elvNPRedirect then return end
 
