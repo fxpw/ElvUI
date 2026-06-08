@@ -77,11 +77,11 @@ end
 local function HandleRecipeCooldown(block, recipeID)
 	if not block or not recipeID then return end
 
-	local start, duration = _G.GetSpellCooldown(recipeID)
-	if not start or not duration or duration == 0 then return end
+	-- local start, duration = _G.GetSpellCooldown(recipeID)
+	-- if not start or not duration or duration == 0 then return end
 
-	local remaining = (start + duration) - _G.GetTime()
-	if remaining <= 0 then return end
+	local remaining = C_TradeSkillUI.GetRecipeCooldown(recipeID)
+	if not remaining or remaining <= 0 then return end
 
 	local cooldownText = FormatCooldownTime(remaining)
 	if not cooldownText then return end
