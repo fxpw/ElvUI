@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ElvUI.toc'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(grep -m1 '^## Version:' ElvUI.toc | sed 's/^## Version:[[:space:]]*//')
+          if [ -z "$VERSION" ]; then
+            echo "Version not found in ElvUI.toc"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VERSION"
+
+      - name: Check version changed
+        id: changed
+        run: |
+          CURRENT="${{ steps.version.outputs.version }}"
+          PREVIOUS=$(git show HEAD~1:ElvUI.toc 2>/dev/null | grep -m1 '^## Version:' | sed 's/^## Version:[[:space:]]*//' || true)
+          if [ "$CURRENT" = "$PREVIOUS" ]; then
+            echo "Version unchanged ($CURRENT), skipping release"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version changed: $PREVIOUS -> $CURRENT"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check tag does not exist
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          if git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.version.outputs.version }} already exists"
+            exit 1
+          fi
+
+      - name: Build addon zip
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          mkdir -p package/ElvUI
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.vscode' \
+            --exclude='.agents' \
+            --exclude='.sirus.interface' \
+            --exclude='.luacheckcache' \
+            --exclude='package' \
+            --exclude='*.bak' \
+            --exclude='AddOns.code-workspace' \
+            ./ package/ElvUI/
+          (cd package && zip -r "../ElvUI.${VERSION}.zip" ElvUI)
+
+      - name: Create GitHub Release
+        if: steps.changed.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          files: ElvUI.${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
