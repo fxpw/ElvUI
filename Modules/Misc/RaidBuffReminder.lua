@@ -111,6 +111,7 @@ RB.MeleeSpell6Buffs = {
 	48934, -- Greater Blessing of Might
 	48932, -- Blessing of Might
 	47436, -- Battle Shout
+	150000, -- mythic buff ap
 }
 RB.CasterSpell7Buffs = {
 	317727, --caster oil
