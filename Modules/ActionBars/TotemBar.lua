@@ -4,7 +4,7 @@ local LSM = E.Libs.LSM
 
 --Lua functions
 local _G = _G
-local unpack, ipairs, pairs = unpack, ipairs, pairs
+local ipairs, pairs = ipairs, pairs
 local gsub, match = string.gsub, string.match
 --WoW API / Variables
 local InCombatLockdown = InCombatLockdown

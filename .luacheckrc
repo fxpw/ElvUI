@@ -67,6 +67,7 @@ globals = {
 	"PromoCodeFrame",
 	"C_Unit",
 	"C_PlayerInfo",
+	"C_TradeSkillUI",
 	"GetItemLevelColor",
 	"HelpTip",
 	"BattlePassSplashFrame",

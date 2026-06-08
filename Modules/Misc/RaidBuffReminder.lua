@@ -3,7 +3,7 @@ local RB = E:GetModule("ReminderBuffs")
 local LSM = E.Libs.LSM
 
 --Lua functions
-local ipairs, unpack = ipairs, unpack
+local ipairs = ipairs
 --WoW API / Variables
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
 local CreateFrame = CreateFrame

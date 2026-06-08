@@ -2,7 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateD
 local TOTEMS = E:GetModule("Totems")
 
 --Lua functions
-local unpack = unpack
 --WoW API / Variables
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
 local CreateFrame = CreateFrame
