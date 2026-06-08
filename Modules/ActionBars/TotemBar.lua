@@ -48,6 +48,17 @@ local SLOT_EMPTY_TCOORDS = {
 	[AIR_TOTEM_SLOT]	= {left = 66/128, right = 96/128, top = 36/256,  bottom = 66/256}
 }
 
+local function SetTotemSlotTexCoord(texture, button, slot)
+	if not texture then return end
+
+	local tCoords = slot and SLOT_EMPTY_TCOORDS[slot]
+	if tCoords then
+		texture:SetTexCoord(tCoords.left, tCoords.right, tCoords.top, tCoords.bottom)
+	else
+		E:SetIconTexCoords(texture, button, TotemIconKeepRatio())
+	end
+end
+
 local oldMultiCastRecallSpellButton_Update = MultiCastRecallSpellButton_Update
 function MultiCastRecallSpellButton_Update(self)
 	if InCombatLockdown() then AB.NeedRecallButtonUpdate = true; AB:RegisterEvent("PLAYER_REGEN_ENABLED") return end
@@ -85,6 +96,10 @@ function AB:StyleTotemSlotButton(button, slot)
 	if color then
 		button:SetBackdropBorderColor(color.r, color.g, color.b)
 		button.ignoreBorderColors = true
+	end
+
+	if button.background then
+		SetTotemSlotTexCoord(button.background, button, slot or button:GetID())
 	end
 end
 
@@ -153,12 +168,7 @@ function AB:MultiCastFlyoutFrame_ToggleFlyout(frame, type, parent)
 	end
 
 	if type == "slot" then
-		local tCoords = SLOT_EMPTY_TCOORDS[parent:GetID()]
-		if AB.db.barTotem.keepButtonSizeRatio ~= false then
-			E:SetIconTexCoords(frame.buttons[1].icon, frame.buttons[1], true)
-		else
-			frame.buttons[1].icon:SetTexCoord(tCoords.left, tCoords.right, tCoords.top, tCoords.bottom)
-		end
+		SetTotemSlotTexCoord(frame.buttons[1].icon, frame.buttons[1], parent:GetID())
 	end
 
 	frame.buttons[1]:SetBackdropBorderColor(color.r, color.g, color.b)
@@ -248,7 +258,7 @@ function AB:PositionAndSizeBarTotem()
 
 		button:ClearAllPoints()
 		button:Size(size, buttonHeight)
-		E:SetIconTexCoords(button.background, button, TotemIconKeepRatio())
+		SetTotemSlotTexCoord(button.background, button, button:GetID())
 
 		if i == 1 then
 			button:Point("LEFT", MultiCastSummonSpellButton, "RIGHT", buttonSpacing, 0)
@@ -379,7 +389,7 @@ function AB:CreateTotemBar()
 		button:StyleButton()
 		button:SetTemplate("Default")
 
-		E:SetIconTexCoords(button.background, button, TotemIconKeepRatio())
+		SetTotemSlotTexCoord(button.background, button, button:GetID())
 		button.background:SetDrawLayer("ARTWORK")
 		button.background:SetInside(button)
 
