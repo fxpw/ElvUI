@@ -15,6 +15,24 @@ if E.myclass ~= "SHAMAN" then return end
 local bar = CreateFrame("Frame", "ElvUI_BarTotem", E.UIParent, "SecureHandlerStateTemplate")
 bar:SetFrameStrata("LOW")
 
+local function GetTotemButtonHeight()
+	local db = AB.db and AB.db.barTotem
+	if AB.db and AB.db.barTotem and AB.db.barTotem.keepButtonSizeRatio ~= false then
+		return E:Scale(db.buttonsize)
+	end
+
+	local height = db and db.buttonheight or nil
+	if not height or height <= 0 then
+		height = db and db.buttonsize or 0
+	end
+
+	return E:Scale(height)
+end
+
+local function TotemIconKeepRatio()
+	return AB.db and AB.db.barTotem and AB.db.barTotem.keepButtonSizeRatio ~= false
+end
+
 local SLOT_BORDER_COLORS = {
 	["summon"]			= {r = 0, g = 0, b = 0},
 	[EARTH_TOTEM_SLOT]	= {r = 0.23, g = 0.45, b = 0.13},
@@ -79,7 +97,7 @@ function AB:SkinSummonButton(button)
 	button:SetTemplate("Default")
 	button:StyleButton()
 
-	icon:SetTexCoord(unpack(E.TexCoords))
+	E:SetIconTexCoords(icon, button, TotemIconKeepRatio())
 	icon:SetDrawLayer("ARTWORK")
 	icon:SetInside(button)
 
@@ -111,7 +129,7 @@ function AB:MultiCastFlyoutFrame_ToggleFlyout(frame, type, parent)
 
 		if button:IsShown() then
 			numButtons = numButtons + 1
-			button:Size(AB.db.barTotem.buttonsize)
+			button:Size(E:Scale(AB.db.barTotem.buttonsize), GetTotemButtonHeight())
 			button:ClearAllPoints()
 
 			if AB.db.barTotem.flyoutDirection == "UP" then
@@ -130,13 +148,17 @@ function AB:MultiCastFlyoutFrame_ToggleFlyout(frame, type, parent)
 
 			button:SetBackdropBorderColor(color.r, color.g, color.b)
 
-			button.icon:SetTexCoord(unpack(E.TexCoords))
+			E:SetIconTexCoords(button.icon, button, TotemIconKeepRatio())
 		end
 	end
 
 	if type == "slot" then
 		local tCoords = SLOT_EMPTY_TCOORDS[parent:GetID()]
-		frame.buttons[1].icon:SetTexCoord(tCoords.left, tCoords.right, tCoords.top, tCoords.bottom)
+		if AB.db.barTotem.keepButtonSizeRatio ~= false then
+			E:SetIconTexCoords(frame.buttons[1].icon, frame.buttons[1], true)
+		else
+			frame.buttons[1].icon:SetTexCoord(tCoords.left, tCoords.right, tCoords.top, tCoords.bottom)
+		end
 	end
 
 	frame.buttons[1]:SetBackdropBorderColor(color.r, color.g, color.b)
@@ -156,7 +178,7 @@ function AB:MultiCastFlyoutFrame_ToggleFlyout(frame, type, parent)
 		MultiCastFlyoutFrameCloseButton.icon:SetRotation(0)
 	end
 
-	frame:Height(((AB.db.barTotem.buttonsize + AB.db.barTotem.flyoutSpacing) * numButtons) + MultiCastFlyoutFrameCloseButton:GetHeight())
+	frame:Height(((GetTotemButtonHeight() + E:Scale(AB.db.barTotem.flyoutSpacing)) * numButtons) + MultiCastFlyoutFrameCloseButton:GetHeight())
 end
 
 function AB:TotemOnEnter()
@@ -192,12 +214,13 @@ function AB:PositionAndSizeBarTotem()
 
 	local buttonSpacing = E:Scale(self.db.barTotem.buttonspacing)
 	local size = E:Scale(self.db.barTotem.buttonsize)
+	local buttonHeight = GetTotemButtonHeight()
 	local numActiveSlots = MultiCastActionBarFrame.numActiveSlots
 
 	bar:Width((size * (2 + numActiveSlots)) + (buttonSpacing * (2 + numActiveSlots - 1)))
 	MultiCastActionBarFrame:Width((size * (2 + numActiveSlots)) + (buttonSpacing * (2 + numActiveSlots - 1)))
-	bar:Height(size)
-	MultiCastActionBarFrame:Height(size)
+	bar:Height(buttonHeight)
+	MultiCastActionBarFrame:Height(buttonHeight)
 	bar.db = self.db.barTotem
 
 	bar.mouseover = self.db.barTotem.mouseover
@@ -215,7 +238,8 @@ function AB:PositionAndSizeBarTotem()
 	RegisterStateDriver(bar, "visibility", visibility)
 
 	MultiCastSummonSpellButton:ClearAllPoints()
-	MultiCastSummonSpellButton:Size(size)
+	MultiCastSummonSpellButton:Size(size, buttonHeight)
+	E:SetIconTexCoords(MultiCastSummonSpellButtonIcon, MultiCastSummonSpellButton, TotemIconKeepRatio())
 	MultiCastSummonSpellButton:Point("BOTTOMLEFT", 0, 0)
 
 	for i = 1, numActiveSlots do
@@ -223,7 +247,8 @@ function AB:PositionAndSizeBarTotem()
 		local lastButton = _G["MultiCastSlotButton"..i - 1]
 
 		button:ClearAllPoints()
-		button:Size(size)
+		button:Size(size, buttonHeight)
+		E:SetIconTexCoords(button.background, button, TotemIconKeepRatio())
 
 		if i == 1 then
 			button:Point("LEFT", MultiCastSummonSpellButton, "RIGHT", buttonSpacing, 0)
@@ -232,7 +257,8 @@ function AB:PositionAndSizeBarTotem()
 		end
 	end
 
-	MultiCastRecallSpellButton:Size(size)
+	MultiCastRecallSpellButton:Size(size, buttonHeight)
+	E:SetIconTexCoords(MultiCastRecallSpellButtonIcon, MultiCastRecallSpellButton, TotemIconKeepRatio())
 	MultiCastRecallSpellButton_Update(MultiCastRecallSpellButton)
 
 	MultiCastRecallSpellButton:ClearAllPoints()
@@ -241,8 +267,16 @@ function AB:PositionAndSizeBarTotem()
 		MultiCastRecallSpellButton:Point("LEFT", lastSlot, "RIGHT", buttonSpacing, 0)
 	end
 
-	MultiCastFlyoutFrameCloseButton:Width(size)
-	MultiCastFlyoutFrameOpenButton:Width(size)
+	MultiCastFlyoutFrameCloseButton:Size(size, buttonHeight)
+	MultiCastFlyoutFrameOpenButton:Size(size, buttonHeight)
+
+	for i = 1, 12 do
+		local actionButton = _G["MultiCastActionButton"..i]
+		local actionIcon = _G["MultiCastActionButton"..i.."Icon"]
+		if actionButton and actionIcon then
+			E:SetIconTexCoords(actionIcon, actionButton, TotemIconKeepRatio())
+		end
+	end
 end
 
 function AB:UpdateTotemBindings()
@@ -345,7 +379,7 @@ function AB:CreateTotemBar()
 		button:StyleButton()
 		button:SetTemplate("Default")
 
-		button.background:SetTexCoord(unpack(E.TexCoords))
+		E:SetIconTexCoords(button.background, button, TotemIconKeepRatio())
 		button.background:SetDrawLayer("ARTWORK")
 		button.background:SetInside(button)
 
@@ -361,7 +395,7 @@ function AB:CreateTotemBar()
 
 		button:StyleButton()
 
-		icon:SetTexCoord(unpack(E.TexCoords))
+		E:SetIconTexCoords(icon, button, TotemIconKeepRatio())
 		icon:SetDrawLayer("ARTWORK")
 		icon:SetInside()
 

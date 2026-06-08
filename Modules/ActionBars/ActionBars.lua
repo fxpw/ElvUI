@@ -89,12 +89,26 @@ AB.customExitButton = {
 	tooltip = LEAVE_VEHICLE
 }
 
+local function GetBarButtonHeight(db)
+	if AB.db and AB.db.keepButtonSizeRatio ~= false then
+		return E:Scale(db.buttonsize)
+	end
+
+	local height = db.buttonheight or db.buttonsize
+	if not height or height <= 0 then
+		height = db.buttonsize
+	end
+
+	return E:Scale(height)
+end
+
 function AB:PositionAndSizeBar(barName)
 	local buttonSpacing = E:Scale(self.db[barName].buttonspacing)
 	local backdropSpacing = E:Scale((self.db[barName].backdropSpacing or self.db[barName].buttonspacing))
 	local buttonsPerRow = self.db[barName].buttonsPerRow
 	local numButtons = self.db[barName].buttons
 	local size = E:Scale(self.db[barName].buttonsize)
+	local buttonHeight = GetBarButtonHeight(self.db[barName])
 	local point = self.db[barName].point
 	local numColumns = ceil(numButtons / buttonsPerRow)
 	local widthMult = self.db[barName].widthMult
@@ -103,6 +117,7 @@ function AB:PositionAndSizeBar(barName)
 	local bar = self.handledBars[barName]
 
 	bar.db = self.db[barName]
+	bar.keepButtonSizeRatio = self.db.keepButtonSizeRatio
 
 	if visibility and match(visibility, "[\n\r]") then
 		visibility = gsub(visibility, "[\n\r]","")
@@ -128,7 +143,7 @@ function AB:PositionAndSizeBar(barName)
 	local sideSpacing = (bar.db.backdrop == true and (E.Border + backdropSpacing) or E.Spacing)
 	--Size of all buttons + Spacing between all buttons + Spacing between additional rows of buttons + Spacing between backdrop and buttons + Spacing on end borders with non-thin borders
 	local barWidth = (size * (buttonsPerRow * widthMult)) + ((buttonSpacing * (buttonsPerRow - 1)) * widthMult) + (buttonSpacing * (widthMult - 1)) + (sideSpacing*2)
-	local barHeight = (size * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult - 1)) + (sideSpacing*2)
+	local barHeight = (buttonHeight * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult - 1)) + (sideSpacing*2)
 	bar:Width(barWidth)
 	bar:Height(barHeight)
 
@@ -166,7 +181,7 @@ function AB:PositionAndSizeBar(barName)
 		lastColumnButton = bar.buttons[i-buttonsPerRow]
 		button:SetParent(bar)
 		button:ClearAllPoints()
-		button:Size(size)
+		button:Size(size, buttonHeight)
 		button:SetAttribute("showgrid", 1)
 
 		if i == 1 then
@@ -617,7 +632,7 @@ function AB:StyleButton(button, noBackdrop, useMasque)
 	end
 
 	if icon then
-		icon:SetTexCoord(unpack(E.TexCoords))
+		E:SetIconTexCoords(icon, button, self.db.keepButtonSizeRatio ~= false)
 		icon:SetInside()
 	end
 
@@ -935,6 +950,10 @@ function AB:LAB_ButtonUpdate(button)
 	button.count:SetTextColor(color.r, color.g, color.b)
 	if button.config and (button.config.outOfRangeColoring ~= "hotkey") then
 		button.hotkey:SetTextColor(color.r, color.g, color.b)
+	end
+
+	if button.icon then
+		E:SetIconTexCoords(button.icon, button, AB.db.keepButtonSizeRatio ~= false)
 	end
 
 	if button.backdrop then

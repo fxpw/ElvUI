@@ -106,6 +106,12 @@ function AB:PositionAndSizeBarShapeShift()
 	local buttonsPerRow = self.db.stanceBar.buttonsPerRow
 	local numButtons = self.db.stanceBar.buttons
 	local size = E:Scale(self.db.stanceBar.buttonsize)
+	local buttonHeight
+	if self.db.keepButtonSizeRatio ~= false then
+		buttonHeight = size
+	else
+		buttonHeight = E:Scale((self.db.stanceBar.buttonheight and self.db.stanceBar.buttonheight > 0) and self.db.stanceBar.buttonheight or self.db.stanceBar.buttonsize)
+	end
 	local point = self.db.stanceBar.point
 	local widthMult = self.db.stanceBar.widthMult
 	local heightMult = self.db.stanceBar.heightMult
@@ -114,6 +120,7 @@ function AB:PositionAndSizeBarShapeShift()
 		E:UpdatePositionOverride(bar.mover:GetName())
 	end
 	bar.db = self.db.stanceBar
+	bar.keepButtonSizeRatio = self.db.keepButtonSizeRatio
 	bar.mouseover = self.db.stanceBar.mouseover
 
 	if bar.LastButton and numButtons > bar.LastButton then
@@ -143,7 +150,7 @@ function AB:PositionAndSizeBarShapeShift()
 	end
 
 	local barWidth = (size * (buttonsPerRow * widthMult)) + ((buttonSpacing * (buttonsPerRow - 1)) * widthMult) + (buttonSpacing * (widthMult-1)) + ((self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)*2)
-	local barHeight = (size * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult-1)) + ((self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)*2)
+	local barHeight = (buttonHeight * (numColumns * heightMult)) + ((buttonSpacing * (numColumns - 1)) * heightMult) + (buttonSpacing * (heightMult-1)) + ((self.db.stanceBar.backdrop and (E.Border + backdropSpacing) or E.Spacing)*2)
 	bar:Width(barWidth)
 	bar:Height(barHeight)
 
@@ -185,7 +192,7 @@ function AB:PositionAndSizeBarShapeShift()
 
 		button:SetParent(bar)
 		button:ClearAllPoints()
-		button:Size(size)
+		button:Size(size, buttonHeight)
 
 		if self.db.stanceBar.mouseover then
 			bar:SetAlpha(0)

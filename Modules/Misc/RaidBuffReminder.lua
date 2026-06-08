@@ -121,6 +121,24 @@ RB.MeleeSpell7Buffs = {
 	317728, --melee oil
 }
 
+local function GetReminderButtonWidth()
+	return E.RBRWidth
+end
+
+local function GetReminderButtonHeight()
+	local db = E.db.general.reminder
+	if db.keepButtonSizeRatio ~= false then
+		return E.RBRWidth
+	end
+
+	local height = db.height
+	if not height or height <= 0 then
+		height = E.RBRWidth
+	end
+
+	return height
+end
+
 
 
 
@@ -275,7 +293,6 @@ function RB:CreateButton()
 	button:SetTemplate("Default")
 
 	button.t = button:CreateTexture(nil, "OVERLAY")
-	button.t:SetTexCoord(unpack(E.TexCoords))
 	button.t:SetInside()
 	button.t:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
 
@@ -329,15 +346,18 @@ end
 
 function RB:UpdateSettings(isCallback)
 	local frame = self.frame
-	frame:Width(E.RBRWidth)
+	local buttonWidth = GetReminderButtonWidth()
+	local buttonHeight = GetReminderButtonHeight()
+	frame:Width(buttonWidth)
 
 	self:UpdateDefaultIcons()
 
 	for i = 1, 7 do
 		local button = frame[i]
 		button:ClearAllPoints()
-		button:SetWidth(E.RBRWidth)
-		button:SetHeight(E.RBRWidth)
+		button:SetWidth(buttonWidth)
+		button:SetHeight(buttonHeight)
+		E:SetIconTexCoords(button.t, button, E.db.general.reminder.keepButtonSizeRatio ~= false)
 
 		if i == 1 then
 			button:SetPoint("TOP", ElvUI_ReminderBuffs, "TOP", 0, 0)
@@ -421,8 +441,9 @@ function RB:UpdateButtonStatus()
 	for i = 1,#allParametres do
 
 		ElvUI_ReminderBuffs[i]:ClearAllPoints()
-		ElvUI_ReminderBuffs[i]:SetWidth(E.RBRWidth)
-		ElvUI_ReminderBuffs[i]:SetHeight(E.RBRWidth)
+		ElvUI_ReminderBuffs[i]:SetWidth(GetReminderButtonWidth())
+		ElvUI_ReminderBuffs[i]:SetHeight(GetReminderButtonHeight())
+		E:SetIconTexCoords(ElvUI_ReminderBuffs[i].t, ElvUI_ReminderBuffs[i], E.db.general.reminder.keepButtonSizeRatio ~= false)
 		ElvUI_ReminderBuffs[i]:Hide()
 
 		if allParametres[i] == true then
@@ -444,11 +465,11 @@ function RB:UpdateButtonStatus()
 			local id = ElvUI_ReminderBuffs[i].currentID
 			if id then
 				if id == 1 then
-					ElvUI_ReminderBuffs[i]:Point("TOP", ElvUI_ReminderBuffs, "TOP", 0, (E.RBRWidth*-(id-1)))
+					ElvUI_ReminderBuffs[i]:Point("TOP", ElvUI_ReminderBuffs, "TOP", 0, (GetReminderButtonHeight() * -(id - 1)))
 				-- print((E.Border))
 				-- print((E.Spacing*3))
 				else
-					ElvUI_ReminderBuffs[i]:Point("TOP", ElvUI_ReminderBuffs, "TOP", 0, (E.RBRWidth*-(id-1))+(E.Border - E.Spacing*3)*4)
+					ElvUI_ReminderBuffs[i]:Point("TOP", ElvUI_ReminderBuffs, "TOP", 0, (GetReminderButtonHeight() * -(id - 1)) + (E.Border - E.Spacing*3)*4)
 				end
 			end
 		-- end
@@ -461,7 +482,7 @@ function RB:Initialize()
 	self.db = E.db.general.reminder
 
 	local frame = CreateFrame("Frame", "ElvUI_ReminderBuffs", Minimap)
-	frame:Width(E.RBRWidth)
+	frame:Width(GetReminderButtonWidth())
 	if E.db.general.reminder.position == "LEFT" then
 		frame:Point("TOPRIGHT", Minimap.backdrop, "TOPLEFT", E.Border - E.Spacing*3, 0)
 		frame:Point("BOTTOMRIGHT", Minimap.backdrop, "BOTTOMLEFT", E.Border - E.Spacing*3, 0)

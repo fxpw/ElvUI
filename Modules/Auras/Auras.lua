@@ -69,6 +69,31 @@ local enchantableSlots = {
 local weaponEnchantTime = {}
 A.EnchanData = weaponEnchantTime
 
+function A:GetAuraButtonSize(db)
+	local width = db.size
+	if not width or width <= 0 then
+		width = 32
+	end
+
+	if db.keepSizeRatio ~= false then
+		return width, width
+	end
+
+	local height = db.height
+	if not height or height <= 0 then
+		height = width
+	end
+
+	return width, height
+end
+
+function A:UpdateAuraButtonTexCoords(button)
+	if not button or not button.texture then return end
+
+	local db = button.auraType and self.db[button.auraType]
+	E:SetIconTexCoords(button.texture, button, not db or db.keepSizeRatio ~= false)
+end
+
 function A:UpdateTime(elapsed)
 	self.timeLeft = self.timeLeft - elapsed
 
@@ -144,7 +169,6 @@ function A:CreateIcon(button)
 
 	button.texture = button:CreateTexture(nil, "BORDER")
 	button.texture:SetInside()
-	button.texture:SetTexCoord(unpack(E.TexCoords))
 
 	button.count = button:CreateFontString(nil, "ARTWORK")
 	button.count:Point("BOTTOMRIGHT", -1 + self.db.countXOffset, 1 + self.db.countYOffset)
@@ -259,24 +283,24 @@ function A:ConfigureAuras(header, auraTable, weaponPosition)
 	end
 
 	local xOffset, yOffset, wrapXOffset, wrapYOffset, minWidth, minHeight
-	local size = db.size
+	local width, height = self:GetAuraButtonSize(db)
 	local point = DIRECTION_TO_POINT[db.growthDirection]
 	local wrapAfter = db.wrapAfter
 	local maxWraps = db.maxWraps
 
 	if IS_HORIZONTAL_GROWTH[db.growthDirection] then
-		minWidth = ((wrapAfter == 1 and 0 or db.horizontalSpacing) + size) * wrapAfter
-		minHeight = (db.verticalSpacing + size) * maxWraps
-		xOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[db.growthDirection] * (db.horizontalSpacing + size)
+		minWidth = ((wrapAfter == 1 and 0 or db.horizontalSpacing) + width) * wrapAfter
+		minHeight = (db.verticalSpacing + height) * maxWraps
+		xOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[db.growthDirection] * (db.horizontalSpacing + width)
 		yOffset = 0
 		wrapXOffset = 0
-		wrapYOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[db.growthDirection] * (db.verticalSpacing + size)
+		wrapYOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[db.growthDirection] * (db.verticalSpacing + height)
 	else
-		minWidth = (db.horizontalSpacing + size) * maxWraps
-		minHeight = ((wrapAfter == 1 and 0 or db.verticalSpacing) + size) * wrapAfter
+		minWidth = (db.horizontalSpacing + width) * maxWraps
+		minHeight = ((wrapAfter == 1 and 0 or db.verticalSpacing) + height) * wrapAfter
 		xOffset = 0
-		yOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[db.growthDirection] * (db.verticalSpacing + size)
-		wrapXOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[db.growthDirection] * (db.horizontalSpacing + size)
+		yOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[db.growthDirection] * (db.verticalSpacing + height)
+		wrapXOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[db.growthDirection] * (db.horizontalSpacing + width)
 		wrapYOffset = 0
 	end
 
@@ -404,7 +428,9 @@ function A:ConfigureAuras(header, auraTable, weaponPosition)
 		display = min(display, wrapAfter * maxWraps)
 	end
 
-	local pos, spacing, iconSize = self.db.barPosition, self.db.barSpacing, db.size - (E.Border * 2)
+	local pos, spacing = self.db.barPosition, self.db.barSpacing
+	local iconWidth = width - (E.Border * 2)
+	local iconHeight = height - (E.Border * 2)
 	local isOnTop = pos == "TOP" and true or false
 	local isOnBottom = pos == "BOTTOM" and true or false
 	local isOnLeft = pos == "LEFT" and true or false
@@ -417,7 +443,8 @@ function A:ConfigureAuras(header, auraTable, weaponPosition)
 		button:ClearAllPoints()
 		button:SetPoint(point, header, cycle * wrapXOffset + tick * xOffset, cycle * wrapYOffset + tick * yOffset)
 
-		button:SetSize(size, size)
+		button:SetSize(width, height)
+		self:UpdateAuraButtonTexCoords(button)
 
 		if button.text then
 			local font = LSM:Fetch("font", self.db.font)
@@ -430,8 +457,8 @@ function A:ConfigureAuras(header, auraTable, weaponPosition)
 			button.count:FontTemplate(font, db.countFontSize, self.db.fontOutline)
 		end
 
-		button.statusBar:Width((isOnTop or isOnBottom) and iconSize or (self.db.barWidth + (E.PixelMode and 0 or 2)))
-		button.statusBar:Height((isOnLeft or isOnRight) and iconSize or (self.db.barHeight + (E.PixelMode and 0 or 2)))
+		button.statusBar:Width((isOnTop or isOnBottom) and iconWidth or (self.db.barWidth + (E.PixelMode and 0 or 2)))
+		button.statusBar:Height((isOnLeft or isOnRight) and iconHeight or (self.db.barHeight + (E.PixelMode and 0 or 2)))
 		button.statusBar:ClearAllPoints()
 		button.statusBar:Point(E.InversePoints[pos], button, pos, (isOnTop or isOnBottom) and 0 or ((isOnLeft and -((E.PixelMode and 1 or 3) + spacing)) or ((E.PixelMode and 1 or 3) + spacing)), (isOnLeft or isOnRight) and 0 or ((isOnTop and ((E.PixelMode and 1 or 3) + spacing) or -((E.PixelMode and 1 or 3) + spacing))))
 		button.statusBar:SetStatusBarTexture(LSM:Fetch("statusbar", self.db.barTexture))

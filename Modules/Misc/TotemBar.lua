@@ -19,6 +19,19 @@ local SLOT_BORDER_COLORS = {
 	[AIR_TOTEM_SLOT]	= {r = 0.42, g = 0.18, b = 0.74}	-- [4]
 }
 
+local function GetTotemButtonHeight(db)
+	if db.keepButtonSizeRatio ~= false then
+		return db.size
+	end
+
+	local height = db.height
+	if not height or height <= 0 then
+		height = db.size
+	end
+
+	return height
+end
+
 function TOTEMS:UpdateAllTotems()
 	for i = 1, MAX_TOTEMS do
 		self:UpdateTotem(nil, i)
@@ -65,11 +78,14 @@ end
 function TOTEMS:PositionAndSize()
 	if not self.Initialized then return end
 
+	local buttonHeight = GetTotemButtonHeight(self.db)
+
 	for i = 1, MAX_TOTEMS do
 		local button = self.bar[i]
 		local prevButton = self.bar[i - 1]
 
-		button:Size(self.db.size)
+		button:Size(self.db.size, buttonHeight)
+		E:SetIconTexCoords(button.iconTexture, button, self.db.keepButtonSizeRatio ~= false)
 		button:ClearAllPoints()
 
 		if self.db.growthDirection == "HORIZONTAL" and self.db.sortDirection == "ASCENDING" then
@@ -101,9 +117,9 @@ function TOTEMS:PositionAndSize()
 
 	if self.db.growthDirection == "HORIZONTAL" then
 		self.bar:Width(self.db.size*(MAX_TOTEMS) + self.db.spacing*(MAX_TOTEMS) + self.db.spacing)
-		self.bar:Height(self.db.size + self.db.spacing * 2)
+		self.bar:Height(buttonHeight + self.db.spacing * 2)
 	else
-		self.bar:Height(self.db.size*(MAX_TOTEMS) + self.db.spacing*(MAX_TOTEMS) + self.db.spacing)
+		self.bar:Height(buttonHeight*(MAX_TOTEMS) + self.db.spacing*(MAX_TOTEMS) + self.db.spacing)
 		self.bar:Width(self.db.size + self.db.spacing * 2)
 	end
 end
@@ -153,7 +169,7 @@ function TOTEMS:Initialize()
 		frame.holder:SetAllPoints()
 
 		frame.iconTexture = frame:CreateTexture(nil, "ARTWORK")
-		frame.iconTexture:SetTexCoord(unpack(E.TexCoords))
+		E:SetIconTexCoords(frame.iconTexture, frame, self.db.keepButtonSizeRatio ~= false)
 		frame.iconTexture:SetInside()
 
 		frame.cooldown = CreateFrame("Cooldown", "$parentCooldown", frame, "CooldownFrameTemplate")

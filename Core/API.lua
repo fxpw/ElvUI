@@ -6,6 +6,7 @@ local wipe, date = wipe, date
 local format, select, type, ipairs, pairs = format, select, type, ipairs, pairs
 local strmatch, strfind, tonumber, tostring = strmatch, strfind, tonumber, tostring
 local tinsert, tremove = table.insert, table.remove
+local min = math.min
 --WoW API / Variables
 local GetActiveTalentGroup = GetActiveTalentGroup
 local GetCVarBool = GetCVarBool
@@ -422,19 +423,50 @@ end
 function E:CropRatio(frame)
 	local left, right, top, bottom = unpack(E.TexCoords)
 	local width, height = frame:GetSize()
-	local ratio = width / height
+	if not width or not height or width <= 0 or height <= 0 then
+		return left, right, top, bottom
+	end
 
-	if ratio > 1 then
-		local trimAmount = (1 - (1 / ratio)) * 0.5
+	local frameRatio = width / height
+	if frameRatio ~= frameRatio or frameRatio == math.huge or frameRatio == -math.huge or frameRatio <= 0 then
+		return left, right, top, bottom
+	end
+
+	local sourceWidth = right - left
+	local sourceHeight = bottom - top
+	if sourceWidth <= 0 or sourceHeight <= 0 then
+		return left, right, top, bottom
+	end
+
+	local sourceRatio = sourceWidth / sourceHeight
+
+	if frameRatio > sourceRatio then
+		local targetHeight = sourceWidth / frameRatio
+		local trimAmount = min((sourceHeight - targetHeight) * 0.5, sourceHeight * 0.5)
+		if trimAmount > 0 then
 		top = top + trimAmount
 		bottom = bottom - trimAmount
-	else
-		local trimAmount = (1 - ratio) * 0.5
+		end
+	elseif frameRatio < sourceRatio then
+		local targetWidth = sourceHeight * frameRatio
+		local trimAmount = min((sourceWidth - targetWidth) * 0.5, sourceWidth * 0.5)
+		if trimAmount > 0 then
 		left = left + trimAmount
 		right = right - trimAmount
+		end
 	end
 
 	return left, right, top, bottom
+end
+
+function E:SetIconTexCoords(texture, frame, keepRatio)
+	if not texture then return end
+
+	if keepRatio or not frame then
+		texture:SetTexCoord(unpack(E.TexCoords))
+	else
+		texture:SetTexCoord(E:CropRatio(frame))
+	end
 end
 
 function E:LoadAPI()
