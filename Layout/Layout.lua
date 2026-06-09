@@ -169,6 +169,7 @@ function LO:RepositionChatDataPanels()
 	RightChatDataPanel:ClearAllPoints()
 
 	local SPACING = E.Border*3 - E.Spacing
+	local SIDE_BUTTON_SPACING = (E.PixelMode and E.Border*4) or SPACING*2
 
 	--Left Chat Tab
 	LeftChatTab:Point("TOPLEFT", LeftChatPanel, "TOPLEFT", SPACING, -SPACING)
