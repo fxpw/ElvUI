@@ -17,7 +17,7 @@ bar:SetFrameStrata("LOW")
 
 local function GetTotemButtonHeight()
 	local db = AB.db and AB.db.barTotem
-	if AB.db and AB.db.barTotem and AB.db.barTotem.keepButtonSizeRatio ~= false then
+	if AB.db and AB.db.barTotem and AB.db.keepButtonSizeRatio ~= false then
 		return E:Scale(db.buttonsize)
 	end
 
@@ -30,7 +30,7 @@ local function GetTotemButtonHeight()
 end
 
 local function TotemIconKeepRatio()
-	return AB.db and AB.db.barTotem and AB.db.barTotem.keepButtonSizeRatio ~= false
+	return AB.db and AB.db.barTotem and AB.db.keepButtonSizeRatio ~= false
 end
 
 local SLOT_BORDER_COLORS = {
