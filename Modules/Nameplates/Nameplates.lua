@@ -419,10 +419,6 @@ function NP:UpdatePlateSize(nameplate)
 	local ft = nameplate.frameType
 	if ft == 'PLAYER' then
 		nameplate:SetSize(NP.db.plateSize.personalWidth, NP.db.plateSize.personalHeight)
-		-- Для личного неймплейта фиксируем скейл 1 только на нашем фрейме.
-		-- Не трогаем родительский base-контейнер от C_NamePlate — его позиционированием и скейлом управляет драйвер клиента,
-		-- иначе личный неймплейт съезжает вбок (влево) относительно центра под моделью игрока.
-		NP:LockNamePlateScale(nameplate, 1)
 	elseif ft == 'FRIENDLY_PLAYER' or ft == 'FRIENDLY_NPC' then
 		nameplate:SetSize(NP.db.plateSize.friendlyWidth, NP.db.plateSize.friendlyHeight)
 	else
@@ -443,9 +439,6 @@ function NP:StylePlate(nameplate)
 
 	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or 1
 	nameplate:SetScale(scale)
-	if nameplate.SetIgnoreParentScale then
-		nameplate:SetIgnoreParentScale(true)
-	end
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate:SetFrameStrata('BACKGROUND')
@@ -658,10 +651,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 			if manaBar then manaBar:Hide() end
 		end
 
-		-- Для личного неймплейта фиксируем скейл 1 на нашем контенте (игнорируя scale родителя от драйвера).
-		if nameplate.frameType == 'PLAYER' then
-			NP:LockNamePlateScale(nameplate, 1)
-		end
+		NP:ApplyScale(nameplate)
 
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
 		NP:UnregisterAuraUnitEvents(nameplate)
@@ -846,55 +836,11 @@ function NP:RefreshPlatesOnTargetChanged()
 	for plate in pairs(NP.Plates) do
 		NP:UpdatePlateTargetState(plate)
 		NP:UpdateTargetFrameLevel(plate)
-
-		-- Clear any target-specific overrides from previous target status so the
-		-- immediate UpdatePlate below sees the correct non-target DB (e.g. health
-		-- enable or nameOnly from profile). Style filters will re-apply their own
-		-- showHealth/nameOnly later if a matching filter (like ElvUI_Target) requires it.
-		plate.plateDBOverride = nil
-		if plate.StyleFilterChanges then
-			plate.StyleFilterChanges.ShowHealth = nil
-			plate.StyleFilterChanges.NameOnly = nil
-		end
-		plate.ShowHealthChanged = nil
-		plate.NameOnlyChanged = nil
-
-		plate.StyleChanged = true
-		NP:StyleFilterSetVariables(plate)
-		NP:UpdatePlate(plate, true)
-		plate:UpdateAllElements('PLAYER_TARGET_CHANGED')
 		NP:StyleFilterUpdate(plate, 'PLAYER_TARGET_CHANGED')
 		NP:Update_TargetIndicator(plate)
 		if plate.ClassPower then
 			NP:Update_ClassPower(plate)
 		end
-
-		-- Second full plate update after a short delay. This catches cases where
-		-- the client/server has not yet fully updated the 'target' token or unit
-		-- state when the synchronous PLAYER_TARGET_CHANGED fires. We capture the
-		-- plate in a local to avoid the classic Lua for-loop closure capturing
-		-- only the final iterator value.
-		local p = plate
-		E:Delay(0.1, function()
-			if p and p.unit and UnitExists(p.unit) then
-				NP:UpdatePlateTargetState(p)
-
-				p.plateDBOverride = nil
-				if p.StyleFilterChanges then
-					p.StyleFilterChanges.ShowHealth = nil
-					p.StyleFilterChanges.NameOnly = nil
-				end
-				p.ShowHealthChanged = nil
-				p.NameOnlyChanged = nil
-
-				p.StyleChanged = true
-				NP:StyleFilterSetVariables(p)
-				NP:UpdatePlate(p, true)
-				p:UpdateAllElements('PLAYER_TARGET_CHANGED')
-				NP:StyleFilterUpdate(p, 'PLAYER_TARGET_CHANGED')
-				NP:Update_TargetIndicator(p)
-			end
-		end)
 	end
 end
 
@@ -913,45 +859,23 @@ function NP:PinPlateBorders(nameplate)
 	nameplate._npPinnedScale = nameplate:GetEffectiveScale()
 end
 
-function NP:LockNamePlateScale(plate, scale)
-	if not plate or plate == NP.TestFrame or InCombatLockdown() then return end
-	scale = scale or 1
-	plate:SetScale(scale)
-	plate._npLockedScale = scale
-	if not plate._npScaleLocked then
-		plate._npScaleLocked = true
-		hooksecurefunc(plate, 'SetScale', function(self, s)
-			if self._npLockedScale and s ~= self._npLockedScale then
-				self:SetScale(self._npLockedScale)
-			end
-		end)
-	end
-end
-
 function NP:ScalePlate(nameplate, scale)
-	if not nameplate or nameplate == NP.TestFrame or InCombatLockdown() then return end
+	if not nameplate or nameplate == NP.TestFrame then return end
 	nameplate:SetScale(scale)
 	nameplate._npAppliedScale = scale
 	NP:PinPlateBorders(nameplate)
 end
 
 function NP:ApplyScale(frame)
-	if not frame or frame == NP.TestFrame or frame:GetName() == 'ElvNP_Test' or InCombatLockdown() then return end
+	if not frame or frame == NP.TestFrame or frame:GetName() == 'ElvNP_Test' then return end
 
-	if frame.frameType == 'PLAYER' then
-		-- Личный неймплейт игрока (personal/self).
-		-- Клиент (через NamePlateDriver + SetNamePlateSelfSize с коэффициентами и compact player setup)
-		-- может давать эффективный скейл ~1.2 родительскому контейнеру.
-		-- Мы не трогаем scale родителя (base plate), иначе съезжает позиция (влево от центра под игроком).
-		-- Фиксируем скейл 1 только на нашем фрейме + SetIgnoreParentScale (в StylePlate) + перехват SetScale.
-		if frame._npAppliedScale ~= 1 then
-			NP:ScalePlate(frame, 1)
-		end
-		NP:LockNamePlateScale(frame, 1)
-		return
+	local personal = frame.frameType == 'PLAYER'
+	if frame.SetIgnoreParentScale and frame._npIgnoreParent ~= personal then
+		frame:SetIgnoreParentScale(personal)
+		frame._npIgnoreParent = personal
 	end
 
-	local scale = (frame.ThreatScale or 1) * (frame.ActionScale or 1)
+	local scale = personal and 1 or (frame.ThreatScale or 1) * (frame.ActionScale or 1)
 	if frame._npAppliedScale ~= scale then
 		NP:ScalePlate(frame, scale)
 	end

@@ -61,7 +61,7 @@ function NP:ThreatIndicator_PostUpdate(unit, status)
 		if sf.HealthColor then
 			self.r, self.g, self.b = Color.r, Color.g, Color.b
 		else
-			nameplate.Health:SetStatusBarColor(Color.r, Color.g, Color.b)
+			nameplate.Health:SetStatusBarColor(Color.r, Color.g, Color.b, nameplate.Health._isTransparent and 0 or 1)
 		end
 
 		nameplate.ThreatScale = Scale or 1
