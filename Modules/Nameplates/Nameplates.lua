@@ -677,6 +677,7 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		nameplate.Health.cur  = nil
 		nameplate.Health._np_cur = nil
 		nameplate.Health._np_max = nil
+		nameplate.ThreatStatus = nil
 		nameplate.Power.cur   = nil
 		nameplate.Power._np_cur  = nil
 		nameplate.Power._np_max  = nil

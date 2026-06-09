@@ -280,6 +280,10 @@ function NP:Update_Health(nameplate, skipUpdate)
 		NP:Health_SetTransparent(nameplate, false)
 
 		E:SetSmoothing(nameplate.Health, NP.db.smoothbars)
+
+		if nameplate.Health.ForceUpdate then
+			nameplate.Health:ForceUpdate()
+		end
 	else
 		if nameplate:IsElementEnabled('Health') then
 			nameplate:DisableElement('Health')
