@@ -439,6 +439,10 @@ function NP:StylePlate(nameplate)
 
 	local scale = (nameplate == NP.TestFrame) and NP.TEST_FRAME_SCALE or 1
 	nameplate:SetScale(scale)
+	if nameplate.SetIgnoreParentScale then
+		nameplate:SetIgnoreParentScale(true)
+		nameplate._npIgnoreParent = true
+	end
 	nameplate:ClearAllPoints()
 	nameplate:SetPoint('CENTER')
 	nameplate:SetFrameStrata('BACKGROUND')
@@ -869,12 +873,12 @@ end
 function NP:ApplyScale(frame)
 	if not frame or frame == NP.TestFrame or frame:GetName() == 'ElvNP_Test' then return end
 
-	local personal = frame.frameType == 'PLAYER'
-	if frame.SetIgnoreParentScale and frame._npIgnoreParent ~= personal then
-		frame:SetIgnoreParentScale(personal)
-		frame._npIgnoreParent = personal
+	if frame.SetIgnoreParentScale and not frame._npIgnoreParent then
+		frame:SetIgnoreParentScale(true)
+		frame._npIgnoreParent = true
 	end
 
+	local personal = frame.frameType == 'PLAYER'
 	local scale = personal and 1 or (frame.ThreatScale or 1) * (frame.ActionScale or 1)
 	if frame._npAppliedScale ~= scale then
 		NP:ScalePlate(frame, scale)
