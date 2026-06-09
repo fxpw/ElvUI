@@ -575,7 +575,7 @@ function mod:StyleFilterClearChanges(frame, HealthColorChanged, BorderChanged, F
 		local hr = frame.Health.r or 1
 		local hg = frame.Health.g or 1
 		local hb = frame.Health.b or 1
-		frame.Health:SetStatusBarColor(hr, hg, hb)
+		frame.Health:SetStatusBarColor(hr, hg, hb, frame.Health._isTransparent and 0 or 1)
 		local cutawayHealth = (frame.Cutaway and frame.Cutaway.Health) or frame.CutawayHealth
 		if cutawayHealth then
 			cutawayHealth:SetStatusBarColor(hr * 1.5, hg * 1.5, hb * 1.5, 1)
