@@ -100,6 +100,21 @@ local UnitPowerMax = UnitPowerMax
 local UnitPowerType = UnitPowerType
 local UnitReaction = UnitReaction
 
+local function SanitizePowerValues(cur, max)
+	-- Some 3.3.5a/custom client states can briefly report invalid power bounds.
+	if(type(max) ~= 'number' or max ~= max or max < 1) then
+		max = 1
+	end
+
+	if(type(cur) ~= 'number' or cur ~= cur or cur < 0) then
+		cur = 0
+	elseif(cur > max) then
+		cur = max
+	end
+
+	return cur, max
+end
+
 local function UpdateColor(self, event, unit)
 	if(self.unit ~= unit) then return end
 	local element = self.Power
@@ -180,11 +195,8 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	local cur, max = UnitPower(unit), UnitPowerMax(unit)
+	local cur, max = SanitizePowerValues(UnitPower(unit), UnitPowerMax(unit))
 	local disconnected = not UnitIsConnected(unit)
-	if max == 0 then
-		max = 1
-	end
 
 	element:SetMinMaxValues(0, max)
 
