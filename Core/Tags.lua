@@ -312,6 +312,14 @@ ElvUF.Tags.Methods["difficultycolor"] = function(unit)
 	return Hex(r, g, b)
 end
 
+ElvUF.Tags.Events["difficulty"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
+ElvUF.Tags.Methods["difficulty"] = function(unit)
+	if UnitCanAttack("player", unit) then
+		local level = UnitLevel(unit)
+		return Hex(GetQuestDifficultyColor((level > 0) and level or 999))
+	end
+end
+
 ElvUF.Tags.Events["namecolor"] = "UNIT_NAME_UPDATE UNIT_FACTION"
 ElvUF.Tags.Methods["namecolor"] = function(unit)
 	local unitReaction = UnitReaction(unit, "player")
@@ -777,6 +785,7 @@ E.TagInfo = {
 	["namecolor"] = {category = L["Colors"], description = L["Colors names by player class or NPC reaction"]},
 	["targetnamecolor"] = {category = L["Colors"], description = "Colors target name by player class or NPC reaction"},
 	["powercolor"] = {category = L["Colors"], description = L["Colors the power text based upon its type"]},
+	["difficulty"] = {category = L["Colors"], description = L["Changes color of the next tag based on how difficult the unit is compared to the players level"]},
 	["difficultycolor"] = {category = L["Colors"], description = L["Colors the following tags by difficulty, red for impossible, orange for hard, green for easy"]},
 	["healthcolor"] = {category = L["Colors"], description = L["Changes color of health text, depending on the unit's current health"]},
 	["threatcolor"] = {category = L["Colors"], description = L["Changes color of health, depending on the unit's threat situation"]},
@@ -928,6 +937,7 @@ E.TagInfo = {
 	["status"] = {category = L["Status"], description = L["Displays zzz, dead, ghost, offline"]},
 	["statustimer"] = {category = L["Status"], description = L["Displays a timer for how long a unit has had the status (e.g 'DEAD - 0:34')"]},
 	["afk"] = {category = L["Status"], description = L["Displays <AFK> if the Unit is afk"]},
+	["afk_eng"] = {category = L["Status"], description = L["Displays <AFK>"]},
 	["dead"] = {category = L["Status"], description = L["Displays <DEAD> if the unit is dead"]},
 	["resting"] = {category = L["Status"], description = L["Displays zzz if the unit is dead"]},
 	["pvp"] = {category = L["Status"], description = L["Displays 'PvP' if the unit is pvp flagged"]},
@@ -954,7 +964,6 @@ E.TagInfo = {
 	["smartclass"] = {category = L["Miscellaneous"], description = L["Displays the player's class or creature's type"]},
 	["specialization"] = {category = L["Miscellaneous"], description = L["Displays your current specialization as text"]},
 	["class"] = {category = L["Miscellaneous"], description = L["Displays the class of the unit, if that unit is a player"]},
-	["difficulty"] = {category = L["Miscellaneous"], description = L["Changes color of the next tag based on how difficult the unit is compared to the players level"]},
 	["faction"] = {category = L["Miscellaneous"], description = L["Displays 'Alliance' or 'Horde' or 'Renegade'"]},
 	["faction:icon"] = {category = L["Miscellaneous"], description = L["Displays faction icon"]},
 	["plus"] = {category = L["Miscellaneous"], description = L["Displays the character '+' if the unit is an elite or rare-elite"]},
