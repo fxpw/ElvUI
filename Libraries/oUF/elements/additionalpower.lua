@@ -66,6 +66,21 @@ local UnitHasVehicleUI = UnitHasVehicleUI
 local UnitPowerType = UnitPowerType
 -- end block
 
+local function SanitizePowerValues(cur, max)
+	-- Some 3.3.5a/custom client states can briefly report invalid power bounds.
+	if(type(max) ~= 'number' or max ~= max or max < 1) then
+		max = 1
+	end
+
+	if(type(cur) ~= 'number' or cur ~= cur or cur < 0) then
+		cur = 0
+	elseif(cur > max) then
+		cur = max
+	end
+
+	return cur, max
+end
+
 -- sourced from FrameXML/AlternatePowerBar.lua
 local ADDITIONAL_POWER_BAR_NAME = ADDITIONAL_POWER_BAR_NAME or 'MANA'
 local ADDITIONAL_POWER_BAR_INDEX = ADDITIONAL_POWER_BAR_INDEX or 0
@@ -129,8 +144,7 @@ local function Update(self, event, unit, powertype)
 		element:PreUpdate(unit)
 	end
 
-	local cur = UnitPower('player', ADDITIONAL_POWER_BAR_INDEX)
-	local max = UnitPowerMax('player', ADDITIONAL_POWER_BAR_INDEX)
+	local cur, max = SanitizePowerValues(UnitPower('player', ADDITIONAL_POWER_BAR_INDEX), UnitPowerMax('player', ADDITIONAL_POWER_BAR_INDEX))
 
 	element:SetMinMaxValues(0, max)
 	element:SetValue(cur)
