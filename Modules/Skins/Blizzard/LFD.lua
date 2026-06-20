@@ -1511,8 +1511,8 @@ local function LoadSkin()
 		LFGListApplicationDialog:StripTextures()
 		LFGListApplicationDialog:SetTemplate("Transparent")
 		if LFGListApplicationDialogBorder then
-	       	LFGListApplicationDialogBorder:Hide()
-	   	end
+			LFGListApplicationDialogBorder:Hide()
+		end
 		if LFGListApplicationDialog.Description then
 			if LFGListApplicationDialog.Description.Bg then
 				LFGListApplicationDialog.Description.Bg:Kill()
@@ -1543,20 +1543,17 @@ local function LoadSkin()
 		LFGListRaidRulesDialog:StripTextures()
 		LFGListRaidRulesDialog:SetTemplate("Transparent")
 		if LFGListRaidRulesDialogHeader then
-        LFGListRaidRulesDialogHeader:StripTextures()
-        -- Текст останется, так как StripTextures() удаляет только текстуры, не текст
-    	end
+        	LFGListRaidRulesDialogHeader:StripTextures()
+		end
 		if LFGListRaidRulesDialogBorder then
         	LFGListRaidRulesDialogBorder:Hide()
-    	end
+		end
 		local buttonSpacing = 10 -- отступ снизу
-    
 		if LFGListRaidRulesDialog.AcceptButton then
 			S:HandleButton(LFGListRaidRulesDialog.AcceptButton)
 			LFGListRaidRulesDialog.AcceptButton:ClearAllPoints()
 			LFGListRaidRulesDialog.AcceptButton:Point("BOTTOMRIGHT", LFGListRaidRulesDialog, "BOTTOM", -10, buttonSpacing)
 		end
-		
 		if LFGListRaidRulesDialog.DeclineButton then
 			S:HandleButton(LFGListRaidRulesDialog.DeclineButton)
 			LFGListRaidRulesDialog.DeclineButton:ClearAllPoints()
