@@ -1506,60 +1506,44 @@ local function LoadSkin()
 			S:HandleButton(LFGListInviteDialog.AcknowledgeButton)
 		end
 	end
+	for _, roleButton in pairs({
+		_G.LFDQueueFrameRoleButtonHealer,
+		_G.LFDQueueFrameRoleButtonDPS,
+		_G.LFDQueueFrameRoleButtonLeader,
+		_G.LFDQueueFrameRoleButtonTank,
+		_G.RaidFinderQueueFrameRoleButtonHealer,
+		_G.RaidFinderQueueFrameRoleButtonDPS,
+		_G.RaidFinderQueueFrameRoleButtonLeader,
+		_G.RaidFinderQueueFrameRoleButtonTank,
+		_G.LFGInvitePopupRoleButtonTank,
+		_G.LFGInvitePopupRoleButtonHealer,
+		_G.LFGInvitePopupRoleButtonDPS,
+		_G.LFGListApplicationDialog.TankButton,
+		_G.LFGListApplicationDialog.HealerButton,
+		_G.LFGListApplicationDialog.DamagerButton,
 
+		-- these three arent scaled to 0.7
+		_G.RolePollPopupRoleButtonTank,
+		_G.RolePollPopupRoleButtonHealer,
+		_G.RolePollPopupRoleButtonDPS,
+	}) do
+		local checkButton = roleButton.checkButton or roleButton.CheckButton
+		if checkButton:GetScale() ~= 1 then
+			checkButton:SetScale(1)
+		end
+
+		S:HandleCheckBox(checkButton, nil, nil, true)
+		checkButton.backdrop:SetInside()
+		checkButton:Size(18)
+	end
 	if LFGListApplicationDialog then
 		LFGListApplicationDialog:StripTextures()
 		LFGListApplicationDialog:SetTemplate("Transparent")
-		if LFGListApplicationDialogBorder then
-			LFGListApplicationDialogBorder:Hide()
-		end
-		if LFGListApplicationDialog.Description then
-			if LFGListApplicationDialog.Description.Bg then
-				LFGListApplicationDialog.Description.Bg:Kill()
-			end
-			for _, region in pairs({LFGListApplicationDialog.Description:GetRegions()}) do
-				if region:IsObjectType("Texture") then
-					local textureName = region:GetName()
-					if textureName and (textureName:find("Left") or textureName:find("Right") or
-					   textureName:find("Top") or textureName:find("Bottom") or textureName:find("Middle")) then
-						region:Kill()
-					end
-				end
-			end
-			LFGListApplicationDialog.Description:CreateBackdrop("Transparent")
-			if LFGListApplicationDialog.Description.EditBox then
-				LFGListApplicationDialog.Description.EditBox:SetTextInsets(4, 4, 4, 4)
-			end
-		end
-		if LFGListApplicationDialog.SignUpButton then
-			S:HandleButton(LFGListApplicationDialog.SignUpButton)
-		end
-		if LFGListApplicationDialog.CancelButton then
-			S:HandleButton(LFGListApplicationDialog.CancelButton)
-		end
+		S:HandleButton(_G.LFGListApplicationDialog.SignUpButton)
+		S:HandleButton(_G.LFGListApplicationDialog.CancelButton)
+		S:HandleEditBox(_G.LFGListApplicationDialogDescription)
 	end
 
-	if LFGListRaidRulesDialog then
-		LFGListRaidRulesDialog:StripTextures()
-		LFGListRaidRulesDialog:SetTemplate("Transparent")
-		if LFGListRaidRulesDialogHeader then
-			LFGListRaidRulesDialogHeader:StripTextures()
-		end
-		if LFGListRaidRulesDialogBorder then
-			LFGListRaidRulesDialogBorder:Hide()
-		end
-		local buttonSpacing = 10 -- отступ снизу
-		if LFGListRaidRulesDialog.AcceptButton then
-			S:HandleButton(LFGListRaidRulesDialog.AcceptButton)
-			LFGListRaidRulesDialog.AcceptButton:ClearAllPoints()
-			LFGListRaidRulesDialog.AcceptButton:Point("BOTTOMRIGHT", LFGListRaidRulesDialog, "BOTTOM", -10, buttonSpacing)
-		end
-		if LFGListRaidRulesDialog.DeclineButton then
-			S:HandleButton(LFGListRaidRulesDialog.DeclineButton)
-			LFGListRaidRulesDialog.DeclineButton:ClearAllPoints()
-			LFGListRaidRulesDialog.DeclineButton:Point("BOTTOMLEFT", LFGListRaidRulesDialog, "BOTTOM", 10, buttonSpacing)
-		end
-	end
 end
 
 S:AddCallback("Skin_LFD", LoadSkin)
