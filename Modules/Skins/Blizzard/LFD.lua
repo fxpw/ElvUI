@@ -1510,10 +1510,25 @@ local function LoadSkin()
 	if LFGListApplicationDialog then
 		LFGListApplicationDialog:StripTextures()
 		LFGListApplicationDialog:SetTemplate("Transparent")
+		if LFGListApplicationDialogBorder then
+	       	LFGListApplicationDialogBorder:Hide()
+	   	end
 		if LFGListApplicationDialog.Description then
-			LFGListApplicationDialog.Description:StripTextures()
+			if LFGListApplicationDialog.Description.Bg then
+				LFGListApplicationDialog.Description.Bg:Kill()
+			end
+			for _, region in pairs({LFGListApplicationDialog.Description:GetRegions()}) do
+				if region:IsObjectType("Texture") then
+					local textureName = region:GetName()
+					if textureName and (textureName:find("Left") or textureName:find("Right") or
+					   textureName:find("Top") or textureName:find("Bottom") or textureName:find("Middle")) then
+						region:Kill()
+					end
+				end
+			end
+			LFGListApplicationDialog.Description:CreateBackdrop("Transparent")
 			if LFGListApplicationDialog.Description.EditBox then
-				S:HandleEditBox(LFGListApplicationDialog.Description.EditBox)
+				LFGListApplicationDialog.Description.EditBox:SetTextInsets(4, 4, 4, 4)
 			end
 		end
 		if LFGListApplicationDialog.SignUpButton then
@@ -1524,6 +1539,30 @@ local function LoadSkin()
 		end
 	end
 
+	if LFGListRaidRulesDialog then
+		LFGListRaidRulesDialog:StripTextures()
+		LFGListRaidRulesDialog:SetTemplate("Transparent")
+		if LFGListRaidRulesDialogHeader then
+        LFGListRaidRulesDialogHeader:StripTextures()
+        -- Текст останется, так как StripTextures() удаляет только текстуры, не текст
+    	end
+		if LFGListRaidRulesDialogBorder then
+        	LFGListRaidRulesDialogBorder:Hide()
+    	end
+		local buttonSpacing = 10 -- отступ снизу
+    
+		if LFGListRaidRulesDialog.AcceptButton then
+			S:HandleButton(LFGListRaidRulesDialog.AcceptButton)
+			LFGListRaidRulesDialog.AcceptButton:ClearAllPoints()
+			LFGListRaidRulesDialog.AcceptButton:Point("BOTTOMRIGHT", LFGListRaidRulesDialog, "BOTTOM", -10, buttonSpacing)
+		end
+		
+		if LFGListRaidRulesDialog.DeclineButton then
+			S:HandleButton(LFGListRaidRulesDialog.DeclineButton)
+			LFGListRaidRulesDialog.DeclineButton:ClearAllPoints()
+			LFGListRaidRulesDialog.DeclineButton:Point("BOTTOMLEFT", LFGListRaidRulesDialog, "BOTTOM", 10, buttonSpacing)
+		end
+	end
 end
 
 S:AddCallback("Skin_LFD", LoadSkin)
