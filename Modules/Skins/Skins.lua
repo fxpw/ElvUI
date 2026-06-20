@@ -1134,36 +1134,90 @@ end
 -- local _G = _G
 -- local ipairs = ipairs
 local tremove = table.remove
--- local find = string.find
---WoW API / Variables
+S.Blizzard = {}
+S.Blizzard.Regions = {
+	'Left',
+	'Middle',
+	'Right',
+	'Mid',
+	'LeftDisabled',
+	'MiddleDisabled',
+	'RightDisabled',
+	'BorderBottom',
+	'BorderBottomLeft',
+	'BorderBottomRight',
+	'BorderLeft',
+	'BorderRight',
+	'TopLeft',
+	'TopRight',
+	'BottomLeft',
+	'BottomRight',
+	'TopMiddle',
+	'MiddleLeft',
+	'MiddleRight',
+	'BottomMiddle',
+	'MiddleMiddle',
+	'TabSpacer',
+	'TabSpacer1',
+	'TabSpacer2',
+	'_RightSeparator',
+	'_LeftSeparator',
+	'Cover',
+	'Border',
+	'Background',
+	'TopTex',
+	'TopLeftTex',
+	'TopRightTex',
+	'LeftTex',
+	'BottomTex',
+	'BottomLeftTex',
+	'BottomRightTex',
+	'RightTex',
+	'MiddleTex',
+	'Center',
+	'ArtOverlayFrame',
+	'FilligreeOverlay',
+	'PortraitOverlay',
+	'ScrollFrameBorder',
+	'ScrollUpBorder',
+	'ScrollDownBorder'
+}
+function S:HandleBlizzardRegions(frame, name, kill, zero)
+	if not name then
+		name = frame.GetName and frame:GetName()
+	end
 
+	for _, area in pairs(S.Blizzard.Regions) do
+		local object = (name and _G[name .. area]) or frame[area]
+		if object then
+			if kill then
+				object:Kill()
+			elseif zero then
+				object:SetAlpha(0)
+			else
+				object:Hide()
+			end
+		end
+	end
+end
 function S:HandleEditBox(frame)
 	if frame.backdrop then return end
 
 	frame:CreateBackdrop()
 	frame.backdrop:SetFrameLevel(frame:GetFrameLevel())
 
-	if frame.Left then frame.Left:SetAlpha(0) end
-	if frame.Middle then frame.Middle:SetAlpha(0) end
-	if frame.Right then frame.Right:SetAlpha(0) end
+	S:HandleBlizzardRegions(frame)
 
-	if frame.IncrementButton and frame.DecrementButton then
-		S:HandleNextPrevButton(frame.IncrementButton, nil, nil, true)
-		frame.IncrementButton:Size(24)
-		S:HandleNextPrevButton(frame.DecrementButton, nil, nil, true)
-		frame.DecrementButton:Size(24)
-		frame.DecrementButton:Point("RIGHT", frame, "LEFT", 0, 0)
-	end
-
-	local EditBoxName = frame.GetName and frame:GetName()
-	if EditBoxName then
-		if _G[EditBoxName.."Left"] then _G[EditBoxName.."Left"]:SetAlpha(0) end
-		if _G[EditBoxName.."Middle"] then _G[EditBoxName.."Middle"]:SetAlpha(0) end
-		if _G[EditBoxName.."Right"] then _G[EditBoxName.."Right"]:SetAlpha(0) end
-		if _G[EditBoxName.."Mid"] then _G[EditBoxName.."Mid"]:SetAlpha(0) end
-
-		if find(EditBoxName, "Silver") or find(EditBoxName, "Copper") then
-			frame.backdrop:Point("BOTTOMRIGHT", -12, -2)
+	local name = frame.GetName and frame:GetName()
+	if name then
+		local gold, silver, copper = strfind(name, 'Gold'), strfind(name, 'Silver'), strfind(name, 'Copper')
+		if gold or silver or copper then
+			frame.backdrop:Point('TOPLEFT', -4, 0)
+			frame.backdrop:Point('BOTTOMRIGHT')
+		else
+			local popup = strfind(name, 'StaticPopup')
+			frame.backdrop:Point('TOPLEFT', -4, popup and -4 or 0)
+			frame.backdrop:Point('BOTTOMRIGHT', 4, popup and 4 or 0)
 		end
 	end
 end
