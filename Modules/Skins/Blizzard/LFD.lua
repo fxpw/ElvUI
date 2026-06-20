@@ -1544,6 +1544,14 @@ local function LoadSkin()
 		S:HandleEditBox(_G.LFGListApplicationDialogDescription)
 	end
 
+	if LFGListRaidRulesDialog then
+		LFGListRaidRulesDialog:StripTextures()
+		LFGListRaidRulesDialogHeader:StripTextures()
+		LFGListRaidRulesDialog:SetTemplate("Transparent")
+		S:HandleButton(_G.LFGListRaidRulesDialog.AcceptButton)
+		S:HandleButton(_G.LFGListRaidRulesDialog.DeclineButton)
+	end
+
 end
 
 S:AddCallback("Skin_LFD", LoadSkin)
