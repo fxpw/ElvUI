@@ -1543,10 +1543,10 @@ local function LoadSkin()
 		LFGListRaidRulesDialog:StripTextures()
 		LFGListRaidRulesDialog:SetTemplate("Transparent")
 		if LFGListRaidRulesDialogHeader then
-        	LFGListRaidRulesDialogHeader:StripTextures()
+			LFGListRaidRulesDialogHeader:StripTextures()
 		end
 		if LFGListRaidRulesDialogBorder then
-        	LFGListRaidRulesDialogBorder:Hide()
+			LFGListRaidRulesDialogBorder:Hide()
 		end
 		local buttonSpacing = 10 -- отступ снизу
 		if LFGListRaidRulesDialog.AcceptButton then
