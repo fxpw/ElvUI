@@ -76,6 +76,8 @@ globals = {
 	"LFGListFrame",
 	"LFGListInviteDialog",
 	"LFGListApplicationDialog",
+	"LFGListRaidRulesDialog",
+	"LFGListRaidRulesDialogHeader",
 	"LFDParentFrameGroupButton3",
 	"ObjectiveTrackerFrame",
 	"ObjectiveTrackerFrameScrollFrame",
