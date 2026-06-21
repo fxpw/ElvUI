@@ -1506,22 +1506,50 @@ local function LoadSkin()
 			S:HandleButton(LFGListInviteDialog.AcknowledgeButton)
 		end
 	end
+	for _, roleButton in pairs({
+		_G.LFDQueueFrameRoleButtonHealer,
+		_G.LFDQueueFrameRoleButtonDPS,
+		_G.LFDQueueFrameRoleButtonLeader,
+		_G.LFDQueueFrameRoleButtonTank,
+		_G.RaidFinderQueueFrameRoleButtonHealer,
+		_G.RaidFinderQueueFrameRoleButtonDPS,
+		_G.RaidFinderQueueFrameRoleButtonLeader,
+		_G.RaidFinderQueueFrameRoleButtonTank,
+		_G.LFGInvitePopupRoleButtonTank,
+		_G.LFGInvitePopupRoleButtonHealer,
+		_G.LFGInvitePopupRoleButtonDPS,
+		_G.LFGListApplicationDialog.TankButton,
+		_G.LFGListApplicationDialog.HealerButton,
+		_G.LFGListApplicationDialog.DamagerButton,
 
+		-- these three arent scaled to 0.7
+		_G.RolePollPopupRoleButtonTank,
+		_G.RolePollPopupRoleButtonHealer,
+		_G.RolePollPopupRoleButtonDPS,
+	}) do
+		local checkButton = roleButton.checkButton or roleButton.CheckButton
+		if checkButton:GetScale() ~= 1 then
+			checkButton:SetScale(1)
+		end
+
+		S:HandleCheckBox(checkButton, nil, nil, true)
+		checkButton.backdrop:SetInside()
+		checkButton:Size(18)
+	end
 	if LFGListApplicationDialog then
 		LFGListApplicationDialog:StripTextures()
 		LFGListApplicationDialog:SetTemplate("Transparent")
-		if LFGListApplicationDialog.Description then
-			LFGListApplicationDialog.Description:StripTextures()
-			if LFGListApplicationDialog.Description.EditBox then
-				S:HandleEditBox(LFGListApplicationDialog.Description.EditBox)
-			end
-		end
-		if LFGListApplicationDialog.SignUpButton then
-			S:HandleButton(LFGListApplicationDialog.SignUpButton)
-		end
-		if LFGListApplicationDialog.CancelButton then
-			S:HandleButton(LFGListApplicationDialog.CancelButton)
-		end
+		S:HandleButton(_G.LFGListApplicationDialog.SignUpButton)
+		S:HandleButton(_G.LFGListApplicationDialog.CancelButton)
+		S:HandleEditBox(_G.LFGListApplicationDialogDescription)
+	end
+
+	if LFGListRaidRulesDialog then
+		LFGListRaidRulesDialog:StripTextures()
+		LFGListRaidRulesDialogHeader:StripTextures()
+		LFGListRaidRulesDialog:SetTemplate("Transparent")
+		S:HandleButton(_G.LFGListRaidRulesDialog.AcceptButton)
+		S:HandleButton(_G.LFGListRaidRulesDialog.DeclineButton)
 	end
 
 end

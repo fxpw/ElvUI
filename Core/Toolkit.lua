@@ -188,6 +188,33 @@ local function Kill(object)
 	object:Hide()
 end
 
+local StripTexturesBlizzFrames = {
+	'Inset',
+	'inset',
+	'InsetFrame',
+	'LeftInset',
+	'RightInset',
+	'NineSlice',
+	'BG',
+	'Bg',
+	'border',
+	'Border',
+	'Background',
+	'BorderFrame',
+	'bottomInset',
+	'BottomInset',
+	'bgLeft',
+	'bgRight',
+	'FilligreeOverlay',
+	'PortraitOverlay',
+	'ArtOverlayFrame',
+	'Portrait',
+	'portrait',
+	'ScrollFrameBorder',
+	'ScrollUpBorder',
+	'ScrollDownBorder',
+}
+
 local function StripTextures(object, kill, alpha)
 	if object:IsObjectType("Texture") then
 		if kill then
@@ -198,6 +225,13 @@ local function StripTextures(object, kill, alpha)
 			object:SetTexture()
 		end
 	else
+		local FrameName = object.GetName and object:GetName()
+		for _, Blizzard in next, StripTexturesBlizzFrames do
+			local BlizzFrame = object[Blizzard] or (FrameName and _G[FrameName .. Blizzard])
+			if BlizzFrame and BlizzFrame.StripTextures then
+				BlizzFrame:StripTextures(kill, alpha)
+			end
+		end
 		if object.GetNumRegions then
 			for i = 1, object:GetNumRegions() do
 				local region = select(i, object:GetRegions())
