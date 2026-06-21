@@ -5,12 +5,66 @@ local UF = E:GetModule("UnitFrames")
 local select = select
 local strfind, strsub, gsub = strfind, strsub, gsub
 local floor, max = floor, max
+local format = string.format
 --WoW API / Variables
 local CreateFrame = CreateFrame
+local GetTime = GetTime
 
 local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
+
+local function RuneTimer_Create(bar)
+	if bar._runeTimerText then return end
+	local t = bar:CreateFontString(nil, 'OVERLAY')
+	t:SetFont(E.media.normFont, 18, 'OUTLINE')
+	t:SetPoint('CENTER', bar, 'CENTER', 0, 0)
+	t:SetTextColor(1, 1, 1, 1)
+	t:SetText('')
+	bar._runeTimerText = t
+end
+local function RuneTimer_RefreshFont(bar, height)
+	if not bar._runeTimerText then return end
+	local fontSize = max(12, min(24, floor(height * 0.85)))
+	bar._runeTimerText:SetFont(E.media.normFont, fontSize, 'OUTLINE')
+end
+
+local runeTimerFrame = CreateFrame('Frame')
+runeTimerFrame._bars = {}
+runeTimerFrame:SetScript('OnUpdate', function(self)
+	local now = GetTime()
+	for bar in pairs(self._bars) do
+		if bar._runeTimerText then
+			local endTime = bar._runeEndTime
+			if endTime then
+				local remaining = endTime - now
+				if remaining > 0 then
+					bar._runeTimerText:SetText(format('%.1f', remaining))
+				else
+					bar._runeTimerText:SetText('')
+					bar._runeEndTime = nil
+				end
+			end
+		end
+	end
+end)
+
+local function Runes_PostUpdate(element, rune, runeID, start, duration, isReady)
+	if not rune._runeTimerText then
+		RuneTimer_Create(rune)
+	end
+
+	-- element — это контейнер Runes (bars); origParent указывает на юнит-фрейм (задаётся в Configure_ClassBar)
+	local frame = element.origParent
+	local showRuneTimer = frame and frame.db and frame.db.classbar and frame.db.classbar.showRuneTimer
+
+	if (not showRuneTimer) or isReady or not start or not duration or duration == 0 then
+		rune._runeTimerText:SetText('')
+		rune._runeEndTime = nil
+	else
+		rune._runeEndTime = start + duration
+	end
+end
 
 function UF:Configure_ClassBar(frame)
 	if not frame.VARIABLES_SET then return end
@@ -77,6 +131,8 @@ function UF:Configure_ClassBar(frame)
 			if i <= frame.MAX_CLASS_BAR then
 				bars[i].backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
 				bars[i]:Height(bars:GetHeight())
+				-- Обновляем шрифт таймера под актуальную высоту
+				RuneTimer_RefreshFont(bars[i], bars:GetHeight())
 
 				if frame.MAX_CLASS_BAR == 1 then
 					bars[i]:Width(CLASSBAR_WIDTH)
@@ -280,10 +336,14 @@ function UF:Construct_DeathKnightResourceBar(frame)
 		runes[i].bg:SetTexture(E.media.blankTex)
 		runes[i].bg:SetParent(runes[i].backdrop)
 		runes[i].bg.multiplier = 0.35
+
+		RuneTimer_Create(runes[i])
+		runeTimerFrame._bars[runes[i]] = true
 	end
 
 	runes.PostUpdateType = UF.PostUpdateRuneType
 	runes.PostUpdateVisibility = UF.PostVisibilityRunes
+	runes.PostUpdate = Runes_PostUpdate
 
 	runes:SetScript("OnShow", ToggleResourceBar)
 	runes:SetScript("OnHide", ToggleResourceBar)
