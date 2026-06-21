@@ -56,9 +56,9 @@ local function Runes_PostUpdate(element, rune, runeID, start, duration, isReady)
 
 	-- element — это контейнер Runes (bars); origParent указывает на юнит-фрейм (задаётся в Configure_ClassBar)
 	local frame = element.origParent
-	local hideRuneTimer = frame and frame.db and frame.db.classbar and frame.db.classbar.hideRuneTimer
+	local showRuneTimer = frame and frame.db and frame.db.classbar and frame.db.classbar.showRuneTimer
 
-	if hideRuneTimer or isReady or not start or not duration or duration == 0 then
+	if (not showRuneTimer) or isReady or not start or not duration or duration == 0 then
 		rune._runeTimerText:SetText('')
 		rune._runeEndTime = nil
 	else
