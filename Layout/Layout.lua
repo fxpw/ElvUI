@@ -281,7 +281,7 @@ function LO:CreateChatPanels()
 
 	--Left Chat
 	local lchat = CreateFrame("Frame", "LeftChatPanel", E.UIParent)
-	lchat:SetFrameStrata("BACKGROUND")
+	lchat:SetFrameStrata("LOW")
 	lchat:SetFrameLevel(100)
 	lchat:Size(E.db.chat.panelWidth, E.db.chat.panelHeight)
 	lchat:Point("BOTTOMLEFT", 4, 4)
