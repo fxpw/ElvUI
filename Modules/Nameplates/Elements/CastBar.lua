@@ -133,7 +133,7 @@ function NP:Construct_Castbar(nameplate)
 		if s ~= 'UNKNOWN' then castbar:SetFrameStrata(s) else castbar:SetFrameStrata('MEDIUM') end
 	end
 	castbar:SetFrameLevel(nameplate:GetFrameLevel() + 2)
-	castbar:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
+	castbar:CreateBackdrop('Transparent', nil, nil, true, true)
 	NP:PinBorderPixel(castbar)
 	NP:HookBorderPin(castbar)
 	castbar:SetStatusBarTexture(LSM:Fetch('statusbar', NP.db.statusbar))
@@ -141,7 +141,7 @@ function NP:Construct_Castbar(nameplate)
 	NP.StatusBars[castbar] = true
 
 	castbar.Button = CreateFrame('Frame', nil, castbar)
-	castbar.Button:SetTemplate(nil, nil, nil, nil, nil, true, true)
+	castbar.Button:SetTemplate(nil, nil, nil, true, true)
 
 	castbar.Icon = castbar.Button:CreateTexture(nil, 'ARTWORK')
 	castbar.Icon:SetTexCoord(unpack(E.TexCoords))

@@ -28,6 +28,8 @@ end
 function NP:PinBorderPixel(frame)
 	local backdrop = frame and frame.backdrop
 	if not backdrop or not backdrop.GetBackdrop then return end
+	if backdrop.iborder then backdrop.iborder:Hide() end
+	if backdrop.oborder then backdrop.oborder:Hide() end
 	local eff = frame:GetEffectiveScale()
 	local px = NP:BorderPixelSize(eff)
 	local bd = backdrop:GetBackdrop()
@@ -175,7 +177,7 @@ function NP:Construct_Health(nameplate)
 	local Health = CreateFrame('StatusBar', nameplate:GetName()..'Health', nameplate)
 	do local s = nameplate:GetFrameStrata() if s ~= 'UNKNOWN' then Health:SetFrameStrata(s) else Health:SetFrameStrata('MEDIUM') end end
 	Health:SetFrameLevel(nameplate:GetFrameLevel() + 1)
-	Health:CreateBackdrop('Transparent', nil, nil, nil, nil, true, true)
+	Health:CreateBackdrop('Transparent', nil, nil, true, true)
 	NP:PinBorderPixel(Health)
 	NP:Health_SyncBorderLevel(Health)
 	NP:HookBorderPin(Health)
