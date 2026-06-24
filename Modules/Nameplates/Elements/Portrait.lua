@@ -32,7 +32,7 @@ end
 function NP:Construct_Portrait(nameplate)
 	local Portrait = nameplate:CreateTexture(nameplate:GetName()..'Portrait', 'OVERLAY', nil, 2)
 	Portrait:SetTexCoord(.18, .82, .18, .82)
-	Portrait:CreateBackdrop(nil, nil, nil, nil, nil, true, true)
+	Portrait:CreateBackdrop(nil, nil, nil, true, true)
 	NP:PinBorderPixel(Portrait)
 	Portrait:Hide()
 

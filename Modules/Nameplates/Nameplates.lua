@@ -55,9 +55,21 @@ do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
 	local tagsElapsed = 0
+	local scaleElapsed = 0
 	local HEALTH_INTERVAL = 0.2
 	local TAGS_INTERVAL   = 0.5
+	local SCALE_INTERVAL  = 0.05
 	f:SetScript('OnUpdate', function(_, dt)
+		scaleElapsed = scaleElapsed + dt
+		if scaleElapsed >= SCALE_INTERVAL then
+			scaleElapsed = 0
+			for plate in pairs(NP.Plates) do
+				if plate.unit and plate._npPinnedScale ~= plate:GetEffectiveScale() then
+					NP:PinPlateBorders(plate)
+				end
+			end
+		end
+
 		elapsed     = elapsed     + dt
 		tagsElapsed = tagsElapsed + dt
 		if elapsed < HEALTH_INTERVAL then return end
@@ -128,10 +140,6 @@ do
 				end
 				if doTags then
 					plate:UpdateTags()
-				end
-
-				if doTags and plate._npPinnedScale ~= plate:GetEffectiveScale() then
-					NP:PinPlateBorders(plate)
 				end
 
 				if not plate.appliedFrameLevelBoost then
