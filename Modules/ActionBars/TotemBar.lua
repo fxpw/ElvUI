@@ -13,7 +13,7 @@ local RegisterStateDriver = RegisterStateDriver
 if E.myclass ~= "SHAMAN" then return end
 
 local bar = CreateFrame("Frame", "ElvUI_BarTotem", E.UIParent, "SecureHandlerStateTemplate")
-bar:SetFrameStrata("LOW")
+bar:SetFrameStrata("MEDIUM")
 
 local function GetTotemButtonHeight()
 	local db = AB.db and AB.db.barTotem
