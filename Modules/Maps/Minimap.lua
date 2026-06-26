@@ -368,7 +368,7 @@ end
 
 function M:CreateFarmModeMap()
 	local fm = CreateFrame("Minimap", "FarmModeMap", E.UIParent)
-	fm:SetFrameStrata("MEDIUM")
+	fm:SetFrameStrata("HIGH")
 	fm:Size(E.db.farmSize)
 	fm:Point("TOP", 0, -120)
 	fm:SetClampedToScreen(true)
