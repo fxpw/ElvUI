@@ -13,7 +13,7 @@ local RegisterStateDriver = RegisterStateDriver
 if E.myclass ~= "SHAMAN" then return end
 
 local bar = CreateFrame("Frame", "ElvUI_BarTotem", E.UIParent, "SecureHandlerStateTemplate")
-bar:SetFrameStrata("LOW")
+bar:SetFrameStrata("MEDIUM")
 
 local function GetTotemButtonHeight()
 	local db = AB.db and AB.db.barTotem
@@ -277,8 +277,8 @@ function AB:PositionAndSizeBarTotem()
 		MultiCastRecallSpellButton:Point("LEFT", lastSlot, "RIGHT", buttonSpacing, 0)
 	end
 
-	MultiCastFlyoutFrameCloseButton:Size(size, buttonHeight)
-	MultiCastFlyoutFrameOpenButton:Size(size, buttonHeight)
+	MultiCastFlyoutFrameCloseButton:Width(size)
+	MultiCastFlyoutFrameOpenButton:Width(size)
 
 	for i = 1, 12 do
 		local actionButton = _G["MultiCastActionButton"..i]
