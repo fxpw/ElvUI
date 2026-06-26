@@ -277,8 +277,8 @@ function AB:PositionAndSizeBarTotem()
 		MultiCastRecallSpellButton:Point("LEFT", lastSlot, "RIGHT", buttonSpacing, 0)
 	end
 
-	MultiCastFlyoutFrameCloseButton:Size(size, buttonHeight)
-	MultiCastFlyoutFrameOpenButton:Size(size, buttonHeight)
+	MultiCastFlyoutFrameCloseButton:Width(size)
+	MultiCastFlyoutFrameOpenButton:Width(size)
 
 	for i = 1, 12 do
 		local actionButton = _G["MultiCastActionButton"..i]
