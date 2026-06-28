@@ -8,7 +8,7 @@ local StatusBarPrototype = Engine.Compat.StatusBarPrototype
 
 
 function UF.HealthClipFrame_HealComm(frame)
-	if frame.HealCommBar then
+	if frame.HealCommBar and frame.db and frame.db.healPrediction and frame.db.healPrediction.enable then
 		UF:SetAlpha_HealComm(frame.HealCommBar, 1)
 	end
 end
@@ -107,15 +107,11 @@ end
 
 function UF:Configure_HealComm(frame)
 	if not (frame.HealCommBar and frame.HealCommBar.absorbBar) then return end -- prevents lua error with ElvUI_Enhanced portrait HD fix option.
+	local hpDB = frame.db.healPrediction
 	local db = frame.db.absorbPrediction
 
-	-- if not db.anchorPoint then
-	-- 	-- dbUpdater(frame)
-	-- 	if db.enable ~= UF.db.units[frame.unitframeType].absorbPrediction.enable then db.enable = true end -- workaround because RaidGroup1Button1 and PartyGroup1Button1 db.enable were being rewritten to false for some reason
-	-- end
-
-	if db and db.enable then
-
+	-- healPrediction.enable is the master switch for the entire heal prediction system
+	if hpDB and hpDB.enable then
 		local pred = frame.HealCommBar
 		local parent = pred.parent
 		local myBar = pred.myBar
@@ -125,13 +121,11 @@ function UF:Configure_HealComm(frame)
 		local overAbsorb = pred.overAbsorb
 		local overHealAbsorb = pred.overHealAbsorb
 
-		-- local unit = frame.unitframeType
-		-- db = UF.db.units[frame.unitframeType].absorbPrediction
-		-- E:Delay(1, dbUpdater, frame) -- workaround to db being overwritten after configure
-
 		local colors = UF.db.colors.healPrediction
 		local absorbColors = UF.db.colors.absorbPrediction
 		pred.maxOverflow = 1 + (colors.maxOverflow or 0)
+
+		UF:SetAlpha_HealComm(pred, 1)
 
 		if not frame:IsElementEnabled("HealthPrediction") then
 			frame:EnableElement("HealthPrediction")
@@ -149,36 +143,50 @@ function UF:Configure_HealComm(frame)
 
 		UF:SetTexture_HealComm(pred, UF.db.colors.transparentHealth and E.media.blankTex or healthBarTexture:GetTexture())
 
-		local absorbTexture = LSM:Fetch("statusbar", db.absorbTexture)
-		absorbBar:SetStatusBarTexture(absorbTexture)
-
 		myBar:SetReverseFill(reverseFill)
 		otherBar:SetReverseFill(reverseFill)
 		healAbsorbBar:SetReverseFill(not reverseFill)
 
-		if db.absorbStyle == "REVERSED" then
-			absorbBar:SetReverseFill(not reverseFill)
-		else
-			absorbBar:SetReverseFill(reverseFill)
-		end
-
 		myBar:SetStatusBarColor(colors.personal.r, colors.personal.g, colors.personal.b, colors.personal.a)
 		otherBar:SetStatusBarColor(colors.others.r, colors.others.g, colors.others.b, colors.others.a)
-		absorbBar:SetStatusBarColor(absorbColors.absorbs.r, absorbColors.absorbs.g, absorbColors.absorbs.b, absorbColors.absorbs.a)
-		healAbsorbBar:SetStatusBarColor(absorbColors.healAbsorbs.r, absorbColors.healAbsorbs.g, absorbColors.healAbsorbs.b, absorbColors.healAbsorbs.a)
 
 		myBar:SetOrientation(orientation)
 		otherBar:SetOrientation(orientation)
 		absorbBar:SetOrientation(orientation)
 		healAbsorbBar:SetOrientation(orientation)
 
-		pred.anchor, pred.anchor1, pred.anchor2 = db.anchorPoint or "BOTTOM", "LEFT", "RIGHT"
+		-- Configure absorb bars only if absorbPrediction is enabled
+		if db and db.enable then
+			local absorbTexture = LSM:Fetch("statusbar", db.absorbTexture)
+			absorbBar:SetStatusBarTexture(absorbTexture)
+
+			if db.absorbStyle == "REVERSED" then
+				absorbBar:SetReverseFill(not reverseFill)
+			else
+				absorbBar:SetReverseFill(reverseFill)
+			end
+
+			absorbBar:SetStatusBarColor(absorbColors.absorbs.r, absorbColors.absorbs.g, absorbColors.absorbs.b, absorbColors.absorbs.a)
+			healAbsorbBar:SetStatusBarColor(absorbColors.healAbsorbs.r, absorbColors.healAbsorbs.g, absorbColors.healAbsorbs.b, absorbColors.healAbsorbs.a)
+
+			absorbBar:Show()
+			healAbsorbBar:Show()
+			overAbsorb:Show()
+			overHealAbsorb:Show()
+		else
+			absorbBar:Hide()
+			healAbsorbBar:Hide()
+			overAbsorb:Hide()
+			overHealAbsorb:Hide()
+		end
+
+		pred.anchor, pred.anchor1, pred.anchor2 = (db and db.anchorPoint) or "BOTTOM", "LEFT", "RIGHT"
 
 		if orientation == "HORIZONTAL" then
 			local p1 = reverseFill and "RIGHT" or "LEFT"
 			local p2 = reverseFill and "LEFT" or "RIGHT"
 
-			local anchor = db.anchorPoint
+			local anchor = (db and db.anchorPoint) or "BOTTOM"
 			pred.anchor, pred.anchor1, pred.anchor2 = anchor, p1, p2
 
 			myBar:ClearAllPoints()
@@ -204,12 +212,14 @@ function UF:Configure_HealComm(frame)
 			parent:ClearAllPoints()
 			parent:Point(p1, health, p1)
 
-			if db.absorbStyle == "REVERSED" then
-				absorbBar:Point(p2, healthBarTexture, p2)
-			elseif db.absorbStyle == "STACKED" then
-				absorbBar:Point(p1, pred.otherBarTexture, p2)
-			else
-				absorbBar:Point(p1, healthBarTexture, p2)
+			if db and db.enable then
+				if db.absorbStyle == "REVERSED" then
+					absorbBar:Point(p2, healthBarTexture, p2)
+				elseif db.absorbStyle == "STACKED" then
+					absorbBar:Point(p1, pred.otherBarTexture, p2)
+				else
+					absorbBar:Point(p1, healthBarTexture, p2)
+				end
 			end
 		else
 			local p1 = reverseFill and "TOP" or "BOTTOM"
@@ -217,7 +227,7 @@ function UF:Configure_HealComm(frame)
 
 			-- anchor converts while the health is in vertical orientation to be able to use a height
 			-- (well in this case, width) other than -1 which positions the UF on the left or right side
-			local anchor = (db.anchorPoint == "BOTTOM" and "RIGHT") or (db.anchorPoint == "TOP" and "LEFT") or db.anchorPoint
+			local anchor = (db and db.anchorPoint == "BOTTOM" and "RIGHT") or (db and db.anchorPoint == "TOP" and "LEFT") or (db and db.anchorPoint) or "RIGHT"
 			pred.anchor, pred.anchor1, pred.anchor2 = anchor, p1, p2
 
 			myBar:ClearAllPoints()
@@ -245,25 +255,35 @@ function UF:Configure_HealComm(frame)
 			parent:ClearAllPoints()
 			parent:Point(p1, health, p1)
 
-			if db.absorbStyle == "REVERSED" then
-				absorbBar:Point(p2, healthBarTexture, p2)
-			elseif db.absorbStyle == "STACKED" then
-				absorbBar:Point(p1, pred.otherBarTexture, p2)
-			else
-				absorbBar:Point(p1, healthBarTexture, p2)
+			if db and db.enable then
+				if db.absorbStyle == "REVERSED" then
+					absorbBar:Point(p2, healthBarTexture, p2)
+				elseif db.absorbStyle == "STACKED" then
+					absorbBar:Point(p1, pred.otherBarTexture, p2)
+				else
+					absorbBar:Point(p1, healthBarTexture, p2)
+				end
 			end
 		end
-	elseif frame:IsElementEnabled("HealthPrediction") then
-		frame:DisableElement("HealthPrediction")
+
+		-- Force an immediate update so the bars appear right away
+		if pred.ForceUpdate then
+			pred:ForceUpdate()
+		end
+	else
+		UF:SetAlpha_HealComm(frame.HealCommBar, 0)
+		if frame:IsElementEnabled("HealthPrediction") then
+			frame:DisableElement("HealthPrediction")
+		end
 	end
 end
 
 function UF:UpdateHealComm(_, myIncomingHeal, otherIncomingHeal, absorb, _, hasOverAbsorb, hasOverHealAbsorb, health, maxHealth)
-	-- print(_, myIncomingHeal, otherIncomingHeal, absorb, _, hasOverAbsorb, hasOverHealAbsorb, health, maxHealth)
 	local frame = self.frame
+	local hpDB = frame and frame.db and frame.db.healPrediction
+	if not hpDB or not hpDB.enable or not health then return end
+
 	local db = frame and frame.db and frame.db.absorbPrediction
-	if not db or not db.absorbStyle or not health then return end
-	-- print("asd")
 	local pred = frame.HealCommBar
 	local healAbsorbBar = pred.healAbsorbBar
 	local absorbBar = pred.absorbBar
@@ -274,12 +294,15 @@ function UF:UpdateHealComm(_, myIncomingHeal, otherIncomingHeal, absorb, _, hasO
 
 	UF:SetSize_HealComm(frame)
 
-	-- absorbs is set to none so hide both and kill code execution
-	if db.absorbStyle == "NONE" then
+	-- Skip absorb bar logic if absorbPrediction is disabled
+	if not db or not db.enable or db.absorbStyle == "NONE" then
 		healAbsorbBar:Hide()
 		absorbBar:Hide()
+		pred.overAbsorb:Hide()
+		pred.overHealAbsorb:Hide()
 		return
 	end
+
 	local missingHealth = maxHealth - health
 	local healthPostHeal = health + myIncomingHeal + otherIncomingHeal
 
