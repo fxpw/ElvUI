@@ -267,9 +267,7 @@ function UF:Configure_HealComm(frame)
 		end
 
 		-- Force an immediate update so the bars appear right away
-		-- Only force update if the frame has a unit assigned, otherwise
-		-- oUF_HealComm4/HealthPrediction will error on UnitGUID(nil)
-		if pred.ForceUpdate and frame.unit then
+		if pred.ForceUpdate then
 			pred:ForceUpdate()
 		end
 	else
