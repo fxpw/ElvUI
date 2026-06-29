@@ -42411,6 +42411,7 @@ globals = {
 	"LookingForGuildFrameRequestToJoinFrameMessageFrame",
 	"LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScroll",
 	"LookingForGuildFrameRequestToJoinFrameMessageFrameMessageScrollScrollBar",
+	"LookingForGuildFrameGuildCardsListScrollFrameScrollBar",
 	"GuildMicroButtonTabard",
 	"GuildMicroButton",
 	"CollectionsMicroButton",
