@@ -40165,6 +40165,7 @@ globals = {
 	"InspectTabardSlot",
 	"InspectTalentFrame",
 	"PlayerTalentFrameResetTalentGroupButton",
+	"PlayerTalentFrameSpecPurchaseButton",
 	"InspectTalentFrameArrowFrame",
 	"InspectTalentFrameCloseButton",
 	"InspectTalentFramePointsBar",

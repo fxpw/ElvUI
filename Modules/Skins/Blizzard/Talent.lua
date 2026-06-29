@@ -50,7 +50,27 @@ S:AddCallbackForAddon("Blizzard_TalentUI", "Skin_Blizzard_TalentUI", function()
 
 	PlayerTalentFrameStatusFrame:HookScript("OnShow", glyphFrameOnShow)
 	PlayerTalentFrameActivateButton:HookScript("OnShow", glyphFrameOnShow)
+	PlayerTalentFrameSpecPurchaseButton:StripTextures()
+	PlayerTalentFrameSpecPurchaseButton:SetTemplate("Default")
+	PlayerTalentFrameSpecPurchaseButton:StyleButton()
 
+	hooksecurefunc("PlayerTalentFrame_UpdateSpecs", function()
+		local button = PlayerTalentFrameSpecPurchaseButton
+		local icon = button.icon or button.IconTexture
+		if not icon then
+			for i = 1, button:GetNumRegions() do
+				local region = select(i, button:GetRegions())
+				if region:GetObjectType() == "Texture" and region:GetTexture() then
+					icon = region
+					break
+				end
+			end
+		end
+		if icon then
+			icon:SetInside()
+			icon:SetTexCoord(unpack(E.TexCoords))
+		end
+	end)
 	PlayerTalentFrameStatusFrame:StripTextures()
 	PlayerTalentFramePointsBar:StripTextures()
 	PlayerTalentFramePreviewBar:StripTextures()
