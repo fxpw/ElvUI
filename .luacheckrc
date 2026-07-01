@@ -8104,6 +8104,8 @@ globals = {
 	"HardcoreFrameNavBar",
 	"HardcoreFrameNavBarOverlay",
 	"HardcoreFrameNavBarHomeButton",
+	"HardcoreFrameParticipantsFrameFilterButton",
+	"HardcoreFrameLadderFrameFilterButton",
 	"Custom_RouletteFrameCloseButton",
 	"FriendsFriendsScrollFrameScrollBar",
 	"FriendsFriendsScrollFrameScrollBarScrollDownButton",
@@ -42868,6 +42870,7 @@ globals = {
 	"HeadHuntingFrameContainerYouTargetsPanelScrollFrameScrollBar",
 	"HeadHuntingSetRewardExternalFrame",
 	"HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu",
+	"HeadHuntingFrameContainerAllTargetsPanelFilterButton",
 	--sirus journals
 	"Custom_MountChestFrame",
 	"Custom_RouletteFrame",
