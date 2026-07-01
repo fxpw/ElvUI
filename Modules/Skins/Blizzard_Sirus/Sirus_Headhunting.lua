@@ -116,6 +116,8 @@ local function LoadSkin()
 	--SearchBox and button
 	S:HandleEditBox(HeadHuntingFrame.Container.AllTargetsPanel.SearchFrame.SearchBox)
 	S:HandleButton(HeadHuntingFrame.Container.AllTargetsPanel.SearchFrame.SearchButton)
+	HeadHuntingFrameContainerAllTargetsPanelFilterButton:StripTextures(true)
+	S:HandleButton(HeadHuntingFrameContainerAllTargetsPanelFilterButton)
 	HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu:StripTextures(true)
 	S:HandleButton(HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu)
 end
