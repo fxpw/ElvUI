@@ -17,6 +17,9 @@ local function LoadSkin()
 		end
 	end
 	S:HandleButton(HardcoreFrameNavBarHomeButton)
+	if HardcoreFrameNavBarHomeButton:GetFontString() then
+		HardcoreFrameNavBarHomeButton:GetFontString():FontTemplate()
+	end
 	S:HandleButton(HardcoreFrameSuggestTab, true)
 	S:HandleButton(HardcoreFrameChallengeListTab, true)
 	S:HandleButton(HardcoreFrameParticipantsTab, true)
