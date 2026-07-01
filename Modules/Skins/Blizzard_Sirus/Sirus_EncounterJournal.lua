@@ -40,6 +40,9 @@ local function LoadSkin()
 
 	S:HandleButton(EncounterJournal.navBar.home, true)
 	EncounterJournal.navBar.home.xoffset = 1
+	if EncounterJournal.navBar.home:GetFontString() then
+		EncounterJournal.navBar.home:GetFontString():FontTemplate()
+	end
 
 	EncounterJournal.inset:StripTextures()
 
@@ -53,6 +56,10 @@ local function LoadSkin()
 
 		tab:HookScript("OnEnter", S.SetModifiedBackdrop)
 		tab:HookScript("OnLeave", S.SetOriginalBackdrop)
+
+		if tab:GetFontString() then
+			tab:GetFontString():FontTemplate()
+		end
 	end
 
 	SkinTierTab(EncounterJournal.instanceSelect.suggestTab)
