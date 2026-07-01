@@ -21,10 +21,16 @@ local function LoadSkin()
 
 	S:HandleButton(HeadHuntingFrame.navBar.home, true)
 	HeadHuntingFrame.navBar.home.xoffset = 1
+	if HeadHuntingFrame.navBar.home:GetFontString() then
+		HeadHuntingFrame.navBar.home:GetFontString():FontTemplate()
+	end
 
 	HeadHuntingFrame.inset:StripTextures()
 
 	S:HandleButton(HeadHuntingFrame.Container.HomeTab, true)
+	if HeadHuntingFrame.Container.HomeTab:GetFontString() then
+		HeadHuntingFrame.Container.HomeTab:GetFontString():FontTemplate()
+	end
 	S:HandleButton(HeadHuntingFrame.Container.AllTargetsTab, true)
 	S:HandleButton(HeadHuntingFrame.Container.YouTargetsTab, true)
 
