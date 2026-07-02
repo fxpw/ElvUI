@@ -52,6 +52,20 @@ local function LoadSkin()
 	S:HandleButton(HomePanel.SuggestionFrameRightBottom.CenterDisplay.ButtonLeft)
 	S:HandleButton(HomePanel.SuggestionFrameRightBottom.CenterDisplay.ButtonRight)
 
+	-- Apply ElvUI font to suggestion center display titles
+	local suggestionFrames = {
+		HeadHuntingFrameContainerHomePanelSuggestionFrameLeftCenterDisplay,
+		HeadHuntingFrameContainerHomePanelSuggestionFrameRightTopCenterDisplay,
+		HeadHuntingFrameContainerHomePanelSuggestionFrameRightBottomCenterDisplay,
+	}
+	for _, frame in ipairs(suggestionFrames) do
+		if frame and frame.Title and frame.Title.text then
+			local fs = frame.Title.text
+			local _, size, flags = fs:GetFont()
+			fs:SetFont(E.media.normFont, size or 12, flags or "")
+		end
+	end
+
 	local AllTargetsPanel = HeadHuntingFrame.Container.AllTargetsPanel
 	AllTargetsPanel:HookScript("OnShow", Panel_OnShow)
 --	AllTargetsPanel:SetTemplate("Transparent")
