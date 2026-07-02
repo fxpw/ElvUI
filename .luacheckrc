@@ -42872,6 +42872,9 @@ globals = {
 	"HeadHuntingSetRewardExternalFrame",
 	"HeadHuntingFrameContainerAllTargetsPanelFilterDropDownMenu",
 	"HeadHuntingFrameContainerAllTargetsPanelFilterButton",
+	"HeadHuntingFrameContainerHomePanelSuggestionFrameLeftCenterDisplay",
+	"HeadHuntingFrameContainerHomePanelSuggestionFrameRightTopCenterDisplay",
+	"HeadHuntingFrameContainerHomePanelSuggestionFrameRightBottomCenterDisplay",
 	--sirus journals
 	"Custom_MountChestFrame",
 	"Custom_RouletteFrame",
