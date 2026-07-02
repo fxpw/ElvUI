@@ -158,6 +158,13 @@ local function LoadSkin()
 	S:HandleButton(EncounterJournalSuggestFrameSuggestion3CenterDisplayButton)
 	S:HandleNextPrevButton(EncounterJournalSuggestFrameSuggestion1PrevButton)
 	S:HandleNextPrevButton(EncounterJournalSuggestFrameSuggestion1NextButton)
+
+	-- Apply ElvUI font to suggestion center display title
+	if EncounterJournalSuggestFrameSuggestion1CenterDisplayTitle and EncounterJournalSuggestFrameSuggestion1CenterDisplayTitle.text then
+		local fs = EncounterJournalSuggestFrameSuggestion1CenterDisplayTitle.text
+		local _, size, flags = fs:GetFont()
+		fs:SetFont(E.media.normFont, size or 12, flags or "")
+	end
 	-- S:HandleScrollBar(EncounterJournalLootJournalScrollFrameScrollBar)
 
 	-- for i = 1, #EncounterJournal.LootJournal.ItemSetsScrollFrame.buttons do
