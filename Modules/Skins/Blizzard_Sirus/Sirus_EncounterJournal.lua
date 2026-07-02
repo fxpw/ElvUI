@@ -215,6 +215,21 @@ local function LoadSkin()
 			index = index + 1
 			instanceButton = scrollFrame["instance"..index]
 		end
+
+		-- Apply ElvUI font to "Unavailable" text on each instance button
+		-- Structure: scrollFrame.instanceX.Unavailable.Text (FontString)
+		for i = 1, index - 1 do
+			local instance = scrollFrame["instance"..i]
+			if instance and instance.Unavailable and instance.Unavailable.Text then
+				local text = instance.Unavailable.Text
+				if text.FontTemplate then
+					text:FontTemplate()
+				elseif text.SetFont then
+					local _, size, flags = text:GetFont()
+					text:SetFont(E.media.normFont, size or 12, flags or "")
+				end
+			end
+		end
 	end)
 
 	hooksecurefunc("EncounterJournal_DisplayInstance", function(instanceID)
