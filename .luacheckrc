@@ -8091,6 +8091,7 @@ globals = {
 	"EncounterJournalSuggestFrameSuggestion3CenterDisplayButton",
 	"EncounterJournalSuggestFrameSuggestion1PrevButton",
 	"EncounterJournalSuggestFrameSuggestion1NextButton",
+	"EncounterJournalSuggestFrameSuggestion1CenterDisplayTitle",
 	"HardcoreFrameNavBarHomeButton",
 	"BattlePassFramePurchasePremiumDialog",
 	"BattlePassFramePurchaseLevelExperienceDialog",
