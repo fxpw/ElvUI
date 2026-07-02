@@ -26,6 +26,17 @@ local function LoadSkin()
 	S:HandleButton(HardcoreFrameLadderTab, true)
 	S:HandleButton(HardcoreFrameSuggestFrameSuggestion2CenterDisplayButton)
 	S:HandleButton(HardcoreFrameSuggestFrameSuggestion3CenterDisplayButton)
+
+	-- Apply ElvUI font to suggestion center display titles
+	for i = 1, 3 do
+		local title = _G["HardcoreFrameSuggestFrameSuggestion"..i.."CenterDisplayTitle"]
+		if title and title.Text then
+			local fs = title.Text
+			local _, size, flags = fs:GetFont()
+			fs:SetFont(E.media.normFont, size or 12, flags or "")
+		end
+	end
+
 	HardcoreFrameParticipantsFrameFilterButton:StripTextures(true)
 	S:HandleButton(HardcoreFrameParticipantsFrameFilterButton)
 	HardcoreFrameLadderFrameFilterButton:StripTextures(true)
