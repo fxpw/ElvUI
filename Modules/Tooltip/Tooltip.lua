@@ -5,7 +5,6 @@ local S = E:GetModule("Skins")
 local _G = _G
 local unpack, tonumber, select = unpack, tonumber, select
 local twipe, tinsert, tconcat = table.wipe, table.insert, table.concat
-local tsort = table.sort
 local floor = math.floor
 local find, format, sub, match = string.find, string.format, string.sub, string.match
 -- WoW API / Variables
