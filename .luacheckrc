@@ -329,7 +329,6 @@ globals = {
 	"table.maxn",
 	"table.remove",
 	"table.sort",
-	"tsort",
 	"tonumber",
 	"tostring",
 	"type",
