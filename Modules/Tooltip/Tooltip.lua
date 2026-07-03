@@ -5,6 +5,7 @@ local S = E:GetModule("Skins")
 local _G = _G
 local unpack, tonumber, select = unpack, tonumber, select
 local twipe, tinsert, tconcat = table.wipe, table.insert, table.concat
+local tsort = table.sort
 local floor = math.floor
 local find, format, sub, match = string.find, string.format, string.sub, string.match
 -- WoW API / Variables
@@ -55,7 +56,6 @@ local FACTION_HORDE = FACTION_HORDE
 local LEVEL = LEVEL
 local FACTION_BAR_COLORS = FACTION_BAR_COLORS
 local ID = ID
-
 local GameTooltip, GameTooltipStatusBar = GameTooltip, GameTooltipStatusBar
 local targetList, inspectCache = {}, {}
 local TAPPED_COLOR = {
@@ -86,6 +86,7 @@ function TT:GetItemLvL(unit, guid)
         return LOADING_LABEL
     end
 end
+
 -- local inventorySlots = {
 -- 	"HeadSlot", "NeckSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "WristSlot",
 -- 	"HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "Finger0Slot", "Finger1Slot",
@@ -526,6 +527,28 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
                 C_Inspect.RequestAvgItemLevel(unit)
 
                 tt:AddDoubleLine(L["Item Level:"], self:GetItemLvL(unit), nil, nil, nil, 1, 1, 1)
+
+                if self.db.mythicRating then
+                    local mythicRating
+                    if C_Inspect and C_Inspect.GetMythicRating then
+                        mythicRating = C_Inspect.GetMythicRating(unit)
+                    elseif GetMythicPlusRating then
+                        mythicRating = GetMythicPlusRating(unit)
+                    end
+
+                    if mythicRating and mythicRating > 0 then
+                        tt:AddLine(" ")
+                        local r, g, b
+                        if mythicRating >= 200 then
+                            r, g, b = 0.99, 0.82, 0.10 -- золотой
+                        elseif mythicRating >= 100 then
+                            r, g, b = 0.00, 0.44, 1.00 -- синий
+                        else
+                            r, g, b = 1.00, 1.00, 1.00 -- белый
+                        end
+                        tt:AddDoubleLine(L["Mythic+ Rating:"], format("|cff%02x%02x%02x%d|r", r * 255, g * 255, b * 255, mythicRating), nil, nil, nil, r, g, b)
+                    end
+                end
             end
         end
     end
