@@ -20,14 +20,20 @@ end
 
 local _G = _G
 local format, strfind, type, tostring = format, strfind, type, tostring
-local pairs, unpack = pairs, unpack
+local pairs, setmetatable, unpack = pairs, setmetatable, unpack
 
+local C_Item = C_Item
+local C_Timer = C_Timer
 local GetTradeTargetItemLink = GetTradeTargetItemLink
 local InCombatLockdown = InCombatLockdown
+local GetContainerItemInfo = GetContainerItemInfo
 local GetContainerItemLink = GetContainerItemLink
 local GetSpellInfo = GetSpellInfo
 local GetItemInfo = GetItemInfo
+local GetItemInfoEx = GetItemInfoEx
+local GetItemSetInfo = GetItemSetInfo
 local GetItemCount = GetItemCount
+local GetTime = GetTime
 local CreateFrame = CreateFrame
 local GameTooltip = GameTooltip
 
@@ -148,12 +154,72 @@ local millableHerbs = {
 
 
 D.DeconstructMode = false
-D.Keys = {}
+D.Keys = {
+	[15869] = true,
+	[15870] = true,
+	[15871] = true,
+	[15872] = true,
+	[43854] = true,
+	[43853] = true,
+}
 D.BlacklistDE = {}
 D.BlacklistLOCK = {}
 D.BlacklistDEPatterns = {}
 D.BlacklistLOCKPatterns = {}
 D.ItemProcessingCache = {}
+D.PendingItemInfo = {}
+D.DeconstructButtons = setmetatable({}, { __mode = "k" })
+local skeletonKeys = { 43853, 43854, 15872, 15871, 15870, 15869 }
+
+local processTooltip
+local disenchantMinSkillPrefix = ITEM_DISENCHANT_MIN_SKILL and ITEM_DISENCHANT_MIN_SKILL:match("^(.-)%%s")
+local PROCESS_UNLOCK = "unlock"
+local PROCESS_PROSPECT = "prospect"
+local PROCESS_MILL = "mill"
+local PROCESS_DISENCHANT = "disenchant"
+
+local function PrepareProcessTooltip(itemLink, bag, slot)
+	if not itemLink then return end
+
+	if not processTooltip then
+		processTooltip = CreateFrame("GameTooltip", "ElvUIDeconstructScanTooltip", UIParent, "GameTooltipTemplate")
+	end
+
+	processTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+	processTooltip:ClearLines()
+	if bag ~= nil and slot then
+		processTooltip:SetBagItem(bag, slot)
+	else
+		processTooltip:SetHyperlink(itemLink)
+	end
+	return processTooltip:GetName(), processTooltip:NumLines()
+end
+
+local function FinishProcessTooltip()
+	processTooltip:Hide()
+	processTooltip:ClearLines()
+end
+
+local function GetItemClassAndSet(item)
+	local _, _, _, _, _, _, _, _, _, _, _, _, classID, _, _, setID = GetItemInfoEx(item)
+	return classID, setID
+end
+
+local function IsGladiatorItem(itemName, setID)
+	if itemName and (strfind(itemName, "гладиатор", 1, true) or strfind(itemName, "Гладиатор", 1, true)
+	or strfind(itemName, "gladiator", 1, true) or strfind(itemName, "Gladiator", 1, true))
+	then
+		return true
+	end
+
+	if setID and setID ~= 0 then
+		local setName = GetItemSetInfo(setID)
+		return setName and (strfind(setName, "гладиатор", 1, true) or strfind(setName, "Гладиатор", 1, true)
+		or strfind(setName, "gladiator", 1, true) or strfind(setName, "Gladiator", 1, true)) or false
+	end
+
+	return false
+end
 
 function D:HasRelevantProfession()
 	if D.HasEnchanting then return true end
@@ -183,10 +249,26 @@ function D:UpdateProfessions()
 	wipe(D.ItemProcessingCache)
 end
 
-local function HaveKey()
-	for key in pairs(D.Keys) do
-		if GetItemCount(key) > 0 then return key end
+function D:GetAvailableKey()
+	local now = GetTime()
+	if D._keyCheckTime and now < D._keyCheckTime then
+		return D._availableKey
 	end
+
+	local availableKey
+	for _, key in ipairs(skeletonKeys) do
+		if GetItemCount(key) > 0 then
+			availableKey = key
+			break
+		end
+	end
+
+	D._keyCheckTime = now + 0.5
+	if D._availableKey ~= availableKey then
+		D._availableKey = availableKey
+		wipe(D.ItemProcessingCache)
+	end
+	return availableKey
 end
 
 function D:Blacklisting(skill)
@@ -295,37 +377,40 @@ function D:IsBreakable(itemId, itemName, itemLink)
 	return true
 end
 
-function D:IsDisenchantableTooltip(itemLink)
-	if not itemLink then return false end
+function D:IsDisenchantableTooltip(itemLink, bag, slot)
+	local tooltipName, numLines = PrepareProcessTooltip(itemLink, bag, slot)
+	if not tooltipName then return nil end
 
-	GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	GameTooltip:SetHyperlink(itemLink)
-
-	for i = 2, GameTooltip:NumLines() do
-		local line = _G["GameTooltipTextLeft" .. i]
-		if line and line:GetText() then
-			local text = line:GetText()
-			if string.find(text, "Disenchant") and not string.find(text, "Cannot") then
-				GameTooltip:Hide()
-				return true
-			end
-			if string.find(text, "Распыл") and not string.find(text, "Нельзя") then
-				GameTooltip:Hide()
-				return true
-			end
+	local result
+	for i = 2, numLines do
+		local line = _G[tooltipName .. "TextLeft" .. i]
+		local text = line and line:GetText()
+		if text == ITEM_DISENCHANT_NOT_DISENCHANTABLE then
+			result = false
+			break
+		elseif text == ITEM_DISENCHANT_ANY_SKILL
+		or (text and disenchantMinSkillPrefix and strfind(text, disenchantMinSkillPrefix, 1, true) == 1)
+		then
+			result = true
+			break
 		end
 	end
-	GameTooltip:Hide()
-	return false
+
+	FinishProcessTooltip()
+	return result
 end
 
-function D:IsDisenchantable(itemId, itemName, itemLink, itemRarity, itemType, itemEquipLoc)
+function D:IsDisenchantable(itemId, itemName, itemLink, itemRarity, itemType, itemEquipLoc, bag, slot)
 	if not itemId or not itemName or not D.HasEnchanting then return false end
 
-	if D:IsDisenchantableTooltip(itemLink) then return true end
+	local tooltipResult = D:IsDisenchantableTooltip(itemLink, bag, slot)
+	if tooltipResult ~= nil then return tooltipResult end
+
+	local classID, setID = GetItemClassAndSet(itemLink or itemId)
+	if IsGladiatorItem(itemName, setID) then return false end
 
 	if not itemRarity or itemRarity < 2 or itemRarity > 4 then return false end
-	if itemType ~= "Armor" and itemType ~= "Weapon" then return false end
+	if classID ~= 2 and classID ~= 4 then return false end
 	if not itemEquipLoc or itemEquipLoc == "" then return false end
 
 	return true
@@ -336,21 +421,23 @@ function D:IsProspectable(itemId)
 	return prospectableOres[tonumber(itemId)] or false
 end
 
-function D:IsProspectableTooltip(itemLink)
+function D:IsProspectableTooltip(itemLink, bag, slot)
 	if not itemLink then return false end
-	GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	GameTooltip:SetHyperlink(itemLink)
-	for i = 2, GameTooltip:NumLines() do
-		local line = _G["GameTooltipTextLeft" .. i]
+	local tooltipName, numLines = PrepareProcessTooltip(itemLink, bag, slot)
+	if not tooltipName then return false end
+
+	local result = false
+	for i = 2, numLines do
+		local line = _G[tooltipName .. "TextLeft" .. i]
 		if line and line:GetText() then
-			if string.find(line:GetText(), ITEM_PROSPECTABLE) then
-				GameTooltip:Hide()
-				return true
+			if ITEM_PROSPECTABLE and strfind(line:GetText(), ITEM_PROSPECTABLE, 1, true) then
+				result = true
+				break
 			end
 		end
 	end
-	GameTooltip:Hide()
-	return false
+	FinishProcessTooltip()
+	return result
 end
 
 function D:IsMillable(itemId)
@@ -358,74 +445,107 @@ function D:IsMillable(itemId)
 	return millableHerbs[tonumber(itemId)] or false
 end
 
-function D:IsUnlockable(itemLink)
-	if not itemLink then return false end
-
-	GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	GameTooltip:SetHyperlink(itemLink)
-
-	for i = 2, GameTooltip:NumLines() do
-		local line = _G["GameTooltipTextLeft" .. i]
-		if line then
-			local text = line:GetText()
-			if text and strfind(text, LOCKED) then
-				GameTooltip:Hide()
-				return true
-			end
-		end
-	end
-
-	GameTooltip:Hide()
-	return false
-end
-
-function D:CanProcessItem(itemLink, hasKey)
-	if not itemLink then return false end
-
-	local itemId = tonumber(itemLink:match("item:(%d+)"))
-	if not itemId then return false end
-
-	if D.ItemProcessingCache[itemId] ~= nil then
-		return D.ItemProcessingCache[itemId]
-	end
+function D:IsMillableTooltip(itemLink, bag, slot)
+	if not itemLink or not ITEM_MILLABLE then return false end
+	local tooltipName, numLines = PrepareProcessTooltip(itemLink, bag, slot)
+	if not tooltipName then return false end
 
 	local result = false
-	local itemName, _, itemRarity, _, _, itemType, _, _, itemEquipLoc = GetItemInfo(itemId)
-
-	if (D.HasPickLock or hasKey) and D:IsUnlockable(itemLink) then
-		if itemName then
-			if D.BlacklistLOCK[itemName] then
-				result = false
-			else
-				local blacklisted = false
-				for _, query in ipairs(D.BlacklistLOCKPatterns or {}) do
-					if query and query ~= "" then
-						local ok, matchResult = pcall(Search.Matches, Search, itemLink, query)
-						if ok and matchResult then
-							blacklisted = true
-							break
-						end
-					end
-				end
-				result = not blacklisted
-			end
-		end
-	elseif D.HasJewelcrafting and D:IsProspectable(itemId) then
-		result = true
-	elseif D.HasInscription and D:IsMillable(itemId) then
-		result = true
-	elseif D.HasEnchanting and D:IsDisenchantable(itemId, itemName, itemLink, itemRarity, itemType, itemEquipLoc) then
-		if D:IsBreakable(itemId, itemName, itemLink) then
+	for i = 2, numLines do
+		local line = _G[tooltipName .. "TextLeft" .. i]
+		local text = line and line:GetText()
+		if text and strfind(text, ITEM_MILLABLE, 1, true) then
 			result = true
+			break
 		end
 	end
-
-	D.ItemProcessingCache[itemId] = result
+	FinishProcessTooltip()
 	return result
 end
 
-function D:ApplyDeconstruct(itemLink, itemId, spell, spellType, r, g, b, slot)
-	if not slot then return end
+function D:IsUnlockable(itemLink, bag, slot)
+	if not itemLink then return false end
+	local tooltipName, numLines = PrepareProcessTooltip(itemLink, bag, slot)
+	if not tooltipName then return false end
+
+	local result = false
+	for i = 2, numLines do
+		local line = _G[tooltipName .. "TextLeft" .. i]
+		if line then
+			local text = line:GetText()
+			if text and strfind(text, LOCKED) then
+				result = true
+				break
+			end
+		end
+	end
+	FinishProcessTooltip()
+	return result
+end
+
+function D:GetProcessAction(itemLink, hasKey, count, bag, slot)
+	if not itemLink then return end
+
+	local itemId = tonumber(itemLink:match("item:(%d+)"))
+	if not itemId then return end
+
+	local itemName, _, itemRarity, _, _, itemType, _, _, itemEquipLoc = GetItemInfo(itemId)
+	if not itemName then
+		D.PendingItemInfo[itemId] = true
+		C_Item.GetItemInfo(itemId, true)
+		return
+	end
+
+	if (D.HasPickLock or hasKey) and D:IsUnlockable(itemLink, bag, slot) then
+		if D.BlacklistLOCK[itemName] then return end
+		for _, query in ipairs(D.BlacklistLOCKPatterns or {}) do
+			if query and query ~= "" then
+				local ok, matchResult = pcall(Search.Matches, Search, itemLink, query)
+				if ok and matchResult then return end
+			end
+		end
+		if D.HasPickLock then
+			return PROCESS_UNLOCK, D.LOCKname, "spell", itemId
+		elseif hasKey then
+			return PROCESS_UNLOCK, hasKey, "item", itemId
+		end
+	end
+
+	local process = D.ItemProcessingCache[itemId]
+	if process == nil then
+		process = false
+		if D.HasJewelcrafting and (D:IsProspectable(itemId) or D:IsProspectableTooltip(itemLink, bag, slot)) then
+			process = PROCESS_PROSPECT
+		elseif D.HasInscription and (D:IsMillable(itemId) or D:IsMillableTooltip(itemLink, bag, slot)) then
+			process = PROCESS_MILL
+		elseif D.HasEnchanting and D:IsDisenchantable(itemId, itemName, itemLink, itemRarity, itemType, itemEquipLoc, bag, slot) then
+			if D:IsBreakable(itemId, itemName, itemLink) then
+				process = PROCESS_DISENCHANT
+			end
+		end
+
+		D.ItemProcessingCache[itemId] = process
+	end
+
+	if process == PROCESS_PROSPECT and (count or 0) >= 5 then
+		return process, D.PROSPECTname, "spell", itemId
+	elseif process == PROCESS_MILL and (count or 0) >= 5 then
+		return process, D.MILLname, "spell", itemId
+	elseif process == PROCESS_DISENCHANT then
+		local spell = D.DEname
+		if D.DEPrimeName and IsSpellKnown(D.PrimeDEID) then
+			spell = D.DEPrimeName
+		end
+		return process, spell, "spell", itemId
+	end
+end
+
+function D:CanProcessItem(itemLink, hasKey, count, bag, slot)
+	return D:GetProcessAction(itemLink, hasKey, count, bag, slot) ~= nil
+end
+
+function D:ApplyDeconstruct(itemLink, itemId, spell, spellType, slot)
+	if not slot or not D.DeconstructionReal then return end
 	if slot == D.DeconstructionReal then return end
 
 	local bag = slot.bag or slot:GetParent():GetID()
@@ -434,12 +554,18 @@ function D:ApplyDeconstruct(itemLink, itemId, spell, spellType, r, g, b, slot)
 	local validBag = slot.bag or (B.BagFrame and B.BagFrame.Bags and B.BagFrame.Bags[bag]) or (B.BankFrame and B.BankFrame.Bags and B.BankFrame.Bags[bag])
 	if not validBag then return end
 
-	D.DeconstructionReal.Bag = bag
-	D.DeconstructionReal.Slot = slotID
-
 	if GetTradeTargetItemLink and GetTradeTargetItemLink(7) == itemLink then
 		return
 	elseif GetContainerItemLink(bag, slotID) == itemLink then
+		local targetKey = format("%s:%s:%s:%s:%s:%s", bag, slotID, itemId, spellType, tostring(spell), tostring(slot))
+		if D.DeconstructionReal.TargetKey == targetKey and D.DeconstructionReal:IsShown() then
+			ActionButton_ShowOverlayGlow(D.DeconstructionReal)
+			return
+		end
+
+		D.DeconstructionReal.TargetKey = targetKey
+		D.DeconstructionReal.Bag = bag
+		D.DeconstructionReal.Slot = slotID
 		D.DeconstructionReal.ID = itemId
 		D.DeconstructionReal:SetAttribute('type1', spellType)
 		D.DeconstructionReal:SetAttribute(spellType, spell)
@@ -462,10 +588,11 @@ function D:DeconstructParser()
 	local ownerName = owner.GetName and owner:GetName()
 	if not ownerName then return end
 
-	if not (strfind(ownerName, 'ElvUI_ContainerFrameBag') or strfind(ownerName, 'ElvUI_BankContainerFrameBag') or strfind(ownerName, 'AdiBagsItemButton')) then return end
+	local isAdiBagsItem = strfind(ownerName, 'AdiBagsItemButton') or strfind(ownerName, 'AdiBagsBankItemButton')
+	if not (strfind(ownerName, 'ElvUI_ContainerFrameBag') or strfind(ownerName, 'ElvUI_BankContainerFrameBag') or isAdiBagsItem) then return end
 
 	local bag, slot
-	if strfind(ownerName, 'AdiBagsItemButton') then
+	if isAdiBagsItem then
 		bag = owner.bag
 		slot = owner.slot
 	else
@@ -481,62 +608,12 @@ function D:DeconstructParser()
 	local itemLink = GetContainerItemLink(bag, slot)
 	if not itemLink then return end
 
-	local itemId = tonumber(itemLink:match("item:(%d+)"))
-	if not itemId then return end
-
-	local itemName, _, itemRarity, _, _, itemType, _, _, itemEquipLoc = GetItemInfo(itemId)
-
 	if InCombatLockdown() then return end
 
-	local r, g, b
-
-	local hasKey = HaveKey()
-	if (D.HasPickLock or hasKey) and D:IsUnlockable(itemLink) then
-		if itemName then
-			if D.BlacklistLOCK[itemName] then
-				return
-			end
-			for _, query in ipairs(D.BlacklistLOCKPatterns or {}) do
-				if query and query ~= "" then
-					local ok, result = pcall(Search.Matches, Search, itemLink, query)
-					if ok and result then
-						return
-					end
-				end
-			end
-		end
-
-		r, g, b = 0, 1, 1
-		if D.HasPickLock then
-			D:ApplyDeconstruct(itemLink, itemId, D.LOCKname, 'spell', r, g, b, owner)
-		elseif hasKey then
-			D:ApplyDeconstruct(itemLink, itemId, hasKey, 'item', r, g, b, owner)
-		end
-		return
-	end
-
-	if D.HasJewelcrafting and (D:IsProspectable(itemId) or D:IsProspectableTooltip(itemLink)) then
-		r, g, b = 1, 0.5, 0
-		D:ApplyDeconstruct(itemLink, itemId, D.PROSPECTname, 'spell', r, g, b, owner)
-		return
-	end
-
-	if D.HasInscription and D:IsMillable(itemId) then
-		r, g, b = 0, 1, 0
-		D:ApplyDeconstruct(itemLink, itemId, D.MILLname, 'spell', r, g, b, owner)
-		return
-	end
-
-	if D.HasEnchanting and D:IsDisenchantable(itemId, itemName, itemLink, itemRarity, itemType, itemEquipLoc) then
-		if D:IsBreakable(itemId, itemName, itemLink) then
-			r, g, b = 0.5, 0, 1
-			local spell = D.DEname
-			if D.DEPrimeName and IsSpellKnown(311891) then
-				spell = D.DEPrimeName
-			end
-			D:ApplyDeconstruct(itemLink, itemId, spell, 'spell', r, g, b, owner)
-			return
-		end
+	local count = select(2, GetContainerItemInfo(bag, slot)) or 0
+	local process, spell, spellType, itemId = D:GetProcessAction(itemLink, D:GetAvailableKey(), count, bag, slot)
+	if process then
+		D:ApplyDeconstruct(itemLink, itemId, spell, spellType, owner)
 	end
 end
 
@@ -550,49 +627,65 @@ function D:GetDeconMode()
 	return text
 end
 
-function D:ToggleMode()
-	if not D:HasRelevantProfession() then return end
+function D:UpdateDeconstructButton(button)
+	if not button then return end
 
-	D.DeconstructMode = not D.DeconstructMode
-
-	if D.DeconstructButton then
-		local normalTex = D.DeconstructButton:GetNormalTexture()
-		if normalTex then
-			if D.DeconstructMode then
-				normalTex:SetTexture([[Interface\ICONS\INV_Enchant_EssenceCosmicGreater]])
-				ActionButton_ShowOverlayGlow(D.DeconstructButton)
-			else
-				normalTex:SetTexture([[Interface\ICONS\INV_Rod_Enchantedcobalt]])
-				ActionButton_HideOverlayGlow(D.DeconstructButton)
-			end
+	local normalTex = button:GetNormalTexture()
+	if normalTex then
+		if D.DeconstructMode then
+			normalTex:SetTexture([[Interface\ICONS\INV_Enchant_EssenceCosmicGreater]])
+			ActionButton_ShowOverlayGlow(button)
+		else
+			normalTex:SetTexture([[Interface\ICONS\INV_Rod_Enchantedcobalt]])
+			ActionButton_HideOverlayGlow(button)
 		end
-
-		D.DeconstructButton.ttText2 = format(L["Deconstruct Mode Desc"] .. "\n" .. L["Current state: %s."], D:GetDeconMode())
-		if GameTooltip:IsOwned(D.DeconstructButton) then B.Tooltip_Show(D.DeconstructButton) end
 	end
 
-	if B.BagFrame then D:UpdateBagSlots(B.BagFrame, D.DeconstructMode) end
-	if B.BankFrame then D:UpdateBagSlots(B.BankFrame, D.DeconstructMode) end
+	button.ttText2 = format(L["Deconstruct Mode Desc"] .. "\n" .. L["Current state: %s."], D:GetDeconMode())
+	if D:HasRelevantProfession() then
+		button:Enable()
+		button:SetAlpha(1)
+	else
+		button:Disable()
+		button:SetAlpha(0.5)
+	end
+	if GameTooltip:IsOwned(button) then B.Tooltip_Show(button) end
+end
+
+function D:RegisterDeconstructButton(button)
+	if not button then return end
+	D.DeconstructButtons[button] = true
+	D.DeconstructButton = D.DeconstructButton or button
+	D:UpdateDeconstructButton(button)
 end
 
 function D:UpdateButtonState()
-	if not D.DeconstructButton then return end
-
-	local hasProf = D:HasRelevantProfession()
-
-	if hasProf then
-		D.DeconstructButton:Enable()
-		D.DeconstructButton:SetAlpha(1)
-	else
-		D.DeconstructButton:Disable()
-		D.DeconstructButton:SetAlpha(0.5)
+	for button in pairs(D.DeconstructButtons) do
+		D:UpdateDeconstructButton(button)
 	end
+end
+
+function D:SetMode(enabled)
+	enabled = not not enabled
+	if enabled and not D:HasRelevantProfession() then return false end
+	D.DeconstructMode = enabled
+	D:UpdateButtonState()
+
+	if B.BagFrame then D:UpdateBagSlots(B.BagFrame, enabled) end
+	if B.BankFrame then D:UpdateBagSlots(B.BankFrame, enabled) end
+	if not enabled and D.DeconstructionReal then D.DeconstructionReal:OnLeave() end
+	D:SendMessage("AdiBags_UpdateAllButtons")
+	return true
+end
+
+function D:ToggleMode()
+	return D:SetMode(not D.DeconstructMode)
 end
 
 function D:UpdateBagSlots(frame, isActive, onlyBagID)
 	if not frame or not frame.Bags then return end
 
-	local hasKey = HaveKey()
+	local hasKey = D:GetAvailableKey()
 	for _, bagID in ipairs(frame.BagIDs) do
 		if (not onlyBagID) or (onlyBagID == bagID) then
 			if frame.Bags[bagID] then
@@ -601,7 +694,8 @@ function D:UpdateBagSlots(frame, isActive, onlyBagID)
 				if slot then
 					if isActive then
 						local itemLink = GetContainerItemLink(bagID, slotID)
-						if itemLink and D:CanProcessItem(itemLink, hasKey) then
+						local count = select(2, GetContainerItemInfo(bagID, slotID)) or 0
+						if itemLink and D:CanProcessItem(itemLink, hasKey, count, bagID, slotID) then
 							slot:SetAlpha(1)
 						else
 							slot:SetAlpha(0.3)
@@ -623,10 +717,16 @@ function D:ConstructRealDecButton()
 	D.DeconstructionReal:SetFrameStrata('TOOLTIP')
 
 	D.DeconstructionReal.OnLeave = function(frame)
+		if D.DeconstructMode and frame:IsMouseOver() then
+			ActionButton_ShowOverlayGlow(frame)
+			return
+		end
+
 		if InCombatLockdown() then
 			frame:SetAlpha(0)
 			frame:RegisterEvent('PLAYER_REGEN_ENABLED')
 		else
+			frame.TargetKey = nil
 			frame:ClearAllPoints()
 			frame:SetAlpha(1)
 			if GameTooltip then GameTooltip:Hide() end
@@ -641,6 +741,12 @@ function D:ConstructRealDecButton()
 		GameTooltip:SetOwner(f, 'ANCHOR_LEFT', 0, 4)
 		GameTooltip:ClearLines()
 		GameTooltip:SetBagItem(f.Bag, f.Slot)
+		ActionButton_ShowOverlayGlow(f)
+		RunNextFrame(function()
+			if f:IsShown() and f:IsMouseOver() then
+				ActionButton_ShowOverlayGlow(f)
+			end
+		end)
 	end
 
 	D.DeconstructionReal:SetScript('OnEnter', D.DeconstructionReal.SetTip)
@@ -682,7 +788,7 @@ local function CreateDeconstructButton(bagFrame)
 	button:SetScript("OnClick", function() D:ToggleMode() end)
 
 	bagFrame.deconstructButton = button
-	D.DeconstructButton = button
+	D:RegisterDeconstructButton(button)
 
 	if bagFrame.editBox then
 		bagFrame.editBox:ClearAllPoints()
@@ -692,37 +798,14 @@ local function CreateDeconstructButton(bagFrame)
 end
 
 local function SetupDeconstructButton()
-	if D.DeconstructButton then return end
-
-	D:UpdateProfessions()
-
 	if not B.BagFrame then return end
+	if B.BagFrame.deconstructButton then return end
 
 	CreateDeconstructButton(B.BagFrame)
-
-	D:UpdateButtonState()
-
-	if not D.DeconstructionReal then
-		D:ConstructRealDecButton()
-
-		GameTooltip:HookScript('OnShow', function() D:DeconstructParser() end)
-		GameTooltip:HookScript('OnUpdate', function() D:DeconstructParser() end)
-	end
-
-	D:RegisterEvent('SKILL_LINES_CHANGED')
-	D:RegisterEvent('SPELLS_CHANGED')
-	D:RegisterEvent('LEARNED_SPELL_IN_TAB')
+	D:InitializeExternal()
 
 	B.BagFrame:HookScript('OnHide', function()
-		D.DeconstructMode = false
-		if D.DeconstructButton then
-			local normalTex = D.DeconstructButton:GetNormalTexture()
-			if normalTex then normalTex:SetTexture([[Interface\ICONS\INV_Rod_Enchantedcobalt]]) end
-			ActionButton_HideOverlayGlow(D.DeconstructButton)
-		end
-		if B.BagFrame then D:UpdateBagSlots(B.BagFrame, false) end
-		if B.BankFrame then D:UpdateBagSlots(B.BankFrame, false) end
-		if D.DeconstructionReal then D.DeconstructionReal:OnLeave() end
+		D:SetMode(false)
 	end)
 end
 
@@ -748,7 +831,36 @@ function D:LEARNED_SPELL_IN_TAB()
 	D:UpdateButtonState()
 end
 
+function D:ScheduleModeRefresh()
+	if D.ModeRefreshScheduled then return end
+	D.ModeRefreshScheduled = true
+	C_Timer:After(0.1, function()
+		D.ModeRefreshScheduled = nil
+		if not D.DeconstructMode then return end
+		if B.BagFrame then D:UpdateBagSlots(B.BagFrame, true) end
+		if B.BankFrame then D:UpdateBagSlots(B.BankFrame, true) end
+		D:SendMessage("AdiBags_UpdateAllButtons")
+	end)
+end
+
+function D:GET_ITEM_INFO_RECEIVED(event, itemID, success)
+	if not D.PendingItemInfo[itemID] then return end
+	D.PendingItemInfo[itemID] = nil
+	D.ItemProcessingCache[itemID] = nil
+	if success and D.DeconstructMode then
+		D:ScheduleModeRefresh()
+	end
+end
+
+function D:PLAYER_REGEN_ENABLED()
+	if not D.PendingExternalInit then return end
+	D:UnregisterEvent('PLAYER_REGEN_ENABLED')
+	D:InitializeExternal()
+end
+
 function D:BAG_UPDATE(event, bagID)
+	D._keyCheckTime = nil
+	D:GetAvailableKey()
 	if D.DeconstructMode then
 		if B.BagFrame then D:UpdateBagSlots(B.BagFrame, true, bagID) end
 		if B.BankFrame then D:UpdateBagSlots(B.BankFrame, true, bagID) end
@@ -759,25 +871,69 @@ function D:BAG_UPDATE_DELAYED()
 	D:BAG_UPDATE()
 end
 
+local function MigrateDeconstructBlacklist()
+	if type(E.db.bags.deconstructBlacklist) ~= "string" then return end
+
+	local newTable = {}
+	for item in string.gmatch(E.db.bags.deconstructBlacklist, "([^,]+)") do
+		item = item:match("^%s*(.-)%s*$")
+		if item and item ~= "" then
+			local itemID = item:match("item:(%d+)")
+			newTable[(itemID or item)] = item
+		end
+	end
+	E.db.bags.deconstructBlacklist = newTable
+end
+
+function D:InitializeExternal()
+	if not E.db.bags.deconstruct then return false end
+
+	if not D.RuntimeInitialized then
+		MigrateDeconstructBlacklist()
+		D:UpdateProfessions()
+		D:Blacklisting('DE')
+		D:Blacklisting('LOCK')
+
+		if D.RegisterCustomEvent then
+			D:RegisterCustomEvent('BAG_UPDATE_DELAYED')
+			D:RegisterCustomEvent('GET_ITEM_INFO_RECEIVED')
+		else
+			D:RegisterEvent('BAG_UPDATE')
+		end
+		D:RegisterEvent('SKILL_LINES_CHANGED')
+		D:RegisterEvent('CHAT_MSG_ADDON')
+		D:RegisterEvent('SPELLS_CHANGED')
+		D:RegisterEvent('LEARNED_SPELL_IN_TAB')
+		D.RuntimeInitialized = true
+	end
+
+	if not D.DeconstructionReal then
+		if InCombatLockdown() then
+			D.PendingExternalInit = true
+			D:RegisterEvent('PLAYER_REGEN_ENABLED')
+			return false
+		end
+		D:ConstructRealDecButton()
+	end
+
+	if not D.TooltipHooksInstalled then
+		GameTooltip:HookScript('OnShow', function() D:DeconstructParser() end)
+		GameTooltip:HookScript('OnUpdate', function() D:DeconstructParser() end)
+		D.TooltipHooksInstalled = true
+	end
+
+	D.PendingExternalInit = nil
+	D:UpdateButtonState()
+	return true
+end
+
 function D:Initialize()
 	if not E.private.bags.enable then return end
 	if not E.db.bags.deconstruct then return end
-
-	if type(E.db.bags.deconstructBlacklist) == "string" then
-		local newTable = {}
-		for item in string.gmatch(E.db.bags.deconstructBlacklist, "([^,]+)") do
-			item = item:match("^%s*(.-)%s*$") -- trim
-			if item and item ~= "" then
-				local itemID = item:match("item:(%d+)")
-				newTable[(itemID or item)] = item
-			end
-		end
-		E.db.bags.deconstructBlacklist = newTable
-	end
-
+	D:InitializeExternal()
 
 	hooksecurefunc(B, "Layout", function(_, isBank)
-		if not isBank then if B.BagFrame and not D.DeconstructButton then E:Delay(0.1, function() SetupDeconstructButton() end) end end
+		if not isBank then if B.BagFrame and not B.BagFrame.deconstructButton then E:Delay(0.1, function() SetupDeconstructButton() end) end end
 
 		if D.DeconstructMode then
 			E:Delay(0.05, function()
@@ -807,20 +963,7 @@ function D:Initialize()
 		end
 	end)
 
-	D:Blacklisting('DE')
-	D:Blacklisting('LOCK')
-
-	if D.RegisterCustomEvent then
-		D:RegisterCustomEvent('BAG_UPDATE_DELAYED')
-	else
-		D:RegisterEvent('BAG_UPDATE')
-	end
-	D:RegisterEvent('SKILL_LINES_CHANGED')
-	D:RegisterEvent('CHAT_MSG_ADDON')
-	D:RegisterEvent('SPELLS_CHANGED')
-	D:RegisterEvent('LEARNED_SPELL_IN_TAB')
-
-	if B.BagFrame and not D.DeconstructButton then E:Delay(0.1, function() SetupDeconstructButton() end) end
+	if B.BagFrame and not B.BagFrame.deconstructButton then E:Delay(0.1, function() SetupDeconstructButton() end) end
 end
 
 hooksecurefunc(B, "Initialize", function() D:Initialize() end)
