@@ -44,6 +44,9 @@ ignore = {
 }
 
 globals = {
+	"GetItemInfoEx",
+	"GetItemSetInfo",
+	"RunNextFrame",
 	"C_CategorySpell",
 	"UnitIsGroupLeader",
 	"C_Inspect",
