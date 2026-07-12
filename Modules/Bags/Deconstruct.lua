@@ -27,6 +27,8 @@ local InCombatLockdown = InCombatLockdown
 local GetContainerItemLink = GetContainerItemLink
 local GetSpellInfo = GetSpellInfo
 local GetItemInfo = GetItemInfo
+local GetItemInfoEx = GetItemInfoEx
+local GetItemSetInfo = GetItemSetInfo
 local GetItemCount = GetItemCount
 local CreateFrame = CreateFrame
 local GameTooltip = GameTooltip
@@ -154,6 +156,27 @@ D.BlacklistLOCK = {}
 D.BlacklistDEPatterns = {}
 D.BlacklistLOCKPatterns = {}
 D.ItemProcessingCache = {}
+
+local disenchantTooltip
+local disenchantMinSkillPrefix = ITEM_DISENCHANT_MIN_SKILL and ITEM_DISENCHANT_MIN_SKILL:match("^(.-)%%s")
+
+local function GetItemClassAndSet(item)
+	local _, _, _, _, _, _, _, _, _, _, _, _, classID, _, _, setID = GetItemInfoEx(item)
+	return classID, setID
+end
+
+local function IsGladiatorItem(itemName, setID)
+	if itemName and (strfind(itemName, "гладиатор", 1, true) or strfind(itemName, "Гладиатор", 1, true)) then
+		return true
+	end
+
+	if setID and setID ~= 0 then
+		local setName = GetItemSetInfo(setID)
+		return setName and (strfind(setName, "гладиатор", 1, true) or strfind(setName, "Гладиатор", 1, true)) or false
+	end
+
+	return false
+end
 
 function D:HasRelevantProfession()
 	if D.HasEnchanting then return true end
@@ -296,36 +319,48 @@ function D:IsBreakable(itemId, itemName, itemLink)
 end
 
 function D:IsDisenchantableTooltip(itemLink)
-	if not itemLink then return false end
+	if not itemLink then return nil end
 
-	GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	GameTooltip:SetHyperlink(itemLink)
+	if not disenchantTooltip then
+		disenchantTooltip = CreateFrame("GameTooltip", "ElvUIDeconstructScanTooltip", UIParent, "GameTooltipTemplate")
+	end
 
-	for i = 2, GameTooltip:NumLines() do
-		local line = _G["GameTooltipTextLeft" .. i]
-		if line and line:GetText() then
-			local text = line:GetText()
-			if string.find(text, "Disenchant") and not string.find(text, "Cannot") then
-				GameTooltip:Hide()
-				return true
-			end
-			if string.find(text, "Распыл") and not string.find(text, "Нельзя") then
-				GameTooltip:Hide()
-				return true
-			end
+	disenchantTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+	disenchantTooltip:ClearLines()
+	disenchantTooltip:SetHyperlink(itemLink)
+
+	local result
+	local tooltipName = disenchantTooltip:GetName()
+	for i = 2, disenchantTooltip:NumLines() do
+		local line = _G[tooltipName .. "TextLeft" .. i]
+		local text = line and line:GetText()
+		if text == ITEM_DISENCHANT_NOT_DISENCHANTABLE then
+			result = false
+			break
+		elseif text == ITEM_DISENCHANT_ANY_SKILL
+		or (text and disenchantMinSkillPrefix and strfind(text, disenchantMinSkillPrefix, 1, true) == 1)
+		then
+			result = true
+			break
 		end
 	end
-	GameTooltip:Hide()
-	return false
+
+	disenchantTooltip:Hide()
+	disenchantTooltip:ClearLines()
+	return result
 end
 
 function D:IsDisenchantable(itemId, itemName, itemLink, itemRarity, itemType, itemEquipLoc)
 	if not itemId or not itemName or not D.HasEnchanting then return false end
 
-	if D:IsDisenchantableTooltip(itemLink) then return true end
+	local tooltipResult = D:IsDisenchantableTooltip(itemLink)
+	if tooltipResult ~= nil then return tooltipResult end
+
+	local classID, setID = GetItemClassAndSet(itemLink or itemId)
+	if IsGladiatorItem(itemName, setID) then return false end
 
 	if not itemRarity or itemRarity < 2 or itemRarity > 4 then return false end
-	if itemType ~= "Armor" and itemType ~= "Weapon" then return false end
+	if classID ~= 2 and classID ~= 4 then return false end
 	if not itemEquipLoc or itemEquipLoc == "" then return false end
 
 	return true
@@ -462,10 +497,11 @@ function D:DeconstructParser()
 	local ownerName = owner.GetName and owner:GetName()
 	if not ownerName then return end
 
-	if not (strfind(ownerName, 'ElvUI_ContainerFrameBag') or strfind(ownerName, 'ElvUI_BankContainerFrameBag') or strfind(ownerName, 'AdiBagsItemButton')) then return end
+	local isAdiBagsItem = strfind(ownerName, 'AdiBagsItemButton') or strfind(ownerName, 'AdiBagsBankItemButton')
+	if not (strfind(ownerName, 'ElvUI_ContainerFrameBag') or strfind(ownerName, 'ElvUI_BankContainerFrameBag') or isAdiBagsItem) then return end
 
 	local bag, slot
-	if strfind(ownerName, 'AdiBagsItemButton') then
+	if isAdiBagsItem then
 		bag = owner.bag
 		slot = owner.slot
 	else
@@ -623,6 +659,11 @@ function D:ConstructRealDecButton()
 	D.DeconstructionReal:SetFrameStrata('TOOLTIP')
 
 	D.DeconstructionReal.OnLeave = function(frame)
+		if frame:IsMouseOver() then
+			ActionButton_ShowOverlayGlow(frame)
+			return
+		end
+
 		if InCombatLockdown() then
 			frame:SetAlpha(0)
 			frame:RegisterEvent('PLAYER_REGEN_ENABLED')
@@ -641,6 +682,12 @@ function D:ConstructRealDecButton()
 		GameTooltip:SetOwner(f, 'ANCHOR_LEFT', 0, 4)
 		GameTooltip:ClearLines()
 		GameTooltip:SetBagItem(f.Bag, f.Slot)
+		ActionButton_ShowOverlayGlow(f)
+		RunNextFrame(function()
+			if f:IsShown() and f:IsMouseOver() then
+				ActionButton_ShowOverlayGlow(f)
+			end
+		end)
 	end
 
 	D.DeconstructionReal:SetScript('OnEnter', D.DeconstructionReal.SetTip)
