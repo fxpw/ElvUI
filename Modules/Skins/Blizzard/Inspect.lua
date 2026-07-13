@@ -5,7 +5,7 @@ local S = E:GetModule("Skins")
 local _G = _G
 local unpack = unpack
 --WoW API / Variables
-local GetInventoryItemID = GetInventoryItemID
+local GetInventoryItemLink = GetInventoryItemLink
 local GetItemInfo = C_Item.GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
 
@@ -84,18 +84,20 @@ S:AddCallbackForAddon("Blizzard_InspectUI", "Skin_Blizzard_InspectUI", function(
 			if button.hasItem then
 				local id = button:GetID()
 				if id and InspectFrame.unit then
-					local itemID = GetInventoryItemID(InspectFrame.unit, id )
-					if itemID then
-						local _, _, quality = GetItemInfo(itemID)
-
-						if not quality then
-							E:Delay(0.1, awaitCache, button)
-							return
-						elseif quality then
-							button.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
-							return
-						end
+					local itemLink = GetInventoryItemLink(InspectFrame.unit, id)
+					if not itemLink then
+						E:Delay(0.1, awaitCache, button)
+						return
 					end
+
+					local _, _, quality = GetItemInfo(itemLink)
+					if not quality then
+						E:Delay(0.1, awaitCache, button)
+						return
+					end
+
+					button.backdrop:SetBackdropBorderColor(GetItemQualityColor(quality))
+					return
 				end
 			end
 
