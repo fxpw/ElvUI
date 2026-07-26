@@ -313,8 +313,11 @@ end
 
 -- UNIT_AURA
 function lib:UNIT_AURA(unit)
+	if not unit then
+		return
+	end
 	local guid = UnitGUID(unit)
-	if (not UnitIsVisible(unit) or (self.wasOffline and self.wasOffline[guid])) then
+	if (not UnitIsVisible(unit) or (self.wasOffline and self.wasOffline[guid or ""])) then
 		if (not self.outOfSight) then
 			self.outOfSight = {}
 		end
