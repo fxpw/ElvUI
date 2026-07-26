@@ -72,7 +72,6 @@ globals = {
 	"C_PlayerInfo",
 	"C_TradeSkillUI",
 	"GetItemLevelColor",
-	"GetMythicPlusRating",
 	"HelpTip",
 	"BattlePassSplashFrame",
 	"C_BattlePass",
