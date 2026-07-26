@@ -863,6 +863,10 @@ local function LoadSkin()
 		SkinLadderSubPanel(LadderDummyFrame)
 	end
 
+	if LadderMythicPlusFrame then
+		SkinLadderSubPanel(LadderMythicPlusFrame)
+	end
+
 	if ChallengesFrame then
 		S:HandlePortraitFrame(ChallengesFrame)
 		if ChallengesFrame.CloseButton or ChallengesFrameCloseButton then
