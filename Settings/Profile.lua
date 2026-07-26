@@ -963,6 +963,7 @@ P.tooltip = {
 	targetInfo = true,
 	playerTitles = true,
 	zodiacName = true,
+	mythicRating = false,
 	guildRanks = true,
 	itemCount = "BAGS_ONLY",
 	spellID = true,
