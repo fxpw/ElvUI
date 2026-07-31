@@ -61,7 +61,6 @@ local HD_MODEL_CAMERA = {
 	['scourgemale_hd.m2'] = true,
 	['dwarfmale_hd.m2'] = true,
 	['vulperafemale.m2'] = true,
-	['humanfemale_hd.m2'] = true,
 	['darkirondwarfmale.m2'] = true,
 	['dracthyrdragonmale1.m2'] = true,
 	['dracthyrfemale.m2'] = true,
