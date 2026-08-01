@@ -1,6 +1,15 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local S = E:GetModule("Skins")
 
+local function GetStoreFrameScale()
+	local parentScale = UIParent and UIParent:GetScale() or 1
+	if parentScale > 0 and parentScale < 0.7 and (GetScreenWidth() >= 2560 or GetScreenHeight() >= 1440) then
+		return 0.75
+	end
+
+	return parentScale
+end
+
 --Lua functions
 --WoW API / Variables
 -- local function HookSubButtons()
@@ -17,7 +26,7 @@ local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.store ~= true then return end
 
 	StoreFrame:HookScript("OnShow", function()
-		StoreFrame:SetScale(UIParent:GetScale())
+		StoreFrame:SetScale(GetStoreFrameScale())
 	end)
 	StoreFrame:EnableMouse(true)
 	StoreFrame:SetMovable(true)
