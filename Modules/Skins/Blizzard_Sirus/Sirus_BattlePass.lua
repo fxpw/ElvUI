@@ -3,6 +3,15 @@ local S = E:GetModule("Skins")
 
 local _G = _G
 
+local function GetBattlePassFrameScale()
+	local parentScale = E.global.general.UIScale or (UIParent and UIParent:GetScale()) or 1
+	if parentScale > 0 and parentScale < 0.7 and (GetScreenWidth() >= 2560 or GetScreenHeight() >= 1440) then
+		return 0.75
+	end
+
+	return parentScale
+end
+
 local function ApplyElvUIFont(frame)
 	if not frame or not frame.GetNumRegions then
 		return
@@ -252,7 +261,7 @@ local function HandleBattlePassFrame()
 	if not f._Elv_ScaleHooked then
 		f._Elv_ScaleHooked = true
 		f:HookScript("OnShow", function(self)
-			self:SetScale(E.global.general.UIScale)
+			self:SetScale(GetBattlePassFrameScale())
 		end)
 	end
 
