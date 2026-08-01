@@ -47,7 +47,6 @@ local match = string.match
 
 local HD_MODEL_PATTERN = '[^\\]*%.m2$'
 local HD_MODEL_CAMERA = {
-	['dwarfmale.m2'] = true,
 	['orcmalenpc.m2'] = true,
 	['scourgemalenpc.m2'] = true,
 	['scourgefemalenpc.m2'] = true,
@@ -56,7 +55,12 @@ local HD_MODEL_CAMERA = {
 	['humanfemalekid.m2'] = true,
 	['chicken.m2'] = true,
 	['rat.m2'] = true,
+	['drakonid2.m2'] = true,
+	['dragonspawn2caster.m2'] = true,
+	['dragonspawn2.m2'] = true,
 	['dracthyrdragonmale1.m2'] = true,
+	['dracthyrdragonmale2.m2'] = true,
+	['dracthyrdragonmale3.m2'] = true,
 	['dracthyrdragonfemale2.m2'] = true,
 	['dracthyrdragonfemale3.m2'] = true,
 }
