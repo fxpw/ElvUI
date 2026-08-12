@@ -600,6 +600,9 @@ function AB:StyleButton(button, noBackdrop, useMasque)
 	local buttonCooldown = _G[name.."Cooldown"]
 
 	local color = self.db.fontColor
+	local hotkeyColor = self.db.useHotkeyColor and self.db.hotkeyColor or color
+	local countColor = self.db.useCountColor and self.db.countColor or color
+	local macroColor = self.db.useMacroColor and self.db.macroColor or color
 	local countPosition = self.db.countTextPosition or "BOTTOMRIGHT"
 	local countXOffset = self.db.countTextXOffset or 0
 	local countYOffset = self.db.countTextYOffset or 2
@@ -616,14 +619,14 @@ function AB:StyleButton(button, noBackdrop, useMasque)
 		count:ClearAllPoints()
 		count:Point(countPosition, countXOffset, countYOffset)
 		count:FontTemplate(LSM:Fetch("font", self.db.font), self.db.fontSize, self.db.fontOutline)
-		count:SetTextColor(color.r, color.g, color.b)
+		count:SetTextColor(countColor.r, countColor.g, countColor.b)
 	end
 
 	if macroText then
 		macroText:ClearAllPoints()
 		macroText:Point("BOTTOM", 0, 1)
 		macroText:FontTemplate(LSM:Fetch("font", self.db.font), self.db.fontSize, self.db.fontOutline)
-		macroText:SetTextColor(color.r, color.g, color.b)
+		macroText:SetTextColor(macroColor.r, macroColor.g, macroColor.b)
 	end
 
 	if not button.noBackdrop and not button.backdrop and not button.useMasque then
@@ -639,7 +642,7 @@ function AB:StyleButton(button, noBackdrop, useMasque)
 	if self.db.hotkeytext or self.db.useRangeColorText then
 		hotkey:FontTemplate(LSM:Fetch("font", self.db.font), self.db.fontSize, self.db.fontOutline)
 		if button.config and (button.config.outOfRangeColoring ~= "hotkey") then
-			button.hotkey:SetTextColor(color.r, color.g, color.b)
+			button.hotkey:SetTextColor(hotkeyColor.r, hotkeyColor.g, hotkeyColor.b)
 		end
 	end
 

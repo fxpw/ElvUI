@@ -29,15 +29,17 @@ local UnitIsUnit = UnitIsUnit
 local UnitLevel = UnitLevel
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
-local UnitPower = UnitPower
-local UnitPowerMax = UnitPowerMax
 local UnitName = UnitName
 local UnitReaction = UnitReaction
 local hooksecurefunc = hooksecurefunc
 
-local SetBarValue = (PixelUtil and PixelUtil.SetStatusBarValue)
-	and function(bar, v) PixelUtil.SetStatusBarValue(bar, v) end
-	or function(bar, v) bar:SetValue(v) end
+function NP:SetBarValue(bar, value)
+	if PixelUtil and PixelUtil.SetStatusBarValue then
+		PixelUtil.SetStatusBarValue(bar, value)
+	else
+		bar:SetValue(value)
+	end
+end
 
 local function HideSelf(self) self:Hide() end
 
@@ -54,11 +56,11 @@ NP.TARGET_LEVEL_FLOOR = 4500
 do
 	local f = CreateFrame('Frame')
 	local elapsed = 0
-	local tagsElapsed = 0
+	local reactionElapsed = 0
 	local scaleElapsed = 0
-	local HEALTH_INTERVAL = 0.2
-	local TAGS_INTERVAL   = 0.5
-	local SCALE_INTERVAL  = 0.05
+	local CHECK_INTERVAL = 0.2
+	local REACTION_INTERVAL = 0.5
+	local SCALE_INTERVAL = 0.05
 	f:SetScript('OnUpdate', function(_, dt)
 		scaleElapsed = scaleElapsed + dt
 		if scaleElapsed >= SCALE_INTERVAL then
@@ -70,12 +72,12 @@ do
 			end
 		end
 
-		elapsed     = elapsed     + dt
-		tagsElapsed = tagsElapsed + dt
-		if elapsed < HEALTH_INTERVAL then return end
-		local doTags = tagsElapsed >= TAGS_INTERVAL
+		elapsed = elapsed + dt
+		reactionElapsed = reactionElapsed + dt
+		if elapsed < CHECK_INTERVAL then return end
 		elapsed = 0
-		if doTags then tagsElapsed = 0 end
+		local doReaction = reactionElapsed >= REACTION_INTERVAL
+		if doReaction then reactionElapsed = 0 end
 
 		if NP.watchMouseover then
 			NP:RefreshPlatesOnMouseoverChanged()
@@ -84,62 +86,8 @@ do
 		for plate in pairs(NP.Plates) do
 			local u = plate.unit
 			if u and UnitExists(u) then
-				if doTags and UnitReaction('player', u) ~= plate.reaction then
+				if doReaction and UnitReaction('player', u) ~= plate.reaction then
 					NP:RefreshPlateReaction(plate)
-				end
-				local h = plate.Health
-				if h then
-					local cur = UnitHealth(u)
-					local max = UnitHealthMax(u)
-					if max and max > 0 then
-						local changed = false
-						if h._np_max ~= max then
-							h._np_max = max
-							h:SetMinMaxValues(0, max)
-							changed = true
-						end
-						if h._np_cur ~= cur then
-							h._np_cur = cur
-							changed = true
-						end
-						if changed then
-							-- fire before SetValue so Cutaway reads the previous value
-							if plate.HealthValueChangeCallbacks then
-								for _, cb in ipairs(plate.HealthValueChangeCallbacks) do
-									cb(NP, plate, cur, max)
-								end
-							end
-							SetBarValue(h, cur)
-						end
-					end
-				end
-				local pw = plate.Power
-				if pw and pw:IsShown() then
-					local cur = UnitPower(u)
-					local max = UnitPowerMax(u)
-					if max and max > 0 then
-						local changed = false
-						if pw._np_max ~= max then
-							pw._np_max = max
-							pw:SetMinMaxValues(0, max)
-							changed = true
-						end
-						if pw._np_cur ~= cur then
-							pw._np_cur = cur
-							changed = true
-						end
-						if changed then
-							if plate.PowerValueChangeCallbacks then
-								for _, cb in ipairs(plate.PowerValueChangeCallbacks) do
-									cb(NP, plate, cur, max)
-								end
-							end
-							SetBarValue(pw, cur)
-						end
-					end
-				end
-				if doTags then
-					plate:UpdateTags()
 				end
 
 				if not plate.appliedFrameLevelBoost then
@@ -172,6 +120,48 @@ do
 	end)
 end
 
+-- обновление здоровья по событиям (вместо опроса в OnUpdate). Вызывается из
+-- PlateUnitEvent_OnEvent на UNIT_HEALTH / UNIT_MAXHEALTH / UNIT_MAXPOWER
+-- и один раз при добавлении таблички
+function NP:UpdatePlateHealth(nameplate)
+	if not nameplate or not nameplate.unit then return end
+	local u = nameplate.unit
+	if not UnitExists(u) then return end
+	local h = nameplate.Health
+	if not h then return end
+	local cur = UnitHealth(u)
+	local max = UnitHealthMax(u)
+	if not max or max <= 0 then return end
+	local changed = false
+	if h._np_max ~= max then
+		h._np_max = max
+		h:SetMinMaxValues(0, max)
+		changed = true
+	end
+	if h._np_cur ~= cur then
+		h._np_cur = cur
+		changed = true
+	end
+	if changed then
+		-- вызываем до SetValue, чтобы Cutaway прочитал предыдущее значение
+		if nameplate.HealthValueChangeCallbacks then
+			for _, cb in ipairs(nameplate.HealthValueChangeCallbacks) do
+				cb(NP, nameplate, cur, max)
+			end
+		end
+		NP:SetBarValue(h, cur)
+	end
+
+	-- обновляем тег текста здоровья (может содержать [health:*] и теги ресурса)
+	local db = NP:PlateDB(nameplate)
+	local hText = db.health and db.health.text
+	if hText and hText.enable and hText.textFormat and hText.textFormat ~= ''
+		and nameplate.Health.Text and nameplate.Health.Text.UpdateTag
+	then
+		nameplate.Health.Text:UpdateTag()
+	end
+end
+
 do
 	local empty = {}
 	function NP:PlateDB(nameplate)
@@ -179,6 +169,70 @@ do
 			return nameplate.plateDBOverride
 		end
 		return (nameplate and NP.db.units and NP.db.units[nameplate.frameType]) or empty
+	end
+end
+
+--[[ Иконки тотемов (минимальный порт элемента IconFrame из dev-версии,
+встроен сюда, чтобы не создавать отдельный файл). Показывает иконку
+тотема над его табличкой. ]]--
+local totemSpellIDs = {
+	-- Воздух
+	8177, 10595, 10600, 10601, 25574, 58746, 58749, 6495, 8512, 3738,
+	-- Земля
+	2062, 2484, 5730, 6390, 6391, 6392, 10427, 10428, 25525, 58580, 58581, 58582,
+	8071, 8154, 8155, 10406, 10407, 10408, 25508, 25509, 58751, 58753,
+	8075, 8160, 8161, 10442, 25361, 25528, 57622, 58643, 8143,
+	-- Огонь
+	2894, 8227, 8249, 10526, 16387, 25557, 58649, 58652, 58656,
+	8181, 10478, 10479, 25560, 58741, 58745, 8190, 10585, 10586, 10587, 25552, 58731, 58734,
+	3599, 6363, 6364, 6365, 10437, 10438, 25533, 58699, 58703, 58704,
+	30706, 57720, 57721, 57722,
+	-- Вода
+	8170, 8184, 10537, 10538, 25563, 58737, 58739, 5394, 6375, 6377, 10462, 10463, 25567, 58755, 58756, 58757,
+	5675, 10495, 10496, 10497, 25570, 58771, 58773, 58774, 16190,
+	-- Другое
+	724, -- Светильник (Lightwell)
+}
+
+NP.TotemIcons = {}
+for _, spellID in ipairs(totemSpellIDs) do
+	local name, _, texture = GetSpellInfo(spellID)
+	if name then
+		NP.TotemIcons[name] = texture
+		-- таблички тотемов в WotLK обычно используют имя заклинания без ранга
+		local baseName = name:gsub('%s+[IVX]+$', '')
+		if baseName ~= name then
+			NP.TotemIcons[baseName] = texture
+		end
+	end
+end
+
+function NP:Construct_TotemIcon(nameplate)
+	local icon = nameplate:CreateTexture(nameplate:GetName()..'TotemIcon', 'OVERLAY', nil, 4)
+	icon:SetTexCoord(unpack(E.TexCoords))
+	icon:CreateBackdrop(nil, nil, nil, true, true)
+	icon:Hide()
+	return icon
+end
+
+function NP:Update_TotemIcon(nameplate)
+	if not nameplate then return end
+	local icon = nameplate.TotemIcon
+	local db = NP:PlateDB(nameplate)
+	local texture = db and db.iconFrame and db.iconFrame.enable and NP.TotemIcons[nameplate.UnitName]
+	if texture and icon then
+		icon:SetTexture(texture)
+		icon:SetSize(db.iconFrame.size, db.iconFrame.size)
+		icon:ClearAllPoints()
+		local parent = (db.iconFrame.parent and db.iconFrame.parent ~= 'Nameplate') and nameplate[db.iconFrame.parent] or nameplate
+		icon:SetPoint(E.InversePoints[db.iconFrame.position], parent, db.iconFrame.position, db.iconFrame.xOffset, db.iconFrame.yOffset)
+		icon:Show()
+		-- фон это отдельная дочерняя рамка таблички, поэтому скрытие только
+		-- текстуры оставит пустую рамку; держим их синхронно
+		if icon.backdrop then icon.backdrop:Show() end
+	elseif icon then
+		icon:Hide()
+		if icon.backdrop then icon.backdrop:Hide() end
 	end
 end
 
@@ -351,6 +405,10 @@ function NP:UpdateCVars()
 
 	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
 
+	-- таблички тотемов (на них завязан TotemIcon)
+	NP:SetEngineCVar('nameplateShowEnemyTotems', '1')
+	NP:SetEngineCVar('nameplateShowFriendlyTotems', '1')
+
 	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
 	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
 	NP:SetEngineCVar('nameplateNotSelectedAlpha', '1')
@@ -434,6 +492,18 @@ function NP:UpdatePlateSize(nameplate)
 	end
 end
 
+function NP:SetNamePlateSizes()
+	local setSelf = C_NamePlate and C_NamePlate.SetNamePlateSelfSize
+	if not setSelf then return end
+
+	local plateSize = NP.db and NP.db.plateSize
+	if not plateSize then return end
+
+	C_NamePlate.SetNamePlateSelfSize(plateSize.personalWidth, plateSize.personalHeight)
+	C_NamePlate.SetNamePlateEnemySize(plateSize.enemyWidth, plateSize.enemyHeight)
+	C_NamePlate.SetNamePlateFriendlySize(plateSize.friendlyWidth, plateSize.friendlyHeight)
+end
+
 function NP:Style(unit)
 	self.isNamePlate = true
 	NP:StylePlate(self, unit)
@@ -471,6 +541,7 @@ function NP:StylePlate(nameplate)
 	nameplate.Level = NP:Construct_Level(textFrame)
 
 	nameplate.ClassificationIndicator = NP:Construct_ClassificationIndicator(nameplate.RaisedElement)
+	nameplate.TotemIcon            = NP:Construct_TotemIcon(nameplate)
 	nameplate.Castbar             = NP:Construct_Castbar(nameplate)
 	nameplate.Portrait            = NP:Construct_Portrait(nameplate.RaisedElement)
 	nameplate.PvPIndicator        = NP:Construct_PvPIndicator(nameplate.RaisedElement)
@@ -521,6 +592,7 @@ function NP:UpdatePlate(nameplate, updateBase)
 		NP:Update_ClassPower(nameplate)
 		NP:Update_Auras(nameplate)
 		NP:Update_ClassificationIndicator(nameplate)
+		NP:Update_TotemIcon(nameplate)
 		NP:Update_TargetIndicator(nameplate)
 		NP:Update_ThreatIndicator(nameplate)
 	else
@@ -629,6 +701,11 @@ function NP:NamePlateCallBack(nameplate, event, unit)
 		NP:UpdateTargetFrameLevel(nameplate)
 		NP:UpdatePlateMouseoverState(nameplate)
 		NP:RegisterAuraUnitEvents(nameplate, unit)
+
+		NP:UpdatePlateHealth(nameplate)
+		NP:UpdatePlatePower(nameplate)
+
+		NP:Update_TotemIcon(nameplate)
 
 		NP:StyleFilterEventWatch(nameplate)
 		NP:StyleFilterSetVariables(nameplate)
@@ -1030,6 +1107,7 @@ function NP:ConfigureAll()
 	if not E.private.nameplates.enable then return end
 
 	NP:UpdateCVars()
+	NP:SetNamePlateSizes()
 	NP:StyleFilterConfigure()
 	NP:Update_StatusBars()
 	NP:ConfigurePlates()
@@ -1072,6 +1150,7 @@ function NP:Initialize()
 	NP:RegisterEvent('GROUP_ROSTER_UPDATE')
 	NP:RegisterEvent('PLAYER_TARGET_CHANGED', 'RefreshPlatesOnTargetChanged')
 	NP:RegisterEvent('UPDATE_MOUSEOVER_UNIT', 'RefreshPlatesOnMouseoverChanged')
+	NP:RegisterEvent('CVAR_UPDATE', 'SetNamePlateSizes')
 
 	if E.myclass == 'ROGUE' or E.myclass == 'DRUID' then
 		NP:RegisterEvent('UNIT_COMBO_POINTS',     'ClassPower_UNIT_COMBO_POINTS')

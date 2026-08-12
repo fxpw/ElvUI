@@ -15,8 +15,16 @@ local GetTalentTabInfo = GetTalentTabInfo
 local RequestBattlefieldScoreData = RequestBattlefieldScoreData
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitHasVehicleUI = UnitHasVehicleUI
+local UnitExists = UnitExists
+local UnitGUID = UnitGUID
+local UnitThreatSituation = UnitThreatSituation
 local IsInInstance = IsInInstance
+local IsInGroup = IsInGroup
+local IsInRaid = IsInRaid
 local IsSpellKnown = IsSpellKnown
+local GetNumRaidMembers = GetNumRaidMembers
+local GetNumPartyMembers = GetNumPartyMembers
+local GetPartyAssignment = GetPartyAssignment
 
 local MAX_TALENT_TABS = MAX_TALENT_TABS
 local NONE = NONE
@@ -109,6 +117,78 @@ function E:GetTalentSpecInfo(isInspect)
 	return specIdx, specName, specIcon
 end
 
+E.GroupRoles = {}
+E.GroupUnitsByRole = {
+	TANK = {},
+	HEALER = {},
+	DAMAGER = {},
+	NONE = {}
+}
+
+function E:UnitTankedByGroup(unit)
+	for _, unitToken in next, E.GroupUnitsByRole.TANK do
+		if E:GetThreatSituation(unit, unitToken) == 3 then
+			return unitToken
+		end
+	end
+end
+
+function E:GetThreatSituation(unit, feedbackUnit)
+	if not unit or not UnitExists(unit) then return end
+
+	if feedbackUnit and feedbackUnit ~= unit and UnitExists(feedbackUnit) then
+		return UnitThreatSituation(feedbackUnit, unit)
+	else
+		return UnitThreatSituation(unit)
+	end
+end
+
+function E:PARTY_MEMBERS_CHANGED()
+	local isInGroup = IsInGroup()
+	E.IsInGroup = isInGroup
+
+	wipe(E.GroupRoles)
+
+	for _, units in next, E.GroupUnitsByRole do
+		wipe(units)
+	end
+
+	if E.IsInGroup then
+		for i = 1, GetNumPartyMembers() do
+			local unit = "party"..i
+			local guid = UnitGUID(unit)
+			local role = guid and ((GetPartyAssignment("MAINTANK", unit) and "TANK" or "NONE") or UnitGroupRolesAssigned(unit))
+			if role then
+				E.GroupRoles[guid] = role
+				E.GroupUnitsByRole[role][guid] = unit
+			end
+		end
+	end
+end
+
+function E:RAID_ROSTER_UPDATE()
+	local isInRaid = IsInRaid()
+	E.IsInGroup = isInRaid
+
+	wipe(E.GroupRoles)
+
+	for _, units in next, E.GroupUnitsByRole do
+		wipe(units)
+	end
+
+	if E.IsInGroup then
+		for i = 1, GetNumRaidMembers() do
+			local unit = "raid"..i
+			local guid = UnitGUID(unit)
+			local role = guid and ((GetPartyAssignment("MAINTANK", unit) and "TANK" or "NONE") or UnitGroupRolesAssigned(unit))
+			if role then
+				E.GroupRoles[guid] = role
+				E.GroupUnitsByRole[role][guid] = unit
+			end
+		end
+	end
+end
+
 function E:CheckRole(event)
 	local talentTree = self:GetTalentSpecInfo()
 	local role
@@ -126,6 +206,8 @@ function E:CheckRole(event)
 	end
 
 	if not role then role = "Melee" end
+
+	self.myrole = self:GetPlayerRole()
 
 	if self.Role ~= role then
 		self.Role = role
@@ -472,6 +554,10 @@ end
 function E:LoadAPI()
 	self:RegisterEvent("PLAYER_LEVEL_UP")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	self:RegisterEvent("RAID_ROSTER_UPDATE")
+	self:PARTY_MEMBERS_CHANGED()
+	self:RAID_ROSTER_UPDATE()
 	self:RegisterEvent("SPELL_UPDATE_USABLE", "CheckRole")
 	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "CheckRole")
 	self:RegisterEvent("PLAYER_TALENT_UPDATE", "CheckRole")

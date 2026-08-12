@@ -6,18 +6,14 @@ To load the AddOn engine add this to the top of your file:
 ]]
 --
 --Lua functions
-local _G, min, pairs, strsplit, unpack, wipe, type, tcopy = _G, min, pairs, strsplit, unpack, wipe, type, table.copy
+local _G, pairs, type, tcopy = _G, pairs, type, table.copy
 --WoW API / Variables
 
-local hooksecurefunc = hooksecurefunc
 local CreateFrame = CreateFrame
-local GetAddOnInfo = GetAddOnInfo
 local GetAddOnMetadata = GetAddOnMetadata
 local GetTime = GetTime
 local HideUIPanel = HideUIPanel
-local InCombatLockdown = InCombatLockdown
 local IsAddOnLoaded = IsAddOnLoaded
-local LoadAddOn = LoadAddOn
 local ReloadUI = ReloadUI
 
 local ERR_NOT_IN_COMBAT = ERR_NOT_IN_COMBAT
@@ -33,7 +29,7 @@ local AddOnName, Engine = ...
 local AddOn = AceAddon:NewAddon(AddOnName, "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "AceHook-3.0")
 AddOn.callbacks = AddOn.callbacks or CallbackHandler:New(AddOn)
 AddOn.DF = {profile = {}, global = {}}; AddOn.privateVars = {profile = {}} -- Defaults
-AddOn.Options = {type = "group", name = AddOnName, args = {}}
+AddOn.Options = {type = "group", name = AddOnName, args = {}, childGroups = 'ElvUI_HiddenTree'}
 
 Engine[1] = AddOn
 Engine[2] = {}
@@ -289,168 +285,4 @@ end
 
 function AddOn:OnProfileReset()
 	AddOn:StaticPopup_Show("RESET_PROFILE_PROMPT")
-end
-
-function AddOn:ResetConfigSettings()
-	AddOn.configSavedPositionTop, AddOn.configSavedPositionLeft = nil, nil
-	AddOn.global.general.AceGUI = AddOn:CopyTable({}, AddOn.DF.global.general.AceGUI)
-end
-
-function AddOn:GetConfigPosition()
-	return AddOn.configSavedPositionTop, AddOn.configSavedPositionLeft
-end
-
-function AddOn:GetConfigSize()
-	return AddOn.global.general.AceGUI.width, AddOn.global.general.AceGUI.height
-end
-
-function AddOn:UpdateConfigSize(reset)
-	local frame = self.GUIFrame
-	if not frame then return end
-
-	local maxWidth, maxHeight = self.UIParent:GetSize()
-	frame:SetMinResize(600, 500)
-	frame:SetMaxResize(maxWidth-50, maxHeight-50)
-
-	self.Libs.AceConfigDialog:SetDefaultSize(AddOnName, self:GetConfigDefaultSize())
-
-	local status = frame.obj and frame.obj.status
-	if status then
-		if reset then
-			self:ResetConfigSettings()
-
-			status.top, status.left = self:GetConfigPosition()
-			status.width, status.height = self:GetConfigDefaultSize()
-
-			frame.obj:ApplyStatus()
-		else
-			local top, left = self:GetConfigPosition()
-			if top and left then
-				status.top, status.left = top, left
-
-				frame.obj:ApplyStatus()
-			end
-		end
-	end
-end
-
-function AddOn:GetConfigDefaultSize()
-	local width, height = AddOn:GetConfigSize()
-	local maxWidth, maxHeight = AddOn.UIParent:GetSize()
-	width, height = min(maxWidth - 50, width), min(maxHeight - 50, height)
-	return width, height
-end
-
-function AddOn:ConfigStopMovingOrSizing()
-	if self.obj and self.obj.status then
-		AddOn.configSavedPositionTop, AddOn.configSavedPositionLeft = AddOn:Round(self:GetTop(), 2), AddOn:Round(self:GetLeft(), 2)
-		AddOn.global.general.AceGUI.width, AddOn.global.general.AceGUI.height = AddOn:Round(self:GetWidth(), 2), AddOn:Round(self:GetHeight(), 2)
-	end
-end
-
-local pageNodes = {}
--- local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
-function AddOn:ToggleOptionsUI(msg)
-	if InCombatLockdown() and AddOn.db.general.showWhenInCombat == false then
-		self:Print(ERR_NOT_IN_COMBAT)
-		self:RegisterEvent("PLAYER_REGEN_ENABLED")
-		return
-	end
-
-	if not IsAddOnLoaded("ElvUI_OptionsUI") then
-		local noConfig
-		local _, _, _, _, reason = GetAddOnInfo("ElvUI_OptionsUI")
-		if reason ~= "MISSING" and reason ~= "DISABLED" then
-			self.GUIFrame = false
-			LoadAddOn("ElvUI_OptionsUI")
-
-			--For some reason, GetAddOnInfo reason is "DEMAND_LOADED" even if the addon is disabled.
-			--Workaround: Try to load addon and check if it is loaded right after.
-			if not IsAddOnLoaded("ElvUI_OptionsUI") then noConfig = true end
-
-			-- version check elvui options if it's actually enabled
-			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.35" then
-				self:StaticPopup_Show("CLIENT_UPDATE_REQUEST")
-			end
-		else
-			noConfig = true
-		end
-
-		if noConfig then
-			self:Print("|cffff0000Error -- Addon 'ElvUI_OptionsUI' не найден или выключен.|r")
-			return
-		end
-	end
-
-	local ACD = self.Libs.AceConfigDialog
-	local ConfigOpen = ACD and ACD.OpenFrames and ACD.OpenFrames[AddOnName]
-
-	local pages, msgStr
-	if msg and msg ~= "" then
-		pages = {strsplit(",", msg)}
-		msgStr = gsub(msg, ",","\001")
-	end
-
-	local mode = "Close"
-	if not ConfigOpen or (pages ~= nil) then
-		if pages ~= nil then
-			local pageCount, index, mainSel = #pages
-			if pageCount > 1 then
-				wipe(pageNodes)
-				index = 0
-
-				local main, mainNode, mainSelStr, sub, subNode, subSel
-				for i = 1, pageCount do
-					if i == 1 then
-						main = pages[i] and ACD and ACD.Status and ACD.Status.ElvUI
-						mainSel = main and main.status and main.status.groups and main.status.groups.selected
-						mainSelStr = mainSel and ("^"..self:EscapeString(mainSel).."\001")
-						mainNode = main and main.children and main.children[pages[i]]
-						pageNodes[index + 1], pageNodes[index + 2] = main, mainNode
-					else
-						sub = pages[i] and pageNodes[i] and ((i == pageCount and pageNodes[i]) or pageNodes[i].children[pages[i]])
-						subSel = sub and sub.status and sub.status.groups and sub.status.groups.selected
-						subNode = (mainSelStr and msgStr:match(mainSelStr..self:EscapeString(pages[i]).."$") and (subSel and subSel == pages[i])) or ((i == pageCount and not subSel) and mainSel and mainSel == msgStr)
-						pageNodes[index + 1], pageNodes[index + 2] = sub, subNode
-					end
-					index = index + 2
-				end
-			else
-				local main = pages[1] and ACD and ACD.Status and ACD.Status.ElvUI
-				mainSel = main and main.status and main.status.groups and main.status.groups.selected
-			end
-
-			if ConfigOpen and ((not index and mainSel and mainSel == msg) or (index and pageNodes and pageNodes[index])) then
-				mode = "Close"
-			else
-				mode = "Open"
-			end
-		else
-			mode = "Open"
-		end
-	end
-
-	if ACD then
-		ACD[mode](ACD, AddOnName)
-	end
-
-	if mode == "Open" then
-		ConfigOpen = ACD and ACD.OpenFrames and ACD.OpenFrames[AddOnName]
-		if ConfigOpen then
-			local frame = ConfigOpen.frame
-			if frame and not self.GUIFrame then
-				self.GUIFrame = frame
-				ElvUIGUIFrame = self.GUIFrame
-
-				self:UpdateConfigSize()
-				hooksecurefunc(frame, "StopMovingOrSizing", AddOn.ConfigStopMovingOrSizing)
-			end
-		end
-
-		if ACD and pages then
-			ACD:SelectGroup(AddOnName, unpack(pages))
-		end
-	end
-
-	GameTooltip:Hide() --Just in case you're mouseovered something and it closes.
 end

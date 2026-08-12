@@ -86,22 +86,25 @@ function DB:HonorBar_OnClick()
 end
 
 function DB:UpdateHonorDimensions()
-	self.honorBar:SetWidth(self.db.honor.width)
-	self.honorBar:SetHeight(self.db.honor.height)
-	self.honorBar.statusBar:SetOrientation(self.db.honor.orientation)
-	self.honorBar.text:FontTemplate(LSM:Fetch("font", self.db.honor.font), self.db.honor.textSize, self.db.honor.fontOutline)
+	local db = self.db.honor
+	self.honorBar:SetWidth(db.width)
+	self.honorBar:SetHeight(db.height)
+	self.honorBar:SetAlpha(db.mouseover and 0 or 1)
+	self.honorBar:SetTemplate(self.db.transparent and "Transparent" or nil)
+	self.honorBar:EnableMouse(not db.clickThrough)
+	self.honorBar:SetFrameLevel(db.frameLevel)
+	self.honorBar:SetFrameStrata(db.frameStrata)
 
-	if DB.db.honor.orientation == "HORIZONTAL" then
-		self.honorBar.statusBar:SetRotatesTexture(false)
-	else
-		self.honorBar.statusBar:SetRotatesTexture(true)
-	end
+	local orientation = self:GetBarOrientation(db)
 
-	if self.db.honor.mouseover then
-		self.honorBar:SetAlpha(0)
-	else
-		self.honorBar:SetAlpha(1)
-	end
+	self.honorBar.statusBar:SetOrientation(orientation)
+	self.honorBar.statusBar:SetRotatesTexture(orientation ~= "HORIZONTAL")
+	self.honorBar.statusBar:SetStatusBarTexture(self:GetBarTexture())
+
+	self.honorBar.text:FontTemplate(LSM:Fetch("font", db.font), db.textSize, db.fontOutline)
+	self.honorBar.text:ClearAllPoints()
+	self.honorBar.text:Point(db.anchorPoint, db.xOffset, db.yOffset)
+	self.honorBar.text:SetShown(db.displayText)
 end
 
 function DB:EnableDisable_HonorBar()

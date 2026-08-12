@@ -344,6 +344,13 @@ local function GetNamedChild(frame, childName, index)
 	return _G[name..childName..(index or "")]
 end
 
+local function OffsetFrameLevel(frame, offset, secondary)
+	if not secondary then secondary = frame end
+
+	local level = secondary:GetFrameLevel()
+	frame:SetFrameLevel(level + (offset or 0))
+end
+
 local function addapi(object)
 	local mt = getmetatable(object).__index
 	if not object.Size then mt.Size = Size end
@@ -361,6 +368,7 @@ local function addapi(object)
 	if not object.StyleButton then mt.StyleButton = StyleButton end
 	if not object.CreateCloseButton then mt.CreateCloseButton = CreateCloseButton end
 	if not object.GetNamedChild then mt.GetNamedChild = GetNamedChild end
+	if not object.OffsetFrameLevel then mt.OffsetFrameLevel = OffsetFrameLevel end
 end
 
 local handled = {["Frame"] = true}

@@ -9,6 +9,12 @@ local random, next, unpack, strsub = random, next, unpack, strsub
 
 E.AnimShake = {{-9,7,-7,12}, {-5,9,-9,5}, {-5,7,-7,5}, {-9,9,-9,9}, {-5,7,-7,5}, {-9,7,-9,5}}
 E.AnimShakeH = {-5,5,-2,5,-2,5}
+E.AnimElastic = {
+	function(anim) anim:Stop() anim.elastic[2]:Play() end,
+	function(anim) anim:Stop() if anim.loop then anim.elastic[1]:Play() end end,
+	function(anim) anim:Stop() anim.elastic[4]:Play() end,
+	function(anim) anim:Stop() if anim.loop then anim.elastic[3]:Play() end end
+}
 
 function E:FlashLoopFinished(requested)
 	if not requested then self:Play() end
@@ -63,6 +69,22 @@ function E:SetUpAnimGroup(obj, Type, ...)
 		shake.path[4]:SetOrder(4)
 		shake.path[5]:SetOrder(5)
 		shake.path[6]:SetOrder(6)
+	elseif Type == "Elastic" then
+		local width, height, duration, loop = ...
+		local elastic = _G.CreateAnimationGroup(obj)
+		obj.elastic = elastic
+
+		for i = 1, 4 do
+			local anim = elastic:CreateAnimation(i < 3 and "width" or "height")
+			anim:SetChange((i==1 and width*0.45) or (i==2 and width) or (i==3 and height*0.45) or height)
+			anim:SetEasing("inout-elastic")
+			anim:SetDuration(duration)
+			anim:SetScript("OnFinished", E.AnimElastic[i])
+			anim.elastic = elastic
+			anim.loop = loop
+
+			elastic[i] = anim
+		end
 	else
 		local x, y, duration, customName = ...
 		if not customName then customName = "anim" end
@@ -290,5 +312,21 @@ function E:UIFrameFadeRemoveFrame(frame)
 		end
 
 		FADEFRAMES[frame] = nil
+	end
+end
+
+function E:Elasticize(obj, width, height)
+	if not obj.elastic then
+		E:SetUpAnimGroup(obj, "Elastic", width or obj:GetWidth(), height or obj:GetHeight(), 2, false)
+	end
+
+	obj.elastic[1]:Play()
+	obj.elastic[3]:Play()
+end
+
+function E:StopElasticize(obj)
+	if obj.elastic then
+		obj.elastic[1]:Stop(true)
+		obj.elastic[3]:Stop(true)
 	end
 end

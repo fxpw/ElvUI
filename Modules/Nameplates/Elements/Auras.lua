@@ -7,12 +7,16 @@ local LSM = E.Libs.LSM
 local _G = _G
 local wipe = wipe
 local unpack = unpack
+local ipairs = ipairs
 local CreateFrame = CreateFrame
 local strsplit = strsplit
+local UnitExists = UnitExists
 local UnitIsFriend = UnitIsFriend
 local UnitCanAttack = UnitCanAttack
 local UnitIsUnit = UnitIsUnit
 local UnitName = UnitName
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
 local ceil, min = math.ceil, math.min
 
 function NP:GetAuraIconSize(db)
@@ -95,6 +99,16 @@ local function NP_ShouldTrackPower(nameplate)
 	return false
 end
 
+local function NP_ShouldTrackHealth(nameplate)
+	if not nameplate then return false end
+	local db = NP:PlateDB(nameplate)
+	if not db or db.nameOnly then return false end
+	if db.health and db.health.enable then return true end
+
+	local hText = db.health and db.health.text
+	return hText and hText.enable and hText.textFormat and hText.textFormat ~= ''
+end
+
 local function NP_ShouldTrackName(nameplate)
 	if not nameplate then return false end
 	local db = NP:PlateDB(nameplate)
@@ -115,9 +129,32 @@ end
 
 function NP:UpdatePlatePower(nameplate)
 	if not nameplate or not nameplate.unit then return end
-
-	if nameplate.Power and nameplate.Power.ForceUpdate and nameplate:IsElementEnabled('Power') then
-		nameplate.Power:ForceUpdate()
+	local u = nameplate.unit
+	if not UnitExists(u) then return end
+	local pw = nameplate.Power
+	if pw then
+		local cur = UnitPower(u)
+		local max = UnitPowerMax(u)
+		if max and max > 0 then
+			local changed = false
+			if pw._np_max ~= max then
+				pw._np_max = max
+				pw:SetMinMaxValues(0, max)
+				changed = true
+			end
+			if pw._np_cur ~= cur then
+				pw._np_cur = cur
+				changed = true
+			end
+			if changed then
+				if nameplate.PowerValueChangeCallbacks then
+					for _, cb in ipairs(nameplate.PowerValueChangeCallbacks) do
+						cb(NP, nameplate, cur, max)
+					end
+				end
+				NP:SetBarValue(pw, cur)
+			end
+		end
 	end
 
 	local db = NP:PlateDB(nameplate)
@@ -201,6 +238,12 @@ function NP:CollectPlateUnitEvents(nameplate)
 		end
 	end
 
+	if NP_ShouldTrackHealth(nameplate) then
+		add('UNIT_HEALTH')
+		add('UNIT_MAXHEALTH')
+		add('UNIT_MAXPOWER')
+	end
+
 	local db = NP:PlateDB(nameplate)
 	if db.eliteIcon and db.eliteIcon.enable then
 		add('UNIT_CLASSIFICATION_CHANGED')
@@ -254,6 +297,11 @@ function NP.PlateUnitEvent_OnEvent(buffs, event, unit)
 	elseif event == 'UNIT_CLASSIFICATION_CHANGED' then
 		if nameplate.ClassificationIndicator and nameplate:IsElementEnabled('ClassificationIndicator') then
 			nameplate:UpdateAllElements('UNIT_CLASSIFICATION_CHANGED')
+		end
+	elseif event == 'UNIT_HEALTH' or event == 'UNIT_MAXHEALTH' or event == 'UNIT_MAXPOWER' then
+		NP:UpdatePlateHealth(nameplate)
+		if event == 'UNIT_MAXPOWER' then
+			NP:UpdatePlatePower(nameplate)
 		end
 	elseif NP_PLATE_POWER_EVENT_SET[event] then
 		NP:UpdatePlatePower(nameplate)
