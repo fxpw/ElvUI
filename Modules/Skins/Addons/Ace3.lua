@@ -181,7 +181,7 @@ function S:Ace3_SkinCheckBox(widget, check, checkbg, highlight)
 		if not widget.__ace3LabelHooked then
 			widget.__ace3LabelHooked = true
 			local coloring
-			hooksecurefunc(widget, 'SetLabel', function(widget, label)
+			hooksecurefunc(widget, 'SetLabel', function(_, label)
 				if coloring then return end
 				Ace3_EnsureEnableColoring()
 				if S:Ace3_CheckBoxIsEnable(widget) then
