@@ -1496,7 +1496,7 @@ function S:Initialize()
 
 	S:SkinAce3()
 
-	-- Early Skin Handling (populated before ElvUI is loaded from the Ace3 file)
+	-- ранняя обработка скинов (заполняется до загрузки ElvUI из файла Ace3)
 	if S.db.ace3.enable and S.EarlyAceWidgets then
 		for _, n in next, S.EarlyAceWidgets do
 			if n.SetLayout then

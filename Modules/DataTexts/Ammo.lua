@@ -51,7 +51,7 @@ local function OnEvent(self, event, ...)
 	end
 
 	if E.myclass == "WARLOCK" then
-		itemID = 6265 -- Soul Shard
+		itemID = 6265 -- осколок души
 		name, count = itemName[itemID] or GetItemInfo(itemID), GetItemCount(itemID)
 
 		if name and not itemName[itemID] then
@@ -123,7 +123,7 @@ local function OnEnter(self)
 			DT.tooltip:AddLine(NOT_APPLICABLE)
 		end
 
-		local itemID = GetInventoryItemID("player", 18) -- ranged weapon
+		local itemID = GetInventoryItemID("player", 18) -- оружие дальнего боя
 		if itemID then
 			local name, _, quality, _, _, _, _, _, equipLoc, texture = GetItemInfo(itemID)
 			local count = GetItemCount(itemID)

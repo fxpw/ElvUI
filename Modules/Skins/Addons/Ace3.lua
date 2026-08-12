@@ -30,7 +30,7 @@ end
 
 function S:Ace3_SkinDropdown()
 	if self and self.obj then
-		local pullout = self.obj.dropdown -- Don't ask questions.. Just FUCKING ACCEPT IT
+		local pullout = self.obj.dropdown
 		if pullout then
 			if pullout.frame then
 				pullout.frame:SetTemplate(nil, true)
@@ -54,10 +54,9 @@ function S:Ace3_CheckBoxIsEnable(widget)
 	if text and S.Ace3_EnableMatch then return strmatch(text, S.Ace3_EnableMatch) end
 end
 
--- Make sure the "Enable" label coloring data is available before any hook
--- that uses it runs. Widgets can be created before the skin module finished
--- initializing (early AceGUI widgets), in which case the hook must not
--- silently skip styling the Enable checkbox.
+-- убеждаемся, что данные подсветки "Enable" доступны до запуска хуков.
+-- Виджеты могут создаваться раньше, чем скин закончит инициализацию,
+-- и хук не должен молча пропускать покраску галочки.
 local function Ace3_EnsureEnableColoring()
 	if S.Ace3_L then return end
 
@@ -141,9 +140,9 @@ end
 
 local buttonSetPointInProgress
 function S:Ace3_ButtonSetPoint(point, anchor, point2, xOffset, yOffset, skip)
-	-- Sirus' toolkit Point only forwards 5 args to SetPoint, so the `skip`
-	-- flag used by dev would be dropped and this hook would re-fire forever
-	-- (C stack overflow). Guard with a re-entrancy flag instead.
+	-- Point из тулкита Sirus передает в SetPoint только 5 аргументов, поэтому
+	-- флаг skip из dev-версии теряется и хук срабатывал бы бесконечно
+	-- (переполнение стека). Защищаемся флагом повторного входа.
 	if not skip and point2 == 'TOPRIGHT' and not buttonSetPointInProgress then
 		buttonSetPointInProgress = true
 		pcall(function()
@@ -174,10 +173,8 @@ function S:Ace3_SkinCheckBox(widget, check, checkbg, highlight)
 		hooksecurefunc(widget, 'SetDisabled', S.Ace3_CheckBoxSetDisabled)
 		hooksecurefunc(widget, 'SetType', S.Ace3_CheckBoxSetType)
 
-		-- AceConfigDialog may set the label after SetDisabled, so also recolor
-		-- the "Enable" label whenever the label text changes. The colored label
-		-- itself still matches the Enable pattern, so a re-entrancy flag stops
-		-- the SetLabel -> SetLabel cycle.
+		-- AceConfigDialog может задать текст метки после SetDisabled, поэтому
+		-- красим "Enable" и при изменении текста. Защита от цикла SetLabel -> SetLabel.
 		if not widget.__ace3LabelHooked then
 			widget.__ace3LabelHooked = true
 			local coloring
@@ -219,10 +216,10 @@ function S:Ace3_SkinTab(tab)
 		tab.backdrop:Point('TOPLEFT', 10, -3)
 		tab.backdrop:Point('BOTTOMRIGHT', -10, 0)
 
-		if tab.text and tab.text.Point then -- possible issue with Pally Power
-			-- center the label inside the tab (dev keeps the TabGroup's
-			-- LEFT+RIGHT span and relies on centered justification; do it
-			-- explicitly here so the Sirus vanilla ButtonText never hugs left)
+		if tab.text and tab.text.Point then -- возможна проблема с Pally Power
+			-- центрируем подпись внутри вкладки (в dev-версии это делается через
+			-- LEFT+RIGHT и центрированное выравнивание; тут делаем явно, чтобы
+			-- стандартный текст кнопок Sirus не прижимался влево)
 			tab.text:ClearAllPoints()
 			tab.text:SetJustifyH('CENTER')
 			tab.text:SetJustifyV('MIDDLE')
@@ -482,7 +479,7 @@ function S:Ace3_RefreshTree(scrollToSelection)
 				treeframe:Hide()
 			end
 
-			return -- dont proceed
+			return -- дальше не идем
 		else
 			border:Point('TOPLEFT', treeframe, 'TOPRIGHT')
 			border:Point('BOTTOMRIGHT', self.frame)
@@ -551,7 +548,7 @@ function S:Ace3_RegisterAsContainer(widget)
 
 		frame:SetTemplate('Transparent')
 
-		if TYPE == 'InlineGroup' then -- 'Window' is another type
+		if TYPE == 'InlineGroup' then -- 'Window' это другой тип
 			frame.ignoreBackdropColors = true
 			S.Ace3_BackdropColor(frame)
 		end
@@ -608,18 +605,18 @@ function S:Ace3_StylePopup()
 	end
 end
 
--- The latest raw implementations of the AceGUI registration methods. The
--- wrappers below always call the CURRENT implementation, so a newer lib copy
--- (loaded by another addon after a LibStub minor bump) keeps working.
+-- последние сырые реализации методов регистрации AceGUI. Обертки ниже всегда
+-- вызывают ТЕКУЩУЮ реализацию, поэтому новая копия библиотеки (загруженная
+-- другим аддоном после бампа minor в LibStub) продолжает работать
 S.Ace3_Impl = {}
 
 S.Ace3_Wrappers = {
 	RegisterAsContainer = function(s, w, ...)
 		local impl = S.Ace3_Impl.RegisterAsContainer
 		if impl then
-			-- The skin must never break the underlying library call. Capture the
-			-- FULL argument list (self + widget): S.Ace3_RegisterAsContainer is
-			-- declared with a colon, so it expects (self, widget).
+			-- скин не должен ломать вызов библиотеки. Передаем ПОЛНЫЙ список
+			-- аргументов (self + widget): S.Ace3_RegisterAsContainer объявлена
+			-- с двоеточием и ждет (self, widget)
 			local rest = { s, w, ... }
 			pcall(function()
 				if E.private and E.private.skins and E.private.skins.ace3.enable then
@@ -668,10 +665,10 @@ function S:Ace3_SkinTooltip(lib, minor) -- lib: AceConfigDialog or AceGUI
 	if not lib.tooltip then
 		S:Ace3_MetaTable(lib)
 	else
-		if lib.tooltip and not S:IsHooked(lib.tooltip, 'OnShow') then -- Tooltip
+		if lib.tooltip and not S:IsHooked(lib.tooltip, 'OnShow') then -- подсказка
 			S:SecureHookScript(lib.tooltip, 'OnShow', S.Ace3_StyleTooltip)
 		end
-		if lib.popup and not S:IsHooked(lib.popup, 'OnShow') then -- StaticPopup
+		if lib.popup and not S:IsHooked(lib.popup, 'OnShow') then -- всплывающее окно
 			S:SecureHookScript(lib.popup, 'OnShow', S.Ace3_StylePopup)
 		end
 	end
@@ -687,12 +684,11 @@ function S:Ace3_MetaIndex(k, v)
 
 		S:SecureHookScript(v, 'OnShow', S.Ace3_StylePopup)
 	elseif k == 'RegisterAsContainer' or k == 'RegisterAsWidget' then
-		-- Refresh the implementation the wrapper should call. A nil assignment
-		-- (the temporary nil-out in HookAce3) must never leave a broken wrapper
-		-- behind -- the methods have to stay callable for every addon sharing
-		-- the AceGUI library (Gladdy, Spy, Details, ...).
-		-- NOTE: the Sirus client does not allow attaching fields to functions,
-		-- so the wrappers are identified by identity (they are singletons).
+		-- обновляем реализацию, которую должна вызывать обертка. Обнуление
+		-- (временный nil в HookAce3) не должно оставить сломанную обертку:
+		-- методы обязаны работать для всех аддонов, использующих AceGUI
+		-- (Gladdy, Spy, Details и др.). Клиент Sirus не позволяет вешать поля
+		-- на функции, поэтому обертки опознаются по идентичности
 		if type(v) == 'function' and v ~= S.Ace3_Wrappers[k] then
 			S.Ace3_Impl[k] = v
 		end
@@ -706,7 +702,7 @@ end
 function S:Ace3_ColorizeEnable(L)
 	S.Ace3_L = L
 
-	-- Special Enable Coloring
+	-- особая подсветка галочки "Enable"
 	S.Ace3_EnableMatch = '^|?c?[Ff]?[Ff]?%x?%x?%x?%x?%x?%x?' .. E:EscapeString(S.Ace3_L.Enable) .. '|?r?$'
 	S.Ace3_EnableOff = format('|cffff3333%s|r', S.Ace3_L.Enable)
 	S.Ace3_EnableOn = format('|cff33ff33%s|r', S.Ace3_L.Enable)
@@ -716,8 +712,8 @@ local lastMinor = 0
 function S:HookAce3(lib, minor, early) -- lib: AceGUI
 	if not lib or (not minor or minor < minorGUI) then return end
 
-	-- Refresh the implementations our wrappers call. A newer lib copy may have
-	-- overwritten our wrapper after a LibStub minor bump.
+	-- обновляем реализации, которые вызывают наши обертки. Новая копия
+	-- библиотеки могла перезаписать нашу обертку после бампа minor
 	local curContainer, curWidget = lib.RegisterAsContainer, lib.RegisterAsWidget
 	if curContainer and curContainer ~= S.Ace3_Wrappers.RegisterAsContainer then
 		S.Ace3_Impl.RegisterAsContainer = curContainer
@@ -740,9 +736,9 @@ function S:HookAce3(lib, minor, early) -- lib: AceGUI
 	end
 
 	if not S.Ace3_L then
-		-- E.global is only populated in OnInitialize, so this can run before it
-		-- exists. Never let the locale setup abort the hook, or the AceGUI
-		-- registration methods would be left missing for every other addon.
+		-- E.global заполняется только в OnInitialize, поэтому тут его может ещё
+		-- не быть. Сбой локали не должен прерывать хук, иначе методы регистрации
+		-- пропадут для всех остальных аддонов
 		local locale = E.global and E.global.general and E.global.general.locale or "enUS"
 		pcall(function()
 			S.Ace3_L = E.Libs.ACL:GetLocale("ElvUI", locale)
@@ -750,9 +746,9 @@ function S:HookAce3(lib, minor, early) -- lib: AceGUI
 		end)
 	end
 
-	-- Never leave the registration methods missing: (re)install our wrappers.
-	-- RegisterAsContainer/RegisterAsWidget are called by every AceGUI widget
-	-- constructor, so a nil value crashes all AceGUI users (Gladdy, Spy, ...).
+	-- никогда не оставляем методы регистрации пустыми: (пере)устанавливаем
+	-- обертки. RegisterAsContainer/RegisterAsWidget вызываются каждым
+	-- конструктором виджета AceGUI, nil упадет у всех пользователей AceGUI
 	if S.Ace3_Impl.RegisterAsContainer then
 		lib.RegisterAsContainer = S.Ace3_Wrappers.RegisterAsContainer
 	end
@@ -761,7 +757,7 @@ function S:HookAce3(lib, minor, early) -- lib: AceGUI
 	end
 end
 
-do -- Early Skin Loading
+do -- ранняя загрузка скинов
 	local Libraries = {
 		['AceGUI'] = true,
 		['AceConfigDialog'] = true,

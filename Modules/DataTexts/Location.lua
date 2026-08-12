@@ -14,7 +14,7 @@ local ToggleFrame = ToggleFrame
 
 local NOT_APPLICABLE = NOT_APPLICABLE
 
-local colors = { -- pulled from Blizz's ZoneText.lua
+local colors = { -- цвета взяты из ZoneText.lua Близзард
 	none		= {r = 1, g = 1, b = 0},
 	arena		= {r = 1.0, g = 0.1, b = 0.1},
 	combat		= {r = 1.0, g = 0.1, b = 0.1},
@@ -32,9 +32,8 @@ end
 local function OnEvent(self)
 	local zone = GetZoneText()
 	local subZone = GetSubZoneText()
-	-- WotLK: continent name comes from GetMapContinents(), indexed by GetCurrentMapContinent()
-	-- (same mapping the client's own WorldMapFrame_LoadContinents uses). The index can be
-	-- 0/-1 (world/cosmic map or instance) where there is no continent name.
+	-- в WotLK имя континента берется из GetMapContinents() по индексу GetCurrentMapContinent()
+	-- (так же делает WorldMapFrame_LoadContinents). Индекс может быть 0/-1 (карта мира или инстанс)
 	local continentID = GetCurrentMapContinent()
 	local continent = (continentID and continentID > 0) and select(continentID, GetMapContinents()) or ""
 

@@ -9,18 +9,18 @@ local UnitStat = UnitStat
 
 local NOT_APPLICABLE = NOT_APPLICABLE
 
--- primary stat index (LE_UNIT_STAT_*) per class / talent tree, 3.3.5a has no GetSpecializationInfo
+-- индекс основной характеристики (LE_UNIT_STAT_*) по классу и ветке талантов; в 3.3.5a нет GetSpecializationInfo
 local primaryStatByClassTree = {
-	WARRIOR = {1, 1, 1},      -- Strength
-	PALADIN = {4, 1, 1},      -- Intellect, Strength, Strength
-	HUNTER = {2, 2, 2},       -- Agility
-	ROGUE = {2, 2, 2},        -- Agility
-	PRIEST = {4, 4, 4},       -- Intellect
-	DEATHKNIGHT = {1, 1, 1},  -- Strength
-	SHAMAN = {4, 2, 4},       -- Intellect, Agility, Intellect
-	MAGE = {4, 4, 4},         -- Intellect
-	WARLOCK = {4, 4, 4},      -- Intellect
-	DRUID = {4, 2, 4},        -- Intellect, Agility, Intellect
+	WARRIOR = {1, 1, 1},      -- Сила
+	PALADIN = {4, 1, 1},      -- Интеллект, Сила, Сила
+	HUNTER = {2, 2, 2},       -- Ловкость
+	ROGUE = {2, 2, 2},        -- Ловкость
+	PRIEST = {4, 4, 4},       -- Интеллект
+	DEATHKNIGHT = {1, 1, 1},  -- Сила
+	SHAMAN = {4, 2, 4},       -- Интеллект, Ловкость, Интеллект
+	MAGE = {4, 4, 4},         -- Интеллект
+	WARLOCK = {4, 4, 4},      -- Интеллект
+	DRUID = {4, 2, 4},        -- Интеллект, Ловкость, Интеллект
 }
 
 local displayString = ""

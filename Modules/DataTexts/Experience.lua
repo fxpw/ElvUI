@@ -24,7 +24,7 @@ local function OnEvent(self)
 	local remainXP = XPToLevel - CurrentXP
 	local remainPercent = E:Round(remainXP / XPToLevel, 4)
 
-	-- values we also use in OnEnter
+	-- эти значения также используются в OnEnter
 	RemainTotal, RemainBars = remainPercent * 100, remainPercent * 20
 	PercentXP, RemainXP = E:Round(CurrentXP / XPToLevel, 4) * 100, E:ShortValue(remainXP)
 

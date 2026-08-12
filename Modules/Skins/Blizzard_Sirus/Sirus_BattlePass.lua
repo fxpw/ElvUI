@@ -151,9 +151,9 @@ local function ReskinPKBTButton(btn, noBackdrop)
 		return
 	end
 
-	-- Named PKBT chrome only. Safe to run after the ElvUI backdrop exists;
-	-- the generic region wipe below must never run after it, because the
-	-- backdrop textures show up in GetRegions and would be wiped with it.
+	-- трогаем только именованный хром PKBT. Безопасно запускать после создания
+	-- фона ElvUI; общая зачистка регионов ниже не должна идти после него,
+	-- иначе фоновые текстуры попадут в GetRegions и будут стерты
 	local function clearChrome(b)
 		if b.Left then
 			b.Left:SetAlpha(0)
@@ -185,16 +185,16 @@ local function ReskinPKBTButton(btn, noBackdrop)
 		if b.SetDisabledTexture then
 			b:SetDisabledTexture("")
 		end
-		-- Content (icon/text in WidgetHolder, Price, PurchaseNote) must stay
-		-- visible - hiding it leaves the button empty. Glow is just chrome.
+		-- контент (иконка/текст в WidgetHolder, Price, PurchaseNote) должен
+		-- оставаться видимым, иначе кнопка станет пустой. Glow это просто хром
 		if b.Glow then
 			b.Glow:Hide()
 		end
 	end
 
 	if not btn._Elv_BaseSkinned then
-		-- Wipe every leftover atlas texture BEFORE S:HandleButton creates the
-		-- ElvUI backdrop, so the catch-all wipe can never touch the backdrop.
+		-- стираем все лишние атласы ДО того, как S:HandleButton создаст фон
+		-- ElvUI, чтобы общая зачистка не задела сам фон
 		for i = 1, (btn:GetNumRegions() or 0) do
 			local r = select(i, btn:GetRegions())
 			if r and r.IsObjectType and r:IsObjectType("Texture") then
@@ -203,8 +203,8 @@ local function ReskinPKBTButton(btn, noBackdrop)
 			end
 		end
 
-		-- noBackdrop skips the ElvUI backdrop (quest page buttons look fine
-		-- transparent and keep just their text/icon)
+		-- noBackdrop пропускает фон ElvUI (кнопки страницы заданий нормально
+		-- выглядят прозрачными, остаются только текст и иконка)
 		S:HandleButton(btn, true, nil, false, noBackdrop)
 		btn._Elv_BaseSkinned = true
 	end
@@ -235,9 +235,9 @@ local function ReskinPKBTButton(btn, noBackdrop)
 				clearChrome(self)
 			end)
 		end
-		-- state changes (OnShow/OnEnable/OnDisable/SetChecked) re-apply the
-		-- three-slice atlases directly through UpdateButton, bypassing
-		-- SetThreeSliceAtlas - hook it so the chrome stays off
+		-- смена состояния (OnShow/OnEnable/OnDisable/SetChecked) снова накладывает
+		-- атласы напрямую через UpdateButton, минуя SetThreeSliceAtlas;
+		-- вешаем хук, чтобы хром оставался скрытым
 		if btn.UpdateButton then
 			hooksecurefunc(btn, "UpdateButton", function(self)
 				clearChrome(self)
@@ -437,7 +437,7 @@ local function HandleBattlePassFrame()
 					-- end
 					-- S:HandleFrame(child)
 					if child.ActionButton then
-						-- quest action buttons: no ElvUI backdrop, just text/icon
+						-- кнопки действий заданий: без фона ElvUI, только текст/иконка
 						ReskinPKBTButton(child.ActionButton, true)
 						child.ActionButton:Show()
 					end
@@ -610,7 +610,7 @@ local function HandleBattlePassFrame()
 			S:HandleCloseButton(d.CloseButton)
 		end
 		if d.PurchaseButton then
-			-- price button (PKBT_GoldButtonMultiWidgetPriceTemplate): Price widget is never hidden
+			-- кнопка цены (PKBT_GoldButtonMultiWidgetPriceTemplate): виджет цены не скрывается
 			ReskinPKBTButton(d.PurchaseButton)
 		end
 		ApplyElvUIFont(d)

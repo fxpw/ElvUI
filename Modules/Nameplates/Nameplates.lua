@@ -120,9 +120,9 @@ do
 	end)
 end
 
--- Event-driven health update (replaces the per-tick polling that was removed
--- from the OnUpdate loop). Called from PlateUnitEvent_OnEvent on
--- UNIT_HEALTH / UNIT_MAXHEALTH / UNIT_MAXPOWER and once when a plate is added.
+-- обновление здоровья по событиям (вместо опроса в OnUpdate). Вызывается из
+-- PlateUnitEvent_OnEvent на UNIT_HEALTH / UNIT_MAXHEALTH / UNIT_MAXPOWER
+-- и один раз при добавлении таблички
 function NP:UpdatePlateHealth(nameplate)
 	if not nameplate or not nameplate.unit then return end
 	local u = nameplate.unit
@@ -143,7 +143,7 @@ function NP:UpdatePlateHealth(nameplate)
 		changed = true
 	end
 	if changed then
-		-- fire before SetValue so Cutaway reads the previous value
+		-- вызываем до SetValue, чтобы Cutaway прочитал предыдущее значение
 		if nameplate.HealthValueChangeCallbacks then
 			for _, cb in ipairs(nameplate.HealthValueChangeCallbacks) do
 				cb(NP, nameplate, cur, max)
@@ -152,7 +152,7 @@ function NP:UpdatePlateHealth(nameplate)
 		NP:SetBarValue(h, cur)
 	end
 
-	-- refresh the health text tag (it can embed [health:*] and power tags)
+	-- обновляем тег текста здоровья (может содержать [health:*] и теги ресурса)
 	local db = NP:PlateDB(nameplate)
 	local hText = db.health and db.health.text
 	if hText and hText.enable and hText.textFormat and hText.textFormat ~= ''
@@ -172,25 +172,26 @@ do
 	end
 end
 
---[[ Totem icons (minimal port of dev's IconFrame element, inlined here
-so no new file is needed). Shows the totem's spell icon above its nameplate. ]]--
+--[[ Иконки тотемов (минимальный порт элемента IconFrame из dev-версии,
+встроен сюда, чтобы не создавать новый файл). Показывает иконку заклинания
+тотема над его табличкой. ]]--
 local totemSpellIDs = {
-	-- Air
+	-- Воздух
 	8177, 10595, 10600, 10601, 25574, 58746, 58749, 6495, 8512, 3738,
-	-- Earth
+	-- Земля
 	2062, 2484, 5730, 6390, 6391, 6392, 10427, 10428, 25525, 58580, 58581, 58582,
 	8071, 8154, 8155, 10406, 10407, 10408, 25508, 25509, 58751, 58753,
 	8075, 8160, 8161, 10442, 25361, 25528, 57622, 58643, 8143,
-	-- Fire
+	-- Огонь
 	2894, 8227, 8249, 10526, 16387, 25557, 58649, 58652, 58656,
 	8181, 10478, 10479, 25560, 58741, 58745, 8190, 10585, 10586, 10587, 25552, 58731, 58734,
 	3599, 6363, 6364, 6365, 10437, 10438, 25533, 58699, 58703, 58704,
 	30706, 57720, 57721, 57722,
-	-- Water
+	-- Вода
 	8170, 8184, 10537, 10538, 25563, 58737, 58739, 5394, 6375, 6377, 10462, 10463, 25567, 58755, 58756, 58757,
 	5675, 10495, 10496, 10497, 25570, 58771, 58773, 58774, 16190,
-	-- Other
-	724, -- Lightwell
+	-- Другое
+	724, -- Светильник (Lightwell)
 }
 
 NP.TotemIcons = {}
@@ -198,7 +199,7 @@ for _, spellID in ipairs(totemSpellIDs) do
 	local name, _, texture = GetSpellInfo(spellID)
 	if name then
 		NP.TotemIcons[name] = texture
-		-- WotLK totem nameplates usually use the plain spell name (no rank suffix)
+		-- таблички тотемов в WotLK обычно используют имя заклинания без ранга
 		local baseName = name:gsub('%s+[IVX]+$', '')
 		if baseName ~= name then
 			NP.TotemIcons[baseName] = texture
@@ -226,8 +227,8 @@ function NP:Update_TotemIcon(nameplate)
 		local parent = (db.iconFrame.parent and db.iconFrame.parent ~= 'Nameplate') and nameplate[db.iconFrame.parent] or nameplate
 		icon:SetPoint(E.InversePoints[db.iconFrame.position], parent, db.iconFrame.position, db.iconFrame.xOffset, db.iconFrame.yOffset)
 		icon:Show()
-		-- the backdrop is a separate child frame of the nameplate, so hiding
-		-- only the texture leaves an empty bordered box behind - keep it in sync
+		-- фон это отдельная дочерняя рамка таблички, поэтому скрытие только
+		-- текстуры оставит пустую рамку; держим их синхронно
 		if icon.backdrop then icon.backdrop:Show() end
 	elseif icon then
 		icon:Hide()
@@ -404,7 +405,7 @@ function NP:UpdateCVars()
 
 	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
 
-	-- totem nameplates (TotemIcon relies on them)
+	-- таблички тотемов (на них завязан TotemIcon)
 	NP:SetEngineCVar('nameplateShowEnemyTotems', '1')
 	NP:SetEngineCVar('nameplateShowFriendlyTotems', '1')
 

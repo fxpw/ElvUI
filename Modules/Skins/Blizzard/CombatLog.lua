@@ -21,7 +21,7 @@ end
 -- credit: Aftermathh, edited by Simpy
 S:AddCallbackForAddon("Blizzard_CombatLog", "Skin_CombatLog", function()
 	if not E.private.chat.enable then return end
-	-- this is always on with the chat module, it's only handle the top bar in combat log chat frame
+	-- окно всегда включено вместе с чатом, тут обрабатываем только верхнюю панель лога боя
 
 	hooksecurefunc("Blizzard_CombatLog_Update_QuickButtons", StyleButtons)
 	StyleButtons()

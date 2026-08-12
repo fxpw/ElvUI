@@ -53,7 +53,7 @@ function BL:GuildBank_ItemLevel(button)
 			local custom = db.itemLevelCustomColorEnable and db.itemLevelCustomColor
 			if custom then
 				r, g, b = custom.r, custom.g, custom.b
-			elseif rarity and rarity > 1 then -- we already do this above otherwise
+			elseif rarity and rarity > 1 then -- иначе это уже сделано выше
 				r, g, b = GetItemQualityColor(rarity)
 			end
 

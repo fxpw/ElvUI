@@ -327,7 +327,7 @@ L["silverabbrev"] = "|cffc7c7cfс|r"
 L["whispers"] = "шепчет"
 L["yells"] = "кричит"
 L["|cFFE30000Lua error recieved. You can view the error message when you exit combat."] = "|cFFE30000Обнаружена ошибка lua. Вы получите отчет о ней после завершения боя."
--- Ported from ElvUI-development
+-- Перенесено из ElvUI-development
 L["Ammo/Shard Counter"] = "Счетчик патронов/осколков"
 L["Completed XP:"] = "Завершено опыта:"
 L["Color the border of items by quality."] = "Окрашивать рамку предметов по качеству."

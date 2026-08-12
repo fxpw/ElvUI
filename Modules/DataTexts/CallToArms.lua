@@ -47,7 +47,6 @@ local function OnEvent(self)
 	local dpsReward = false
 	local unavailable = true
 
-	--Dungeons
 	for i = 1, GetNumRandomDungeons() do
 		local id = GetLFGRandomDungeonInfo(i)
 		local eligible, forTank, forHealer, forDamage, itemCount = GetLFGDungeonRewards(id)

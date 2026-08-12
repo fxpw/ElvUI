@@ -510,7 +510,7 @@ function E:CreateMoverPopup()
 	end)
 	S:HandleNextPrevButton(rightButton)
 	rightButton:SetSize(22, 22)
-end--=================== ElvUI 7.x window chrome (ported from ElvUI-development) ===================
+end --=================== Хром окна настроек (перенесено из ElvUI-development) ===================
 local hooksecurefunc = hooksecurefunc
 local next, sort, gsub, wipe = next, sort, gsub, wipe
 local strsplit, strmatch, strtrim, strlower = strsplit, strmatch, strtrim, strlower
@@ -611,7 +611,7 @@ function E:Config_ButtonOnEnter()
 	local current = self:GetText()
 	E.ConfigTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT', 0, 2)
 
-	-- show the full name when the button label was truncated
+	-- показать полное имя, если текст кнопки обрезан
 	if name and name ~= current then
 		E.ConfigTooltip:AddLine(E:StripString(name), 1, 1, 1, true)
 	end
@@ -670,7 +670,7 @@ function E:Config_SearchUpdate(userInput)
 
 		local ACD = E.Libs.AceConfigDialog
 		if ACD then
-			ACD:SelectGroup('ElvUI', 'search') -- trigger update
+			ACD:SelectGroup('ElvUI', 'search') -- чтобы обновить окно настроек
 		end
 	end
 end
@@ -687,7 +687,7 @@ function E:Config_SearchClear()
 	if selected == 'search' then
 		local ACD = E.Libs.AceConfigDialog
 		if ACD then
-			ACD:SelectGroup('ElvUI', self.selected or 'general') -- try to stay or swap back to general if it cant
+			ACD:SelectGroup('ElvUI', self.selected or 'general') -- остаемся в выбранном разделе или возвращаемся в "Общее"
 		end
 	end
 
@@ -732,8 +732,8 @@ function E:Config_TruncateButtonText(btn)
 	local fs = btn:GetFontString()
 	if not fs then return end
 
-	-- Sirus client: the raw fontstring may have no font yet; ensure one is set
-	-- before measuring, otherwise SetText fails with "Font not set"
+	-- в Sirus у шрифта может ещё не быть гарнитуры; ставим её до замера,
+	-- иначе SetText падает с "Font not set"
 	local _, fontHeight = fs:GetFont()
 	if not fontHeight and fs.FontTemplate then
 		fs:FontTemplate(nil, 12)
@@ -814,13 +814,9 @@ function E:Config_UpdateSliderPosition(btn)
 	local left = btn and btn.frame and btn.frame.leftHolder
 	if not (left and left.slider) then return end
 
-	-- Scrolling moves the buttons frame (and its children) up by 30px per
-	-- unit while the frame's bottom stays anchored to the visible bottom
-	-- edge, so the visible top edge is frame top minus the scroll offset.
-	-- Derive the needed scroll from the button's live position instead of
-	-- the stale creation-time sliderValue, and leave the scroll untouched
-	-- when the selected entry is already fully visible -- otherwise simply
-	-- selecting a group would reset the scroll position to the top.
+	-- скролл двигает кнопки вверх на 30px за шаг; считаем нужную позицию
+	-- по живой геометрии кнопки, а не по сохраненному sliderValue, и не
+	-- трогаем скролл, если выбранная запись уже полностью видна
 	local btns = left.buttons
 	local slider = left.slider
 	local value = slider:GetValue()
@@ -833,13 +829,11 @@ function E:Config_UpdateSliderPosition(btn)
 	if not (viewBottom and viewTop and btnBottom and btnTop) then return end
 
 	if btnBottom >= viewBottom and btnTop <= viewTop then
-		-- Already fully visible: keep the current scroll position.
+		-- кнопка уже полностью видна, скролл не трогаем
 		return
 	end
 
-	-- Bring the selected entry's bottom edge to the visible bottom edge;
-	-- this is the same target the sliderValue used to encode, but computed
-	-- from the current positions so it can never point at a stale value.
+	-- подводим нижний край выбранной кнопки к нижнему краю области просмотра
 	local needed = value + (viewBottom - btnBottom) / step
 	local _, maxValue = slider:GetMinMaxValues()
 	if needed < 0 then needed = 0 end
@@ -863,10 +857,9 @@ function E:Config_CreateFrame(info, frame, unskinned, frameType, ...)
 		element:SetScript('OnClick', info.func)
 
 		if element then
-			-- icon-only buttons (e.g. "Reposition Window") must not render a
-			-- text label on top of their texture: never set a label in the
-			-- first place, and hide any fontstring the client may create
-			-- (SetText('') alone does not reliably clear it in this client)
+			-- кнопки только с иконкой (например "Reposition Window") не должны
+			-- показывать текст поверх текстуры: не задаем подпись и скрываем
+			-- любой fontstring, который может создать клиент (SetText('') его не чистит)
 			if info.texture then
 				local textureFontString = element:GetFontString()
 				if textureFontString then
@@ -881,11 +874,9 @@ function E:Config_CreateFrame(info, frame, unskinned, frameType, ...)
 			element:HookScript('OnEnter', E.Config_ButtonOnEnter)
 			element:HookScript('OnLeave', E.Config_ButtonOnLeave)
 
-			-- Sirus client: template buttons have no font on the raw fontstring
-			-- until the button machinery applies it; set one up front so the
-			-- width is measured correctly and truncation does not hit
-			-- "Font not set" (bottom buttons only; left buttons get theirs
-			-- in Config_HandleLeftButton)
+			-- в Sirus у шаблонных кнопок нет шрифта на сыром fontstring, пока его
+			-- не применит механика кнопок; задаем заранее, чтобы корректно замерить
+			-- ширину и обрезать текст без ошибки "Font not set" (только нижние кнопки)
 			if not info.key then
 				local btext = element:GetFontString()
 				if btext and btext.FontTemplate then
@@ -893,9 +884,8 @@ function E:Config_CreateFrame(info, frame, unskinned, frameType, ...)
 				end
 			end
 
-			-- dev: width = text + 40, height 22. Bottom buttons (no info.key)
-			-- get a safety cap so russian labels never overlap the search box;
-			-- left buttons override the width later (Config_HandleLeftButton)
+			-- ширина = текст + 40, высота 22. Нижние кнопки ограничиваем по ширине,
+			-- чтобы русские подписи не налезали на строку поиска
 			local width = element:GetTextWidth() + 40
 			if not info.key then
 				width = min(width, 160)
@@ -907,7 +897,7 @@ function E:Config_CreateFrame(info, frame, unskinned, frameType, ...)
 			end
 		end
 	elseif frameType == 'EditBox' then
-		element:FontTemplate() -- Define Font properties for the Editbox text field to show written characters
+		element:FontTemplate()
 		element:SetAutoFocus(false)
 
 		S:HandleSearchBox(element, unskinned)
@@ -1026,7 +1016,7 @@ end
 function E:Config_HandleLeftButton(info, frame, unskinned, buttons, last, index)
 	local btn = E:Config_CreateFrame(info, frame, unskinned, 'Button', nil, buttons, 'UIPanelButtonTemplate')
 
-	-- plugin groups (not part of core options) are visually nested
+	-- группы плагинов (не из базовых настроек) визуально вложены
 	local submenu = (info.order or 0) >= 6 and not tContains(E.OriginalOptions, info.key)
 
 	btn:Width(submenu and 164 or 176)
@@ -1043,8 +1033,7 @@ function E:Config_HandleLeftButton(info, frame, unskinned, buttons, last, index)
 	if not last then
 		btn:Point('TOP', buttons, 'TOP', submenu and 11 or -1, 0)
 	elseif last.IsObjectType and last:IsObjectType('FontString') then
-		-- x offset 0: vertical chain only; the horizontal indent for plugins
-		-- comes from the "Plugins" section label, so rows never staircase
+		-- смещение по X нулевое: отступ для плагинов дает заголовок секции "Плагины"
 		btn:Point('TOP', last, 'BOTTOM', 0, -4)
 	else
 		btn:Point('TOP', last, 'BOTTOM', 0, (last.separator and -6) or -4)
@@ -1079,7 +1068,7 @@ end
 
 function E:Config_CreateLeftButtons(frame, unskinned, options)
 	local opts = {}
-	-- plugin groups (not part of core options) go to the end of the list, visually nested
+	-- группы плагинов идут в конец списка, визуально вложенные
 	local pluginHeaderShown = false
 	for key, info in pairs(options) do
 		if not tContains(E.OriginalOptions, key) then
@@ -1101,7 +1090,7 @@ function E:Config_CreateLeftButtons(frame, unskinned, options)
 			last = E:Config_CreateSeparatorLine(frame, last)
 		end
 
-		-- first plugin group gets a "Plugins" heading (non-clickable)
+		-- первой группе плагинов выводим заголовок "Плагины" (не кликабельный)
 		if (opt[1] or 0) >= 100 and not pluginHeaderShown then
 			pluginHeaderShown = true
 			last = E:Config_CreateSectionLabel(frame, last, L["Plugins"])
@@ -1269,8 +1258,8 @@ function E:Config_SetStatusText(text)
 	E:Config_ContentPlacement(self.frame, self.content, not E.private.skins.ace3.enable, shown)
 end
 
--- Defensive: hide the AceConfigDialog treeframe for the ElvUI root group even
--- if the Ace3 skin hook did not run (the chrome renders its own left menu).
+-- На всякий случай прячем дерево AceConfigDialog для корневой группы ElvUI,
+-- даже если хук скина Ace3 не сработал (своё левое меню рисует хром окна).
 function E:Config_HideAceTree(frame)
 	if not (frame and frame.obj) then return end
 
@@ -1304,11 +1293,9 @@ function E:Config_WindowOpened(frame)
 
 		local logoColor = E.media.rgbvaluecolor or {1, .82, 0}
 
-		-- Play the decorative elastic bounce like the original ElvUI. The
-		-- "width"/"height" animations can leave the textures at a tiny/zero
-		-- size on this client if they stall, so ConfigLogoElasticize always
-		-- resets to the base size first and snaps back to it once the bounce
-		-- should be over.
+		-- декоративный отскок логотипа, как в оригинальном ElvUI; анимации могут
+		-- застрять на крошечном размере, поэтому перед показом размер сбрасывается
+		-- и возвращается после окончания отскока
 		for _, logo in next, { frame.leftHolder.LogoTop, frame.leftHolder.LogoBottom } do
 			if logo then
 				logo:SetVertexColor(unpack(logoColor))
@@ -1333,11 +1320,11 @@ function E:Config_WindowOpened(frame)
 		titlebg:ClearAllPoints()
 		titlebg:SetPoint('TOPLEFT', frame)
 		titlebg:SetPoint('TOPRIGHT', frame)
-		titlebg:SetTexture(nil) -- hide the default dialog header strip (the chrome renders its own top bar)
+		titlebg:SetTexture(nil) -- убрать стандартную шапку диалога, свою рисует хром
 
 		local statusParent = frame.statusText and frame.statusText.parent
 		if statusParent then
-			if unskinned then -- this lets the arrow work properly without finding it
+			if unskinned then -- чтобы стрелка ресайза работала корректно
 				E:Config_SaveOldFramelevel(statusParent)
 
 				statusParent:OffsetFrameLevel(-1)
@@ -1412,7 +1399,7 @@ function E:Config_CreateBottomButtons(frame, unskinned)
 
 				local ACD = E.Libs.AceConfigDialog
 				if ACD then
-					ACD:SelectGroup('ElvUI', 'search') -- trigger update
+					ACD:SelectGroup('ElvUI', 'search') -- чтобы обновить окно настроек
 				end
 			end
 		},
@@ -1467,7 +1454,7 @@ function E:Config_CreateBottomButtons(frame, unskinned)
 			element:Point('BOTTOMLEFT', frame.bottomHolder, 'BOTTOMLEFT', unskinned and 24 or offset, offset)
 		elseif info.var == 'RepositionWindow' then
 			element:Point('TOPRIGHT', frame.topHolder, 'TOPRIGHT', -(unskinned and 46 or 32), -(unskinned and 4 or 2))
-		elseif index == 4 then -- Search
+		elseif index == 4 then -- кнопка поиска
 			element:Point('BOTTOMRIGHT', frame.bottomHolder, 'BOTTOMRIGHT', -(unskinned and 24 or offset), offset)
 		elseif index > 4 then
 			element:Point('RIGHT', last, 'LEFT', -(index == 5 and (unskinned and 16 or 20) or (unskinned and 6 or 12)), 0)
@@ -1546,11 +1533,11 @@ function E:ToggleOptions(msg)
 			E.GUIFrame = false
 			LoadAddOn("ElvUI_OptionsUI")
 
-			--For some reason, GetAddOnInfo reason is "DEMAND_LOADED" even if the addon is disabled.
-			--Workaround: Try to load addon and check if it is loaded right after.
+			-- по какой-то причине GetAddOnInfo возвращает "DEMAND_LOADED", даже если
+			-- аддон выключен; пробуем загрузить и проверяем результат сразу после
 			if not IsAddOnLoaded("ElvUI_OptionsUI") then noConfig = true end
 
-			-- version check elvui options if it's actually enabled
+			-- проверяем версию ElvUI_OptionsUI, если он реально включен
 			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.35" then
 				E:StaticPopup_Show("CLIENT_UPDATE_REQUEST")
 			end
@@ -1590,7 +1577,7 @@ function E:ToggleOptions(msg)
 		end
 
 		local unskinned = not E.private.skins.ace3.enable
-		if not frame.bottomHolder then -- window was released or never opened
+		if not frame.bottomHolder then -- окно было закрыто или ещё не открывалось
 			frame:HookScript('OnHide', E.Config_WindowClosed)
 
 			for _, child in next, { frame:GetChildren() } do
@@ -1618,7 +1605,7 @@ function E:ToggleOptions(msg)
 									region:SetAllPoints()
 
 									child.resizeTexture = region
-								elseif texture then -- this is the smaller texture, we don"t need it
+								elseif texture then -- это меньшая текстура, она не нужна
 									region:SetAlpha(0)
 								end
 							end
@@ -1695,7 +1682,7 @@ function E:ToggleOptions(msg)
 			buttonsHolder:Point('BOTTOMRIGHT', unskinned and 6 or 1, unskinned and 10 or 0)
 			left.buttonsHolder = buttonsHolder
 
-			local buttonsScrollFrame = CreateFrame('ScrollFrame', nil, buttonsHolder) -- SetClipsChildren does not exist in 3.3.5, lets do this instead
+			local buttonsScrollFrame = CreateFrame('ScrollFrame', nil, buttonsHolder) -- в 3.3.5 нет SetClipsChildren, поэтому используем ScrollFrame
 			buttonsScrollFrame:SetAllPoints(buttonsHolder)
 			left.buttonsScrollFrame = buttonsScrollFrame
 
@@ -1726,7 +1713,7 @@ function E:ToggleOptions(msg)
 			local thumb = slider:GetThumbTexture()
 			thumb:Point('LEFT', left, 'RIGHT', unskinned and 6 or 2, 0)
 			thumb:Size(8, 12)
-			thumb:SetAlpha(0) -- hide this one, its under the unskinned buttons
+			thumb:SetAlpha(0) -- скрываем, он под нескинованными кнопками
 			left.slider.thumb = thumb
 
 			local thumbHolder = CreateFrame('Frame', nil, left)
@@ -1779,10 +1766,10 @@ function E:ToggleOptions(msg)
 		end
 	end
 
-	GameTooltip:Hide() --Just in case you're mouseovered something and it closes.
+	GameTooltip:Hide()
 end
 
--- aliases so existing Sirus callers (PixelPerfect, OptionsUI Core, commands) keep working
+-- алиасы, чтобы старые вызовы Sirus (PixelPerfect, OptionsUI Core, команды) продолжали работать
 E.ToggleOptionsUI = E.ToggleOptions
 E.UpdateConfigSize = E.Config_UpdateSize
 E.GetConfigDefaultSize = E.Config_GetDefaultSize

@@ -37,7 +37,7 @@
 	<Script file="Expertise.lua"/>
 	<Script file="ArmorPenetration.lua"/>
 	<Script file="ConfigElvUI.lua"/>
-	<!-- Ported from ElvUI-development -->
+	<!-- Перенесено из ElvUI-development -->
 	<Script file="Agility.lua"/>
 	<Script file="Ammo.lua"/>
 	<Script file="CallToArms.lua"/>

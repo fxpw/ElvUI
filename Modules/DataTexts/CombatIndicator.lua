@@ -14,7 +14,7 @@ local function OnEvent(self, event)
 end
 
 local function ValueColorUpdate()
-	-- Setup strings with fixed colors, matches the ElvUI defaults (green/red)
+	-- строки с фиксированными цветами, как в стандартном ElvUI (зеленый/красный)
 	inCombat = E:RGBToHex(1, 0.13, 0.13)..L["In Combat"].."|r"
 	outOfCombat = E:RGBToHex(0.2, 1, 0.2)..L["Out of Combat"].."|r"
 end

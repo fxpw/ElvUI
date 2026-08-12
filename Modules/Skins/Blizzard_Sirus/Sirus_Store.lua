@@ -15,7 +15,7 @@ local function GetStoreFrameScale()
 end
 
 ------------------------------------------------------------------------
--- Shared PKBT helpers (same approach as the BattlePass skin)
+-- Общие помощники PKBT (тот же подход, что в скине BattlePass)
 ------------------------------------------------------------------------
 
 local function ApplyElvUIFont(frame)
@@ -55,11 +55,10 @@ local function ApplyElvUIFontForce(frame)
 	end
 end
 
--- The PKBT text colors were designed for the light default store backdrops
--- and are unreadable on the dark ElvUI backdrops (dark browns, warm beige and
--- brownish-gray body text). Normalize only those to white - gold accents,
--- pure white, neutral grays (disabled states) and semantic colors are left
--- untouched.
+-- цвета текста PKBT рассчитаны на светлый фон магазина и нечитаемы на
+-- темном фоне ElvUI (темно-коричневые, бежевые и серо-коричневые). Приводим
+-- только их к белому: золотые акценты, чистый белый, нейтральные серые
+-- (отключенные состояния) и смысловые цвета не трогаем
 local function NormalizePKBTTextColors(frame)
 	if not frame or not frame.GetObjectType then return end
 
@@ -67,10 +66,10 @@ local function NormalizePKBTTextColors(frame)
 	if (objectType == "FontString" or objectType == "SimpleHTML") and frame.GetTextColor and frame.SetTextColor then
 		local r, g, b = frame:GetTextColor()
 		if r and g and b then
-			-- dark text is meant for a light background
+			-- темный текст рассчитан на светлый фон
 			local luminance = r * 0.3 + g * 0.6 + b * 0.1
-			-- PKBT muted warm-gray family (r > g > b, near-even tint): beige
-			-- and brownish-gray body text that disappears on dark backdrops
+			-- приглушенная тепло-серая гамма PKBT (r > g > b, почти ровный тон):
+			-- бежевый и серо-коричневый текст, который теряется на темном фоне
 			local mutedWarm = r > b and g >= 0.8 * r and b >= 0.7 * g
 			if luminance < 0.4 or mutedWarm then
 				frame:SetTextColor(1, 1, 1)
@@ -84,8 +83,8 @@ local function NormalizePKBTTextColors(frame)
 			if region then NormalizePKBTTextColors(region) end
 		end
 	end
-	-- GetNumChildren is a Frame-only method - guard it so the recursion
-	-- cannot crash when it reaches a Texture/FontString region
+	-- GetNumChildren есть только у Frame; проверяем, чтобы рекурсия не упала,
+	-- когда дойдет до региона Texture/FontString
 	if frame.GetNumChildren then
 		for i = 1, frame:GetNumChildren() do
 			local child = select(i, frame:GetChildren())
@@ -94,14 +93,12 @@ local function NormalizePKBTTextColors(frame)
 	end
 end
 
--- Strip the PKBT three-slice/atlas chrome from a button and give it the
--- ElvUI look. Hooks keep it clean when the client swaps atlas textures.
--- NOTE: the button's content lives in WidgetHolder (AddText/AddTextureAtlas)
--- and the Price/PurchaseNote widgets, so those are left untouched - hiding
--- them makes the button empty.
--- Named PKBT chrome only. Safe to run after the ElvUI backdrop exists;
--- the generic region wipe must never run after the backdrop is created,
--- because the backdrop textures show up in GetRegions and would be wiped.
+-- Убираем с кнопки трехслойный хром/атласы PKBT и приводим её к виду ElvUI.
+-- Хуки держат кнопку чистой, когда клиент меняет атласы.
+-- ВАЖНО: контент кнопки живет в WidgetHolder (AddText/AddTextureAtlas)
+-- и в виджетах Price/PurchaseNote, поэтому их не трогаем, иначе кнопка
+-- станет пустой. Только именованный хром PKBT: общая зачистка регионов не
+-- должна идти после создания фона, иначе фоновые текстуры будут стерты.
 local function ClearPKBTChrome(b)
 	if not b then return end
 	if b.Left then b.Left:SetAlpha(0) end
@@ -117,10 +114,10 @@ local function ClearPKBTChrome(b)
 	if b.Glow then b.Glow:Hide() end
 end
 
--- The client re-applies the three-slice/state atlases on every state change
--- (OnShow/OnEnable/OnDisable/SetChecked all go through UpdateButton, which
--- sets the atlases directly and bypasses SetThreeSliceAtlas), so hook all of
--- them to keep the chrome off.
+-- клиент заново накладывает атласы при каждой смене состояния
+-- (OnShow/OnEnable/OnDisable/SetChecked идут через UpdateButton, который
+-- задает атласы напрямую и минует SetThreeSliceAtlas), поэтому вешаем
+-- хуки на все эти методы, чтобы хром оставался скрытым
 local function HookClearPKBTChrome(btn)
 	if btn._Elv_ClearHooks then return end
 	btn._Elv_ClearHooks = true
@@ -144,8 +141,8 @@ local function ReskinPKBTButton(btn)
 	if not btn or not btn.IsObjectType or not btn:IsObjectType("Button") then return end
 
 	if not btn._Elv_BaseSkinned then
-		-- Wipe every leftover atlas texture BEFORE S:HandleButton creates the
-		-- ElvUI backdrop, so the catch-all wipe can never touch the backdrop.
+		-- стираем все лишние атласы ДО того, как S:HandleButton создаст фон
+		-- ElvUI, чтобы общая зачистка не задела сам фон
 		for i = 1, (btn:GetNumRegions() or 0) do
 			local r = select(i, btn:GetRegions())
 			if r and r.IsObjectType and r:IsObjectType("Texture") then
@@ -166,12 +163,12 @@ local function ReskinPKBTButton(btn)
 end
 
 ------------------------------------------------------------------------
--- Store skin parts
+-- Части скина магазина
 ------------------------------------------------------------------------
 
--- Category buttons keep their icon texture: ReskinPKBTButton wipes ALL
--- direct regions (including the icon) and S:HandleIcon does not restore
--- textures, so use strip=false here and only clear the named chrome.
+-- У кнопок категорий остается текстура иконки: ReskinPKBTButton стирает ВСЕ
+-- прямые регионы (включая иконку), а S:HandleIcon не возвращает текстуры,
+-- поэтому тут strip=false и чистим только именованный хром
 local function SkinStoreCategoryButton(btn)
 	if not btn or not btn.IsObjectType or not btn:IsObjectType("Button") then return end
 	if btn._ElvCategorySkinned then return end
@@ -182,14 +179,14 @@ local function SkinStoreCategoryButton(btn)
 	ApplyElvUIFont(btn)
 	HookClearPKBTChrome(btn)
 
-	-- top-level category icons are set via SetTexture (UpdateInfo) - the
-	-- standard ElvUI icon crop is safe and desired here
+	-- иконки категорий верхнего уровня задаются через SetTexture (UpdateInfo),
+	-- стандартная обрезка иконки ElvUI тут безопасна и нужна
 	if btn.Icon then
 		btn.Icon:SetTexCoord(unpack(E.TexCoords))
 	end
 	if btn.ButtonText then
-		-- font only: the client's UpdateState owns the state colors
-		-- (white / hover green / selected gold / disabled gray)
+		-- только шрифт: цвета состояний задает UpdateState клиента
+		-- (белый / зеленый при наведении / золотой у выбранной / серый у выключенной)
 		btn.ButtonText:FontTemplate(nil, nil, "OUTLINE")
 	end
 	if btn.NewIcon then btn.NewIcon:Hide() end
@@ -205,21 +202,21 @@ local function SkinStoreSubCategoryButton(btn)
 	ApplyElvUIFont(btn)
 	HookClearPKBTChrome(btn)
 
-	-- sub-category icons are ALWAYS atlases (SetAtlas in UpdateInfo) - the
-	-- texcoords SetAtlas assigned must be preserved or the icon renders
-	-- crooked/blank, so never call SetTexCoord here
+	-- иконки подкатегорий ВСЕГДА атласы (SetAtlas в UpdateInfo); сохраненные
+	-- texcoord нужны, иначе иконка отрисуется криво или пустой, поэтому
+	-- SetTexCoord тут не вызываем
 	if btn.ButtonText then
-		-- font only: the client's UpdateState owns the state colors
-		-- (white / hover green / selected gold / disabled gray)
+		-- только шрифт: цвета состояний задает UpdateState клиента
+		-- (белый / зеленый при наведении / золотой у выбранной / серый у выключенной)
 		btn.ButtonText:FontTemplate(nil, nil, "OUTLINE")
 	end
 	if btn.NewIcon then btn.NewIcon:Hide() end
 end
 
--- Bag buttons on the top panels (Vote / Referral / Loyality). The bag icon
--- IS the button's normal atlas (PKBT-Store-Bag-Portrait), so a generic
--- HandleCheckBox would strip it and leave the button empty. Only the chrome
--- states (pushed/disabled/highlight/checked) are cleared.
+-- кнопки сумок на верхних панелях (Vote / Referral / Loyality). Иконка сумки
+-- это и есть обычный атлас кнопки (PKBT-Store-Bag-Portrait), поэтому обычный
+-- HandleCheckBox сотрет её и оставит кнопку пустой. Чистим только состояния
+-- хрома (нажатое/выключенное/наведение/выбранное)
 local function SkinStoreBagButton(btn)
 	if not btn or not btn.IsObjectType or not btn:IsObjectType("CheckButton") then return end
 	if btn._ElvBagSkinned then return end
@@ -245,7 +242,7 @@ local function SkinStoreBagButton(btn)
 	end
 end
 
--- Tabs keep their icon/text; only the three-slice chrome is cleared.
+-- вкладки сохраняют иконку и текст; убираем только трехслойный хром
 local function SkinStoreTabButton(btn)
 	if not btn or not btn.IsObjectType or not btn:IsObjectType("Button") then return end
 
@@ -262,7 +259,7 @@ local function SkinStoreTabButton(btn)
 		if b.SetDisabledTexture then b:SetDisabledTexture("") end
 	end
 
-	-- no strip: keep the tab icon and any non-chrome textures
+	-- без strip: сохраняем иконку вкладки и остальные текстуры
 	S:HandleButton(btn, false)
 	clearChrome(btn)
 	ApplyElvUIFont(btn)
@@ -328,10 +325,10 @@ local function SkinStoreRowButton(row)
 	end
 end
 
--- The filter search editbox is a pooled PKBT_EditBoxTemplate whose chrome
--- (BackgroundLeft/Right/Center three-slice) is NOT in S.Blizzard.Regions, so
--- S:HandleEditBox leaves it visible - hide it explicitly for a clean ElvUI
--- look. The clear (X) button stays functional; only its state textures go.
+-- поле поиска фильтра это пулируемый PKBT_EditBoxTemplate, чей хром
+-- (BackgroundLeft/Right/Center) отсутствует в S.Blizzard.Regions, поэтому
+-- S:HandleEditBox его не убирает; скрываем явно. Кнопка очистки (X)
+-- остается рабочей, убираем только ее текстуры состояний
 local function SkinStoreFilterEditBox(editbox)
 	if not editbox or not editbox.IsObjectType or not editbox:IsObjectType("EditBox") then return end
 	if editbox._ElvFilterEditBoxSkinned then return end
@@ -378,14 +375,14 @@ local function SkinStoreList(view)
 		if not filter._ElvSkinned then
 			filter._ElvSkinned = true
 			filter:StripTextures(true)
-			-- the PKBT inset border is a child frame (not covered by
-			-- StripTextures) - the ElvUI backdrop provides the panel frame
+			-- вложенная рамка PKBT это дочерняя рамка (StripTextures её не
+			-- берет); фон панели обеспечивает фон ElvUI
 			if filter.NineSliceInset then filter.NineSliceInset:Hide() end
 			filter:CreateBackdrop("Transparent")
 		end
 		if filter.Scroll then
-			-- the filter panel has its own right-hand scrollbar (same
-			-- PKBT_UIPanelScrollBarTemplate as the item list) - skin it too
+			-- у панели фильтра свой скроллбар справа (тот же
+			-- PKBT_UIPanelScrollBarTemplate, что и в списке предметов), скинуем и его
 			if filter.Scroll.ScrollBar then
 				S:HandleScrollBar(filter.Scroll.ScrollBar)
 			end
@@ -449,16 +446,16 @@ local function SkinStoreDialog(dialog)
 
 	for _, key in ipairs({ "PurchaseButton", "BuyButton", "ActionButton", "AgreeButton", "InviteButton", "InfoButton", "OkButton", "CancelButton", "AcceptButton", "BackButton", "DetailsButton" }) do
 		local btn = dialog[key]
-		-- Price/widget content is never hidden by ReskinPKBTButton
+		-- контент цены/виджетов ReskinPKBTButton не скрывает
 		if btn then ReskinPKBTButton(btn) end
 	end
 
 	ApplyElvUIFont(dialog)
 	NormalizePKBTTextColors(dialog)
 
-	-- Dynamic content (product widget, options, referral steps) is re-created
-	-- every time the dialog is shown with new data, which re-applies the PKBT
-	-- brown text colors - normalize again after each show.
+	-- динамический контент (виджет товара, опции, шаги рефералки) пересоздается
+	-- при каждом показе диалога и заново накладывает коричневый текст PKBT;
+	-- приводим цвета к белому после каждого показа
 	if not dialog._ElvDialogHooked then
 		dialog._ElvDialogHooked = true
 		dialog:HookScript("OnShow", function(self)
@@ -474,7 +471,7 @@ local function HandleStoreFrame()
 	if not f._ElvMainSkinned then
 		f._ElvMainSkinned = true
 
-		-- PKBT panel chrome -> ElvUI backdrop
+		-- хром панели PKBT заменяем фоном ElvUI
 		f:StripTextures(true)
 		if f.NineSlice then f.NineSlice:Hide() end
 		if f.DecorOverlay then f.DecorOverlay:Hide() end
@@ -493,7 +490,7 @@ local function HandleStoreFrame()
 		end
 	end
 
-	-- Top panel (account info + currencies + progress)
+	-- верхняя панель (информация об аккаунте + валюты + прогресс)
 	local top = f.TopPanel
 	if top then
 		if not top._ElvSkinned then
@@ -530,7 +527,7 @@ local function HandleStoreFrame()
 		end
 	end
 
-	-- Left panel (nav + premium + subscription tracker)
+	-- левая панель (навигация + премиум + трекер подписки)
 	local left = f.LeftPanel
 	if left then
 		if left.NavPanel then
@@ -538,9 +535,9 @@ local function HandleStoreFrame()
 			if not nav._ElvSkinned then
 				nav._ElvSkinned = true
 				nav:StripTextures(true)
-				-- the PKBT inset border (its right edge is the divider between the
-				-- nav column and the content area) must go - the ElvUI backdrop
-				-- provides the separator in ElvUI style instead
+				-- вложенную рамку PKBT (её правый край служит разделителем между
+				-- колонкой навигации и контентом) убираем, разделитель в стиле
+				-- ElvUI дает фон
 				if nav.NineSliceInset then nav.NineSliceInset:Hide() end
 				nav:CreateBackdrop("Transparent")
 			end
@@ -571,7 +568,7 @@ local function HandleStoreFrame()
 		end
 	end
 
-	-- Content area
+	-- область контента
 	local content = f.Content
 	if content then
 		if not content._ElvSkinned then
@@ -583,7 +580,7 @@ local function HandleStoreFrame()
 		ApplyElvUIFont(content)
 	end
 
-	-- Dialogs
+	-- диалоги
 	for _, dialog in ipairs({ f.LinkDialog, f.AgreementDialog, f.ReferralInviteDialog, f.PremiumPurchaseDialog, f.ProductPurchaseDialogSecondary }) do
 		SkinStoreDialog(dialog)
 	end
@@ -594,7 +591,7 @@ local function HandleStoreFrame()
 		end
 	end
 
-	-- Promo code frame
+	-- окно промокода
 	local promo = _G.PromoCodeFrame
 	if promo and not promo._ElvSkinned then
 		promo._ElvSkinned = true
@@ -616,18 +613,18 @@ local function HandleStoreFrame()
 		end
 	end
 
-	-- Same readability fix for the main store window: PKBT beige/brown body
-	-- text (account/premium labels, tracker text, ...) on the dark backdrop
+	-- та же правка читаемости для главного окна магазина: бежевый/коричневый
+	-- текст PKBT (подписи аккаунта/премиума, текст трекера и т.д.) на темном фоне
 	NormalizePKBTTextColors(f)
 end
 
 local function HookStore()
-	-- IMPORTANT: StoreFrame and its children Mixin() their methods at login,
-	-- copying them onto the frame instances. hooksecurefunc on the mixin tables
-	-- would therefore never fire for those instances - the hooks must be placed
-	-- on the frame instances themselves. Mixins are only safe to hook for frames
-	-- created AFTER this runs (SubCategoryMenu, recommendation cards), because
-	-- those copy the already-hooked method at creation time.
+	-- ВАЖНО: StoreFrame и его дети при логине Mixin() копируют методы на свои
+	-- экземпляры, поэтому hooksecurefunc на таблицах миксинов для этих
+	-- экземпляров не сработает: хуки нужно вешать на сами рамки. Миксины
+	-- безопасно хукать только для рамок, создаваемых ПОСЛЕ этого кода
+	-- (SubCategoryMenu, карточки рекомендаций), так как те копируют уже
+	-- захученный метод при создании
 	local storeFrame = _G.StoreFrame
 	if storeFrame then
 		if not S._Elv_StoreInstanceHooked then
@@ -664,8 +661,8 @@ local function HookStore()
 			hooksecurefunc(itemListView, "UpdateViewTable", SkinListView)
 			hooksecurefunc(itemListView, "OnItemScrollUpdate", SkinListView)
 			hooksecurefunc(itemListView, "OnShow", SkinListView)
-			-- filter options (search editbox, checkboxes) are pooled and built
-			-- in UpdateFilters - re-skin right after they are (re)created
+			-- опции фильтра (поле поиска, галочки) пулируются и создаются
+			-- в UpdateFilters, поэтому перескиниваем сразу после их (пере)создания
 			hooksecurefunc(itemListView, "UpdateFilters", SkinListView)
 		end
 
@@ -711,9 +708,9 @@ local function HookStore()
 		end
 	end
 
-	-- Runtime-created frames: SubCategoryMenu (created with the category buttons)
-	-- and recommendation cards (created from a pool) copy the mixin methods at
-	-- creation time, so the mixin hooks DO fire for them.
+	-- рамки, создаваемые в рантайме: SubCategoryMenu (создается вместе с кнопками
+	-- категорий) и карточки рекомендаций (из пула) копируют методы миксинов при
+	-- создании, поэтому хуки на миксинах для них срабатывают
 	if _G.StoreCategorySubMenuMixin and not S._Elv_StoreSubMenuHooked then
 		S._Elv_StoreSubMenuHooked = true
 
@@ -733,10 +730,10 @@ local function HookStore()
 	end
 end
 
--- Skin work is best-effort: an error here must not abort ApplySkin before
--- HookStore (which would leave the store with no skin hooks at all) or
--- propagate into the skin loader's callback dispatch (which would break the
--- remaining skins). Contain the error and surface it via the default handler.
+-- скин работает по принципу best-effort: ошибка тут не должна прервать
+-- ApplySkin до HookStore (иначе у магазина не будет хуков скина вообще)
+-- или уйти в диспетчер колбэков загрузчика скинов. Ловим ошибку и
+-- показываем её через стандартный обработчик
 local function SafeSkinCall(fn, ...)
 	if not fn then return end
 	local ok, err = pcall(fn, ...)

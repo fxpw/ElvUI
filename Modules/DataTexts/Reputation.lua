@@ -14,8 +14,8 @@ local NOT_APPLICABLE = NOT_APPLICABLE
 local REPUTATION = REPUTATION
 local STANDING = STANDING
 
--- WotLK has no GetWatchedFactionIndex(); find the index by matching the
--- watched faction name returned by GetWatchedFactionInfo() against the roster.
+-- в WotLK нет GetWatchedFactionIndex(); ищем индекс, сверяя имя
+-- отслеживаемой фракции из GetWatchedFactionInfo() со списком фракций
 local function GetWatchedFactionIndex()
 	local name = GetWatchedFactionInfo()
 	if not name then return end
@@ -47,7 +47,7 @@ local function OnEvent(self)
 	local color = _G.FACTION_BAR_COLORS[reaction]
 	local	standingLabel = E:RGBToHex(color.r, color.g, color.b).._G["FACTION_STANDING_LABEL"..reaction].."|r"
 
-	--Prevent a division by zero
+	-- защита от деления на ноль
 	local maxMinDiff = max - min
 	if maxMinDiff == 0 then
 		maxMinDiff = 1

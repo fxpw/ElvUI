@@ -16,7 +16,7 @@ local GetQuestLogRewardMoney = GetQuestLogRewardMoney
 local GetNumQuestLogEntries = GetNumQuestLogEntries
 local BreakUpLargeNumbers = BreakUpLargeNumbers
 
-local MAX_QUESTLOG_QUESTS = MAX_QUESTLOG_QUESTS -- 25 for WotLK
+local MAX_QUESTLOG_QUESTS = MAX_QUESTLOG_QUESTS -- 25 в WotLK
 local QUESTS_LABEL = QUESTS_LABEL
 local COMPLETE = COMPLETE
 local INCOMPLETE = INCOMPLETE

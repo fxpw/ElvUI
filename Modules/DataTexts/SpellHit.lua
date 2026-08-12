@@ -4,8 +4,8 @@ local DT = E:GetModule("DataTexts")
 --Lua functions
 local join = string.join
 --WoW API / Variables
--- WotLK has no GetSpellHitModifier(); the rating bonus is the full spell-hit
--- value the client exposes (same as the character sheet's Spell Hit row).
+-- в WotLK нет GetSpellHitModifier(); бонус рейтинга и есть полное значение
+-- меткости, которое отдает клиент (как в строке "Меткость" окна персонажа)
 local GetCombatRatingBonus = GetCombatRatingBonus
 local CR_HIT_SPELL = CR_HIT_SPELL
 

@@ -154,7 +154,7 @@ S:AddCallbackForAddon("ViragDevTool", "Skin_ViragDevTool", function()
 		pushed:SetRotation(rotation)
 		disabled:SetRotation(rotation)
 
-		PlaySound(isShown and 620 or 621) -- QUESTLOGOPEN or QUESTLOGCLOSE
+		PlaySound(isShown and 620 or 621) -- звук открытия/закрытия журнала заданий
 	end)
 
 	local resizeButton = _G.ViragDevToolFrameResizeButton

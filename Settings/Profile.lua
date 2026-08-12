@@ -162,7 +162,7 @@ P.general = {
 		fontOutline = "MONOCHROMEOUTLINE"
 	},
 	kittys = false
-}	--DataBars
+}
 P.databars = {
 	transparent = true,
 	statusbar = "ElvUI Norm",
