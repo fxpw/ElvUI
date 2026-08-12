@@ -146,12 +146,15 @@ local function CleanPageButton(btn)
 	end)
 end
 
-local function ReskinPKBTButton(btn)
+local function ReskinPKBTButton(btn, noBackdrop)
 	if not btn or not btn.IsObjectType or not btn:IsObjectType("Button") then
 		return
 	end
 
-	local function clearTextures(b)
+	-- Named PKBT chrome only. Safe to run after the ElvUI backdrop exists;
+	-- the generic region wipe below must never run after it, because the
+	-- backdrop textures show up in GetRegions and would be wiped with it.
+	local function clearChrome(b)
 		if b.Left then
 			b.Left:SetAlpha(0)
 		end
@@ -182,33 +185,31 @@ local function ReskinPKBTButton(btn)
 		if b.SetDisabledTexture then
 			b:SetDisabledTexture("")
 		end
-		for i = 1, (b:GetNumRegions() or 0) do
-			local r = select(i, b:GetRegions())
+		-- Content (icon/text in WidgetHolder, Price, PurchaseNote) must stay
+		-- visible - hiding it leaves the button empty. Glow is just chrome.
+		if b.Glow then
+			b.Glow:Hide()
+		end
+	end
+
+	if not btn._Elv_BaseSkinned then
+		-- Wipe every leftover atlas texture BEFORE S:HandleButton creates the
+		-- ElvUI backdrop, so the catch-all wipe can never touch the backdrop.
+		for i = 1, (btn:GetNumRegions() or 0) do
+			local r = select(i, btn:GetRegions())
 			if r and r.IsObjectType and r:IsObjectType("Texture") then
 				r:SetTexture()
 				r:SetAlpha(0)
 			end
 		end
-		if b.Glow then
-			b.Glow:Hide()
-		end
-		if b.WidgetHolder then
-			b.WidgetHolder:Hide()
-		end
-		if b.Price then
-			b.Price:Hide()
-		end
-		if b.PurchaseNote then
-			b.PurchaseNote:Hide()
-		end
-	end
 
-	if not btn._Elv_BaseSkinned then
-		S:HandleButton(btn, true)
+		-- noBackdrop skips the ElvUI backdrop (quest page buttons look fine
+		-- transparent and keep just their text/icon)
+		S:HandleButton(btn, true, nil, false, noBackdrop)
 		btn._Elv_BaseSkinned = true
 	end
 
-	clearTextures(btn)
+	clearChrome(btn)
 
 	ApplyElvUIFontForce(btn)
 
@@ -216,26 +217,34 @@ local function ReskinPKBTButton(btn)
 		btn._Elv_ClearHooks = true
 		if btn.SetThreeSliceAtlas then
 			hooksecurefunc(btn, "SetThreeSliceAtlas", function(self)
-				clearTextures(self)
+				clearChrome(self)
 			end)
 		end
 		if btn.SetNormalAtlas then
 			hooksecurefunc(btn, "SetNormalAtlas", function(self)
-				clearTextures(self)
+				clearChrome(self)
 			end)
 		end
 		if btn.SetHighlightAtlas then
 			hooksecurefunc(btn, "SetHighlightAtlas", function(self)
-				clearTextures(self)
+				clearChrome(self)
 			end)
 		end
 		if btn.SetPushedAtlas then
 			hooksecurefunc(btn, "SetPushedAtlas", function(self)
-				clearTextures(self)
+				clearChrome(self)
+			end)
+		end
+		-- state changes (OnShow/OnEnable/OnDisable/SetChecked) re-apply the
+		-- three-slice atlases directly through UpdateButton, bypassing
+		-- SetThreeSliceAtlas - hook it so the chrome stays off
+		if btn.UpdateButton then
+			hooksecurefunc(btn, "UpdateButton", function(self)
+				clearChrome(self)
 			end)
 		end
 		btn:HookScript("OnShow", function(self)
-			clearTextures(self)
+			clearChrome(self)
 			ApplyElvUIFontForce(self)
 		end)
 	end
@@ -428,7 +437,8 @@ local function HandleBattlePassFrame()
 					-- end
 					-- S:HandleFrame(child)
 					if child.ActionButton then
-						ReskinPKBTButton(child.ActionButton)
+						-- quest action buttons: no ElvUI backdrop, just text/icon
+						ReskinPKBTButton(child.ActionButton, true)
 						child.ActionButton:Show()
 					end
 					SkinAllQuestActionButtons(child)
@@ -459,46 +469,42 @@ local function HandleBattlePassFrame()
 		if _G.BattlePassLevelCardMixin and not S._Elv_LevelCardButtonsHooked then
 			S._Elv_LevelCardButtonsHooked = true
 			hooksecurefunc(_G.BattlePassLevelCardMixin, "SetTypeState", function(self)
-				local freeButton = self.FreeFrame and self.FreeFrame.ActionButton
-				local premButton = self.PremiumFrame and self.PremiumFrame.ActionButton
-				if freeButton then
-					S:HandleButton(freeButton)
-					-- ReskinPKBTButton(freeButton)
-					-- freeButton:Show()
-				end
-				if premButton then
-					S:HandleButton(premButton)
-					-- ReskinPKBTButton(premButton)
-					-- premButton:Show()
-				end
-			end)
-			hooksecurefunc(_G.BattlePassLevelCardMixin, "SetState", function(self)
-				if self.SetScript then
-					self:SetScript("OnUpdate", nil)
-				end
-				local fb = self.FreeFrame and self.FreeFrame.ActionButton
-				local pb = self.PremiumFrame and self.PremiumFrame.ActionButton
-				if fb then
-					S:HandleButton(fb)
-					fb:Show()
-				end
-				if pb then
-					S:HandleButton(pb)
-					pb:Show()
-				end
-			end)
-			hooksecurefunc(_G.BattlePassLevelCardMixin, "OnLeave", function(self)
-				local fb = self.FreeFrame and self.FreeFrame.ActionButton
-				local pb = self.PremiumFrame and self.PremiumFrame.ActionButton
-				if fb then
-					S:HandleButton(fb)
-					fb:Show()
-				end
-				if pb then
-					S:HandleButton(pb)
-					pb:Show()
-				end
-			end)
+					local freeButton = self.FreeFrame and self.FreeFrame.ActionButton
+					local premButton = self.PremiumFrame and self.PremiumFrame.ActionButton
+					if freeButton then
+						ReskinPKBTButton(freeButton)
+					end
+					if premButton then
+						ReskinPKBTButton(premButton)
+					end
+				end)
+				hooksecurefunc(_G.BattlePassLevelCardMixin, "SetState", function(self)
+					if self.SetScript then
+						self:SetScript("OnUpdate", nil)
+					end
+					local fb = self.FreeFrame and self.FreeFrame.ActionButton
+					local pb = self.PremiumFrame and self.PremiumFrame.ActionButton
+					if fb then
+						ReskinPKBTButton(fb)
+						fb:Show()
+					end
+					if pb then
+						ReskinPKBTButton(pb)
+						pb:Show()
+					end
+				end)
+				hooksecurefunc(_G.BattlePassLevelCardMixin, "OnLeave", function(self)
+					local fb = self.FreeFrame and self.FreeFrame.ActionButton
+					local pb = self.PremiumFrame and self.PremiumFrame.ActionButton
+					if fb then
+						ReskinPKBTButton(fb)
+						fb:Show()
+					end
+					if pb then
+						ReskinPKBTButton(pb)
+						pb:Show()
+					end
+				end)
 		end
 
 		if main.ScrollFrame and main.ScrollFrame.buttons then
@@ -506,14 +512,10 @@ local function HandleBattlePassFrame()
 				local fb = card.FreeFrame and card.FreeFrame.ActionButton
 				local pb = card.PremiumFrame and card.PremiumFrame.ActionButton
 				if fb then
-					S:HandleButton(fb)
-					-- ReskinPKBTButton(fb)
-					-- fb:Show()
+					ReskinPKBTButton(fb)
 				end
 				if pb then
-					S:HandleButton(pb)
-					-- ReskinPKBTButton(pb)
-					-- pb:Show()
+					ReskinPKBTButton(pb)
 				end
 			end
 		end
@@ -570,7 +572,7 @@ local function HandleBattlePassFrame()
 		end
 
 		if main.PurchasePremiumButton then
-			S:HandleButton(main.PurchasePremiumButton)
+			ReskinPKBTButton(main.PurchasePremiumButton)
 		end
 		ApplyElvUIFont(main)
 	end
@@ -603,22 +605,20 @@ local function HandleBattlePassFrame()
 
 	if f.PurchasePremiumDialog then
 		local d = f.PurchasePremiumDialog
-		S:HandleFrame(BattlePassFramePurchasePremiumDialog)
 		S:HandleFrame(d)
 		if d.CloseButton then
 			S:HandleCloseButton(d.CloseButton)
 		end
 		if d.PurchaseButton then
-			S:HandleButton(d.PurchaseButton)
+			-- price button (PKBT_GoldButtonMultiWidgetPriceTemplate): Price widget is never hidden
+			ReskinPKBTButton(d.PurchaseButton)
 		end
 		ApplyElvUIFont(d)
 	end
 
 	if f.PurchaseExperienceDialog then
 		local d = f.PurchaseExperienceDialog
-		S:HandleFrame(BattlePassFramePurchaseLevelExperienceDialog)
-		-- d:StripTextures(true)
-		-- d:SetTemplate("Transparent")
+		S:HandleFrame(d)
 		if d.CloseButton then
 			S:HandleCloseButton(d.CloseButton)
 		end
@@ -719,14 +719,13 @@ local function HandleBattlePassFrame()
 
 	if f.PurchaseLevelExperienceDialog then
 		local d = f.PurchaseLevelExperienceDialog
-		S:HandleFrame(BattlePassFramePurchaseLevelExperienceDialog)
 		d:StripTextures(true)
 		d:SetTemplate("Transparent")
 		if d.CloseButton then
 			S:HandleCloseButton(d.CloseButton)
 		end
 		if d.PurchaseButton then
-			S:HandleButton(d.PurchaseButton)
+			ReskinPKBTButton(d.PurchaseButton)
 		end
 		ApplyElvUIFont(d)
 	end
@@ -745,10 +744,10 @@ local function HandleBattlePassFrame()
 			d.backdrop:SetBackdropBorderColor(0, 0, 0, 0)
 		end
 		if d.OkButton then
-			S:HandleButton(d.OkButton)
+			ReskinPKBTButton(d.OkButton)
 		end
 		if d.CancelButton then
-			S:HandleButton(d.CancelButton)
+			ReskinPKBTButton(d.CancelButton)
 		end
 		ApplyElvUIFont(d)
 	end

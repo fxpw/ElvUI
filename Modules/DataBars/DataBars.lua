@@ -161,7 +161,10 @@ function mod:ThreatBar_GetColor(unit)
 		return class.r * 255, class.g * 255, class.b * 255
 	elseif unitReaction then
 		local reaction = ElvUF.colors.reaction[unitReaction]
-		return reaction.r * 255, reaction.g * 255, reaction.b * 255
+		if reaction then
+			return reaction[1] * 255, reaction[2] * 255, reaction[3] * 255
+		end
+		return 194, 194, 194
 	else
 		return 194, 194, 194
 	end

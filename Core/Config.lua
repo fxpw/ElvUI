@@ -13,6 +13,8 @@ local IsAddOnLoaded = IsAddOnLoaded
 local InCombatLockdown = InCombatLockdown
 local EditBox_ClearFocus = EditBox_ClearFocus
 local RESET = RESET
+local GetTime = GetTime
+local C_Timer = C_Timer
 
 local selectedValue, grid = "ALL"
 local statusTextHooked = {}
@@ -1124,6 +1126,50 @@ function E:Config_GetWindow()
 	return ConfigOpen and ConfigOpen.frame
 end
 
+local ConfigLogoWidth, ConfigLogoHeight = 128, 64
+
+local function ConfigLogoAnimating(logo)
+	if not (logo and logo.elastic) then return false end
+
+	for i = 1, 4 do
+		if logo.elastic[i] and logo.elastic[i]:IsPlaying() then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function ConfigLogoSettle(logo)
+	if not logo then return end
+	if not ConfigLogoAnimating(logo) then return end
+
+	for i = 1, 4 do
+		if logo.elastic and logo.elastic[i] then
+			logo.elastic[i]:Stop()
+		end
+	end
+
+	logo:SetSize(ConfigLogoWidth, ConfigLogoHeight)
+end
+
+local function ConfigLogoElasticize(logo)
+	if not logo then return end
+
+	logo:SetSize(ConfigLogoWidth, ConfigLogoHeight)
+	logo:Show()
+	pcall(E.Elasticize, E, logo, ConfigLogoWidth, ConfigLogoHeight)
+
+	local token = GetTime()
+	logo.elasticToken = token
+
+	C_Timer:After(4.5, function()
+		if logo.elasticToken == token then
+			ConfigLogoSettle(logo)
+		end
+	end)
+end
+
 local ConfigLogoTop
 local function ConfigLogoUpdate(_, r, g, b)
 	if ConfigLogoTop then
@@ -1150,8 +1196,8 @@ function E:Config_WindowClosed()
 
 		ConfigLogoTop = nil
 
-		E:StopElasticize(self.leftHolder.LogoTop)
-		E:StopElasticize(self.leftHolder.LogoBottom)
+		ConfigLogoSettle(self.leftHolder.LogoTop)
+		ConfigLogoSettle(self.leftHolder.LogoBottom)
 
 		E:Config_RestoreOldPosition(self.topHolder.version)
 		E:Config_RestoreOldPosition(self.obj.content)
@@ -1226,16 +1272,16 @@ function E:Config_WindowOpened(frame)
 
 		local logoColor = E.media.rgbvaluecolor or {1, .82, 0}
 
-		-- Show the logo statically. The Elasticize bounce uses "width"/"height"
-		-- animations that leave the textures at a tiny/zero size on this client
-		-- when the animation stalls, so do not animate: force the final size
-		-- and colors explicitly on every open.
+		-- Play the decorative elastic bounce like the original ElvUI. The
+		-- "width"/"height" animations can leave the textures at a tiny/zero
+		-- size on this client if they stall, so ConfigLogoElasticize always
+		-- resets to the base size first and snaps back to it once the bounce
+		-- should be over.
 		for _, logo in next, { frame.leftHolder.LogoTop, frame.leftHolder.LogoBottom } do
 			if logo then
 				logo:SetVertexColor(unpack(logoColor))
-				logo:SetSize(128, 64)
 				logo:SetDesaturated(false)
-				logo:Show()
+				ConfigLogoElasticize(logo)
 			end
 		end
 		ConfigLogoTop = frame.leftHolder.LogoTop
