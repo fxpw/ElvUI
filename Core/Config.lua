@@ -6,7 +6,7 @@ local _G = _G
 local unpack = unpack
 local type, ipairs, tonumber = type, ipairs, tonumber
 local floor, select = floor, select
-local max, min = max, min
+local min = min
 --WoW API / Variables
 local CreateFrame = CreateFrame
 local IsAddOnLoaded = IsAddOnLoaded
@@ -513,9 +513,8 @@ local hooksecurefunc = hooksecurefunc
 local next, sort, gsub, wipe = next, sort, gsub, wipe
 local strsplit, strmatch, strtrim, strlower = strsplit, strmatch, strtrim, strlower
 local pairs, tinsert, tContains = pairs, tinsert, tContains
-local min = min
 local EditBox_HighlightText = EditBox_HighlightText
-local EnableAddOn, GetAddOnInfo = EnableAddOn, GetAddOnInfo
+local GetAddOnInfo = GetAddOnInfo
 local LoadAddOn = LoadAddOn
 local GetMouseFocus = GetMouseFocus
 local UIParent = UIParent
@@ -830,7 +829,20 @@ function E:Config_CreateFrame(info, frame, unskinned, frameType, ...)
 		element:SetScript('OnClick', info.func)
 
 		if element then
-			E:Config_SetButtonText(element)
+			-- icon-only buttons (e.g. "Reposition Window") must not render a
+			-- text label on top of their texture: never set a label in the
+			-- first place, and hide any fontstring the client may create
+			-- (SetText('') alone does not reliably clear it in this client)
+			if info.texture then
+				local textureFontString = element:GetFontString()
+				if textureFontString then
+					textureFontString:SetText('')
+					textureFontString:Hide()
+				end
+			else
+				E:Config_SetButtonText(element)
+			end
+
 			E:Config_SetButtonColor(element, element.info.key == 'general')
 			element:HookScript('OnEnter', E.Config_ButtonOnEnter)
 			element:HookScript('OnLeave', E.Config_ButtonOnLeave)
@@ -1213,16 +1225,20 @@ function E:Config_WindowOpened(frame)
 		frame.originalClose:Hide()
 
 		local logoColor = E.media.rgbvaluecolor or {1, .82, 0}
-		frame.leftHolder.LogoTop:SetVertexColor(unpack(logoColor))
-		frame.leftHolder.LogoBottom:SetVertexColor(unpack(logoColor))
-		frame.leftHolder.LogoTop:Show()
-		frame.leftHolder.LogoBottom:Show()
-		ConfigLogoTop = frame.leftHolder.LogoTop
 
-		-- decorative bounce-in; if the animation framework fails the logo
-		-- must still stay visible at its full size (pcall guards it)
-		pcall(E.Elasticize, E, frame.leftHolder.LogoTop, 128, 64)
-		pcall(E.Elasticize, E, frame.leftHolder.LogoBottom, 128, 64)
+		-- Show the logo statically. The Elasticize bounce uses "width"/"height"
+		-- animations that leave the textures at a tiny/zero size on this client
+		-- when the animation stalls, so do not animate: force the final size
+		-- and colors explicitly on every open.
+		for _, logo in next, { frame.leftHolder.LogoTop, frame.leftHolder.LogoBottom } do
+			if logo then
+				logo:SetVertexColor(unpack(logoColor))
+				logo:SetSize(128, 64)
+				logo:SetDesaturated(false)
+				logo:Show()
+			end
+		end
+		ConfigLogoTop = frame.leftHolder.LogoTop
 
 		local unskinned = not E.private.skins.ace3.enable
 		local version = frame.topHolder.version
@@ -1259,7 +1275,6 @@ function E:Config_WindowOpened(frame)
 end
 
 function E:Config_CreateBottomButtons(frame, unskinned)
-	local L = E.Libs.ACL:GetLocale('ElvUI', E.global.general.locale or 'enUS')
 	local C = E.Config[1]
 
 	local last, search

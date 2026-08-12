@@ -2,7 +2,6 @@ local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateD
 local DT = E:GetModule("DataTexts")
 
 --Lua functions
-local _G = _G
 local ipairs = ipairs
 local format = string.format
 --WoW API / Variables
@@ -12,8 +11,6 @@ local GetAverageItemLevel = GetAverageItemLevel
 local GetItemLevelColor = GetItemLevelColor
 local GetItemInfo = GetItemInfo
 local GetItemQualityColor = GetItemQualityColor
-
-local GMSURVEYRATING3 = GMSURVEYRATING3
 
 local displayString = ""
 local iconString = "|T%s:24:24:0:0:50:50:4:46:4:46|t %s"

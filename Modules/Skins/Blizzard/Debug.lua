@@ -157,10 +157,10 @@ S:AddCallbackForAddon("ViragDevTool", "Skin_ViragDevTool", function()
 		PlaySound(isShown and 620 or 621) -- QUESTLOGOPEN or QUESTLOGCLOSE
 	end)
 
-	local button = _G.ViragDevToolFrameResizeButton
-	local normal, pushed = button:GetNormalTexture(), button:GetPushedTexture()
+	local resizeButton = _G.ViragDevToolFrameResizeButton
+	local normal, pushed = resizeButton:GetNormalTexture(), resizeButton:GetPushedTexture()
 
-	S:HandleNextPrevButton(button)
+	S:HandleNextPrevButton(resizeButton)
 
 	normal:SetRotation(-2.35)
 	pushed:SetRotation(-2.35)

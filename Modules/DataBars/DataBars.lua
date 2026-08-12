@@ -210,9 +210,9 @@ function mod:ThreatBar_Update(event, unit)
 				end
 
 				for guid, role in next, E.GroupRoles do
-					local unit = E.GroupUnitsByRole[role][guid]
-					if unit and not UnitIsUnit(unit, "player") then
-						_, _, bar.list[unit] = UnitDetailedThreatSituation(unit, "target")
+					local unitID = E.GroupUnitsByRole[role][guid]
+					if unitID and not UnitIsUnit(unitID, "player") then
+						_, _, bar.list[unitID] = UnitDetailedThreatSituation(unitID, "target")
 					end
 				end
 

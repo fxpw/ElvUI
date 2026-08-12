@@ -3,13 +3,11 @@ local DT = E:GetModule("DataTexts")
 
 --Lua functions
 local _G = _G
-local join = string.join
 --WoW API / Variables
 local GetZonePVPInfo = GetZonePVPInfo
-local GetRealZoneText = GetRealZoneText
 local GetSubZoneText = GetSubZoneText
 local GetCurrentMapContinent = GetCurrentMapContinent
-local GetContinentName = GetContinentName
+local GetMapContinents = GetMapContinents
 local GetZoneText = GetZoneText
 local IsInInstance = IsInInstance
 local ToggleFrame = ToggleFrame
@@ -27,18 +25,18 @@ local colors = { -- pulled from Blizz's ZoneText.lua
 	sanctuary	= {r = 0.4, g = 0.8, b = 0.9},
 }
 
-local lastPanel
-
 local function GetStatus()
 	return IsInInstance() and colors.instance or colors[GetZonePVPInfo()] or colors.none
 end
 
 local function OnEvent(self)
-	lastPanel = self
-
 	local zone = GetZoneText()
 	local subZone = GetSubZoneText()
-	local continent = GetContinentName(GetCurrentMapContinent()) or ""
+	-- WotLK: continent name comes from GetMapContinents(), indexed by GetCurrentMapContinent()
+	-- (same mapping the client's own WorldMapFrame_LoadContinents uses). The index can be
+	-- 0/-1 (world/cosmic map or instance) where there is no continent name.
+	local continentID = GetCurrentMapContinent()
+	local continent = (continentID and continentID > 0) and select(continentID, GetMapContinents()) or ""
 
 	if zone == "" and subZone == "" and continent == "" then
 		self.text:SetText(NOT_APPLICABLE)

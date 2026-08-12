@@ -3,7 +3,6 @@ local DT = E:GetModule("DataTexts")
 
 --Lua functions
 local _G = _G
-local format = string.format
 --WoW API / Variables
 local GetDungeonDifficulty = GetDungeonDifficulty
 local GetRaidDifficulty = GetRaidDifficulty

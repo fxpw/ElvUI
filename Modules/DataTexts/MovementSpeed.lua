@@ -5,8 +5,6 @@ local DT = E:GetModule("DataTexts")
 local join = string.join
 --WoW API / Variables
 local IsFalling = IsFalling
-local IsFlying = IsFlying
-local IsSwimming = IsSwimming
 local GetUnitSpeed = GetUnitSpeed
 
 local BASE_MOVEMENT_SPEED = 7

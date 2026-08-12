@@ -54,6 +54,26 @@ function S:Ace3_CheckBoxIsEnable(widget)
 	if text and S.Ace3_EnableMatch then return strmatch(text, S.Ace3_EnableMatch) end
 end
 
+-- Make sure the "Enable" label coloring data is available before any hook
+-- that uses it runs. Widgets can be created before the skin module finished
+-- initializing (early AceGUI widgets), in which case the hook must not
+-- silently skip styling the Enable checkbox.
+local function Ace3_EnsureEnableColoring()
+	if S.Ace3_L then return end
+
+	pcall(function()
+		local locale = (E.global and E.global.general and E.global.general.locale) or 'enUS'
+		local ACL = E.Libs and E.Libs.ACL
+		if ACL then
+			S:Ace3_ColorizeEnable(ACL:GetLocale('ElvUI', locale))
+		end
+	end)
+
+	if not S.Ace3_L then
+		S:Ace3_ColorizeEnable({ Enable = 'Enable' })
+	end
+end
+
 function S:Ace3_CheckBoxSetDesaturated(value)
 	local widget = self:GetParent():GetParent().obj
 	if value == true then
@@ -70,6 +90,7 @@ function S:Ace3_CheckBoxSetDesaturated(value)
 end
 
 function S:Ace3_CheckBoxSetDisabled(disabled)
+	Ace3_EnsureEnableColoring()
 	if S:Ace3_CheckBoxIsEnable(self) then
 		local tristateOrDisabled = disabled or (self.tristate and self.checked == nil)
 		self:SetLabel((tristateOrDisabled and S.Ace3_L.Enable) or (self.checked and S.Ace3_EnableOn) or S.Ace3_EnableOff)
@@ -153,6 +174,26 @@ function S:Ace3_SkinCheckBox(widget, check, checkbg, highlight)
 		hooksecurefunc(widget, 'SetDisabled', S.Ace3_CheckBoxSetDisabled)
 		hooksecurefunc(widget, 'SetType', S.Ace3_CheckBoxSetType)
 
+		-- AceConfigDialog may set the label after SetDisabled, so also recolor
+		-- the "Enable" label whenever the label text changes. The colored label
+		-- itself still matches the Enable pattern, so a re-entrancy flag stops
+		-- the SetLabel -> SetLabel cycle.
+		if not widget.__ace3LabelHooked then
+			widget.__ace3LabelHooked = true
+			local coloring
+			hooksecurefunc(widget, 'SetLabel', function(widget, label)
+				if coloring then return end
+				Ace3_EnsureEnableColoring()
+				if S:Ace3_CheckBoxIsEnable(widget) then
+					coloring = true
+					local disabled = widget.disabled
+					local tristateOrDisabled = disabled or (widget.tristate and widget.checked == nil)
+					widget:SetLabel((tristateOrDisabled and S.Ace3_L.Enable) or (widget.checked and S.Ace3_EnableOn) or S.Ace3_EnableOff)
+					coloring = nil
+				end
+			end)
+		end
+
 		if E.private.skins.checkBoxSkin then
 			S.Ace3_CheckBoxSetDesaturated(check, check:GetDesaturation())
 			hooksecurefunc(check, 'SetDesaturated', S.Ace3_CheckBoxSetDesaturated)
@@ -179,10 +220,13 @@ function S:Ace3_SkinTab(tab)
 		tab.backdrop:Point('BOTTOMRIGHT', -10, 0)
 
 		if tab.text and tab.text.Point then -- possible issue with Pally Power
-			-- Sirus TabGroup pre-anchors text with a RIGHT point; clear it so the
-			-- text is positioned exactly like dev instead of being squeezed
+			-- center the label inside the tab (dev keeps the TabGroup's
+			-- LEFT+RIGHT span and relies on centered justification; do it
+			-- explicitly here so the Sirus vanilla ButtonText never hugs left)
 			tab.text:ClearAllPoints()
-			tab.text:Point('LEFT', 14, -1)
+			tab.text:SetJustifyH('CENTER')
+			tab.text:SetJustifyV('MIDDLE')
+			tab.text:Point('CENTER', tab, 'CENTER', 0, -1)
 		end
 
 		hooksecurefunc(tab, 'SetSelected', S.Ace3_TabSetSelected)

@@ -6,18 +6,14 @@ To load the AddOn engine add this to the top of your file:
 ]]
 --
 --Lua functions
-local _G, min, pairs, strsplit, unpack, wipe, type, tcopy = _G, min, pairs, strsplit, unpack, wipe, type, table.copy
+local _G, pairs, type, tcopy = _G, pairs, type, table.copy
 --WoW API / Variables
 
-local hooksecurefunc = hooksecurefunc
 local CreateFrame = CreateFrame
-local GetAddOnInfo = GetAddOnInfo
 local GetAddOnMetadata = GetAddOnMetadata
 local GetTime = GetTime
 local HideUIPanel = HideUIPanel
-local InCombatLockdown = InCombatLockdown
 local IsAddOnLoaded = IsAddOnLoaded
-local LoadAddOn = LoadAddOn
 local ReloadUI = ReloadUI
 
 local ERR_NOT_IN_COMBAT = ERR_NOT_IN_COMBAT

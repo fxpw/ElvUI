@@ -4,7 +4,8 @@ local DT = E:GetModule("DataTexts")
 --Lua functions
 local join = string.join
 --WoW API / Variables
-local GetSpellHitModifier = GetSpellHitModifier
+-- WotLK has no GetSpellHitModifier(); the rating bonus is the full spell-hit
+-- value the client exposes (same as the character sheet's Spell Hit row).
 local GetCombatRatingBonus = GetCombatRatingBonus
 local CR_HIT_SPELL = CR_HIT_SPELL
 
@@ -14,7 +15,7 @@ local lastPanel
 local function OnEvent(self)
 	lastPanel = self
 
-	self.text:SetFormattedText(displayString, GetCombatRatingBonus(CR_HIT_SPELL) + (GetSpellHitModifier() or 0))
+	self.text:SetFormattedText(displayString, GetCombatRatingBonus(CR_HIT_SPELL))
 end
 
 local function ValueColorUpdate(hex)

@@ -22,8 +22,8 @@ local IsInInstance = IsInInstance
 local IsInGroup = IsInGroup
 local IsInRaid = IsInRaid
 local IsSpellKnown = IsSpellKnown
-local GetNumGroupMembers = GetNumGroupMembers
-local GetNumSubgroupMembers = GetNumSubgroupMembers
+local GetNumRaidMembers = GetNumRaidMembers
+local GetNumPartyMembers = GetNumPartyMembers
 local GetPartyAssignment = GetPartyAssignment
 
 local MAX_TALENT_TABS = MAX_TALENT_TABS
@@ -154,7 +154,7 @@ function E:PARTY_MEMBERS_CHANGED()
 	end
 
 	if E.IsInGroup then
-		for i = 1, GetNumSubgroupMembers() do
+		for i = 1, GetNumPartyMembers() do
 			local unit = "party"..i
 			local guid = UnitGUID(unit)
 			local role = guid and ((GetPartyAssignment("MAINTANK", unit) and "TANK" or "NONE") or UnitGroupRolesAssigned(unit))
@@ -177,7 +177,7 @@ function E:RAID_ROSTER_UPDATE()
 	end
 
 	if E.IsInGroup then
-		for i = 1, GetNumGroupMembers() do
+		for i = 1, GetNumRaidMembers() do
 			local unit = "raid"..i
 			local guid = UnitGUID(unit)
 			local role = guid and ((GetPartyAssignment("MAINTANK", unit) and "TANK" or "NONE") or UnitGroupRolesAssigned(unit))

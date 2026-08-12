@@ -1,6 +1,5 @@
 local E, L, V, P, G = unpack(select(2, ...)) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local BL = E:GetModule("Blizzard")
-local B = E:GetModule("Bags")
 local LSM = E.Libs.LSM
 
 --Lua functions

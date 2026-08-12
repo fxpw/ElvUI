@@ -4,14 +4,11 @@ local DT = E:GetModule("DataTexts")
 --Lua functions
 local _G = _G
 local format = string.format
-local pairs = pairs
 --WoW API / Variables
 local GetMoney = GetMoney
 local GetCurrencyListSize = GetCurrencyListSize
 local GetCurrencyListInfo = GetCurrencyListInfo
 local ToggleCharacter = ToggleCharacter
-
-local GUILDCONTROL_OPTION16 = GUILDCONTROL_OPTION16
 
 local iconString = "|T%s:20:20:0:0:64:64:4:60:4:60|t"
 local goldText = ""

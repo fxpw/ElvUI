@@ -6,12 +6,26 @@ local _G = _G
 local format = string.format
 --WoW API / Variables
 local ToggleCharacter = ToggleCharacter
-local GetWatchedFactionIndex = GetWatchedFactionIndex
+local GetWatchedFactionInfo = GetWatchedFactionInfo
 local GetFactionInfo = GetFactionInfo
+local GetNumFactions = GetNumFactions
 
 local NOT_APPLICABLE = NOT_APPLICABLE
 local REPUTATION = REPUTATION
 local STANDING = STANDING
+
+-- WotLK has no GetWatchedFactionIndex(); find the index by matching the
+-- watched faction name returned by GetWatchedFactionInfo() against the roster.
+local function GetWatchedFactionIndex()
+	local name = GetWatchedFactionInfo()
+	if not name then return end
+
+	for i = 1, GetNumFactions() do
+		if GetFactionInfo(i) == name then
+			return i
+		end
+	end
+end
 
 local function GetWatchedFactionData()
 	local index = GetWatchedFactionIndex()
