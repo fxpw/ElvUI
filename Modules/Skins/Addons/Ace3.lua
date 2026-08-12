@@ -665,10 +665,10 @@ function S:Ace3_SkinTooltip(lib, minor) -- lib: AceConfigDialog or AceGUI
 	if not lib.tooltip then
 		S:Ace3_MetaTable(lib)
 	else
-		if lib.tooltip and not S:IsHooked(lib.tooltip, 'OnShow') then -- подсказка
+		if lib.tooltip and not S:IsHooked(lib.tooltip, 'OnShow') then
 			S:SecureHookScript(lib.tooltip, 'OnShow', S.Ace3_StyleTooltip)
 		end
-		if lib.popup and not S:IsHooked(lib.popup, 'OnShow') then -- всплывающее окно
+		if lib.popup and not S:IsHooked(lib.popup, 'OnShow') then
 			S:SecureHookScript(lib.popup, 'OnShow', S.Ace3_StylePopup)
 		end
 	end
