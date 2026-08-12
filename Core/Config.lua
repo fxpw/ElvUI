@@ -720,7 +720,7 @@ function E:Config_SliderOnMouseWheel(offset)
 	if newValue > maxValue then return end
 
 	self:SetValue(newValue)
-	self.buttons:Point('TOPLEFT', 0, newValue * 36)
+	self.buttons:Point('TOPLEFT', 0, newValue * 30)
 end
 
 function E:Config_SliderOnValueChanged(value)
@@ -812,8 +812,40 @@ end
 
 function E:Config_UpdateSliderPosition(btn)
 	local left = btn and btn.frame and btn.frame.leftHolder
-	if left and left.slider then
-		E.Config_SliderOnValueChanged(left.slider, btn.sliderValue or 0)
+	if not (left and left.slider) then return end
+
+	-- Scrolling moves the buttons frame (and its children) up by 30px per
+	-- unit while the frame's bottom stays anchored to the visible bottom
+	-- edge, so the visible top edge is frame top minus the scroll offset.
+	-- Derive the needed scroll from the button's live position instead of
+	-- the stale creation-time sliderValue, and leave the scroll untouched
+	-- when the selected entry is already fully visible -- otherwise simply
+	-- selecting a group would reset the scroll position to the top.
+	local btns = left.buttons
+	local slider = left.slider
+	local value = slider:GetValue()
+	local step = 30
+
+	local viewBottom = btns:GetBottom()
+	local viewTop = btns:GetTop() - value * step
+	local btnBottom = btn:GetBottom()
+	local btnTop = btn:GetTop()
+	if not (viewBottom and viewTop and btnBottom and btnTop) then return end
+
+	if btnBottom >= viewBottom and btnTop <= viewTop then
+		-- Already fully visible: keep the current scroll position.
+		return
+	end
+
+	-- Bring the selected entry's bottom edge to the visible bottom edge;
+	-- this is the same target the sliderValue used to encode, but computed
+	-- from the current positions so it can never point at a stale value.
+	local needed = value + (viewBottom - btnBottom) / step
+	local _, maxValue = slider:GetMinMaxValues()
+	if needed < 0 then needed = 0 end
+	if needed > maxValue then needed = maxValue end
+	if needed ~= value then
+		E.Config_SliderOnValueChanged(slider, needed)
 	end
 end
 

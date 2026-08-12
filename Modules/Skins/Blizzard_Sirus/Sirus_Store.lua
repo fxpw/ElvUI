@@ -55,6 +55,45 @@ local function ApplyElvUIFontForce(frame)
 	end
 end
 
+-- The PKBT text colors were designed for the light default store backdrops
+-- and are unreadable on the dark ElvUI backdrops (dark browns, warm beige and
+-- brownish-gray body text). Normalize only those to white - gold accents,
+-- pure white, neutral grays (disabled states) and semantic colors are left
+-- untouched.
+local function NormalizePKBTTextColors(frame)
+	if not frame or not frame.GetObjectType then return end
+
+	local objectType = frame:GetObjectType()
+	if (objectType == "FontString" or objectType == "SimpleHTML") and frame.GetTextColor and frame.SetTextColor then
+		local r, g, b = frame:GetTextColor()
+		if r and g and b then
+			-- dark text is meant for a light background
+			local luminance = r * 0.3 + g * 0.6 + b * 0.1
+			-- PKBT muted warm-gray family (r > g > b, near-even tint): beige
+			-- and brownish-gray body text that disappears on dark backdrops
+			local mutedWarm = r > b and g >= 0.8 * r and b >= 0.7 * g
+			if luminance < 0.4 or mutedWarm then
+				frame:SetTextColor(1, 1, 1)
+			end
+		end
+	end
+
+	if frame.GetNumRegions then
+		for i = 1, frame:GetNumRegions() do
+			local region = select(i, frame:GetRegions())
+			if region then NormalizePKBTTextColors(region) end
+		end
+	end
+	-- GetNumChildren is a Frame-only method - guard it so the recursion
+	-- cannot crash when it reaches a Texture/FontString region
+	if frame.GetNumChildren then
+		for i = 1, frame:GetNumChildren() do
+			local child = select(i, frame:GetChildren())
+			if child then NormalizePKBTTextColors(child) end
+		end
+	end
+end
+
 -- Strip the PKBT three-slice/atlas chrome from a button and give it the
 -- ElvUI look. Hooks keep it clean when the client swaps atlas textures.
 -- NOTE: the button's content lives in WidgetHolder (AddText/AddTextureAtlas)
@@ -289,6 +328,30 @@ local function SkinStoreRowButton(row)
 	end
 end
 
+-- The filter search editbox is a pooled PKBT_EditBoxTemplate whose chrome
+-- (BackgroundLeft/Right/Center three-slice) is NOT in S.Blizzard.Regions, so
+-- S:HandleEditBox leaves it visible - hide it explicitly for a clean ElvUI
+-- look. The clear (X) button stays functional; only its state textures go.
+local function SkinStoreFilterEditBox(editbox)
+	if not editbox or not editbox.IsObjectType or not editbox:IsObjectType("EditBox") then return end
+	if editbox._ElvFilterEditBoxSkinned then return end
+	editbox._ElvFilterEditBoxSkinned = true
+
+	S:HandleEditBox(editbox)
+
+	if editbox.BackgroundLeft then editbox.BackgroundLeft:SetAlpha(0) end
+	if editbox.BackgroundRight then editbox.BackgroundRight:SetAlpha(0) end
+	if editbox.BackgroundCenter then editbox.BackgroundCenter:SetAlpha(0) end
+
+	if editbox.ClearButton then
+		if editbox.ClearButton.SetHighlightTexture then editbox.ClearButton:SetHighlightTexture("") end
+		if editbox.ClearButton.SetPushedTexture then editbox.ClearButton:SetPushedTexture("") end
+		if editbox.ClearButton.SetDisabledTexture then editbox.ClearButton:SetDisabledTexture("") end
+	end
+
+	ApplyElvUIFont(editbox)
+end
+
 local function SkinStoreList(view)
 	if not view then return end
 
@@ -315,20 +378,30 @@ local function SkinStoreList(view)
 		if not filter._ElvSkinned then
 			filter._ElvSkinned = true
 			filter:StripTextures(true)
+			-- the PKBT inset border is a child frame (not covered by
+			-- StripTextures) - the ElvUI backdrop provides the panel frame
+			if filter.NineSliceInset then filter.NineSliceInset:Hide() end
 			filter:CreateBackdrop("Transparent")
 		end
-		if filter.ResetButton then ReskinPKBTButton(filter.ResetButton) end
-		local scrollChild = filter.Scroll and filter.Scroll.ScrollChild
-		if scrollChild then
-			for i = 1, (scrollChild:GetNumChildren() or 0) do
-				local child = select(i, scrollChild:GetChildren())
-				if child then
-					if child.IsObjectType and child:IsObjectType("CheckButton") then
-						S:HandleCheckBox(child)
-					elseif child.IsObjectType and child:IsObjectType("EditBox") then
-						S:HandleEditBox(child)
+		if filter.Scroll then
+			-- the filter panel has its own right-hand scrollbar (same
+			-- PKBT_UIPanelScrollBarTemplate as the item list) - skin it too
+			if filter.Scroll.ScrollBar then
+				S:HandleScrollBar(filter.Scroll.ScrollBar)
+			end
+			local scrollChild = filter.Scroll.ScrollChild
+			if scrollChild then
+				if scrollChild.ResetButton then ReskinPKBTButton(scrollChild.ResetButton) end
+				for i = 1, (scrollChild:GetNumChildren() or 0) do
+					local child = select(i, scrollChild:GetChildren())
+					if child then
+						if child.IsObjectType and child:IsObjectType("CheckButton") then
+							S:HandleCheckBox(child)
+						elseif child.IsObjectType and child:IsObjectType("EditBox") then
+							SkinStoreFilterEditBox(child)
+						end
+						ApplyElvUIFont(child)
 					end
-					ApplyElvUIFont(child)
 				end
 			end
 		end
@@ -381,6 +454,17 @@ local function SkinStoreDialog(dialog)
 	end
 
 	ApplyElvUIFont(dialog)
+	NormalizePKBTTextColors(dialog)
+
+	-- Dynamic content (product widget, options, referral steps) is re-created
+	-- every time the dialog is shown with new data, which re-applies the PKBT
+	-- brown text colors - normalize again after each show.
+	if not dialog._ElvDialogHooked then
+		dialog._ElvDialogHooked = true
+		dialog:HookScript("OnShow", function(self)
+			NormalizePKBTTextColors(self)
+		end)
+	end
 end
 
 local function HandleStoreFrame()
@@ -454,6 +538,10 @@ local function HandleStoreFrame()
 			if not nav._ElvSkinned then
 				nav._ElvSkinned = true
 				nav:StripTextures(true)
+				-- the PKBT inset border (its right edge is the divider between the
+				-- nav column and the content area) must go - the ElvUI backdrop
+				-- provides the separator in ElvUI style instead
+				if nav.NineSliceInset then nav.NineSliceInset:Hide() end
 				nav:CreateBackdrop("Transparent")
 			end
 			ApplyElvUIFont(nav)
@@ -464,6 +552,7 @@ local function HandleStoreFrame()
 			if not premium._ElvSkinned then
 				premium._ElvSkinned = true
 				premium:StripTextures(true)
+				if premium.NineSliceInset then premium.NineSliceInset:Hide() end
 				premium:CreateBackdrop("Transparent")
 			end
 			if premium.Purchase then ReskinPKBTButton(premium.Purchase) end
@@ -523,8 +612,13 @@ local function HandleStoreFrame()
 				S:HandleScrollBar(promo.Content.Scroll.ScrollBar)
 			end
 			ApplyElvUIFont(promo.Content)
+			NormalizePKBTTextColors(promo)
 		end
 	end
+
+	-- Same readability fix for the main store window: PKBT beige/brown body
+	-- text (account/premium labels, tracker text, ...) on the dark backdrop
+	NormalizePKBTTextColors(f)
 end
 
 local function HookStore()
@@ -570,6 +664,9 @@ local function HookStore()
 			hooksecurefunc(itemListView, "UpdateViewTable", SkinListView)
 			hooksecurefunc(itemListView, "OnItemScrollUpdate", SkinListView)
 			hooksecurefunc(itemListView, "OnShow", SkinListView)
+			-- filter options (search editbox, checkboxes) are pooled and built
+			-- in UpdateFilters - re-skin right after they are (re)created
+			hooksecurefunc(itemListView, "UpdateFilters", SkinListView)
 		end
 
 		local pageCollections = storeFrame.Content and storeFrame.Content.PageCollections
@@ -636,6 +733,19 @@ local function HookStore()
 	end
 end
 
+-- Skin work is best-effort: an error here must not abort ApplySkin before
+-- HookStore (which would leave the store with no skin hooks at all) or
+-- propagate into the skin loader's callback dispatch (which would break the
+-- remaining skins). Contain the error and surface it via the default handler.
+local function SafeSkinCall(fn, ...)
+	if not fn then return end
+	local ok, err = pcall(fn, ...)
+	if not ok then
+		local handler = geterrorhandler()
+		if handler then handler(err) end
+	end
+end
+
 local function LoadSkin()
 	if E.private.skins.blizzard.enable ~= true or E.private.skins.blizzard.store ~= true then return end
 
@@ -658,10 +768,10 @@ local function LoadSkin()
 			self:SetPoint("CENTER", UIParent, "CENTER", frame_x, frame_y)
 		end)
 
-		HandleStoreFrame()
-		HookStore()
+		SafeSkinCall(HandleStoreFrame)
+		SafeSkinCall(HookStore)
 		StoreFrame:HookScript("OnShow", function()
-			HandleStoreFrame()
+			SafeSkinCall(HandleStoreFrame)
 		end)
 	end
 
