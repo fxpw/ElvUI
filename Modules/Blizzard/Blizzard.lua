@@ -19,8 +19,8 @@ function B:ADDON_LOADED(_, addon)
 
 			ChatFrameEditBox:Insert(GetTradeSkillListLink())
 		end)
-
-		self:UnregisterEvent("ADDON_LOADED")
+	elseif addon == "Blizzard_GuildBankUI" then
+		self:ImproveGuildBank()
 	end
 end
 

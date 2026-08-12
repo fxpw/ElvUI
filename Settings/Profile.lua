@@ -130,6 +130,26 @@ P.general = {
 		height = 0,
 		spacing = 4
 	},
+	guildBank = {
+		itemQuality = true,
+		itemLevel = true,
+		itemLevelThreshold = 1,
+		itemLevelFont = "Homespun",
+		itemLevelFontSize = 10,
+		itemLevelFontOutline = "MONOCHROMEOUTLINE",
+		itemLevelCustomColorEnable = false,
+		itemLevelCustomColor = { r = 1, g = 1, b = 1 },
+		itemLevelPosition = "BOTTOMRIGHT",
+		itemLevelxOffset = 0,
+		itemLevelyOffset = 2,
+		countFont = "Homespun",
+		countFontSize = 10,
+		countFontOutline = "MONOCHROMEOUTLINE",
+		countFontColor = { r = 1, g = 1, b = 1 },
+		countPosition = "BOTTOMRIGHT",
+		countxOffset = 0,
+		countyOffset = 2,
+	},
 	reminder = {
 		enable = false,
 		durations = true,
@@ -142,10 +162,11 @@ P.general = {
 		fontOutline = "MONOCHROMEOUTLINE"
 	},
 	kittys = false
-}
-
---DataBars
+}	--DataBars
 P.databars = {
+	transparent = true,
+	statusbar = "ElvUI Norm",
+	customTexture = false,
 	experience = {
 		enable = true,
 		width = 10,
@@ -160,6 +181,13 @@ P.databars = {
 		hideInVehicle = false,
 		hideInCombat = false,
 		showBubbles = false,
+		clickThrough = false,
+		frameLevel = 1,
+		frameStrata = "LOW",
+		displayText = true,
+		anchorPoint = "CENTER",
+		xOffset = 0,
+		yOffset = 0,
 		questXP = {
 			color = { r = 0, g = 1, b = 0, a = 0.4 },
 			tooltip = true,
@@ -180,7 +208,14 @@ P.databars = {
 		hideAtMaxLevel = true,
 		hideInVehicle = false,
 		hideInCombat = false,
-		showBubbles = false
+		showBubbles = false,
+		clickThrough = false,
+		frameLevel = 1,
+		frameStrata = "LOW",
+		displayText = true,
+		anchorPoint = "CENTER",
+		xOffset = 0,
+		yOffset = 0
 	},
 	reputation = {
 		enable = false,
@@ -194,7 +229,35 @@ P.databars = {
 		orientation = "VERTICAL",
 		hideInVehicle = false,
 		hideInCombat = false,
-		showBubbles = false
+		showBubbles = false,
+		clickThrough = false,
+		frameLevel = 1,
+		frameStrata = "LOW",
+		displayText = true,
+		anchorPoint = "CENTER",
+		xOffset = 0,
+		yOffset = 0
+	},
+	threat = {
+		enable = true,
+		width = 222,
+		height = 10,
+		textFormat = "NONE",
+		textSize = 11,
+		font = "PT Sans Narrow",
+		fontOutline = "SHADOW",
+		mouseover = false,
+		orientation = "AUTOMATIC",
+		showBubbles = false,
+		clickThrough = false,
+		frameLevel = 1,
+		frameStrata = "LOW",
+		displayText = true,
+		tankStatus = true,
+		smoothbars = true,
+		anchorPoint = "CENTER",
+		xOffset = 0,
+		yOffset = 0
 	}
 }
 
@@ -253,6 +316,17 @@ P.bags = {
 			questStarter = { r = 1, g = 1, b = 0 },
 			questItem = { r = 1, g = 0.30, b = 0.30 }
 		}
+	},
+	shownBags = {},
+	autoToggle = {
+		enable = true,
+		bank = true,
+		mail = true,
+		vendor = true,
+		soulBind = true,
+		auctionHouse = true,
+		professions = false,
+		guildBank = false
 	},
 	vendorGrays = {
 		enable = false,
@@ -487,6 +561,15 @@ local NP_EliteIcon = {
 	yOffset = 0,
 }
 
+local NP_IconFrame = {
+	enable = false,
+	size = 24,
+	parent = 'Nameplate',
+	position = 'CENTER',
+	xOffset = 0,
+	yOffset = 42,
+}
+
 local NP_PvPIndicator = {
 	enable = true,
 	size = 24,
@@ -704,6 +787,7 @@ for unit, data in next, P.nameplates.units do
 		end
 		if unit:find('_NPC') then
 			data.eliteIcon = CopyTable(NP_EliteIcon)
+			data.iconFrame = CopyTable(NP_IconFrame)
 		end
 	end
 end
@@ -720,6 +804,9 @@ P.nameplates.serviceAuras = {
 P.nameplates.units.PLAYER.nameOnly = false
 P.nameplates.units.PLAYER.buffs.priority = 'Blacklist,blockNoDuration,Personal'
 P.nameplates.units.PLAYER.debuffs.priority = 'Blacklist,blockNoDuration,Personal'
+
+P.nameplates.units.FRIENDLY_NPC.iconFrame.enable = true
+P.nameplates.units.ENEMY_NPC.iconFrame.enable = true
 
 P.nameplates.units.FRIENDLY_PLAYER.health.enable = true
 P.nameplates.units.FRIENDLY_PLAYER.level.enable = true
@@ -4180,6 +4267,12 @@ P.actionbar = {
 	fontSize = 10,
 	fontOutline = "MONOCHROMEOUTLINE",
 	fontColor = { r = 1, g = 1, b = 1 },
+	useHotkeyColor = false,
+	hotkeyColor = { r = 1, g = 1, b = 1 },
+	useCountColor = false,
+	countColor = { r = 1, g = 1, b = 1 },
+	useMacroColor = false,
+	macroColor = { r = 1, g = 1, b = 1 },
 
 	macrotext = false,
 	hotkeytext = true,
@@ -4443,7 +4536,14 @@ P.databars.honor = {
 	mouseover = false,
 	orientation = "VERTICAL",
 	hideInVehicle = false,
-	hideInCombat = false
+	hideInCombat = false,
+	clickThrough = false,
+	frameLevel = 1,
+	frameStrata = "LOW",
+	displayText = true,
+	anchorPoint = "CENTER",
+	xOffset = 0,
+	yOffset = 0
 }
 
 -- Sirus

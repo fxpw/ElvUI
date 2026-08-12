@@ -182,6 +182,66 @@ do
 	end
 end
 
+--[[ Totem icons (minimal port of dev's IconFrame element, inlined here
+so no new file is needed). Shows the totem's spell icon above its nameplate. ]]--
+local totemSpellIDs = {
+	-- Air
+	8177, 10595, 10600, 10601, 25574, 58746, 58749, 6495, 8512, 3738,
+	-- Earth
+	2062, 2484, 5730, 6390, 6391, 6392, 10427, 10428, 25525, 58580, 58581, 58582,
+	8071, 8154, 8155, 10406, 10407, 10408, 25508, 25509, 58751, 58753,
+	8075, 8160, 8161, 10442, 25361, 25528, 57622, 58643, 8143,
+	-- Fire
+	2894, 8227, 8249, 10526, 16387, 25557, 58649, 58652, 58656,
+	8181, 10478, 10479, 25560, 58741, 58745, 8190, 10585, 10586, 10587, 25552, 58731, 58734,
+	3599, 6363, 6364, 6365, 10437, 10438, 25533, 58699, 58703, 58704,
+	30706, 57720, 57721, 57722,
+	-- Water
+	8170, 8184, 10537, 10538, 25563, 58737, 58739, 5394, 6375, 6377, 10462, 10463, 25567, 58755, 58756, 58757,
+	5675, 10495, 10496, 10497, 25570, 58771, 58773, 58774, 16190,
+	-- Other
+	724, -- Lightwell
+}
+
+NP.TotemIcons = {}
+for _, spellID in ipairs(totemSpellIDs) do
+	local name, _, texture = GetSpellInfo(spellID)
+	if name then
+		NP.TotemIcons[name] = texture
+		-- WotLK totem nameplates usually use the plain spell name (no rank suffix)
+		local baseName = name:gsub('%s+[IVX]+$', '')
+		if baseName ~= name then
+			NP.TotemIcons[baseName] = texture
+		end
+	end
+end
+
+function NP:Construct_TotemIcon(nameplate)
+	local icon = nameplate:CreateTexture(nameplate:GetName()..'TotemIcon', 'OVERLAY', nil, 4)
+	icon:SetTexCoord(unpack(E.TexCoords))
+	icon:CreateBackdrop(nil, nil, nil, true, true)
+	icon:Hide()
+	return icon
+end
+
+function NP:Update_TotemIcon(nameplate)
+	local db = NP:PlateDB(nameplate)
+	if not db or not db.iconFrame then return end
+
+	local texture = db.iconFrame.enable and NP.TotemIcons[nameplate.UnitName]
+	if texture and nameplate.TotemIcon then
+		local icon = nameplate.TotemIcon
+		icon:SetTexture(texture)
+		icon:SetSize(db.iconFrame.size, db.iconFrame.size)
+		icon:ClearAllPoints()
+		local parent = (db.iconFrame.parent and db.iconFrame.parent ~= 'Nameplate') and nameplate[db.iconFrame.parent] or nameplate
+		icon:SetPoint(E.InversePoints[db.iconFrame.position], parent, db.iconFrame.position, db.iconFrame.xOffset, db.iconFrame.yOffset)
+		icon:Show()
+	elseif nameplate.TotemIcon then
+		nameplate.TotemIcon:Hide()
+	end
+end
+
 local NP_ENGINE_CVARS = {
 	loadDistance = { cvar = 'nameplateMaxDistance', driver = true },
 	predictedHealthAndPower = { cvar = 'nameplatePredictedHealthAndPower', bool = true },
@@ -351,6 +411,10 @@ function NP:UpdateCVars()
 
 	NP:SetEngineCVar('nameplateShowOnlyNames', '0')
 
+	-- totem nameplates (TotemIcon relies on them)
+	NP:SetEngineCVar('nameplateShowEnemyTotems', '1')
+	NP:SetEngineCVar('nameplateShowFriendlyTotems', '1')
+
 	-- transparency is owned by Style Filters (e.g. ElvUI_NonTarget); pin engine alpha neutral so it can't double-dim
 	NP:SetEngineCVar('nameplateSelectedAlpha', '1')
 	NP:SetEngineCVar('nameplateNotSelectedAlpha', '1')
@@ -471,6 +535,7 @@ function NP:StylePlate(nameplate)
 	nameplate.Level = NP:Construct_Level(textFrame)
 
 	nameplate.ClassificationIndicator = NP:Construct_ClassificationIndicator(nameplate.RaisedElement)
+	nameplate.TotemIcon            = NP:Construct_TotemIcon(nameplate)
 	nameplate.Castbar             = NP:Construct_Castbar(nameplate)
 	nameplate.Portrait            = NP:Construct_Portrait(nameplate.RaisedElement)
 	nameplate.PvPIndicator        = NP:Construct_PvPIndicator(nameplate.RaisedElement)
@@ -521,6 +586,7 @@ function NP:UpdatePlate(nameplate, updateBase)
 		NP:Update_ClassPower(nameplate)
 		NP:Update_Auras(nameplate)
 		NP:Update_ClassificationIndicator(nameplate)
+		NP:Update_TotemIcon(nameplate)
 		NP:Update_TargetIndicator(nameplate)
 		NP:Update_ThreatIndicator(nameplate)
 	else

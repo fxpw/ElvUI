@@ -77,20 +77,31 @@ end
 function mod:PetExperienceBar_UpdateDimensions()
 	if E.myclass ~= "HUNTER" then return end
 
-	self.petExpBar:Size(self.db.petExperience.width, self.db.petExperience.height)
-	self.petExpBar:SetAlpha(self.db.petExperience.mouseover and 0 or 1)
+	local db = self.db.petExperience
+	self.petExpBar:Size(db.width, db.height)
+	self.petExpBar:SetAlpha(db.mouseover and 0 or 1)
+	self.petExpBar:SetTemplate(self.db.transparent and "Transparent" or nil)
+	self.petExpBar:EnableMouse(not db.clickThrough)
+	self.petExpBar:SetFrameLevel(db.frameLevel)
+	self.petExpBar:SetFrameStrata(db.frameStrata)
 
-	self.petExpBar.text:FontTemplate(LSM:Fetch("font", self.db.petExperience.font), self.db.petExperience.textSize, self.db.petExperience.fontOutline)
+	local orientation = self:GetBarOrientation(db)
 
-	self.petExpBar.statusBar:SetOrientation(self.db.petExperience.orientation)
-	self.petExpBar.statusBar:SetRotatesTexture(self.db.petExperience.orientation ~= "HORIZONTAL")
+	self.petExpBar.text:FontTemplate(LSM:Fetch("font", db.font), db.textSize, db.fontOutline)
+	self.petExpBar.text:ClearAllPoints()
+	self.petExpBar.text:Point(db.anchorPoint, db.xOffset, db.yOffset)
+	self.petExpBar.text:SetShown(db.displayText)
+
+	self.petExpBar.statusBar:SetOrientation(orientation)
+	self.petExpBar.statusBar:SetRotatesTexture(orientation ~= "HORIZONTAL")
+	self.petExpBar.statusBar:SetStatusBarTexture(self:GetBarTexture())
 
 	if self.petExpBar.bubbles then
-		self:UpdateBarBubbles(self.petExpBar, self.db.petExperience)
-	elseif self.db.petExperience.showBubbles then
+		self:UpdateBarBubbles(self.petExpBar, db)
+	elseif db.showBubbles then
 		local bubbles = self:CreateBarBubbles(self.petExpBar)
 		bubbles:SetFrameLevel(5)
-		self:UpdateBarBubbles(self.petExpBar, self.db.petExperience)
+		self:UpdateBarBubbles(self.petExpBar, db)
 	end
 end
 

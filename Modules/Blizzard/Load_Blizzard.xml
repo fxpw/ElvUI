@@ -9,4 +9,5 @@
 	<Script file="GM.lua"/>
 	<Script file="Durability.lua"/>
 	<Script file="CaptureBar.lua"/>
+	<Script file="GuildBank.lua"/>
 </Ui>

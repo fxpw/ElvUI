@@ -87,20 +87,31 @@ function mod:ReputationBar_OnClick()
 end
 
 function mod:ReputationBar_UpdateDimensions()
-	self.repBar:Size(self.db.reputation.width, self.db.reputation.height)
-	self.repBar:SetAlpha(self.db.reputation.mouseover and 0 or 1)
+	local db = self.db.reputation
+	self.repBar:Size(db.width, db.height)
+	self.repBar:SetAlpha(db.mouseover and 0 or 1)
+	self.repBar:SetTemplate(self.db.transparent and "Transparent" or nil)
+	self.repBar:EnableMouse(not db.clickThrough)
+	self.repBar:SetFrameLevel(db.frameLevel)
+	self.repBar:SetFrameStrata(db.frameStrata)
 
-	self.repBar.text:FontTemplate(LSM:Fetch("font", self.db.reputation.font), self.db.reputation.textSize, self.db.reputation.fontOutline)
+	local orientation = self:GetBarOrientation(db)
 
-	self.repBar.statusBar:SetOrientation(self.db.reputation.orientation)
-	self.repBar.statusBar:SetRotatesTexture(self.db.reputation.orientation ~= "HORIZONTAL")
+	self.repBar.text:FontTemplate(LSM:Fetch("font", db.font), db.textSize, db.fontOutline)
+	self.repBar.text:ClearAllPoints()
+	self.repBar.text:Point(db.anchorPoint, db.xOffset, db.yOffset)
+	self.repBar.text:SetShown(db.displayText)
+
+	self.repBar.statusBar:SetOrientation(orientation)
+	self.repBar.statusBar:SetRotatesTexture(orientation ~= "HORIZONTAL")
+	self.repBar.statusBar:SetStatusBarTexture(self:GetBarTexture())
 
 	if self.repBar.bubbles then
-		self:UpdateBarBubbles(self.repBar, self.db.reputation)
-	elseif self.db.reputation.showBubbles then
+		self:UpdateBarBubbles(self.repBar, db)
+	elseif db.showBubbles then
 		local bubbles = self:CreateBarBubbles(self.repBar)
 		bubbles:SetFrameLevel(5)
-		self:UpdateBarBubbles(self.repBar, self.db.reputation)
+		self:UpdateBarBubbles(self.repBar, db)
 	end
 end
 

@@ -598,6 +598,8 @@ function B:Layout(isBank)
 			newBag = (bagID ~= -1 or bagID ~= 0) and B.db.split["bag"..bagID] or false
 		end
 
+		local bagShown = B.db.shownBags and B.db.shownBags["bag"..bagID] ~= false
+
 		--Bag Containers
 		if (not isBank) or (isBank and (bagID ~= -1) and (numContainerSlots >= 1) and ((i - 1 <= numContainerSlots))) then
 			if not f.ContainerHolder[i] then
@@ -657,6 +659,20 @@ function B:Layout(isBank)
 				end
 				f.ContainerHolder[i].iconTexture:SetInside()
 				f.ContainerHolder[i].iconTexture:SetTexCoord(unpack(E.TexCoords))
+
+				f.ContainerHolder[i].isBank = isBank
+
+				if bagID ~= 0 and bagID ~= -1 then
+					f.ContainerHolder[i].shownIcon = f.ContainerHolder[i]:CreateTexture(nil, "OVERLAY", nil, 1)
+					f.ContainerHolder[i].shownIcon:Size(16)
+					f.ContainerHolder[i].shownIcon:Point("BOTTOMLEFT", 1, 1)
+					B:SetBagShownTexture(f.ContainerHolder[i].shownIcon, bagShown)
+					f.ContainerHolder[i]:HookScript("OnClick", function(holder)
+						if IsShiftKeyDown() and not CursorHasItem() then
+							B:ToggleContainer(holder)
+						end
+					end)
+				end
 			end
 
 			f.ContainerHolder:Size(((buttonSize + buttonSpacing) * (isBank and i - 1 or i)) + buttonSpacing, buttonSize + (buttonSpacing * 2))
@@ -679,7 +695,7 @@ function B:Layout(isBank)
 
 		--Bag Slots
 		local numSlots = GetContainerNumSlots(bagID)
-		if numSlots > 0 then
+		if numSlots > 0 and bagShown then
 			if not f.Bags[bagID] then
 				f.Bags[bagID] = CreateFrame("Frame", f:GetName().."Bag"..bagID, f.holderFrame)
 				-- f.Bags[bagID]:SetBagID(bagID)
@@ -1523,6 +1539,102 @@ function B:ToggleBags(id)
 	end
 end
 
+function B:SetBagShownTexture(icon, shown)
+	if not icon then return end
+	local texture = shown and (_G.READY_CHECK_READY_TEXTURE or READY_TEX) or (_G.READY_CHECK_NOT_READY_TEXTURE or NOT_READY_TEX)
+	icon:SetTexture(texture)
+end
+
+function B:IsBagShown(bagID)
+	return bagID and B.db.shownBags["bag"..bagID] ~= false
+end
+
+function B:SetBagShown(bagID, shown)
+	B.db.shownBags["bag"..bagID] = shown
+end
+
+function B:ToggleContainer(holder)
+	if not holder then return end
+
+	local swap = not B:IsBagShown(holder.id)
+
+	B:SetBagShown(holder.id, swap)
+	B:SetBagShownTexture(holder.shownIcon, swap)
+
+	if B:AnyBagsShown() then
+		B:Layout(holder.isBank)
+		return true
+	else
+		B:CloseAllBags()
+	end
+end
+
+function B:AnyBagsShown()
+	if not B.BagFrame then return true end
+
+	for _, bagID in ipairs(B.BagFrame.BagIDs) do
+		if B.db.shownBags["bag"..bagID] ~= false then
+			return true
+		end
+	end
+end
+
+function B:CloseAllBags()
+	if not B.BagFrame or not B.BagFrame:IsShown() then return false end
+
+	B:CloseBags()
+	return true
+end
+
+B.AutoToggleEvents = {
+	AUCTION_HOUSE_SHOW = "auctionHouse",
+	AUCTION_HOUSE_CLOSED = "auctionHouse",
+	TRADE_SKILL_SHOW = "professions",
+	TRADE_SKILL_CLOSE = "professions",
+	TRADE_SHOW = "trade",
+	TRADE_CLOSED = "trade"
+}
+
+B.AutoToggleClose = {
+	AUCTION_HOUSE_CLOSED = true,
+	TRADE_SKILL_CLOSE = true,
+	TRADE_CLOSED = true
+}
+
+function B:HandleOpenAllBags(frame)
+	if not frame then return end
+
+	local mail = frame == _G.MailFrame and frame:IsShown()
+	local vendor = frame == _G.MerchantFrame and frame:IsShown()
+
+	if (not mail and not vendor) or (mail and B.db.autoToggle.mail) or (vendor and B.db.autoToggle.vendor) then
+		B:OpenBags()
+	else
+		B:CloseBags()
+	end
+end
+
+function B:AutoToggleFunction()
+	local option = B.AutoToggleEvents[self]
+	if not option then return end
+
+	if B.db.autoToggle[option] and not B.AutoToggleClose[self] then
+		B:OpenBags()
+	else
+		B:CloseBags()
+	end
+end
+
+function B:SetupAutoToggle()
+	for event in next, B.AutoToggleEvents do
+		if B.db.autoToggle.enable then
+			B:RegisterEvent(event, B.AutoToggleFunction)
+		else
+			B:UnregisterEvent(event)
+		end
+	end
+end
+
 function B:ToggleBackpack()
 	if IsOptionFrameOpen() then return end
 
@@ -1576,7 +1688,9 @@ function B:OpenBank()
 	--Call :Layout first so all elements are created before we update
 	B:Layout(true)
 
-	B:OpenBags()
+	if not B.db.autoToggle or B.db.autoToggle.bank then
+		B:OpenBags()
+	end
 	B:UpdateTokens()
 
 	B.BankFrame:Show()
@@ -1906,7 +2020,7 @@ function B:Initialize()
 	B.BagFrame = B:ContructContainerFrame("ElvUI_ContainerFrame")
 
 	--Hook onto Blizzard Functions
-	B:SecureHook("OpenAllBags", "ToggleBackpack")
+	B:SecureHook("OpenAllBags", "HandleOpenAllBags")
 	B:SecureHook("CloseAllBags", "CloseBags")
 	B:SecureHook("ToggleBag", "ToggleBags")
 	B:SecureHook("OpenBackpack", "OpenBags")
@@ -1924,6 +2038,16 @@ function B:Initialize()
 	B:RegisterEvent("BANKFRAME_CLOSED", "CloseBank")
 	B:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
 	B:RegisterEvent("GUILDBANKBAGSLOTS_CHANGED")
+	B:SetupAutoToggle()
+
+	local guildBankFrame = _G.GuildBankFrame
+	if guildBankFrame and B.db.autoToggle.guildBank then
+		guildBankFrame:HookScript("OnShow", function()
+			if guildBankFrame:IsShown() then
+				B:OpenBags()
+			end
+		end)
+	end
 end
 
 local function InitializeCallback()

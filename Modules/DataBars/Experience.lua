@@ -164,29 +164,43 @@ function mod:ExperienceBar_OnClick(button)
 end
 
 function mod:ExperienceBar_UpdateDimensions()
-	self.expBar:Size(self.db.experience.width, self.db.experience.height)
-	self.expBar:SetAlpha(self.db.experience.mouseover and 0 or 1)
+	local db = self.db.experience
+	self.expBar:Size(db.width, db.height)
+	self.expBar:SetAlpha(db.mouseover and 0 or 1)
+	self.expBar:SetTemplate(self.db.transparent and "Transparent" or nil)
+	self.expBar:EnableMouse(not db.clickThrough)
+	self.expBar:SetFrameLevel(db.frameLevel)
+	self.expBar:SetFrameStrata(db.frameStrata)
 
-	self.expBar.text:FontTemplate(LSM:Fetch("font", self.db.experience.font), self.db.experience.textSize, self.db.experience.fontOutline)
+	local orientation = self:GetBarOrientation(db)
+	local texture = self:GetBarTexture()
 
-	self.expBar.statusBar:SetOrientation(self.db.experience.orientation)
-	self.expBar.statusBar:SetRotatesTexture(self.db.experience.orientation ~= "HORIZONTAL")
+	self.expBar.text:FontTemplate(LSM:Fetch("font", db.font), db.textSize, db.fontOutline)
+	self.expBar.text:ClearAllPoints()
+	self.expBar.text:Point(db.anchorPoint, db.xOffset, db.yOffset)
+	self.expBar.text:SetShown(db.displayText)
 
-	self.expBar.rested:SetOrientation(self.db.experience.orientation)
-	self.expBar.rested:SetRotatesTexture(self.db.experience.orientation ~= "HORIZONTAL")
+	self.expBar.statusBar:SetOrientation(orientation)
+	self.expBar.statusBar:SetRotatesTexture(orientation ~= "HORIZONTAL")
+	self.expBar.statusBar:SetStatusBarTexture(texture)
 
-	self.expBar.questBar:SetOrientation(self.db.experience.orientation)
-	self.expBar.questBar:SetRotatesTexture(self.db.experience.orientation ~= "HORIZONTAL")
+	self.expBar.rested:SetOrientation(orientation)
+	self.expBar.rested:SetRotatesTexture(orientation ~= "HORIZONTAL")
+	self.expBar.rested:SetStatusBarTexture(texture)
 
-	local color = self.db.experience.questXP.color
+	self.expBar.questBar:SetOrientation(orientation)
+	self.expBar.questBar:SetRotatesTexture(orientation ~= "HORIZONTAL")
+	self.expBar.questBar:SetStatusBarTexture(texture)
+
+	local color = db.questXP.color
 	self.expBar.questBar:SetStatusBarColor(color.r, color.g, color.b, color.a)
 
 	if self.expBar.bubbles then
-		self:UpdateBarBubbles(self.expBar, self.db.experience)
-	elseif self.db.experience.showBubbles then
+		self:UpdateBarBubbles(self.expBar, db)
+	elseif db.showBubbles then
 		local bubbles = self:CreateBarBubbles(self.expBar)
 		bubbles:SetFrameLevel(5)
-		self:UpdateBarBubbles(self.expBar, self.db.experience)
+		self:UpdateBarBubbles(self.expBar, db)
 	end
 end
 
