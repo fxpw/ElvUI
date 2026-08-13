@@ -1538,7 +1538,7 @@ function E:ToggleOptions(msg)
 			if not IsAddOnLoaded("ElvUI_OptionsUI") then noConfig = true end
 
 			-- проверяем версию ElvUI_OptionsUI, если он реально включен
-			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.35" then
+			if (not noConfig) and GetAddOnMetadata("ElvUI_OptionsUI", "Version") ~= "1.37" then
 				E:StaticPopup_Show("CLIENT_UPDATE_REQUEST")
 			end
 		else
