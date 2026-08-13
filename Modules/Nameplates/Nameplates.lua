@@ -90,6 +90,9 @@ do
 					NP:RefreshPlateReaction(plate)
 				end
 
+				NP:UpdatePlateHealth(plate)
+				NP:UpdatePlatePower(plate)
+
 				if not plate.appliedFrameLevelBoost then
 					if plate._npTargetBoost then
 						local b = (plate.Buffs and plate.Buffs.visibleBuffs) or 0
@@ -120,9 +123,10 @@ do
 	end)
 end
 
--- обновление здоровья по событиям (вместо опроса в OnUpdate). Вызывается из
--- PlateUnitEvent_OnEvent на UNIT_HEALTH / UNIT_MAXHEALTH / UNIT_MAXPOWER
--- и один раз при добавлении таблички
+-- обновление здоровья. Вызывается из PlateUnitEvent_OnEvent на
+-- UNIT_HEALTH / UNIT_MAXHEALTH / UNIT_MAXPOWER, один раз при добавлении
+-- таблички и из OnUpdate (события в этом клиенте не приходят для табличек,
+-- не находящихся в таргете, так что опрос остаётся основным источником)
 function NP:UpdatePlateHealth(nameplate)
 	if not nameplate or not nameplate.unit then return end
 	local u = nameplate.unit
