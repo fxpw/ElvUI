@@ -186,6 +186,8 @@ local bagdemagus = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\bagd
 local gb = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\gbutterfly]], ":32:32")
 local angrybird = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\angrybird]], ":32:32")
 local marazmat = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\marazmat]], ":24:24")
+local kel = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kel]], ":24:24")
+local kel2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\kel2]], ":24:24")
 
 local lunt = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\lunt]], ":32:32")
 local eye2 = E:TextureString([[Interface\AddOns\ElvUI\Media\ChatLogos\eye2]], ":25:25")
@@ -427,6 +429,15 @@ local specialChatIconsSirus = {
 	["Oldpain-Neverest x3 - 3.3.5a+"] = skull2,
 	["Пеин-Neverest x3 - 3.3.5a+"] = skull2,
 	["Пейн-Neverest x3 - 3.3.5a+"] = skull2,
+	["Кель-Sirus x5 - 3.3.5a+"] = kel2,
+	["Скилуха-Sirus x5 - 3.3.5a+"] = kel2,
+	["Духовенство-Sirus x5 - 3.3.5a+"] = kel2,
+	["Манимэйкер-Sirus x5 - 3.3.5a+"] = kel2,
+	["Экзозайка-Sirus x5 - 3.3.5a+"] = kel2,
+
+	["Хахантунчик-Sirus x5 - 3.3.5a+"] = kel,
+	["Землетряска-Sirus x5 - 3.3.5a+"] = kel,
+	["Капкрита-Sirus x5 - 3.3.5a+"] = kel,
 
 
 }
